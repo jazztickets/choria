@@ -84,7 +84,7 @@ struct _Tile {
 };
 
 struct _TileVertexBuffer {
-	float Data[10];
+	float Data[5];
 };
 
 // Classes

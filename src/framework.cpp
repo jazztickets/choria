@@ -28,6 +28,7 @@
 #include <ae/random.h>
 #include <ae/assets.h>
 #include <ae/atlas.h>
+#include <ae/texture_array.h>
 #include <ae/actions.h>
 #include <ae/audio.h>
 #include <ae/util.h>
@@ -445,6 +446,12 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/models/");
 	ae::Assets.LoadTextureDirectory("textures/skills/");
 	ae::Assets.LoadTextureDirectory("textures/status/");
+
+	ae::Assets.TextureArrays["default"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 100);
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/none.png");
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/grass0.png");
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/sand0.png");
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/water0.png");
 
 	// Load tables
 	ae::Assets.LoadAtlasDirectory("textures/map/", glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);

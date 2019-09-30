@@ -6,5 +6,5 @@ pos_uv_static	shaders/pos_uv.vert	shaders/pos_uv_static.frag	2	0
 ortho_pos	shaders/ortho_pos.vert	shaders/pos.frag	1	0
 ortho_pos_uv	shaders/ortho_pos_uv.vert	shaders/ortho_pos_uv.frag	2	0
 test	shaders/test.vert	shaders/test.frag	2	0
-map	shaders/map.vert	shaders/map.frag	5	0
+map	shaders/map.vert	shaders/map.frag	3	0
 map_object	shaders/map_object.vert	shaders/map_object.frag	2	0
