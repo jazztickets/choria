@@ -29,6 +29,7 @@
 #include <ae/assets.h>
 #include <ae/atlas.h>
 #include <ae/texture_array.h>
+#include <ae/tilemap.h>
 #include <ae/actions.h>
 #include <ae/audio.h>
 #include <ae/util.h>
@@ -462,7 +463,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadMusic("music/");
 
 	// Load tile maps
-	ae::Assets.Atlases["textures/map/default.png"]->LoadTileMap("data/tiles.tsv");
+	ae::Assets.TileMaps["default"] = new ae::_TileMap("data/tiles.tsv");
 
 	// Load font names only
 	ae::Assets.LoadFonts("ui/fonts.tsv", false);

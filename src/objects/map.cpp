@@ -27,6 +27,7 @@
 #include <ae/texture.h>
 #include <ae/assets.h>
 #include <ae/texture_array.h>
+#include <ae/tilemap.h>
 #include <ae/atlas.h>
 #include <ae/font.h>
 #include <ae/framebuffer.h>
@@ -504,11 +505,11 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 }
 
 // Set texture indexes for each layer based on base texture index
-void _Map::BuildLayers(bool NoTrans) {
+void _Map::BuildLayers(bool ShowTransitions) {
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			_Tile &Tile = Tiles[i+0][j+0];
-			if(NoTrans) {
+			if(!ShowTransitions) {
 				Tile.TextureIndex[0] = Tile.BaseTextureIndex;
 				Tile.TextureIndex[1] = 0;
 				Tile.TextureIndex[2] = 0;
@@ -869,7 +870,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 					File.ignore(1);
 					File.getline(Buffer, 1024, '\n');
 					if(!Server) {
-						const ae::_TileData &TileData = TileAtlas->TileMap.at(Buffer);
+						const ae::_TileMap::_TileData &TileData = ae::Assets.TileMaps["default"]->Data.at(Buffer);
 						Tile->BaseTextureIndex = TileData.Index;
 						Tile->Hierarchy = TileData.Hierarchy;
 					}
@@ -959,7 +960,7 @@ bool _Map::Save(const std::string &Path) {
 			const _Tile &Tile = Tiles[i][j];
 			Output << "T" << '\n';
 			if(Tile.BaseTextureIndex)
-				Output << "b " << TileAtlas->TileMapIndex.at(Tile.BaseTextureIndex)->ID << '\n';
+				Output << "b " << ae::Assets.TileMaps["default"]->Index.at(Tile.BaseTextureIndex)->ID << '\n';
 			if(!Tile.ZoneID.empty())
 				Output << "z " << Tile.ZoneID << '\n';
 			if(Tile.Event.Type != EventType::NONE)

@@ -18,6 +18,7 @@
 #include <states/editor.h>
 #include <ae/camera.h>
 #include <ae/assets.h>
+#include <ae/tilemap.h>
 #include <ae/atlas.h>
 #include <ae/program.h>
 #include <ae/audio.h>
@@ -97,7 +98,7 @@ void _EditorState::Init() {
 	Framebuffer = new ae::_Framebuffer(ae::Graphics.CurrentSize);
 
 	// Set filters
-	ShowTransitions = false;
+	ShowTransitions = true;
 	Filter = 0;
 	Filter |= MAP_RENDER_TEXTURE;
 	Filter |= MAP_RENDER_WALL;
@@ -1200,7 +1201,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 			// Apply filters
 			if(Filter & MAP_RENDER_TEXTURE) {
 				Tile.BaseTextureIndex = Brush->BaseTextureIndex;
-				Tile.Hierarchy = Map->TileAtlas->TileMapIndex.at(Tile.BaseTextureIndex)->Hierarchy;
+				Tile.Hierarchy = ae::Assets.TileMaps["default"]->Index.at(Tile.BaseTextureIndex)->Hierarchy;
 			}
 			if(Filter & MAP_RENDER_WALL)
 				Tile.Wall = Brush->Wall;
