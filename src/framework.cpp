@@ -67,6 +67,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Token = std::string(Arguments[i]);
 		TokensRemaining = ArgumentCount - i - 1;
 		if(Token == "-server") {
+			if(!Config.MaxFPS)
+				Config.MaxFPS = DEFAULT_MAXFPS;
 			State = &DedicatedState;
 			LoadClientAssets = false;
 		}
