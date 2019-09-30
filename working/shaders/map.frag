@@ -15,8 +15,8 @@ out vec4 out_color;
 void main() {
 	vec4 texture_color_back = texture(sampler0, texture_coord0);
 	vec4 texture_color_fore = texture(sampler0, texture_coord1);
-	vec4 texture_color_trans = texture(sampler1, texture_coord3);
-	vec4 texture_color_corner = texture(sampler1, texture_coord2);
+	vec4 texture_color_trans = texture(sampler2, texture_coord3);
+	vec4 texture_color_corner = texture(sampler2, texture_coord2);
 
 	float trans = max(texture_color_trans.a, texture_color_corner.a);
 
@@ -28,6 +28,6 @@ void main() {
 		texture_color = texture_color_back;
 
 	// Add lights
-	vec4 light_color = ambient_light + texelFetch(sampler2, ivec2(gl_FragCoord.xy), 0);
+	vec4 light_color = ambient_light + texelFetch(sampler1, ivec2(gl_FragCoord.xy), 0);
 	out_color = color * texture_color * light_color;
 }

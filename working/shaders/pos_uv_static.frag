@@ -4,8 +4,6 @@ uniform sampler2D sampler0;
 uniform vec4 ambient_light;
 uniform vec4 color;
 
-smooth in vec3 world_vertex;
-in vec3 world_normal;
 in vec2 texture_coord;
 out vec4 out_color;
 

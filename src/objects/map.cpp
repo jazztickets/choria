@@ -552,6 +552,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 		// Setup lights
 		ae::Assets.Programs["map"]->AmbientLight = AmbientLight;
+		ae::Assets.Programs["map_object"]->AmbientLight = AmbientLight;
 
 		// Add lights
 		int LightCount = 0;
@@ -603,15 +604,20 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		ae::Assets.Programs["map"]->Use();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
-		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, TransAtlas->Texture->ID);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
 		glActiveTexture(GL_TEXTURE0);
 		ae::Graphics.DirtyState();
 	}
 
 	// Draw layers
 	RenderTiles("map", Bounds, glm::vec3(0.0f), false);
+
+	// Setup shader
+	ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
 	// Render objects
 	for(const auto &Object : Objects)
