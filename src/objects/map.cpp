@@ -862,7 +862,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 			} break;
 			// Texture index
 			case 'b': {
-				if(Tile) {
+				if(Tile && !Server) {
 					char Buffer[1024];
 					File.ignore(1);
 					File.getline(Buffer, 1024, '\n');
