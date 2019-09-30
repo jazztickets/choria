@@ -7,7 +7,7 @@ uniform vec4 ambient_light;
 uniform vec4 color;
 
 in vec2 texture_coord;
-flat in float texture_index0;
+in float texture_index0;
 //in vec2 texture_coord1;
 //in vec2 texture_coord2;
 //in vec2 texture_coord3;

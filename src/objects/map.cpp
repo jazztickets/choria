@@ -28,7 +28,6 @@
 #include <ae/assets.h>
 #include <ae/texture_array.h>
 #include <ae/tilemap.h>
-#include <ae/atlas.h>
 #include <ae/font.h>
 #include <ae/framebuffer.h>
 #include <ae/program.h>
@@ -81,16 +80,12 @@ const std::vector<double> DayCyclesTime = {
 	18.0 * 60.0,
 };
 
-const std::string MAP_TRANS_ATLAS = "textures/map/trans.png";
-
 // Constructor
 _Map::_Map() :
 	Loaded(false),
 	Tiles(nullptr),
 	Size(0, 0),
-	UseAtlas(false),
-	TileAtlas(nullptr),
-	TransAtlas(nullptr),
+	Headless(false),
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	IsOutside(true),
 	Clock(0),
@@ -118,9 +113,9 @@ _Map::~_Map() {
 	// Delete background layer
 	delete BackgroundMap;
 
-	// Delete atlas
-	if(UseAtlas)
-		CloseAtlas();
+	// Delete vertex data
+	if(!Headless)
+		CloseVertices();
 
 	// Delete map data
 	FreeMap();
@@ -170,39 +165,17 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 		}
 	}
 
-	// Save old texture atlas name
-	std::string OldTextureAtlas = "";
-	if(TileAtlas)
-		OldTextureAtlas = TileAtlas->Texture->Name;
-
 	// Delete data
-	CloseAtlas();
+	CloseVertices();
 	FreeMap();
 
 	// Init new data
 	Tiles = NewTiles;
 	Size = NewSize;
-	if(OldTextureAtlas != "") {
-		InitAtlas(OldTextureAtlas);
-		InitVertices();
-	}
+	InitVertices();
 
 	// Update index
 	IndexEvents();
-}
-
-// Initialize the texture atlas
-void _Map::InitAtlas(const std::string AtlasPath) {
-
-	// Load tile atlas
-	TileAtlas = ae::Assets.Atlases[AtlasPath];
-	if(!TileAtlas)
-		throw std::runtime_error("Can't find atlas: " + AtlasPath);
-
-	// Load transition atlas
-	//TransAtlas = ae::Assets.Atlases[MAP_TRANS_ATLAS];
-	//if(!TransAtlas)
-	//	throw std::runtime_error("Can't find atlas: " + MAP_TRANS_ATLAS);
 }
 
 // Initialize vbo and vertex data
@@ -230,11 +203,10 @@ void _Map::InitVertices(bool Static) {
 		VertexIndex = 0;
 		for(int j = 0; j < Size.y; j++) {
 			for(int i = 0; i < Size.x; i++) {
-				glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[0]);
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, 0, 0, (float)Tiles[i][j].TextureIndex[0] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1, 0, (float)Tiles[i][j].TextureIndex[0] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, 0, 1, (float)Tiles[i][j].TextureIndex[0] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1, 1, (float)Tiles[i][j].TextureIndex[0] };
 			}
 		}
 
@@ -259,8 +231,8 @@ void _Map::InitVertices(bool Static) {
 	}
 }
 
-// Free memory used by texture atlas
-void _Map::CloseAtlas() {
+// Free memory used by rendering
+void _Map::CloseVertices() {
 	delete[] TileVertices;
 	delete[] TileFaces;
 	glDeleteBuffers(1, &TileVertexBufferID);
@@ -268,8 +240,6 @@ void _Map::CloseAtlas() {
 
 	TileVertexBufferID = 0;
 	TileElementBufferID = 0;
-	TileAtlas = nullptr;
-	TransAtlas = nullptr;
 	TileFaces = nullptr;
 	TileVertices = nullptr;
 }
@@ -694,8 +664,7 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 	// Set shader parameters
 	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
-	//ae::Graphics.SetTextureID(TileAtlas->Texture->ID);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, ae::Assets.TextureArrays["default"]->ID);
+	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
 	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
 
 	// Build tiles
@@ -810,9 +779,6 @@ void _Map::Load(const std::string &Path, bool Static) {
 	size_t PrefixPosition = Path.find(MAPS_PATH);
 	if(PrefixPosition != std::string::npos)
 		Name = Path.substr(PrefixPosition + MAPS_PATH.length(), Path.find(".map.gz") - MAPS_PATH.length());
-
-	if(UseAtlas)
-		InitAtlas("textures/map/default.png");
 
 	// Load background map
 	/*
@@ -930,7 +896,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 	IndexEvents();
 
 	// Initialize 2d tile rendering
-	if(UseAtlas) {
+	if(!Headless) {
 		InitVertices(Static);
 		BuildLayers();
 	}

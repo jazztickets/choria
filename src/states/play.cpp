@@ -122,7 +122,6 @@ void _PlayState::Init() {
 	try {
 		MenuMap = new _Map();
 		MenuMap->Stats = Stats;
-		MenuMap->UseAtlas = true;
 		MenuMap->Clock = ae::GetRandomInt(0, MAP_DAY_LENGTH);
 		MenuMap->Load("maps/start.map.gz");
 	}
@@ -924,7 +923,6 @@ void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 
 		Map = new _Map();
 		Map->Stats = Stats;
-		Map->UseAtlas = true;
 		Map->Clock = Clock;
 		Map->NetworkID = MapID;
 		for(const auto &Iterator : Stats->MapsIndex) {

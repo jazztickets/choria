@@ -54,7 +54,6 @@ class _Battle;
 namespace ae {
 	class _Buffer;
 	class _Camera;
-	class _Atlas;
 	class _Program;
 	class _Peer;
 	class _Framebuffer;
@@ -97,7 +96,6 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 		void AllocateMap();
 		void ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize);
-		void InitAtlas(const std::string AtlasPath);
 		void InitVertices(bool Static=false);
 
 		void Update(double FrameTime) override;
@@ -163,9 +161,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		std::map<_Event, std::vector<glm::ivec2>> IndexedEvents;
 
 		// Graphics
-		bool UseAtlas;
-		const ae::_Atlas *TileAtlas;
-		const ae::_Atlas *TransAtlas;
+		bool Headless;
 		glm::vec4 AmbientLight;
 		int IsOutside;
 		double Clock;
@@ -198,7 +194,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 	private:
 
-		void CloseAtlas();
+		void CloseVertices();
 		void FreeMap();
 
 		// Path finding

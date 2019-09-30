@@ -102,6 +102,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	for(const auto &MapNetworkID : Stats->MapsIndex) {
 		if(MapNetworkID.second) {
 			_Map *Map = MapManager->CreateWithID(MapNetworkID.second);
+			Map->Headless = true;
 			Map->Name = MapNetworkID.first;
 		}
 	}

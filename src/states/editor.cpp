@@ -18,8 +18,8 @@
 #include <states/editor.h>
 #include <ae/camera.h>
 #include <ae/assets.h>
+#include <ae/texture_array.h>
 #include <ae/tilemap.h>
-#include <ae/atlas.h>
 #include <ae/program.h>
 #include <ae/audio.h>
 #include <ae/font.h>
@@ -519,6 +519,8 @@ void _EditorState::Render(double BlendFactor) {
 	ae::Graphics.Setup2D();
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 	glUniformMatrix4fv(ae::Assets.Programs["ortho_pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv_array"]);
+	glUniformMatrix4fv(ae::Assets.Programs["ortho_pos_uv_array"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
 	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 
@@ -613,11 +615,11 @@ void _EditorState::DrawBrushInfo() {
 
 		// Draw texture
 		ae::_Bounds TextureBounds;
-		TextureBounds.Start = DrawPosition - glm::vec2(Map->TileAtlas->Size) / 2.0f;
-		TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
-		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		TextureBounds.Start = DrawPosition - glm::vec2(64) / 2.0f;
+		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv_array"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->BaseTextureIndex));
+		ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays["default"], Brush->BaseTextureIndex);
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
@@ -857,24 +859,25 @@ void _EditorState::InitTextures() {
 	glm::vec2 Spacing = glm::vec2(20, 20);
 	glm::vec2 Offset(Start);
 
-	uint32_t TextureCount = (uint32_t)(Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y));
+	const ae::_TextureArray *TextureArray = ae::Assets.TextureArrays["default"];
+	uint32_t TextureCount = (uint32_t)TextureArray->Count;
 	for(uint32_t i = 0; i < TextureCount; i++) {
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
 		Button->Parent = TexturesElement;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = Map->TileAtlas->Size;
+		Button->BaseSize = TextureArray->Size;
 		Button->Alignment = ae::LEFT_TOP;
-		Button->Atlas = Map->TileAtlas;
+		Button->TextureArray = TextureArray;
 		Button->TextureIndex = i;
 		Button->Clickable = true;
 		TexturesElement->Children.push_back(Button);
 
 		// Update position
-		Offset.x += Map->TileAtlas->Size.x + Spacing.x;
-		if(Offset.x > TexturesElement->BaseSize.x - Map->TileAtlas->Size.x) {
-			Offset.y += Map->TileAtlas->Size.y + Spacing.y;
+		Offset.x += TextureArray->Size.x + Spacing.x;
+		if(Offset.x > TexturesElement->BaseSize.x - TextureArray->Size.x) {
+			Offset.y += TextureArray->Size.y + Spacing.y;
 			Offset.x = Start.x;
 		}
 	}
@@ -1007,9 +1010,7 @@ void _EditorState::CreateMap() {
 	// Create map
 	Map = new _Map();
 	Map->Stats = Stats;
-	Map->UseAtlas = true;
 	Map->Size = Size;
-	Map->InitAtlas("textures/map/default.png");
 	Map->InitVertices();
 	Map->AllocateMap();
 	FilePath = NewMapFilenameTextBox->Text;
@@ -1091,7 +1092,6 @@ void _EditorState::LoadMap() {
 	// Attempt to load map
 	_Map *NewMap = new _Map();
 	NewMap->Stats = Stats;
-	NewMap->UseAtlas = true;
 	try {
 		NewMap->Load(Path);
 	}

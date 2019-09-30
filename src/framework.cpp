@@ -27,7 +27,6 @@
 #include <ae/input.h>
 #include <ae/random.h>
 #include <ae/assets.h>
-#include <ae/atlas.h>
 #include <ae/texture_array.h>
 #include <ae/tilemap.h>
 #include <ae/actions.h>
@@ -455,7 +454,6 @@ void _Framework::LoadAssets() {
 	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/water0.png");
 
 	// Load tables
-	ae::Assets.LoadAtlasDirectory("textures/map/", glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
 	ae::Assets.LoadPrograms("shaders/programs.tsv");
 	ae::Assets.LoadColors("ui/colors.tsv");
 	ae::Assets.LoadStyles("ui/styles.tsv");

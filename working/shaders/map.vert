@@ -8,7 +8,7 @@ uniform mat4 view_projection_transform;
 uniform mat4 model_transform;
 
 out vec2 texture_coord;
-flat out float texture_index0;
+out float texture_index0;
 
 void main() {
 	vec4 vec4_vertex_position = vec4(vertex_position, 1);
