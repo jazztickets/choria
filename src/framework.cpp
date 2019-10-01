@@ -447,12 +447,15 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/skills/");
 	ae::Assets.LoadTextureDirectory("textures/status/");
 
-	// Load texture array
-	ae::Assets.TextureArrays["default"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 100);
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/none.png");
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/grass0.png");
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/sand0.png");
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/water0.png");
+	// Load tile maps
+	ae::Assets.TileMaps["default"] = new ae::_TileMap("data/tiles.tsv");
+
+	// Load texture arrays
+	ae::Assets.TextureArrays["default"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), (int)ae::Assets.TileMaps["default"]->Data.size());
+	for(const auto &TileData : ae::Assets.TileMaps["default"]->Index) {
+		ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/" + TileData.second->ID + ".png");
+	}
+
 	ae::Assets.TextureArrays["trans"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 32);
 	for(int i = 0; i < 32; i++) {
 		std::string Filename = i < 10 ? "0" + std::to_string(i) : std::to_string(i);
@@ -465,9 +468,6 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadStyles("ui/styles.tsv");
 	ae::Assets.LoadSounds("sounds/");
 	ae::Assets.LoadMusic("music/");
-
-	// Load tile maps
-	ae::Assets.TileMaps["default"] = new ae::_TileMap("data/tiles.tsv");
 
 	// Load font names only
 	ae::Assets.LoadFonts("ui/fonts.tsv", false);
