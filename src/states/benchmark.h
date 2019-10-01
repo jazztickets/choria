@@ -23,7 +23,7 @@
 // Forward Declarations
 namespace ae {
 	class _Camera;
-	class _Atlas;
+	class _TextureArray;
 }
 
 // Benchmarking state
@@ -34,16 +34,14 @@ class _BenchmarkState : public ae::_State {
 		enum VertexBufferType {
 			VBO_STATIC,
 			VBO_DYNAMIC,
-			VBO_ATLAS,
-			VBO_ATLAS_DYNAMIC,
+			VBO_TEXTURE_ARRAY,
 			VBO_COUNT,
 		};
 
 		enum StageType {
 			STAGE_COLOR_STATIC,
 			STAGE_COLOR_DYNAMIC,
-			STAGE_ATLAS_STATIC,
-			STAGE_ATLAS_DYNAMIC,
+			STAGE_TEXTURE_ARRAY_STATIC,
 			STAGE_COUNT,
 		};
 
@@ -68,7 +66,7 @@ class _BenchmarkState : public ae::_State {
 	protected:
 
 		GLuint VertexBuffer[VBO_COUNT];
-		const ae::_Atlas *Atlas;
+		const ae::_TextureArray *TextureArray;
 		int Stage;
 		int Frames;
 };
