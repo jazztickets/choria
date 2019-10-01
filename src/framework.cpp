@@ -447,11 +447,17 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/skills/");
 	ae::Assets.LoadTextureDirectory("textures/status/");
 
+	// Load texture array
 	ae::Assets.TextureArrays["default"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 100);
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/none.png");
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/grass0.png");
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/sand0.png");
-	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/water0.png");
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/none.png");
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/grass0.png");
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/sand0.png");
+	ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/water0.png");
+	ae::Assets.TextureArrays["trans"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 32);
+	for(int i = 0; i < 32; i++) {
+		std::string Filename = i < 10 ? "0" + std::to_string(i) : std::to_string(i);
+		ae::Assets.TextureArrays["trans"]->AddTexture("textures/tiles/trans/" + Filename + ".png");
+	}
 
 	// Load tables
 	ae::Assets.LoadPrograms("shaders/programs.tsv");
