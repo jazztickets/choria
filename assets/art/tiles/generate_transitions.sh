@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# check for imagemagick
+type convert >/dev/null 2>&1 || {
+	echo >&2 "imagemagick is not installed ";
+	exit 1;
+}
+
 in="$1"
 
 if [ -z $in ]; then

@@ -37,8 +37,8 @@
 
 // Constants
 const int MAP_VERSION = 1;
-const int MAP_TILE_WIDTH = 64;
-const int MAP_TILE_HEIGHT = 64;
+const int MAP_TILE_WIDTH = 66;
+const int MAP_TILE_HEIGHT = 66;
 const int MAP_LAYERS = 4;
 const double MAP_DAY_LENGTH = 24.0*60.0;
 const double MAP_CLOCK_SPEED = 1.0;
@@ -83,7 +83,7 @@ struct _Tile {
 };
 
 struct _TileVertexBuffer {
-	float Data[5];
+	float Data[8];
 };
 
 // Classes

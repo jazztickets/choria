@@ -579,8 +579,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	if(Framebuffer) {
 		ae::Assets.Programs["map"]->Use();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glActiveTexture(GL_TEXTURE2);
-		//glBindTexture(GL_TEXTURE_2D, TransAtlas->Texture->ID);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, ae::Assets.TextureArrays["trans"]->ID);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
 		glActiveTexture(GL_TEXTURE0);
@@ -671,6 +671,7 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;
 	if(!Static) {
+		float TexelSize = 1.0f / MAP_TILE_WIDTH;
 
 		// Iterate over viewable tiles
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
@@ -678,14 +679,10 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 				const _Tile &Tile = Tiles[i][j];
 
 				// Build buffer with background, foreground, and transition layers
-				//glm::vec4 BackCoords = TileAtlas->GetTextureCoords(Tile.TextureIndex[0]);
-				//glm::vec4 ForeCoords = TileAtlas->GetTextureCoords(Tile.TextureIndex[1]);
-				//glm::vec4 EdgeCoords = TransAtlas->GetTextureCoords(Tile.TextureIndex[2]);
-				//glm::vec4 CornerCoords = TransAtlas->GetTextureCoords(Tile.TextureIndex[3]);
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, 0, 0, (float)Tile.TextureIndex[0] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1, 0, (float)Tile.TextureIndex[0] };
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, 0, 1, (float)Tile.TextureIndex[0] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1, 1, (float)Tile.TextureIndex[0] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TexelSize,     TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1 - TexelSize, TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TexelSize,     1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1 - TexelSize, 1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
 
 				FaceIndex += 2;
 			}
@@ -707,8 +704,9 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), nullptr);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 2));
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 4));
-	//glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 6));
-	//glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 8));
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 5));
+	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 6));
+	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 7));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	if(!Static)
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
