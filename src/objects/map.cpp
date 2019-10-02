@@ -496,7 +496,13 @@ void _Map::BuildLayers(bool ShowTransitions) {
 			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+1, j+0), 2);
 			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+0, j+1), 4);
 			EdgeTrans |= GetTransition(Tile, glm::ivec2(i-1, j+0), 8);
-			Tile.TextureIndex[2] = EdgeTrans;
+			if(EdgeTrans != 255)
+				Tile.TextureIndex[2] = EdgeTrans;
+			else {
+				Tile.TextureIndex[2] = 0;
+				Tile.TextureIndex[3] = 0;
+				continue;
+			}
 
 			// Get corner transition texture index
 			uint32_t CornerTrans = 0;
@@ -504,7 +510,13 @@ void _Map::BuildLayers(bool ShowTransitions) {
 			CornerTrans |= GetTransition(Tile, glm::ivec2(i+1, j-1), 2);
 			CornerTrans |= GetTransition(Tile, glm::ivec2(i+1, j+1), 4);
 			CornerTrans |= GetTransition(Tile, glm::ivec2(i-1, j+1), 8);
-			Tile.TextureIndex[3] = 16 + CornerTrans;
+			if(CornerTrans != 255)
+				Tile.TextureIndex[3] = 16 + CornerTrans;
+			else {
+				Tile.TextureIndex[2] = 0;
+				Tile.TextureIndex[3] = 0;
+				continue;
+			}
 		}
 	}
 }
@@ -1245,6 +1257,9 @@ uint32_t _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint3
 	// Get valid tile to check
 	glm::ivec2 CheckCoord = GetValidCoord(CheckPosition);
 	_Tile &TileCheck = Tiles[CheckCoord.x][CheckCoord.y];
+
+	if(TileCheck.Hierarchy == -1)
+		return 255;
 
 	// Check hierarchy
 	if(Tile.Hierarchy < TileCheck.Hierarchy) {
