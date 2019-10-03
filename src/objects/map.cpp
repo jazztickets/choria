@@ -1258,6 +1258,7 @@ uint32_t _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint3
 	glm::ivec2 CheckCoord = GetValidCoord(CheckPosition);
 	_Tile &TileCheck = Tiles[CheckCoord.x][CheckCoord.y];
 
+	// Return 255 to disable all transitions for that tile
 	if(TileCheck.Hierarchy == -1)
 		return 255;
 
