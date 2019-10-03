@@ -83,7 +83,7 @@ struct _Tile {
 };
 
 struct _TileVertexBuffer {
-	float Data[8];
+	float Data[7];
 };
 
 // Classes
@@ -210,6 +210,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		uint32_t TileElementBufferID;
 		_TileVertexBuffer *TileVertices;
 		glm::u32vec3 *TileFaces;
+		uint32_t TransitionLookup[256];
 
 		// Network
 		std::list<const ae::_Peer *> Peers;

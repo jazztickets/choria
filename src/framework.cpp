@@ -456,8 +456,8 @@ void _Framework::LoadAssets() {
 		ae::Assets.TextureArrays["default"]->AddTexture("textures/tiles/default/" + TileData.second->ID + ".png");
 	}
 
-	ae::Assets.TextureArrays["trans"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 32);
-	for(int i = 0; i < 32; i++) {
+	ae::Assets.TextureArrays["trans"] = new ae::_TextureArray(glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 47);
+	for(int i = 0; i < 47; i++) {
 		std::string Filename = i < 10 ? "0" + std::to_string(i) : std::to_string(i);
 		ae::Assets.TextureArrays["trans"]->AddTexture("textures/tiles/trans/" + Filename + ".png");
 	}

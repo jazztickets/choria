@@ -63,7 +63,7 @@ for i in range(0, 255):
 # print codes
 i = 0
 for index in lookup:
-	print(str(i) + ":" + lookup[index])
+	print(str(index) + ":" + str(i) + ":" + lookup[index])
 	i += 1
 
 # print commands

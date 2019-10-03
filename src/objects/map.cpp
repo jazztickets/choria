@@ -229,6 +229,55 @@ void _Map::InitVertices(bool Static) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
 	}
+
+	// Build lookup table of transition index to texture index
+	TransitionLookup[0] = 0;
+	TransitionLookup[1] = 1;
+	TransitionLookup[2] = 2;
+	TransitionLookup[4] = 3;
+	TransitionLookup[5] = 4;
+	TransitionLookup[8] = 5;
+	TransitionLookup[10] = 6;
+	TransitionLookup[12] = 7;
+	TransitionLookup[16] = 8;
+	TransitionLookup[17] = 9;
+	TransitionLookup[18] = 10;
+	TransitionLookup[24] = 11;
+	TransitionLookup[26] = 12;
+	TransitionLookup[32] = 13;
+	TransitionLookup[33] = 14;
+	TransitionLookup[34] = 15;
+	TransitionLookup[36] = 16;
+	TransitionLookup[37] = 17;
+	TransitionLookup[48] = 18;
+	TransitionLookup[49] = 19;
+	TransitionLookup[50] = 20;
+	TransitionLookup[64] = 21;
+	TransitionLookup[65] = 22;
+	TransitionLookup[66] = 23;
+	TransitionLookup[68] = 24;
+	TransitionLookup[69] = 25;
+	TransitionLookup[72] = 26;
+	TransitionLookup[74] = 27;
+	TransitionLookup[76] = 28;
+	TransitionLookup[80] = 29;
+	TransitionLookup[81] = 30;
+	TransitionLookup[82] = 31;
+	TransitionLookup[88] = 32;
+	TransitionLookup[90] = 33;
+	TransitionLookup[128] = 34;
+	TransitionLookup[129] = 35;
+	TransitionLookup[130] = 36;
+	TransitionLookup[132] = 37;
+	TransitionLookup[133] = 38;
+	TransitionLookup[136] = 39;
+	TransitionLookup[138] = 40;
+	TransitionLookup[140] = 41;
+	TransitionLookup[160] = 42;
+	TransitionLookup[161] = 43;
+	TransitionLookup[162] = 44;
+	TransitionLookup[164] = 45;
+	TransitionLookup[165] = 46;
 }
 
 // Free memory used by rendering
@@ -491,27 +540,23 @@ void _Map::BuildLayers(bool ShowTransitions) {
 			Tile.TextureIndex[0] = Tile.BaseTextureIndex;
 
 			// Get edge transition texture index
-			uint32_t EdgeTrans = 0;
-			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+0, j-1), 1);
-			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+1, j+0), 2);
-			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+0, j+1), 4);
-			EdgeTrans |= GetTransition(Tile, glm::ivec2(i-1, j+0), 8);
-			if(EdgeTrans != 255)
-				Tile.TextureIndex[2] = EdgeTrans;
-			else {
-				Tile.TextureIndex[2] = 0;
-				Tile.TextureIndex[3] = 0;
-				continue;
-			}
+			uint32_t TransIndex = 0;
+			TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j-1), 2);
+			TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+0), 8);
+			TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+0), 16);
+			TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j+1), 64);
 
-			// Get corner transition texture index
-			uint32_t CornerTrans = 0;
-			CornerTrans |= GetTransition(Tile, glm::ivec2(i-1, j-1), 1);
-			CornerTrans |= GetTransition(Tile, glm::ivec2(i+1, j-1), 2);
-			CornerTrans |= GetTransition(Tile, glm::ivec2(i+1, j+1), 4);
-			CornerTrans |= GetTransition(Tile, glm::ivec2(i-1, j+1), 8);
-			if(CornerTrans != 255)
-				Tile.TextureIndex[3] = 16 + CornerTrans;
+			if(!(TransIndex & 2) && !(TransIndex & 8))
+				TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j-1), 1);
+			if(!(TransIndex & 2) && !(TransIndex & 16))
+				TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j-1), 4);
+			if(!(TransIndex & 8) && !(TransIndex & 64))
+				TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+1), 32);
+			if(!(TransIndex & 16) && !(TransIndex & 64))
+				TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+1), 128);
+
+			if(TransIndex != 255)
+				Tile.TextureIndex[2] = TransitionLookup[TransIndex];
 			else {
 				Tile.TextureIndex[2] = 0;
 				Tile.TextureIndex[3] = 0;
@@ -691,10 +736,10 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 				const _Tile &Tile = Tiles[i][j];
 
 				// Build buffer with background, foreground, and transition layers
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TexelSize,     TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1 - TexelSize, TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TexelSize,     1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1 - TexelSize, 1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2], (float)Tile.TextureIndex[3] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TexelSize,     TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1 - TexelSize, TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TexelSize,     1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1 - TexelSize, 1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
 
 				FaceIndex += 2;
 			}
@@ -718,7 +763,6 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 4));
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 5));
 	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 6));
-	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 7));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	if(!Static)
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
