@@ -451,8 +451,8 @@ void _EditorState::HandleQuit() {
 // Updates the current state
 void _EditorState::Update(double FrameTime) {
 	ae::Graphics.Element->Update(FrameTime, ae::Input.GetMouse());
-	if(ae::Graphics.Element->HitElement)
-		std::cout << ae::Graphics.Element->HitElement << std::endl;
+	//if(ae::Graphics.Element->HitElement)
+	//	std::cout << ae::Graphics.Element->HitElement << std::endl;
 
 	if(!Map)
 		return;
