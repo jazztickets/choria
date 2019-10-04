@@ -210,7 +210,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		uint32_t TileElementBufferID;
 		_TileVertexBuffer *TileVertices;
 		glm::u32vec3 *TileFaces;
-		uint32_t TransitionLookup[256];
+		uint32_t TransitionLookup[166];
 
 		// Network
 		std::list<const ae::_Peer *> Peers;
