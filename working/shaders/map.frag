@@ -14,13 +14,14 @@ out vec4 out_color;
 
 void main() {
 	vec4 texture_color_back = texture(sampler0, vec3(texture_coord, texture_index0));
-	vec4 texture_color_fore = texture(sampler0, vec3(texture_coord, texture_index1));
 	vec4 texture_color_trans = texture(sampler2, vec3(texture_coord, texture_index2));
 
 	// Blend first two textures
 	vec4 texture_color;
-	if(texture_color_trans.a > 0)
+	if(texture_color_trans.a > 0) {
+		vec4 texture_color_fore = texture(sampler0, vec3(texture_coord, texture_index1));
 		texture_color = mix(texture_color_back, texture_color_fore, texture_color_trans.a);
+	}
 	else
 		texture_color = texture_color_back;
 

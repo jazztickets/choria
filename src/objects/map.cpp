@@ -556,7 +556,7 @@ void _Map::BuildLayers(bool ShowTransitions) {
 				TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+1), 128);
 
 			if(TransIndex != 255)
-				Tile.TextureIndex[2] = TransitionLookup[TransIndex];
+				Tile.TextureIndex[3] = TransitionLookup[TransIndex];
 			else {
 				Tile.TextureIndex[2] = 0;
 				Tile.TextureIndex[3] = 0;
@@ -736,10 +736,10 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 				const _Tile &Tile = Tiles[i][j];
 
 				// Build buffer with background, foreground, and transition layers
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TexelSize,     TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1 - TexelSize, TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TexelSize,     1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1 - TexelSize, 1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[2] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TexelSize,     TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1 - TexelSize, TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TexelSize,     1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1 - TexelSize, 1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
 
 				FaceIndex += 2;
 			}
