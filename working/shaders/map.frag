@@ -7,6 +7,7 @@ uniform sampler2DArray sampler3;
 uniform vec4 ambient_light;
 uniform vec4 color;
 uniform vec2 tile_count;
+uniform vec2 tile_offset;
 uniform float texture_scale;
 uniform float texture_offset;
 
@@ -19,7 +20,7 @@ void main() {
 	// Convert vertex position to map coordinate
 	ivec2 map_coord = ivec2(vertex_coord);
 
-	int texture_index0 = int(texelFetch(sampler1, map_coord, 0).r * 255);
+	int texture_index0 = int(texelFetch(sampler2, map_coord, 0).r * 255);
 	int texture_index1 = 0;
 	int texture_index2 = 0;
 
@@ -39,6 +40,6 @@ void main() {
 		texture_color = texture_color_back;
 
 	// Add lights
-	vec4 light_color = ambient_light + texelFetch(sampler2, ivec2(gl_FragCoord.xy), 0);
+	vec4 light_color = ambient_light + texelFetch(sampler1, ivec2(gl_FragCoord.xy), 0);
 	out_color = color * texture_color * light_color;
 }

@@ -619,9 +619,9 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, ae::Assets.TextureArrays["trans"]->ID);
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
-		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, MapTextureID);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
 		glActiveTexture(GL_TEXTURE0);
 		ae::Graphics.DirtyState();
 	}
@@ -704,7 +704,8 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 	ae::Graphics.SetProgram(Program);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
 	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
-	Program->SetUniformVec2("tile_count", glm::vec2(50, 50));
+	Program->SetUniformVec2("tile_count", glm::vec2((int)Bounds[2] - (int)Bounds[0] + 1, (int)Bounds[3] - (int)Bounds[1] + 1));
+	Program->SetUniformVec2("tile_offset", glm::vec2((int)Bounds[0], (int)Bounds[1]));
 	Program->SetUniformFloat("texture_scale", 64.0f / 66.0f);
 	Program->SetUniformFloat("texture_offset", 1.0f / 66.0f);
 
