@@ -22,6 +22,7 @@
 #include <ae/camera.h>
 #include <ae/random.h>
 #include <ae/program.h>
+#include <ae/texture_array.h>
 #include <objects/minigame.h>
 #include <stats.h>
 #include <framework.h>
@@ -140,6 +141,21 @@ void _TestState::Init() {
 		Minigame->StartGame(2109853616);
 		Minigame->Drop(-4.879331111907959);
 	}
+
+	float Vertices[] = {
+		0, 1,
+		1, 1,
+		0, 0,
+		1, 0,
+		0, 1,
+		1, 1,
+		0, 0,
+		1, 0,
+	};
+
+	glGenBuffers(1, &VertexBuffer[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 }
 
 // Close
@@ -147,6 +163,8 @@ void _TestState::Close() {
 	delete Stats;
 	delete Minigame;
 	delete Camera;
+
+	glDeleteBuffers(1, &VertexBuffer[0]);
 }
 
 // Key handler
@@ -222,6 +240,8 @@ void _TestState::Render(double BlendFactor) {
 		glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
 		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["test"]);
+		glUniformMatrix4fv(ae::Assets.Programs["test"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	}
 
 	ae::Assets.Programs["pos_uv_static"]->AmbientLight = glm::vec4(1.0f);
@@ -233,26 +253,50 @@ void _TestState::Render(double BlendFactor) {
 	if(Minigame)
 		Minigame->Render(BlendFactor);
 
+	RenderMapTest();
+
 	ae::Graphics.Setup2D();
 	ae::Graphics.SetStaticUniforms();
 
+	Render2DTest();
+}
+
+void _TestState::Render2DTest() {
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
-	ae::Graphics.SetColor(glm::vec4(1,0,0,1));
+	ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 	ae::Graphics.DrawRectangle(glm::vec2(1, 1), glm::vec2(4, 4), true);
-	ae::Graphics.SetColor(glm::vec4(0,1,0,1));
+	ae::Graphics.SetColor(glm::vec4(0, 1, 0, 1));
 	ae::Graphics.DrawRectangle(glm::vec2(5, 1), glm::vec2(8, 4), false);
 
 	ae::Graphics.EnableScissorTest();
 	ae::_Bounds ScissorRegion(glm::vec2(9, 1), glm::vec2(12, 4));
 	ae::Graphics.SetScissor(ScissorRegion);
-	ae::Graphics.SetColor(glm::vec4(0,1,1,1));
+	ae::Graphics.SetColor(glm::vec4(0, 1, 1, 1));
 	ae::Graphics.DrawRectangle(glm::vec2(8, 0), glm::vec2(13, 5), true);
 	ae::Graphics.DisableScissorTest();
 
 	ae::_Bounds MaskRegion(glm::vec2(13, 1), glm::vec2(16, 4));
 	ae::Graphics.EnableStencilTest();
 	ae::Graphics.DrawMask(MaskRegion);
-	ae::Graphics.SetColor(glm::vec4(1,1,0,1));
+	ae::Graphics.SetColor(glm::vec4(1, 1, 0, 1));
 	ae::Graphics.DrawRectangle(glm::vec2(12, 0), glm::vec2(17, 5), true);
 	ae::Graphics.DisableStencilTest();
+}
+
+void _TestState::RenderMapTest() {
+	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
+	ae::Graphics.DirtyState();
+	ae::_Program *Program = ae::Assets.Programs["test"];
+	ae::Graphics.SetProgram(Program);
+	ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	Program->SetUniformVec2("tile_count", glm::vec2(5, 3));
+	Program->SetUniformFloat("texture_scale", 64.0f / 66.0f);
+	Program->SetUniformFloat("texture_offset", 1.0f / 66.0f);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[0]);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	ae::Graphics.DirtyState();
 }

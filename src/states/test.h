@@ -61,6 +61,11 @@ class _TestState : public ae::_State {
 
 	protected:
 
+		void Render2DTest();
+		void RenderMapTest();
+
+		GLuint VertexBuffer[2];
+
 };
 
 extern _TestState TestState;

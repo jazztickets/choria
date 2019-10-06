@@ -97,10 +97,9 @@ _Map::_Map() :
 	MaxZoneColors(sizeof(ZoneColors) / sizeof(glm::vec4)),
 	CurrentZoneColors(MaxZoneColors),
 	Pather(nullptr),
-	TileVertexBufferID(0),
-	TileElementBufferID(0),
-	TileVertices(nullptr),
-	TileFaces(nullptr) {
+	MapVertexBufferID(0),
+	MapTextureID(0),
+	MapTexture(nullptr) {
 
 }
 
@@ -180,55 +179,41 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 
 // Initialize vbo and vertex data
 void _Map::InitVertices(bool Static) {
-	GLuint TileVertexCount = (GLuint)(4 * Size.x * Size.y);
-	GLuint TileFaceCount = (GLuint)(2 * Size.x * Size.y);
 
-	TileFaces = new glm::u32vec3[TileFaceCount];
+	// Build quad for map
+	float Vertices[] = {
+		0, 1,
+		1, 1,
+		0, 0,
+		1, 0,
+		0, 1,
+		1, 1,
+		0, 0,
+		1, 0,
+	};
 
-	int FaceIndex = 0;
-	int VertexIndex = 0;
+	// Generate vertex buffer and bind
+	glGenBuffers(1, &MapVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, MapVertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+
+	// Create tile texture lookup storage
+	MapTexture = new GLuint[Size.x * Size.y];
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
-			TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 1, VertexIndex + 0 };
-			TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 3, VertexIndex + 1 };
-			VertexIndex += 4;
+			int Coord = i + j * Size.x;
+			MapTexture[Coord] = Tiles[i][j].BaseTextureIndex;
 		}
 	}
 
-	// Create a static vbo
-	if(Static) {
-		uint32_t VertexIndex = 0;
-		TileVertices = new _TileVertexBuffer[TileVertexCount];
-
-		VertexIndex = 0;
-		for(int j = 0; j < Size.y; j++) {
-			for(int i = 0; i < Size.x; i++) {
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, 0, 0, (float)Tiles[i][j].TextureIndex[0] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1, 0, (float)Tiles[i][j].TextureIndex[0] };
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, 0, 1, (float)Tiles[i][j].TextureIndex[0] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1, 1, (float)Tiles[i][j].TextureIndex[0] };
-			}
-		}
-
-		glGenBuffers(1, &TileVertexBufferID);
-		glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, TileVertices, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &TileElementBufferID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, TileFaces, GL_STATIC_DRAW);
-	}
-	else {
-		TileVertices = new _TileVertexBuffer[TileVertexCount];
-
-		glGenBuffers(1, &TileVertexBufferID);
-		glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(_TileVertexBuffer) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
-
-		glGenBuffers(1, &TileElementBufferID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
-	}
+	// Create texture for tile lookups
+	glGenTextures(1, &MapTextureID);
+	glBindTexture(GL_TEXTURE_2D, MapTextureID);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Size.x, Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *)MapTexture);
 
 	// Build lookup table of transition index to texture index
 	TransitionLookup[0] = 0;
@@ -282,15 +267,10 @@ void _Map::InitVertices(bool Static) {
 
 // Free memory used by rendering
 void _Map::CloseVertices() {
-	delete[] TileVertices;
-	delete[] TileFaces;
-	glDeleteBuffers(1, &TileVertexBufferID);
-	glDeleteBuffers(1, &TileElementBufferID);
+	glDeleteBuffers(1, &MapVertexBufferID);
+	MapVertexBufferID = 0;
 
-	TileVertexBufferID = 0;
-	TileElementBufferID = 0;
-	TileFaces = nullptr;
-	TileVertices = nullptr;
+	delete[] MapTexture;
 }
 
 // Free memory used by the tiles
@@ -636,16 +616,18 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	if(Framebuffer) {
 		ae::Assets.Programs["map"]->Use();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glActiveTexture(GL_TEXTURE2);
+		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, ae::Assets.TextureArrays["trans"]->ID);
-		glActiveTexture(GL_TEXTURE1);
+		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, MapTextureID);
 		glActiveTexture(GL_TEXTURE0);
 		ae::Graphics.DirtyState();
 	}
 
 	// Draw layers
-	RenderTiles("map", Bounds, glm::vec3(0.0f), false);
+	RenderTiles(ae::Assets.Programs["map"], Bounds, glm::vec3(0.0f), false);
 
 	// Set program for objects
 	ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
@@ -716,17 +698,18 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 }
 
 // Render map
-void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static) {
+void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static) {
 
 	// Set shader parameters
-	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
+	ae::Graphics.SetProgram(Program);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
 	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
-	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
+	Program->SetUniformVec2("tile_count", glm::vec2(50, 50));
+	Program->SetUniformFloat("texture_scale", 64.0f / 66.0f);
+	Program->SetUniformFloat("texture_offset", 1.0f / 66.0f);
 
+	/*
 	// Build tiles
-	uint32_t VertexIndex = 0;
-	int FaceIndex = 0;
 	if(!Static) {
 		float TexelSize = 1.0f / MAP_TILE_WIDTH;
 
@@ -745,30 +728,13 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 			}
 		}
 	}
-	else {
-		VertexIndex = (uint32_t)(Size.x * Size.y * 4);
-		FaceIndex = Size.x * Size.y * 2;
-	}
+	*/
 
-	// Get buffer sizes
-	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(_TileVertexBuffer);
-	GLsizeiptr ElementBufferSize = FaceIndex * (int)sizeof(glm::u32vec3);
+	glBindBuffer(GL_ARRAY_BUFFER, MapVertexBufferID);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
 
-	// Bind buffers
-	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
-	if(!Static)
-		glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 2));
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 4));
-	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 5));
-	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 6));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
-	if(!Static)
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
-
-	// Render buffer
-	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, nullptr);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	// Reset internal state
 	ae::Graphics.DirtyState();

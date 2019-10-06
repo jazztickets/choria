@@ -20,7 +20,7 @@
 // Libraries
 #include <ae/baseobject.h>
 #include <ae/network.h>
-#include <ae/texture.h>
+#include <ae/opengl.h>
 #include <enums.h>
 #include <path/micropather.h>
 #include <glm/vec2.hpp>
@@ -111,7 +111,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		// Graphics
 		void BuildLayers(bool ShowTransitions=true);
 		void Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
-		void RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static=false);
+		void RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static=false);
 		int AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB);
 
 		// Collision
@@ -206,10 +206,9 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		uint32_t GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint32_t Bit);
 
 		// Rendering
-		uint32_t TileVertexBufferID;
-		uint32_t TileElementBufferID;
-		_TileVertexBuffer *TileVertices;
-		glm::u32vec3 *TileFaces;
+		GLuint MapVertexBufferID;
+		GLuint MapTextureID;
+		GLuint *MapTexture;
 		uint32_t TransitionLookup[166];
 
 		// Network
