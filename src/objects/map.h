@@ -37,8 +37,10 @@
 
 // Constants
 const int MAP_VERSION = 1;
-const int MAP_TILE_WIDTH = 66;
-const int MAP_TILE_HEIGHT = 66;
+const int MAP_TILE_WIDTH = 64;
+const int MAP_TILE_HEIGHT = 64;
+const int MAP_TILE_PADDED_WIDTH = 66;
+const int MAP_TILE_PADDED_HEIGHT = 66;
 const int MAP_LAYERS = 4;
 const double MAP_DAY_LENGTH = 24.0*60.0;
 const double MAP_CLOCK_SPEED = 1.0;
@@ -139,7 +141,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 		void GetTile(const glm::ivec2 &Position, _Tile &Tile) const { Tile = Tiles[Position.x][Position.y]; }
 		const _Tile *GetTile(const glm::ivec2 &Position) const { return &Tiles[Position.x][Position.y]; }
-		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
+		void SetTile(const glm::ivec2 &Position, const _Tile *Tile);
 
 		// File IO
 		void Load(const std::string &Path, bool Static=false);
@@ -208,7 +210,6 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		// Rendering
 		GLuint MapVertexBufferID;
 		GLuint MapTextureID;
-		GLuint *MapTexture;
 		uint32_t TransitionLookup[166];
 
 		// Network

@@ -98,8 +98,7 @@ _Map::_Map() :
 	CurrentZoneColors(MaxZoneColors),
 	Pather(nullptr),
 	MapVertexBufferID(0),
-	MapTextureID(0),
-	MapTexture(nullptr) {
+	MapTextureID(0) {
 
 }
 
@@ -198,7 +197,7 @@ void _Map::InitVertices(bool Static) {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
 	// Create tile texture lookup storage
-	MapTexture = new GLuint[Size.x * Size.y];
+	GLuint *MapTexture = new GLuint[Size.x * Size.y];
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			int Coord = i + j * Size.x;
@@ -214,6 +213,7 @@ void _Map::InitVertices(bool Static) {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Size.x, Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *)MapTexture);
+	delete[] MapTexture;
 
 	// Build lookup table of transition index to texture index
 	TransitionLookup[0] = 0;
@@ -267,10 +267,13 @@ void _Map::InitVertices(bool Static) {
 
 // Free memory used by rendering
 void _Map::CloseVertices() {
-	glDeleteBuffers(1, &MapVertexBufferID);
+	if(MapVertexBufferID)
+		glDeleteBuffers(1, &MapVertexBufferID);
 	MapVertexBufferID = 0;
 
-	delete[] MapTexture;
+	if(MapTextureID)
+		glDeleteTextures(1, &MapTextureID);
+	MapTextureID = 0;
 }
 
 // Free memory used by the tiles
@@ -839,7 +842,6 @@ void _Map::Load(const std::string &Path, bool Static) {
 			// Map size
 			case 'S': {
 				File >> Size.x >> Size.y;
-				FreeMap();
 				AllocateMap();
 			} break;
 			// Begin new tile
@@ -1235,6 +1237,15 @@ glm::vec2 _Map::GetValidPosition(const glm::vec2 &Position) const {
 // Get a valid position within the grid
 glm::ivec2 _Map::GetValidCoord(const glm::ivec2 &Position) const {
 	return glm::clamp(Position, glm::ivec2(0), Size - 1);
+}
+
+// Set tile attributes
+void _Map::SetTile(const glm::ivec2 &Position, const _Tile *Tile) {
+	 Tiles[Position.x][Position.y] = *Tile;
+
+	 // Update texture lookup
+	 glBindTexture(GL_TEXTURE_2D, MapTextureID);
+	 glTexSubImage2D(GL_TEXTURE_2D, 0, Position.x, Position.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Tile->BaseTextureIndex);
 }
 
 // Distance between two points

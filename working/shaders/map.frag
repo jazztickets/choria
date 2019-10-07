@@ -20,12 +20,17 @@ void main() {
 	// Convert vertex position to map coordinate
 	ivec2 map_coord = ivec2(vertex_coord);
 
+	// Get texture index from map
 	int texture_index0 = int(texelFetch(sampler2, map_coord, 0).r * 255);
 	int texture_index1 = 0;
 	int texture_index2 = 0;
 
+	if(texture_index0 == 0)
+		discard;
+
 	// Get texture coordinate for the tile
-	vec2 tile_texture_coord = fract(texture_coord * tile_count) * texture_scale + texture_offset;
+	//vec2 tile_texture_coord = fract(texture_coord * tile_count) * texture_scale + texture_offset;
+	vec2 tile_texture_coord = texture_coord * tile_count;
 
 	vec4 texture_color_back = texture(sampler0, vec3(tile_texture_coord, texture_index0));
 	vec4 texture_color_trans = texture(sampler3, vec3(tile_texture_coord, texture_index2));
