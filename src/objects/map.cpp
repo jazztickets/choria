@@ -196,16 +196,8 @@ void _Map::InitVertices(bool Static) {
 	glBindBuffer(GL_ARRAY_BUFFER, MapVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
-	// Create tile texture lookup storage
-	GLuint *MapTexture = new GLuint[Size.x * Size.y];
-	for(int j = 0; j < Size.y; j++) {
-		for(int i = 0; i < Size.x; i++) {
-			int Coord = i + j * Size.x;
-			MapTexture[Coord] = Tiles[i][j].BaseTextureIndex;
-		}
-	}
-
 	// Create texture for tile lookups
+	GLuint *MapTexture = new GLuint[Size.x * Size.y];
 	glGenTextures(1, &MapTextureID);
 	glBindTexture(GL_TEXTURE_2D, MapTextureID);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -508,6 +500,9 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 
 // Set texture indexes for each layer based on base texture index
 void _Map::BuildLayers(bool ShowTransitions) {
+
+	// Update texture lookup
+	glBindTexture(GL_TEXTURE_2D, MapTextureID);
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			_Tile &Tile = Tiles[i+0][j+0];
@@ -516,35 +511,41 @@ void _Map::BuildLayers(bool ShowTransitions) {
 				Tile.TextureIndex[1] = 0;
 				Tile.TextureIndex[2] = 0;
 				Tile.TextureIndex[3] = 0;
-				continue;
 			}
-
-			// Set base texture
-			Tile.TextureIndex[0] = Tile.BaseTextureIndex;
-
-			// Get edge transition texture index
-			uint32_t TransIndex = 0;
-			TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j-1), 2);
-			TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+0), 8);
-			TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+0), 16);
-			TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j+1), 64);
-
-			if(!(TransIndex & 2) && !(TransIndex & 8))
-				TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j-1), 1);
-			if(!(TransIndex & 2) && !(TransIndex & 16))
-				TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j-1), 4);
-			if(!(TransIndex & 8) && !(TransIndex & 64))
-				TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+1), 32);
-			if(!(TransIndex & 16) && !(TransIndex & 64))
-				TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+1), 128);
-
-			if(TransIndex != 255)
-				Tile.TextureIndex[3] = TransitionLookup[TransIndex];
 			else {
-				Tile.TextureIndex[2] = 0;
-				Tile.TextureIndex[3] = 0;
-				continue;
+
+				// Set base texture
+				Tile.TextureIndex[0] = Tile.BaseTextureIndex;
+				Tile.TextureIndex[1] = 0;
+
+				// Get edge transition texture index
+				uint32_t TransIndex = 0;
+				TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j-1), 2);
+				TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+0), 8);
+				TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+0), 16);
+				TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j+1), 64);
+
+				if(!(TransIndex & 2) && !(TransIndex & 8))
+					TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j-1), 1);
+				if(!(TransIndex & 2) && !(TransIndex & 16))
+					TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j-1), 4);
+				if(!(TransIndex & 8) && !(TransIndex & 64))
+					TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+1), 32);
+				if(!(TransIndex & 16) && !(TransIndex & 64))
+					TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+1), 128);
+
+				if(TransIndex != 255) {
+					Tile.TextureIndex[3] = TransitionLookup[TransIndex];
+				}
+				else {
+					Tile.TextureIndex[2] = 0;
+					Tile.TextureIndex[3] = 0;
+				}
 			}
+
+			// Set texture indexes in map lookup texture
+			GLuint Pixel = Tile.TextureIndex[0] | (Tile.TextureIndex[1] << 8) | (Tile.TextureIndex[2] << 16) | (Tile.TextureIndex[3] << 24);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, i, j, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Pixel);
 		}
 	}
 }
@@ -615,19 +616,19 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Size.x);
 	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
 
-	// Set framebuffer texture
+	// Set textures
+	ae::Assets.Programs["map"]->Use();
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, ae::Assets.TextureArrays["trans"]->ID);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, MapTextureID);
 	if(Framebuffer) {
-		ae::Assets.Programs["map"]->Use();
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, ae::Assets.TextureArrays["trans"]->ID);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, MapTextureID);
 		glActiveTexture(GL_TEXTURE1);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
-		glActiveTexture(GL_TEXTURE0);
-		ae::Graphics.DirtyState();
 	}
+	glActiveTexture(GL_TEXTURE0);
+	ae::Graphics.DirtyState();
 
 	// Draw layers
 	RenderTiles(ae::Assets.Programs["map"], Bounds, glm::vec3(0.0f), false);
@@ -709,35 +710,13 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
 	Program->SetUniformVec2("tile_count", glm::vec2((int)Bounds[2] - (int)Bounds[0] + 1, (int)Bounds[3] - (int)Bounds[1] + 1));
 	Program->SetUniformVec2("tile_offset", glm::vec2((int)Bounds[0], (int)Bounds[1]));
-	Program->SetUniformFloat("texture_scale", 64.0f / 66.0f);
-	Program->SetUniformFloat("texture_offset", 1.0f / 66.0f);
+	Program->SetUniformFloat("texture_scale", MAP_TILE_WIDTH / MAP_TILE_PADDED_WIDTH);
+	Program->SetUniformFloat("texture_offset", 1.0f / MAP_TILE_PADDED_WIDTH);
 
-	/*
-	// Build tiles
-	if(!Static) {
-		float TexelSize = 1.0f / MAP_TILE_WIDTH;
-
-		// Iterate over viewable tiles
-		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
-			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
-				const _Tile &Tile = Tiles[i][j];
-
-				// Build buffer with background, foreground, and transition layers
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TexelSize,     TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, 1 - TexelSize, TexelSize,     (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TexelSize,     1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, 1 - TexelSize, 1 - TexelSize, (float)Tile.TextureIndex[0], (float)Tile.TextureIndex[1], (float)Tile.TextureIndex[3] };
-
-				FaceIndex += 2;
-			}
-		}
-	}
-	*/
-
+	// Draw map quad
 	glBindBuffer(GL_ARRAY_BUFFER, MapVertexBufferID);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
-
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	// Reset internal state
@@ -1237,15 +1216,6 @@ glm::vec2 _Map::GetValidPosition(const glm::vec2 &Position) const {
 // Get a valid position within the grid
 glm::ivec2 _Map::GetValidCoord(const glm::ivec2 &Position) const {
 	return glm::clamp(Position, glm::ivec2(0), Size - 1);
-}
-
-// Set tile attributes
-void _Map::SetTile(const glm::ivec2 &Position, const _Tile *Tile) {
-	 Tiles[Position.x][Position.y] = *Tile;
-
-	 // Update texture lookup
-	 glBindTexture(GL_TEXTURE_2D, MapTextureID);
-	 glTexSubImage2D(GL_TEXTURE_2D, 0, Position.x, Position.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Tile->BaseTextureIndex);
 }
 
 // Distance between two points

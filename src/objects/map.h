@@ -141,7 +141,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 		void GetTile(const glm::ivec2 &Position, _Tile &Tile) const { Tile = Tiles[Position.x][Position.y]; }
 		const _Tile *GetTile(const glm::ivec2 &Position) const { return &Tiles[Position.x][Position.y]; }
-		void SetTile(const glm::ivec2 &Position, const _Tile *Tile);
+		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
 
 		// File IO
 		void Load(const std::string &Path, bool Static=false);
