@@ -710,7 +710,7 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
 	Program->SetUniformVec2("tile_count", glm::vec2((int)Bounds[2] - (int)Bounds[0] + 1, (int)Bounds[3] - (int)Bounds[1] + 1));
 	Program->SetUniformVec2("tile_offset", glm::vec2((int)Bounds[0], (int)Bounds[1]));
-	Program->SetUniformFloat("texture_scale", MAP_TILE_WIDTH / MAP_TILE_PADDED_WIDTH);
+	Program->SetUniformFloat("texture_scale", MAP_TILE_WIDTH / (float)MAP_TILE_PADDED_WIDTH);
 	Program->SetUniformFloat("texture_offset", 1.0f / MAP_TILE_PADDED_WIDTH);
 
 	// Draw map quad

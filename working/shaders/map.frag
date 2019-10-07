@@ -37,7 +37,7 @@ void main() {
 
 	// Blend first two textures
 	vec4 texture_color;
-	if(false && texture_color_trans.a > 0) {
+	if(texture_color_trans.a > 0) {
 		vec4 texture_color_fore = texture(sampler0, vec3(tile_texture_coord, texture_index1));
 		texture_color = mix(texture_color_back, texture_color_fore, texture_color_trans.a);
 	}
