@@ -196,16 +196,14 @@ void _Map::InitVertices(bool Static) {
 	glBindBuffer(GL_ARRAY_BUFFER, MapVertexBufferID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
-	// Create texture for tile lookups
-	GLuint *MapTexture = new GLuint[Size.x * Size.y];
+	// Allocate texture array for tile lookups
 	glGenTextures(1, &MapTextureID);
-	glBindTexture(GL_TEXTURE_2D, MapTextureID);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Size.x, Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *)MapTexture);
-	delete[] MapTexture;
+	glBindTexture(GL_TEXTURE_2D_ARRAY, MapTextureID);
+	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, Size.x, Size.y, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 	// Build lookup table of transition index to texture index
 	TransitionLookup[0] = 0;
@@ -502,7 +500,7 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 void _Map::BuildLayers(bool ShowTransitions) {
 
 	// Update texture lookup
-	glBindTexture(GL_TEXTURE_2D, MapTextureID);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, MapTextureID);
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			_Tile &Tile = Tiles[i+0][j+0];
@@ -541,7 +539,7 @@ void _Map::BuildLayers(bool ShowTransitions) {
 				(Tile.TextureIndex[(int)MapLayerType::FIRST_TRANS] << 8) |
 				(Tile.TextureIndex[(int)MapLayerType::FIRST_LAYER] << 16);
 
-			glTexSubImage2D(GL_TEXTURE_2D, 0, i, j, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Pixel);
+			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, i, j, 0, 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Pixel);
 		}
 	}
 }
@@ -617,7 +615,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, ae::Assets.TextureArrays["trans"]->ID);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, MapTextureID);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, MapTextureID);
 	if(Framebuffer) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
