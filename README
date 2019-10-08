@@ -98,13 +98,13 @@ Hit 2 to draw zones
 Hit 3 to draw PVP/safe areas
 Hit 4 to draw events
 
-Hit F1-F5 to change brush size
+Hit F1-F2 to change modes
 Hit Spacebar to list textures
-Hit Tab to change from background/foreground layer
+Hit Tab to change from transition/block mode
 Hit W to change from Wall/Walkable
 Hit P to change from PVP/Safe zone
-Hit E/Shift-E to change event types
-Hit G on an event to open it in the design tool or to switch maps
+Hit E to open the event menu
+Hit G on an map event to switch maps
 Hit V to paste a copied area of tiles
 Hit Z to rotate through different zone colors
 Hit T/Shift-T to cycle the clock
@@ -117,8 +117,8 @@ Use Right-mouse button to pan the camera
 Use Mousewheel to zoom the camera in or out
 Use Shift+Mousewheel to quickly zoom the camera in or out
 
-Use Ctrl+Mousewheel to change zones or event data number
-Use Shift+Ctrl+Mousewheel to change zones or event data number by 10
+Use Ctrl+Mousewheel to change brush size
+Use Shift+Ctrl+Mousewheel to change brush size by 10
 
 Hit Ctrl+Left-mouse button to copy an existing tile into the brush
 Use Middle-click drag to highlight an area to copy, then V to paste

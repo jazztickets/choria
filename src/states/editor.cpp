@@ -257,19 +257,14 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				ToggleTextures();
 			break;
 			case SDL_SCANCODE_F1:
-				BrushRadius = 0.5f;
 			break;
 			case SDL_SCANCODE_F2:
-				BrushRadius = 1.5f;
 			break;
 			case SDL_SCANCODE_F3:
-				BrushRadius = 2.5f;
 			break;
 			case SDL_SCANCODE_F4:
-				BrushRadius = 5.0f;
 			break;
 			case SDL_SCANCODE_F5:
-				BrushRadius = 10.0f;
 			break;
 			case SDL_SCANCODE_Z:
 				if(Map) {
@@ -398,8 +393,17 @@ void _EditorState::HandleMouseWheel(int Direction) {
 		if(ae::Input.ModKeyDown(KMOD_SHIFT))
 			Direction *= 10;
 
-		if(Mode == EditorModeType::OBJECT) {
-			AdjustValue(ObjectData, Direction);
+		switch(Mode) {
+			case EditorModeType::TILE:
+				BrushRadius += Direction;
+				if(BrushRadius < 0.5f)
+					BrushRadius = 0.5f;
+				if(BrushRadius > 128.5f)
+					BrushRadius = 128.5f;
+			break;
+			case EditorModeType::OBJECT:
+				AdjustValue(ObjectData, Direction);
+			break;
 		}
 	}
 	else {
