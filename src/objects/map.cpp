@@ -511,26 +511,37 @@ void _Map::BuildLayers(bool ShowTransitions) {
 			Tile.TextureIndex[(int)MapLayerType::SECOND_LAYER] = 0;
 			Tile.TextureIndex[(int)MapLayerType::THIRD_TRANS] = 0;
 			Tile.TextureIndex[(int)MapLayerType::THIRD_LAYER] = 0;
-			if(ShowTransitions) {
+			if(ShowTransitions && Tile.Hierarchy != -1) {
+				std::map<uint32_t, uint32_t> Pairs;
 
-				// Get edge transition texture index
-				uint32_t TransIndex = 0;
-				TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j-1), 2);
-				TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+0), 8);
-				TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+0), 16);
-				TransIndex |= GetTransition(Tile, glm::ivec2(i+0, j+1), 64);
+				// Check corners
+				GetTransition(Tile, glm::ivec2(i - 1, j - 1), Pairs, 1);
+				GetTransition(Tile, glm::ivec2(i + 1, j - 1), Pairs, 4);
+				GetTransition(Tile, glm::ivec2(i - 1, j + 1), Pairs, 32);
+				GetTransition(Tile, glm::ivec2(i + 1, j + 1), Pairs, 128);
 
-				if(!(TransIndex & 2) && !(TransIndex & 8))
-					TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j-1), 1);
-				if(!(TransIndex & 2) && !(TransIndex & 16))
-					TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j-1), 4);
-				if(!(TransIndex & 8) && !(TransIndex & 64))
-					TransIndex |= GetTransition(Tile, glm::ivec2(i-1, j+1), 32);
-				if(!(TransIndex & 16) && !(TransIndex & 64))
-					TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+1), 128);
+				// Check edges
+				GetTransition(Tile, glm::ivec2(i + 0, j - 1), Pairs, 2);
+				GetTransition(Tile, glm::ivec2(i - 1, j + 0), Pairs, 8);
+				GetTransition(Tile, glm::ivec2(i + 1, j + 0), Pairs, 16);
+				GetTransition(Tile, glm::ivec2(i + 0, j + 1), Pairs, 64);
 
-				if(TransIndex != 255 && Tile.Hierarchy != -1)
-					Tile.TextureIndex[(int)MapLayerType::FIRST_TRANS] = TransitionLookup[TransIndex];
+				// Build list of textures in order of base to top
+				int TextureIndex = (int)MapLayerType::FIRST_TRANS;
+				for(const auto &Pair : Pairs) {
+
+					// Set transition for the layer
+					Tile.TextureIndex[TextureIndex] = TransitionLookup[Pair.second];
+
+					// Set layer texture
+					Tile.TextureIndex[TextureIndex+1] = Pair.first;
+					std::cout << Pair.first << " " << Pair.second << std::endl;
+					TextureIndex += 2;
+
+					// Too many transitions
+					if(TextureIndex >= (int)MapLayerType::COUNT)
+						break;
+				}
 			}
 
 			// Set texture indexes in map lookup texture
@@ -541,6 +552,47 @@ void _Map::BuildLayers(bool ShowTransitions) {
 
 			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, i, j, 0, 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Pixel);
 		}
+	}
+}
+
+// Return 'Bit' if 'Tile' has a lower precedence than the tile in CheckPosition
+void _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, std::map<uint32_t, uint32_t> &Pairs, uint32_t Bit) {
+
+	// Get valid tile to check
+	glm::ivec2 CheckCoord = GetValidCoord(CheckPosition);
+	_Tile &TileCheck = Tiles[CheckCoord.x][CheckCoord.y];
+
+	// Ignore tiles with no hierarchy
+	if(TileCheck.Hierarchy == -1)
+		return;
+
+	// Check hierarchy
+	if(Tile.Hierarchy >= TileCheck.Hierarchy)
+		return;
+
+	// Create pair
+	if(Pairs.find(TileCheck.BaseTextureIndex) == Pairs.end())
+		Pairs[TileCheck.BaseTextureIndex] = 0;
+
+	// Unset corner bits
+	Pairs[TileCheck.BaseTextureIndex] |= Bit;
+	switch(Bit) {
+		// Top
+		case 2:
+			Pairs[TileCheck.BaseTextureIndex] &= ~5U;
+		break;
+		// Left
+		case 8:
+			Pairs[TileCheck.BaseTextureIndex] &= ~33U;
+		break;
+		// Right
+		case 16:
+			Pairs[TileCheck.BaseTextureIndex] &= ~132U;
+		break;
+		// Bottom
+		case 64:
+			Pairs[TileCheck.BaseTextureIndex] &= ~160U;
+		break;
 	}
 }
 
@@ -1235,25 +1287,4 @@ void _Map::AdjacentCost(void *State, std::vector<micropather::StateCost> *Neighb
 		micropather::StateCost NodeCost = { PositionToNode(NewPosition), Cost };
 		Neighbors->push_back(NodeCost);
 	}
-}
-
-// Return 'Bit' if 'Tile' has a lower precedence than the tile in CheckPosition
-uint32_t _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint32_t Bit) {
-
-	// Get valid tile to check
-	glm::ivec2 CheckCoord = GetValidCoord(CheckPosition);
-	_Tile &TileCheck = Tiles[CheckCoord.x][CheckCoord.y];
-
-	// Return 255 to disable all transitions for that tile
-	if(TileCheck.Hierarchy == -1)
-		return 255;
-
-	// Check hierarchy
-	if(Tile.Hierarchy < TileCheck.Hierarchy) {
-		Tile.TextureIndex[(int)MapLayerType::BASE] = Tile.BaseTextureIndex;
-		Tile.TextureIndex[(int)MapLayerType::FIRST_LAYER] = TileCheck.BaseTextureIndex;
-		return Bit;
-	}
-
-	return 0;
 }
