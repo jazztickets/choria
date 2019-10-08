@@ -30,7 +30,7 @@ convert $in/tl.png -rotate 180  $out/br.png
 convert $in/tl.png -rotate 270  $out/bl.png
 
 # build transitions
-convert $out/t.png -fill transparent -draw 'color 0,0 reset' $out/00.png
+convert $out/t.png -fill black -draw 'color 0,0 reset' -define png:color-type=0 $out/00.png
 cp $out/tl.png $out/01.png
 cp $out/t.png $out/02.png
 cp $out/tr.png $out/03.png
