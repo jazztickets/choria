@@ -215,7 +215,7 @@ void _Stats::LoadMapDirectory() {
 			throw std::runtime_error("Bad filename: " + Files.Path + File);
 
 		std::string Name = File.substr(0, DotPosition);
-		MapsIndex[Name] = NetworkID;
+		MapsIndex[Name] = NetworkID++;
 	}
 	MapsIndex[""] = 0;
 }
