@@ -535,7 +535,6 @@ void _Map::BuildLayers(bool ShowTransitions) {
 
 					// Set layer texture
 					Tile.TextureIndex[TextureIndex+1] = Pair.first;
-					std::cout << Pair.first << " " << Pair.second << std::endl;
 					TextureIndex += 2;
 
 					// Too many transitions
