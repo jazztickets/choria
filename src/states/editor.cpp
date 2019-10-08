@@ -1013,6 +1013,7 @@ void _EditorState::CreateMap() {
 	Map->Size = Size;
 	Map->InitVertices();
 	Map->AllocateMap();
+	AllocateCopy();
 	FilePath = NewMapFilenameTextBox->Text;
 
 	CloseWindows();

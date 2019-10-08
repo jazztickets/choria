@@ -496,10 +496,10 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 	return GetTile(Position)->PVP;
 }
 
-// Set texture indexes for each layer based on base texture index
+// Set layer texture indexes for each tile
 void _Map::BuildLayers(bool ShowTransitions) {
 
-	// Update texture lookup
+	// Update map lookup texture
 	glBindTexture(GL_TEXTURE_2D_ARRAY, MapTextureID);
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
