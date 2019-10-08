@@ -41,7 +41,6 @@ const int MAP_TILE_WIDTH = 64;
 const int MAP_TILE_HEIGHT = 64;
 const int MAP_TILE_PADDED_WIDTH = 66;
 const int MAP_TILE_PADDED_HEIGHT = 66;
-const int MAP_LAYERS = 4;
 const double MAP_DAY_LENGTH = 24.0*60.0;
 const double MAP_CLOCK_SPEED = 1.0;
 const glm::vec4 MAP_AMBIENT_LIGHT = glm::vec4(0.3, 0.3, 0.3, 1);
@@ -61,6 +60,18 @@ namespace ae {
 	class _Framebuffer;
 }
 
+// Enumerations
+enum class MapLayerType : int {
+	BASE,
+	FIRST_TRANS,
+	FIRST_LAYER,
+	SECOND_TRANS,
+	SECOND_LAYER,
+	THIRD_TRANS,
+	THIRD_LAYER,
+	COUNT,
+};
+
 // Structures
 struct _Event {
 	_Event() : Type(EventType::NONE) { }
@@ -74,18 +85,14 @@ struct _Event {
 };
 
 struct _Tile {
-	_Tile() : TextureIndex{0, 0, 0, 0}, BaseTextureIndex(0), Hierarchy(0), Wall(false), PVP(false) { }
-	uint32_t TextureIndex[MAP_LAYERS];
+	_Tile() : BaseTextureIndex(0), Hierarchy(0), Wall(false), PVP(false) { }
+	uint32_t TextureIndex[(int)MapLayerType::COUNT];
 	uint32_t BaseTextureIndex;
 	int Hierarchy;
 	_Event Event;
 	std::string ZoneID;
 	bool Wall;
 	bool PVP;
-};
-
-struct _TileVertexBuffer {
-	float Data[7];
 };
 
 // Classes

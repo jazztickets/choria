@@ -506,17 +506,14 @@ void _Map::BuildLayers(bool ShowTransitions) {
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			_Tile &Tile = Tiles[i+0][j+0];
-			if(!ShowTransitions) {
-				Tile.TextureIndex[0] = Tile.BaseTextureIndex;
-				Tile.TextureIndex[1] = 0;
-				Tile.TextureIndex[2] = 0;
-				Tile.TextureIndex[3] = 0;
-			}
-			else {
-
-				// Set base texture
-				Tile.TextureIndex[0] = Tile.BaseTextureIndex;
-				Tile.TextureIndex[1] = 0;
+			Tile.TextureIndex[(int)MapLayerType::BASE] = Tile.BaseTextureIndex;
+			Tile.TextureIndex[(int)MapLayerType::FIRST_TRANS] = 0;
+			Tile.TextureIndex[(int)MapLayerType::FIRST_LAYER] = 0;
+			Tile.TextureIndex[(int)MapLayerType::SECOND_TRANS] = 0;
+			Tile.TextureIndex[(int)MapLayerType::SECOND_LAYER] = 0;
+			Tile.TextureIndex[(int)MapLayerType::THIRD_TRANS] = 0;
+			Tile.TextureIndex[(int)MapLayerType::THIRD_LAYER] = 0;
+			if(ShowTransitions) {
 
 				// Get edge transition texture index
 				uint32_t TransIndex = 0;
@@ -534,17 +531,16 @@ void _Map::BuildLayers(bool ShowTransitions) {
 				if(!(TransIndex & 16) && !(TransIndex & 64))
 					TransIndex |= GetTransition(Tile, glm::ivec2(i+1, j+1), 128);
 
-				if(TransIndex != 255) {
-					Tile.TextureIndex[3] = TransitionLookup[TransIndex];
-				}
-				else {
-					Tile.TextureIndex[2] = 0;
-					Tile.TextureIndex[3] = 0;
-				}
+				if(TransIndex != 255 && Tile.Hierarchy != -1)
+					Tile.TextureIndex[(int)MapLayerType::FIRST_TRANS] = TransitionLookup[TransIndex];
 			}
 
 			// Set texture indexes in map lookup texture
-			GLuint Pixel = Tile.TextureIndex[0] | (Tile.TextureIndex[1] << 8) | (Tile.TextureIndex[2] << 16) | (Tile.TextureIndex[3] << 24);
+			GLuint Pixel =
+				Tile.TextureIndex[(int)MapLayerType::BASE] |
+				(Tile.TextureIndex[(int)MapLayerType::FIRST_TRANS] << 8) |
+				(Tile.TextureIndex[(int)MapLayerType::FIRST_LAYER] << 16);
+
 			glTexSubImage2D(GL_TEXTURE_2D, 0, i, j, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Pixel);
 		}
 	}
@@ -1256,8 +1252,8 @@ uint32_t _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint3
 
 	// Check hierarchy
 	if(Tile.Hierarchy < TileCheck.Hierarchy) {
-		Tile.TextureIndex[0] = Tile.BaseTextureIndex;
-		Tile.TextureIndex[1] = TileCheck.BaseTextureIndex;
+		Tile.TextureIndex[(int)MapLayerType::BASE] = Tile.BaseTextureIndex;
+		Tile.TextureIndex[(int)MapLayerType::FIRST_LAYER] = TileCheck.BaseTextureIndex;
 		return Bit;
 	}
 

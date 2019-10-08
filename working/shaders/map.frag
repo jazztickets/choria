@@ -20,20 +20,23 @@ void main() {
 	// Convert vertex position to map coordinate
 	ivec2 map_coord = ivec2(vertex_coord);
 
-	// Get texture index from map
+	// Get base texture index from map
 	int texture_index0 = int(texelFetch(sampler2, map_coord, 0).r * 255);
-	int texture_index1 = int(texelFetch(sampler2, map_coord, 0).g * 255);
-	int texture_index2 = int(texelFetch(sampler2, map_coord, 0).a * 255);
-
 	if(texture_index0 == 0)
 		discard;
+
+	// Get first transition
+	int trans_index0 = int(texelFetch(sampler2, map_coord, 0).g * 255);
+
+	// Get second texture layer
+	int texture_index1 = int(texelFetch(sampler2, map_coord, 0).b * 255);
 
 	// Get texture coordinate for the tile
 	vec2 tile_texture_coord = texture_coord * tile_count;
 	vec2 padded_tile_texture_coord = fract(tile_texture_coord) * texture_scale + texture_offset;
 
 	vec4 texture_color_back = texture(sampler0, vec3(tile_texture_coord, texture_index0));
-	vec4 texture_color_trans = texture(sampler3, vec3(padded_tile_texture_coord, texture_index2));
+	vec4 texture_color_trans = texture(sampler3, vec3(padded_tile_texture_coord, trans_index0));
 
 	// Blend first two textures
 	vec4 texture_color;
