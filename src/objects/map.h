@@ -212,7 +212,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void PrintStateInfo(void *State) override { }
 
 		// Tiles
-		void GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, std::map<uint32_t, uint32_t> &Pairs, uint32_t Bit);
+		void GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, std::map<uint32_t, std::pair<int, uint32_t> > &Pairs, uint32_t Bit);
 
 		// Rendering
 		GLuint MapVertexBufferID;

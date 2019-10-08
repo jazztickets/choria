@@ -15,37 +15,55 @@ in vec2 vertex_coord;
 in vec2 texture_coord;
 out vec4 out_color;
 
+// Mix two textures with a transition layer in-between
+vec4 mix_layers(vec2 layer_coord, vec2 trans_coord, vec4 bottom_color, int trans_index, int top_index) {
+
+	// No transition
+	if(trans_index == 0)
+		return bottom_color;
+
+	// Get transition texture
+	vec4 trans_color = texture(sampler3, vec3(trans_coord, trans_index));
+
+	// Check for transparency
+	if(trans_color.r == 0)
+		return bottom_color;
+
+	// Blend colors
+	vec4 top_color = texture(sampler0, vec3(layer_coord, top_index));
+	vec4 texture_color = mix(bottom_color, top_color, trans_color.r);
+
+	return texture_color;
+}
+
 void main() {
 
-	// Convert vertex position to map coordinate
-	ivec3 map_coord = ivec3(vertex_coord, 0);
-
-	// Get base texture index from map
-	int base_index = int(texelFetch(sampler2, map_coord, 0).r * 255);
-	if(base_index == 0)
-		discard;
-
-	// Get first transition
-	int first_trans_index = int(texelFetch(sampler2, map_coord, 0).g * 255);
-
-	// Get second texture layer
-	int first_layer_index = int(texelFetch(sampler2, map_coord, 0).b * 255);
-
-	// Get texture coordinate for the tile
+	// Get texture coordinates for the tile
 	vec2 tile_texture_coord = texture_coord * tile_count;
 	vec2 padded_tile_texture_coord = fract(tile_texture_coord) * texture_scale + texture_offset;
 
-	vec4 texture_color_back = texture(sampler0, vec3(tile_texture_coord, base_index));
-	vec4 texture_color_trans = texture(sampler3, vec3(padded_tile_texture_coord, first_trans_index));
+	// Convert vertex position to map coordinate
+	ivec3 map_coord0 = ivec3(vertex_coord, 0);
+	ivec3 map_coord1 = ivec3(vertex_coord, 1);
 
-	// Blend first two textures
-	vec4 texture_color;
-	if(texture_color_trans.r > 0) {
-		vec4 texture_color_fore = texture(sampler0, vec3(tile_texture_coord, first_layer_index));
-		texture_color = mix(texture_color_back, texture_color_fore, texture_color_trans.r);
-	}
-	else
-		texture_color = texture_color_back;
+	// Get base index
+	int base_index = int(texelFetch(sampler2, map_coord0, 0).r * 255);
+	if(base_index == 0)
+		discard;
+
+	// Get texture indexes
+	int first_trans_index = int(texelFetch(sampler2, map_coord0, 0).g * 255);
+	int first_layer_index = int(texelFetch(sampler2, map_coord0, 0).b * 255);
+	int second_trans_index = int(texelFetch(sampler2, map_coord0, 0).a * 255);
+	int second_layer_index = int(texelFetch(sampler2, map_coord1, 0).r * 255);
+	int third_trans_index = int(texelFetch(sampler2, map_coord1, 0).g * 255);
+	int third_layer_index = int(texelFetch(sampler2, map_coord1, 0).b * 255);
+
+	// Mix textures
+	vec4 texture_color = texture(sampler0, vec3(tile_texture_coord, base_index));
+	texture_color = mix_layers(tile_texture_coord, padded_tile_texture_coord, texture_color, first_trans_index, first_layer_index);
+	texture_color = mix_layers(tile_texture_coord, padded_tile_texture_coord, texture_color, second_trans_index, second_layer_index);
+	texture_color = mix_layers(tile_texture_coord, padded_tile_texture_coord, texture_color, third_trans_index, third_layer_index);
 
 	// Add lights
 	vec4 light_color = ambient_light + texelFetch(sampler1, ivec2(gl_FragCoord.xy), 0);
