@@ -497,12 +497,14 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 }
 
 // Set layer texture indexes for each tile
-void _Map::BuildLayers(bool ShowTransitions) {
+void _Map::BuildLayers(const glm::ivec4 &Bounds, bool ShowTransitions) {
+	glm::ivec2 Start = GetValidCoord(glm::ivec2(Bounds[0], Bounds[1]));
+	glm::ivec2 End = GetValidCoord(glm::ivec2(Bounds[2], Bounds[3]));
 
 	// Update map lookup texture
 	glBindTexture(GL_TEXTURE_2D_ARRAY, MapTextureID);
-	for(int j = 0; j < Size.y; j++) {
-		for(int i = 0; i < Size.x; i++) {
+	for(int j = Start.y; j <= End.y; j++) {
+		for(int i = Start.x; i <= End.x; i++) {
 			_Tile &Tile = Tiles[i+0][j+0];
 			Tile.TextureIndex[(int)MapLayerType::BASE] = Tile.BaseTextureIndex;
 			Tile.TextureIndex[(int)MapLayerType::FIRST_TRANS] = 0;
@@ -963,7 +965,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 	// Initialize 2d tile rendering
 	if(!Headless) {
 		InitVertices(Static);
-		BuildLayers();
+		BuildLayers(glm::ivec4(0, 0, Size.x, Size.y));
 	}
 
 	// Initialize path finding

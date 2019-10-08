@@ -251,7 +251,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			break;
 			case SDL_SCANCODE_TAB:
 				ShowTransitions = !ShowTransitions;
-				Map->BuildLayers(ShowTransitions);
+				Map->BuildLayers(glm::ivec4(0, 0, Map->Size.x, Map->Size.y), ShowTransitions);
 			break;
 			case SDL_SCANCODE_SPACE:
 				ToggleTextures();
@@ -741,8 +741,10 @@ void _EditorState::PasteTiles() {
 	glm::ivec2 PastePosition = Map->GetValidCoord(WorldCursor);
 
 	// Copy tiles
-	for(int j = 0; j < CopyEnd.y - CopyStart.y + 1; j++) {
-		for(int i = 0; i < CopyEnd.x - CopyStart.x + 1; i++) {
+	int CopyWidth = CopyEnd.x - CopyStart.x + 1;
+	int CopyHeight = CopyEnd.y - CopyStart.y + 1;
+	for(int j = 0; j < CopyHeight; j++) {
+		for(int i = 0; i < CopyWidth; i++) {
 			glm::ivec2 CopyCoord = glm::ivec2(i, j) + CopyPosition;
 			glm::ivec2 PasteCoord = glm::ivec2(i, j) + PastePosition;
 			if(Map->IsValidPosition(CopyCoord) && Map->IsValidPosition(PasteCoord)) {
@@ -752,7 +754,7 @@ void _EditorState::PasteTiles() {
 	}
 
 	// Rebuild map tiles
-	Map->BuildLayers(ShowTransitions);
+	Map->BuildLayers(glm::ivec4(PastePosition - glm::ivec2(1), PastePosition + glm::ivec2(CopyWidth, CopyHeight)), ShowTransitions);
 }
 
 // Get tile range from anchor point to world cursor
@@ -1220,7 +1222,13 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 		}
 	}
 
-	Map->BuildLayers(ShowTransitions);
+	// Rebuild affected layers
+	Map->BuildLayers(
+		glm::ivec4(
+			glm::ivec2(Position) - glm::ivec2(BrushRadius + 1),
+			glm::ivec2(Position) + glm::ivec2(BrushRadius + 1)
+		),
+		ShowTransitions);
 }
 
 // Deletes the map
