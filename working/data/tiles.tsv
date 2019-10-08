@@ -1,6 +1,7 @@
 id	hierarchy
 none	0
-grass0	3
-sand0	2
-water0	1
+water0	2
+lava0	1
+sand0	3
+grass0	4
 brick0	-1
