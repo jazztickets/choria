@@ -326,7 +326,6 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	}
 	// Release left mouse button
 	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-		DrawCopyBounds = false;
 		DrawingObject = false;
 
 		// Button bar
@@ -750,6 +749,7 @@ void _EditorState::CopyTiles() {
 		return;
 
 	// Set state
+	DrawCopyBounds = false;
 	Copied = true;
 
 	// Get copy bounds
