@@ -1036,7 +1036,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 				Object->Character->Invisible = Invisible;
 				Object->Character->Bounty = Bounty;
 			}
-			Object->Light = Light;
+			Object->LightType = Light;
 			Object->ServerPosition = Position;
 
 			switch(Status) {

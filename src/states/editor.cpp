@@ -393,7 +393,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(Mode == EditorModeType::OBJECT) {
 				_Object *Object = new _Object;
 				Object->Position = DrawStart;
-				Object->Light = (int)ObjectData;
+				Object->LightType = (int)ObjectData;
 				Map->StaticObjects.push_back(Object);
 			}
 		}

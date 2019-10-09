@@ -796,11 +796,11 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 	// Iterate over objects
 	int LightCount = 0;
 	for(const auto &Object : *ObjectList) {
-		if(!Object->Light)
+		if(!Object->LightType)
 			continue;
 
 		// Check for valid light
-		const auto &Iterator = Stats->Lights.find((uint32_t)Object->Light);
+		const auto &Iterator = Stats->Lights.find((uint32_t)Object->LightType);
 		if(Iterator == Stats->Lights.end())
 		   continue;
 
@@ -948,7 +948,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 			// Object light
 			case 'l': {
 				if(Object) {
-					File >> Object->Light;
+					File >> Object->LightType;
 				}
 			} break;
 			default:
@@ -1008,7 +1008,7 @@ bool _Map::Save(const std::string &Path) {
 	// Write static objects
 	for(auto &Object : StaticObjects) {
 		Output << "O " << Object->Position.x << ' ' << Object->Position.y << '\n';
-		Output << "l " << Object->Light << '\n';
+		Output << "l " << Object->LightType << '\n';
 	}
 
 	Output.close();

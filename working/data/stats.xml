@@ -13,6 +13,7 @@
 	</portraits>
 	<buffs>
 		<buff id="healing" name="Healing" script="Buff_Healing" texture="textures/buffs/healing.png"/>
+		<buff id="light" name="Light" script="Buff_Light" texture="textures/buffs/light.png"/>
 	</buffs>
 	<skills>
 		<skill id="attack" name="Attack" max_level="20" texture="textures/skills/attack.png">
@@ -60,6 +61,9 @@
 		</item>
 		<item id="battle_potion" name="Battle Potion" type="consumable" texture="textures/items/death_potion.png">
 			<use scope="world" script="Item_BattlePotion"/>
+		</item>
+		<item id="torch" name="Torch" type="consumable" texture="textures/items/torch.png">
+			<use scope="world" level="3" duration="60" script="Item_Torch"/>
 		</item>
 		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
 			<price buy="5" tradable="false"/>

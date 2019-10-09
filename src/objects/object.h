@@ -31,6 +31,7 @@ class _Inventory;
 class _Fighter;
 class _Controller;
 class _Monster;
+class _Light;
 class _Map;
 class _Battle;
 class _Buff;
@@ -136,6 +137,7 @@ class _Object : public ae::_BaseObject {
 		_Fighter *Fighter;
 		_Controller *Controller;
 		_Monster *Monster;
+		_Light *Light;
 
 		// Pointers
 		const _Stats *Stats;
@@ -151,7 +153,7 @@ class _Object : public ae::_BaseObject {
 		// Render
 		const _Model *Model;
 		const ae::_Texture *BuildTexture;
-		int Light;
+		int LightType;
 
 	private:
 

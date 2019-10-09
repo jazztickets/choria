@@ -309,7 +309,7 @@ void _Character::CalculateStats() {
 	DropRate = BaseDropRate;
 	Resistances.clear();
 
-	Object->Light = 0;
+	Object->LightType = 0;
 	Invisible = 0;
 	Stunned = 0;
 
@@ -482,7 +482,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
 
 	if(StatChange.HasStat(StatType::LIGHT))
-		Object->Light = StatChange.Values[StatType::LIGHT].Integer;
+		Object->LightType = StatChange.Values[StatType::LIGHT].Integer;
 }
 
 // Get percentage to next level
