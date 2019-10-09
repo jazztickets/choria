@@ -70,7 +70,6 @@ class _EditorState : public ae::_State {
 		void ResizeMap();
 		void SaveMap();
 		void LoadMap();
-		void SwitchBrushModes(int Key);
 		void Go();
 
 		void ToggleTextures();
@@ -90,10 +89,14 @@ class _EditorState : public ae::_State {
 		void ClearEvents();
 		bool CloseWindows();
 
+		// Modes
+		void SwitchMode(EditorModeType Value);
+
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
 		void DrawBrushInfo();
 		void AdjustValue(uint32_t &Value, int Direction);
+		void SwitchBrushModes(int Key);
 
 		// Copy/Paste
 		void CopyTiles();
@@ -128,8 +131,10 @@ class _EditorState : public ae::_State {
 		_Tile *Brush;
 
 		// Objects
+		bool DrawingObject;
 		int ObjectType;
 		uint32_t ObjectData;
+		glm::vec2 DrawStart;
 
 		// Filter
 		int Filter;

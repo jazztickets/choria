@@ -117,6 +117,8 @@ void _EditorState::Init() {
 
 	Copied = false;
 	DrawCopyBounds = false;
+	DrawingObject = false;
+	DrawStart = glm::vec2(0.0f, 0.0f);
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
 	WorldCursor = glm::vec2(0.0f, 0.0f);
@@ -207,7 +209,6 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_2:
 			case SDL_SCANCODE_3:
 			case SDL_SCANCODE_4:
-			case SDL_SCANCODE_5:
 				SwitchBrushModes((int)(KeyEvent.Scancode - SDL_SCANCODE_1 + 1));
 			break;
 			case SDL_SCANCODE_T:
@@ -257,14 +258,10 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				ToggleTextures();
 			break;
 			case SDL_SCANCODE_F1:
+				SwitchMode(EditorModeType::TILE);
 			break;
 			case SDL_SCANCODE_F2:
-			break;
-			case SDL_SCANCODE_F3:
-			break;
-			case SDL_SCANCODE_F4:
-			break;
-			case SDL_SCANCODE_F5:
+				SwitchMode(EditorModeType::OBJECT);
 			break;
 			case SDL_SCANCODE_Z:
 				if(Map) {
@@ -288,31 +285,49 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 	// Mouse press
 	if(MouseEvent.Pressed) {
-		if(Map) {
-			switch(MouseEvent.Button) {
-				// Eyedropper tool
-				case SDL_BUTTON_LEFT:
-					if(ae::Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor)) {
-						*Brush = *Map->GetTile(WorldCursor);
-						EventDataElement->Text = Brush->Event.Data;
-					}
-				break;
-				// Scroll map
-				case SDL_BUTTON_RIGHT:
-					if(!ae::Graphics.Element->HitElement)
-						Camera->Set2DPosition(WorldCursor);
-				break;
-				case SDL_BUTTON_MIDDLE: {
-					if(Mode == EditorModeType::TILE) {
+		if(!Map)
+			return;
+
+		switch(MouseEvent.Button) {
+			case SDL_BUTTON_LEFT:
+				switch(Mode) {
+					// Eyedropper tool
+					case EditorModeType::TILE:
+						if(ae::Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor)) {
+							*Brush = *Map->GetTile(WorldCursor);
+							EventDataElement->Text = Brush->Event.Data;
+						}
+					break;
+					// Draw object
+					case EditorModeType::OBJECT:
+						DrawingObject = true;
+						DrawStart = WorldCursor;
+					break;
+				}
+			break;
+			// Scroll map
+			case SDL_BUTTON_RIGHT:
+				if(!ae::Graphics.Element->HitElement)
+					Camera->Set2DPosition(WorldCursor);
+			break;
+			case SDL_BUTTON_MIDDLE: {
+				switch(Mode) {
+					// Copy tiles
+					case EditorModeType::TILE:
 						DrawCopyBounds = true;
 						CopyStart = Map->GetValidCoord(WorldCursor);
-					}
-				} break;
-			}
+					break;
+					// Select objects
+					case EditorModeType::OBJECT:
+					break;
+				}
+			} break;
 		}
 	}
 	// Release left mouse button
 	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+		DrawCopyBounds = false;
+		DrawingObject = false;
 
 		// Button bar
 		if(ButtonBarElement->GetClickedElement()) {
@@ -372,13 +387,15 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				CloseWindows();
 			}
 		}
+		else if(ae::Graphics.Element->HitElement == nullptr) {
 
-		// Place object
-		if(Mode == EditorModeType::OBJECT) {
-			_Object *Object = new _Object;
-			Object->Position = WorldCursor;
-			Object->Light = (int)ObjectData;
-			Map->StaticObjects.push_back(Object);
+			// Place object
+			if(Mode == EditorModeType::OBJECT) {
+				_Object *Object = new _Object;
+				Object->Position = DrawStart;
+				Object->Light = (int)ObjectData;
+				Map->StaticObjects.push_back(Object);
+			}
 		}
 	}
 	// Release middle mouse
@@ -456,9 +473,15 @@ void _EditorState::Update(double FrameTime) {
 	}
 
 	// Handle mouse input
-	if(Mode == EditorModeType::TILE) {
-		if(ae::Input.MouseDown(SDL_BUTTON_LEFT) && !(ae::Input.ModKeyDown(KMOD_CTRL)) && ae::Graphics.Element->HitElement == nullptr) {
-			ApplyBrush(WorldCursor);
+	if(ae::Graphics.Element->HitElement == nullptr) {
+		switch(Mode) {
+			case EditorModeType::TILE:
+				if(ae::Input.MouseDown(SDL_BUTTON_LEFT) && !ae::Input.ModKeyDown(KMOD_CTRL)) {
+					ApplyBrush(WorldCursor);
+				}
+			break;
+			case EditorModeType::OBJECT:
+			break;
 		}
 	}
 
@@ -503,20 +526,29 @@ void _EditorState::Render(double BlendFactor) {
 		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
 	}
 
-	// Draw tile brush size
-	if(Mode == EditorModeType::TILE) {
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
+	switch(Mode) {
+		// Draw tile brush size
+		case EditorModeType::TILE:
+			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+			ae::Graphics.SetColor(glm::vec4(1.0f));
+			ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
-		// Draw copy tool boundaries
-		if(DrawCopyBounds) {
-			ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
+			// Draw copy tool boundaries
+			if(DrawCopyBounds) {
+				ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
 
-			glm::ivec2 Start, End;
-			GetDrawBounds(Start, End);
-			ae::Graphics.DrawRectangle(Start, End + 1, true);
-		}
+				glm::ivec2 Start, End;
+				GetDrawBounds(Start, End);
+				ae::Graphics.DrawRectangle(Start, End + 1, true);
+			}
+		break;
+		case EditorModeType::OBJECT:
+			if(DrawingObject) {
+				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+				ae::Graphics.SetColor(glm::vec4(1.0f));
+				ae::Graphics.DrawCircle(glm::vec3(DrawStart, 0.0f), glm::length(WorldCursor - DrawStart));
+			}
+		break;
 	}
 
 	// Setup UI
@@ -718,7 +750,6 @@ void _EditorState::CopyTiles() {
 		return;
 
 	// Set state
-	DrawCopyBounds = false;
 	Copied = true;
 
 	// Get copy bounds
@@ -1001,6 +1032,24 @@ bool _EditorState::CloseWindows() {
 	return WasOpen;
 }
 
+// Switch editor modes
+void _EditorState::SwitchMode(EditorModeType Value) {
+	Mode = Value;
+	switch(Mode) {
+		case EditorModeType::TILE:
+			Filter = 0;
+			Filter |= MAP_RENDER_TEXTURE;
+			Filter |= MAP_RENDER_WALL;
+		break;
+		case EditorModeType::OBJECT:
+			Filter = 0;
+		break;
+	}
+
+	DrawCopyBounds = false;
+	DrawingObject = false;
+}
+
 // Creates a map with the given parameters
 void _EditorState::CreateMap() {
 	CloseMap();
@@ -1161,10 +1210,6 @@ void _EditorState::SwitchBrushModes(int Key) {
 			Filter = 0;
 			Filter |= MAP_RENDER_EVENTTYPE;
 			Filter |= MAP_RENDER_EVENTDATA;
-		break;
-		case 5:
-			Mode = EditorModeType::OBJECT;
-			Filter = 0;
 		break;
 	}
 }

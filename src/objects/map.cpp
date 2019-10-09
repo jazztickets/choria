@@ -505,7 +505,7 @@ void _Map::BuildLayers(const glm::ivec4 &Bounds, bool ShowTransitions) {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, MapTextureID);
 	for(int j = Start.y; j <= End.y; j++) {
 		for(int i = Start.x; i <= End.x; i++) {
-			_Tile &Tile = Tiles[i+0][j+0];
+			_Tile &Tile = Tiles[i + 0][j + 0];
 			Tile.TextureIndex[(int)MapLayerType::BASE] = Tile.BaseTextureIndex;
 			Tile.TextureIndex[(int)MapLayerType::FIRST_TRANS] = 0;
 			Tile.TextureIndex[(int)MapLayerType::FIRST_LAYER] = 0;
@@ -539,16 +539,16 @@ void _Map::BuildLayers(const glm::ivec4 &Bounds, bool ShowTransitions) {
 				int TextureIndex = (int)MapLayerType::FIRST_TRANS;
 				for(const auto &Pair : SortedPairs) {
 
+					// Too many transitions
+					if(TextureIndex >= (int)MapLayerType::COUNT)
+						break;
+
 					// Set transition for the layer
 					Tile.TextureIndex[TextureIndex] = TransitionLookup[Pair.second.second];
 
 					// Set layer texture
-					Tile.TextureIndex[TextureIndex+1] = Pair.second.first;
+					Tile.TextureIndex[TextureIndex + 1] = Pair.second.first;
 					TextureIndex += 2;
-
-					// Too many transitions
-					if(TextureIndex >= (int)MapLayerType::COUNT)
-						break;
 				}
 			}
 
