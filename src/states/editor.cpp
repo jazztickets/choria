@@ -28,6 +28,7 @@
 #include <ae/console.h>
 #include <ae/graphics.h>
 #include <ae/framebuffer.h>
+#include <objects/components/light.h>
 #include <objects/object.h>
 #include <objects/map.h>
 #include <framework.h>
@@ -391,8 +392,9 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			// Place object
 			if(Mode == EditorModeType::OBJECT) {
 				_Object *Object = new _Object;
+				Object->Light->Color = glm::vec3(1.0f);
+				Object->Light->Radius = glm::length(DrawStart - WorldCursor);
 				Object->Position = DrawStart;
-				Object->LightType = (int)ObjectData;
 				Map->StaticObjects.push_back(Object);
 			}
 		}

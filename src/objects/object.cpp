@@ -23,6 +23,7 @@
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
+#include <objects/components/light.h>
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
@@ -82,6 +83,7 @@ _Object::_Object() :
 	Fighter = new _Fighter(this);
 	Controller = new _Controller(this);
 	Monster = new _Monster(this);
+	Light = new _Light(this);
 }
 
 // Destructor
@@ -108,6 +110,7 @@ _Object::~_Object() {
 		Peer = nullptr;
 	}
 
+	delete Light;
 	delete Monster;
 	delete Controller;
 	delete Fighter;

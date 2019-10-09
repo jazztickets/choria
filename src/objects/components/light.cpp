@@ -19,6 +19,9 @@
 
 // Constructor
 _Light::_Light(_Object *Object) :
-	Object(Object) {
+	Object(Object),
+	LightTypeID(0),
+	Color(1.0f),
+	Radius(0.0f) {
 
 }

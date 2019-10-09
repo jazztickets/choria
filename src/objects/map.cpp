@@ -20,6 +20,7 @@
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
+#include <objects/components/light.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <hud/hud.h>
@@ -796,15 +797,10 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 	// Iterate over objects
 	int LightCount = 0;
 	for(const auto &Object : *ObjectList) {
-		if(!Object->LightType)
+		if(!Object->Light)
 			continue;
 
-		// Check for valid light
-		const auto &Iterator = Stats->Lights.find((uint32_t)Object->LightType);
-		if(Iterator == Stats->Lights.end())
-		   continue;
-
-		const _LightType &LightType = Iterator->second;
+		_Light *Light = Object->Light;
 
 		// Check to see if light is in frustum
 		glm::vec2 Point(Object->Position.x + 0.5f, Object->Position.y + 0.5f);
@@ -819,13 +815,13 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 
 		// Compare distances
 		float DistanceSquared = glm::distance2(Point, glm::vec2(Object->Position) + glm::vec2(0.5f));
-		if(DistanceSquared >= (LightType.Radius + 0.5f) * (LightType.Radius + 0.5f))
+		if(DistanceSquared >= (Light->Radius + 0.5f) * (Light->Radius + 0.5f))
 			continue;
 
 		// Draw light
 		glm::vec3 Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0);
-		glm::vec4 Color = glm::vec4(LightType.Color, 1);
-		glm::vec2 Scale(LightType.Radius * 2.0f);
+		glm::vec4 Color = glm::vec4(Light->Color, 1);
+		glm::vec2 Scale(Light->Radius * 2.0f);
 		ae::Graphics.SetColor(Color);
 		ae::Graphics.DrawSprite(Position, ae::Assets.Textures["textures/lights/light0.png"], 0.0f, Scale);
 
@@ -948,7 +944,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 			// Object light
 			case 'l': {
 				if(Object) {
-					File >> Object->LightType;
+					File >> Object->Light->Radius >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b;
 				}
 			} break;
 			default:
@@ -997,7 +993,7 @@ bool _Map::Save(const std::string &Path) {
 			if(!Tile.ZoneID.empty())
 				Output << "z " << Tile.ZoneID << '\n';
 			if(Tile.Event.Type != EventType::NONE)
-				Output << "e " << (int)Tile.Event.Type << " " << Tiles[i][j].Event.Data << '\n';
+				Output << "e " << (int)Tile.Event.Type << ' ' << Tiles[i][j].Event.Data << '\n';
 			if(Tile.Wall)
 				Output << "w " << Tile.Wall << '\n';
 			if(Tile.PVP)
@@ -1008,7 +1004,9 @@ bool _Map::Save(const std::string &Path) {
 	// Write static objects
 	for(auto &Object : StaticObjects) {
 		Output << "O " << Object->Position.x << ' ' << Object->Position.y << '\n';
-		Output << "l " << Object->LightType << '\n';
+
+		if(Object->Light)
+			Output << "l " << Object->Light->Radius << ' ' << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << '\n';
 	}
 
 	Output.close();

@@ -21,6 +21,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
+#include <objects/components/light.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/map.h>
@@ -1016,27 +1017,35 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 		glm::ivec2 Position = Data.Read<glm::ivec2>();
 		uint8_t Status = Data.Read<uint8_t>();
-		int Light = Data.ReadBit();
+		bool HasLight = Data.ReadBit();
 		int Invisible = Data.ReadBit();
 		int Bounty = Data.ReadBit();
 		if(Bounty)
 			Bounty = Data.Read<int>();
-		if(Light)
-			Light = Data.Read<uint8_t>();
+
+		uint8_t LightTypeID = 0;
+		if(HasLight)
+			LightTypeID = Data.Read<uint8_t>();
 
 		// Find object
 		_Object *Object = ObjectManager->GetObject(NetworkID);
 		if(Object) {
 			Object->Character->Status = Status;
 
-			if(Object == Player) {
-			}
-			else {
+			if(Object != Player) {
 				Object->Position = Position;
 				Object->Character->Invisible = Invisible;
 				Object->Character->Bounty = Bounty;
 			}
-			Object->LightType = Light;
+			Object->LightType = LightTypeID;
+
+			// Check for valid light
+			const auto &Iterator = Stats->Lights.find(LightTypeID);
+			if(Iterator != Stats->Lights.end()) {
+				Object->Light->Radius = Iterator->second.Radius;
+				Object->Light->Color = Iterator->second.Color;
+			}
+
 			Object->ServerPosition = Position;
 
 			switch(Status) {

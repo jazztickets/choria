@@ -35,7 +35,7 @@ class _Light {
 		_Object *Object;
 
 		// Attributes
-		uint32_t ID;
+		uint32_t LightTypeID;
 		glm::vec3 Color;
 		float Radius;
 
