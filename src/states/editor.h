@@ -72,6 +72,7 @@ class _EditorState : public ae::_State {
 		void SaveMap();
 		void LoadMap();
 		void Go();
+		void UpdateSliders();
 
 		void ToggleTextures();
 		void ToggleLights();

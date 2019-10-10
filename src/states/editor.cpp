@@ -53,7 +53,6 @@ _EditorState EditorState;
 void _EditorState::Init() {
 	ae::Graphics.Element->SetActive(false);
 	ae::Graphics.Element->Active = true;
-
 	ae::Audio.StopMusic();
 
 	// Setup UI
@@ -87,6 +86,10 @@ void _EditorState::Init() {
 	ResizeMapElement->SetActive(false);
 	SaveMapElement->SetActive(false);
 	LoadMapElement->SetActive(false);
+
+	ae::Assets.Elements["button_editor_light_r"]->SetOffsetPercent(glm::vec2(1.0f, 0));
+	ae::Assets.Elements["button_editor_light_g"]->SetOffsetPercent(glm::vec2(1.0f, 0));
+	ae::Assets.Elements["button_editor_light_b"]->SetOffsetPercent(glm::vec2(1.0f, 0));
 
 	// Load stats database
 	Stats = new _Stats();
@@ -541,6 +544,9 @@ void _EditorState::Update(double FrameTime) {
 				Clock -= MAP_DAY_LENGTH;
 		}
 	}
+
+	// Update UI
+	UpdateSliders();
 }
 
 // Draws the current state
@@ -1338,6 +1344,44 @@ void _EditorState::Go() {
 			} break;
 			default:
 			break;
+		}
+	}
+}
+
+// Update slider boxes
+void _EditorState::UpdateSliders() {
+
+	// Set up slider data
+	std::pair<std::string, float *> Data[3] = {
+		{ "r", &LightBrush->Color.r },
+		{ "g", &LightBrush->Color.g },
+		{ "b", &LightBrush->Color.b },
+	};
+
+	// Loop through sliders
+	size_t Count = sizeof(Data) / sizeof(Data[0]);
+	for(size_t i = 0; i < Count; i++) {
+		ae::_Element *Slider = ae::Assets.Elements["element_editor_light_" + Data[i].first];
+		ae::_Element *Button = ae::Assets.Elements["button_editor_light_" + Data[i].first];
+
+		// Handle clicking inside slider elements
+		if(!Button->PressedElement && Slider->PressedElement) {
+			Button->PressedOffset = Button->Size / 2.0f;
+			Button->PressedElement = Button;
+		}
+
+		// Update value
+		if(Button->PressedElement) {
+			ae::_Element *Value = ae::Assets.Elements["label_editor_light_" + Data[i].first + "_value"];
+
+			// Convert slider percent to number
+			std::stringstream Buffer;
+			Buffer << std::fixed << std::setprecision(2) << Button->GetOffsetPercent().x;
+			Value->Text = Buffer.str();
+			Buffer.str("");
+
+			// Update data source
+			*Data[i].second = std::stof(Value->Text);
 		}
 	}
 }
