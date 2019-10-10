@@ -25,6 +25,7 @@
 struct _Tile;
 class _Map;
 class _Stats;
+class _Light;
 
 namespace ae {
 	class _Camera;
@@ -34,8 +35,8 @@ namespace ae {
 }
 
 enum class EditorModeType : int {
-	TILE,
-	OBJECT,
+	TILES,
+	LIGHTS,
 };
 
 // Classes
@@ -73,6 +74,7 @@ class _EditorState : public ae::_State {
 		void Go();
 
 		void ToggleTextures();
+		void ToggleLights();
 		void ToggleEvents();
 		void ToggleNewMap();
 		void ToggleResize();
@@ -80,12 +82,14 @@ class _EditorState : public ae::_State {
 		void ToggleLoadMap(const std::string &TempPath = "");
 
 		void InitTextures();
+		void InitLights();
 		void InitEvents();
 		void InitNewMap();
 		void InitResize();
 		void InitSaveMap();
 		void InitLoadMap(const std::string &TempPath = "");
 		void ClearTextures();
+		void ClearLights();
 		void ClearEvents();
 		bool CloseWindows();
 
@@ -129,13 +133,14 @@ class _EditorState : public ae::_State {
 		EditorModeType Mode;
 		bool ShowTransitions;
 		float BrushRadius;
-		_Tile *Brush;
+		_Tile *TileBrush;
 
 		// Objects
 		bool DrawingObject;
 		int ObjectType;
 		uint32_t ObjectData;
 		glm::vec2 DrawStart;
+		_Light *LightBrush;
 
 		// Filter
 		int Filter;
@@ -145,6 +150,8 @@ class _EditorState : public ae::_State {
 		ae::_Element *ButtonBarElement;
 		ae::_Element *ClockElement;
 		ae::_Element *TexturesElement;
+		ae::_Element *LightsElement;
+		ae::_Element *LightTypesElement;
 		ae::_Element *EventsElement;
 		ae::_Element *EventTypesElement;
 		ae::_Element *EventDataElement;

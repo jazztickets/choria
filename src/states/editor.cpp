@@ -27,6 +27,7 @@
 #include <ae/input.h>
 #include <ae/console.h>
 #include <ae/graphics.h>
+#include <ae/files.h>
 #include <ae/framebuffer.h>
 #include <objects/components/light.h>
 #include <objects/object.h>
@@ -60,8 +61,10 @@ void _EditorState::Init() {
 	ButtonBarElement = ae::Assets.Elements["element_editor_buttonbar"];
 	ClockElement = ae::Assets.Elements["element_editor_clock"];
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
+	LightsElement = ae::Assets.Elements["element_editor_lights"];
+	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
-	EventTypesElement = ae::Assets.Elements["element_editor_eventtypes"];
+	EventTypesElement = ae::Assets.Elements["element_editor_event_types"];
 	EventDataElement = ae::Assets.Elements["textbox_editor_eventdata"];
 	NewMapElement = ae::Assets.Elements["element_editor_newmap"];
 	ResizeMapElement = ae::Assets.Elements["element_editor_resizemap"];
@@ -78,6 +81,7 @@ void _EditorState::Init() {
 	LoadMapTextBox = ae::Assets.Elements["textbox_editor_loadmap"];
 	EditorElement->SetActive(true);
 	TexturesElement->SetActive(false);
+	LightsElement->SetActive(false);
 	EventsElement->SetActive(false);
 	NewMapElement->SetActive(false);
 	ResizeMapElement->SetActive(false);
@@ -88,7 +92,10 @@ void _EditorState::Init() {
 	Stats = new _Stats();
 
 	// Create brush
-	Brush = new _Tile();
+	TileBrush = new _Tile();
+	LightBrush = new _Light();
+	LightBrush->Color = glm::vec4(1.0f);
+	LightBrush->Intensity = 1.0f;
 	BrushRadius = 0.5f;
 
 	// Create camera
@@ -123,7 +130,7 @@ void _EditorState::Init() {
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
 	WorldCursor = glm::vec2(0.0f, 0.0f);
-	Mode = EditorModeType::TILE;
+	Mode = EditorModeType::TILES;
 	ObjectType = 0;
 	ObjectData = 1;
 }
@@ -132,7 +139,8 @@ void _EditorState::Init() {
 void _EditorState::Close() {
 	delete Stats;
 	delete Camera;
-	delete Brush;
+	delete TileBrush;
+	delete LightBrush;
 	delete Framebuffer;
 
 	ClearTextures();
@@ -220,10 +228,10 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				ToggleEvents();
 			break;
 			case SDL_SCANCODE_W:
-				Brush->Wall = !Brush->Wall;
+				TileBrush->Wall = !TileBrush->Wall;
 			break;
 			case SDL_SCANCODE_P:
-				Brush->PVP = !Brush->PVP;
+				TileBrush->PVP = !TileBrush->PVP;
 			break;
 			case SDL_SCANCODE_N:
 				Framework.IgnoreNextInputEvent = true;
@@ -256,13 +264,20 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				Map->BuildLayers(glm::ivec4(0, 0, Map->Size.x, Map->Size.y), ShowTransitions);
 			break;
 			case SDL_SCANCODE_SPACE:
-				ToggleTextures();
+				switch(Mode) {
+					case EditorModeType::TILES:
+						ToggleTextures();
+					break;
+					case EditorModeType::LIGHTS:
+						ToggleLights();
+					break;
+				}
 			break;
 			case SDL_SCANCODE_F1:
-				SwitchMode(EditorModeType::TILE);
+				SwitchMode(EditorModeType::TILES);
 			break;
 			case SDL_SCANCODE_F2:
-				SwitchMode(EditorModeType::OBJECT);
+				SwitchMode(EditorModeType::LIGHTS);
 			break;
 			case SDL_SCANCODE_Z:
 				if(Map) {
@@ -291,16 +306,22 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 		switch(MouseEvent.Button) {
 			case SDL_BUTTON_LEFT:
+				if(ae::Graphics.Element->HitElement)
+					break;
+
 				switch(Mode) {
 					// Eyedropper tool
-					case EditorModeType::TILE:
+					case EditorModeType::TILES:
 						if(ae::Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor)) {
-							*Brush = *Map->GetTile(WorldCursor);
-							EventDataElement->Text = Brush->Event.Data;
+							*TileBrush = *Map->GetTile(WorldCursor);
+							EventDataElement->Text = TileBrush->Event.Data;
 						}
 					break;
-					// Draw object
-					case EditorModeType::OBJECT:
+					// Start drawing object
+					case EditorModeType::LIGHTS:
+						if(!LightBrush->Texture)
+							break;
+
 						DrawingObject = true;
 						DrawStart = glm::vec2(glm::ivec2(WorldCursor)) + glm::vec2(0.5f, 0.5f);
 					break;
@@ -314,12 +335,12 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			case SDL_BUTTON_MIDDLE: {
 				switch(Mode) {
 					// Copy tiles
-					case EditorModeType::TILE:
+					case EditorModeType::TILES:
 						DrawCopyBounds = true;
 						CopyStart = Map->GetValidCoord(WorldCursor);
 					break;
 					// Select objects
-					case EditorModeType::OBJECT:
+					case EditorModeType::LIGHTS:
 					break;
 				}
 			} break;
@@ -327,7 +348,6 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	}
 	// Release left mouse button
 	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-		DrawingObject = false;
 
 		// Button bar
 		if(ButtonBarElement->GetClickedElement()) {
@@ -344,8 +364,18 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
 				ae::_Element *Button = TexturesElement->GetClickedElement();
-				Brush->BaseTextureIndex = Button->TextureIndex;
+				TileBrush->BaseTextureIndex = Button->TextureIndex;
 				CloseWindows();
+			}
+		}
+		// Light select
+		else if(LightsElement->GetClickedElement()) {
+			ae::_Element *ClickedElement = LightsElement->GetClickedElement();
+
+			// Clicked light texture button
+			if(ClickedElement->Parent && ClickedElement->Parent == LightTypesElement) {
+				LightBrush->Texture = ClickedElement->Texture;
+				//CloseWindows();
 			}
 		}
 		// Event select
@@ -354,17 +384,18 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 			// Clicked event type button
 			if(ClickedElement->Parent && ClickedElement->Parent == EventTypesElement) {
-				ae::_Element *Button = ClickedElement;
 
 				// Validate data
-				switch((EventType)Button->Index) {
+				switch((EventType)ClickedElement->Index) {
 					case EventType::VENDOR:
 						if(Stats->Vendors.find(EventDataElement->Text) == Stats->Vendors.end())
 							return;
 					break;
 				}
-				Brush->Event.Type = (EventType)Button->Index;
-				Brush->Event.Data = EventDataElement->Text;
+
+				// Set brush data
+				TileBrush->Event.Type = (EventType)ClickedElement->Index;
+				TileBrush->Event.Data = EventDataElement->Text;
 				SwitchBrushModes(4);
 				CloseWindows();
 			}
@@ -390,16 +421,26 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(ae::Graphics.Element->HitElement == nullptr) {
 
 			// Place object
-			if(Mode == EditorModeType::OBJECT) {
-				_Object *Object = new _Object();
-				Object->Light->Texture = ae::Assets.Textures["textures/lights/round.png"];
-				Object->Light->Intensity = 1.0f;
-				Object->Light->Color = glm::vec3(1.0f);
-				Object->Light->Radius = GetLightRadius();
-				Object->Position = DrawStart;
-				Map->StaticObjects.push_back(Object);
+			switch(Mode) {
+				case EditorModeType::LIGHTS:
+					if(!DrawingObject)
+						break;
+
+					if(!LightBrush->Texture)
+						break;
+
+					_Object *Object = new _Object();
+					Object->Light->Texture = LightBrush->Texture;
+					Object->Light->Intensity = LightBrush->Intensity;
+					Object->Light->Color = LightBrush->Color;
+					Object->Light->Radius = GetLightRadius();
+					Object->Position = DrawStart;
+					Map->StaticObjects.push_back(Object);
+				break;
 			}
 		}
+
+		DrawingObject = false;
 	}
 	// Release middle mouse
 	else if(MouseEvent.Button == SDL_BUTTON_MIDDLE) {
@@ -414,15 +455,14 @@ void _EditorState::HandleMouseWheel(int Direction) {
 			Direction *= 10;
 
 		switch(Mode) {
-			case EditorModeType::TILE:
+			case EditorModeType::TILES:
 				BrushRadius += Direction;
 				if(BrushRadius < 0.5f)
 					BrushRadius = 0.5f;
 				if(BrushRadius > 128.5f)
 					BrushRadius = 128.5f;
 			break;
-			case EditorModeType::OBJECT:
-				AdjustValue(ObjectData, Direction);
+			case EditorModeType::LIGHTS:
 			break;
 		}
 	}
@@ -478,12 +518,12 @@ void _EditorState::Update(double FrameTime) {
 	// Handle mouse input
 	if(ae::Graphics.Element->HitElement == nullptr) {
 		switch(Mode) {
-			case EditorModeType::TILE:
+			case EditorModeType::TILES:
 				if(ae::Input.MouseDown(SDL_BUTTON_LEFT) && !ae::Input.ModKeyDown(KMOD_CTRL)) {
 					ApplyBrush(WorldCursor);
 				}
 			break;
-			case EditorModeType::OBJECT:
+			case EditorModeType::LIGHTS:
 			break;
 		}
 	}
@@ -531,7 +571,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	switch(Mode) {
 		// Draw tile brush size
-		case EditorModeType::TILE:
+		case EditorModeType::TILES:
 			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 			ae::Graphics.SetColor(glm::vec4(1.0f));
 			ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
@@ -545,7 +585,7 @@ void _EditorState::Render(double BlendFactor) {
 				ae::Graphics.DrawRectangle(Start, End + 1, true);
 			}
 		break;
-		case EditorModeType::OBJECT:
+		case EditorModeType::LIGHTS:
 			if(DrawingObject) {
 				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 				ae::Graphics.SetColor(glm::vec4(1.0f));
@@ -650,7 +690,7 @@ void _EditorState::DrawBrushInfo() {
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
 	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(64, 64) * ae::_Element::GetUIScale(), DrawPosition + glm::vec2(64, 194) * ae::_Element::GetUIScale(), true);
-	if(Mode == EditorModeType::TILE) {
+	if(Mode == EditorModeType::TILES) {
 
 		// Draw texture
 		ae::_Bounds TextureBounds;
@@ -658,7 +698,7 @@ void _EditorState::DrawBrushInfo() {
 		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv_array"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays["default"], Brush->BaseTextureIndex);
+		ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays["default"], TileBrush->BaseTextureIndex);
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
@@ -673,7 +713,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw wall
-		if(Brush->Wall)
+		if(TileBrush->Wall)
 			Buffer << "Wall";
 		else
 			Buffer << "Floor";
@@ -685,7 +725,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw zone
-		Buffer << "Zone " << Brush->ZoneID;
+		Buffer << "Zone " << TileBrush->ZoneID;
 
 		Filter & MAP_RENDER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -694,7 +734,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw PVP
-		if(Brush->PVP)
+		if(TileBrush->PVP)
 			Buffer << "PVP";
 		else
 			Buffer << "Safe";
@@ -706,7 +746,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw event type
-		Buffer << Stats->EventTypes.at(Brush->Event.Type).second;
+		Buffer << Stats->EventTypes.at(TileBrush->Event.Type).second;
 
 		Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -715,25 +755,29 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw event data
-		Buffer << Brush->Event.Data;
+		Buffer << TileBrush->Event.Data;
 
 		Filter & MAP_RENDER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 	}
-	else if(Mode == EditorModeType::OBJECT) {
+	else if(Mode == EditorModeType::LIGHTS) {
 
-		// Draw object type
+		ae::_Bounds TextureBounds;
+		TextureBounds.Start = DrawPosition - glm::vec2(64) / 2.0f;
+		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.SetColor(LightBrush->Color);
+		if(LightBrush->Texture)
+			ae::Graphics.DrawImage(TextureBounds, LightBrush->Texture);
+
+		DrawPosition.y += 70 * ae::_Element::GetUIScale();
+
 		Buffer << "Lights";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
 		DrawPosition.y += TextSpacingY;
-
-		// Draw object data
-		Buffer << "Data " << ObjectData;
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
-		Buffer.str("");
 	}
 }
 
@@ -749,7 +793,7 @@ void _EditorState::AdjustValue(uint32_t &Value, int Direction) {
 
 // Copy tiles
 void _EditorState::CopyTiles() {
-	if(Mode != EditorModeType::TILE)
+	if(Mode != EditorModeType::TILES)
 		return;
 
 	// Set state
@@ -772,7 +816,7 @@ void _EditorState::CopyTiles() {
 
 // Paste tiles
 void _EditorState::PasteTiles() {
-	if(Mode != EditorModeType::TILE || !Copied)
+	if(Mode != EditorModeType::TILES || !Copied)
 		return;
 
 	// Get offsets
@@ -840,6 +884,17 @@ void _EditorState::ToggleTextures() {
 	}
 }
 
+// Show the light select screen
+void _EditorState::ToggleLights() {
+	if(!LightsElement->Active) {
+		CloseWindows();
+		InitLights();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Show the event select screen
 void _EditorState::ToggleEvents() {
 	if(!EventsElement->Active) {
@@ -884,6 +939,14 @@ void _EditorState::ClearTextures() {
 	TexturesElement->Children.clear();
 }
 
+// Delete memory used by lights screen
+void _EditorState::ClearLights() {
+	for(auto &Child : LightTypesElement->Children)
+		delete Child;
+
+	LightTypesElement->Children.clear();
+}
+
 // Delete memory used by events screen
 void _EditorState::ClearEvents() {
 	for(auto &Child : EventTypesElement->Children)
@@ -925,6 +988,42 @@ void _EditorState::InitTextures() {
 
 	TexturesElement->CalculateBounds();
 	TexturesElement->SetActive(true);
+}
+
+// Init lights screen
+void _EditorState::InitLights() {
+	ClearLights();
+
+	glm::vec2 Start = glm::vec2(20, 20);
+	glm::vec2 Spacing = glm::vec2(20, 20);
+	glm::vec2 Offset(Start);
+
+	std::string LightsPath = "textures/lights/";
+	ae::_Files Files(LightsPath);
+	LightTypesElement->BaseSize = LightsElement->BaseSize;
+	for(const auto &File : Files.Nodes) {
+		const ae::_Texture *Texture = ae::Assets.Textures[LightsPath + File];
+
+		// Add button
+		ae::_Element *Button = new ae::_Element();
+		Button->Parent = LightTypesElement;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = glm::vec2(64, 64);
+		Button->Alignment = ae::LEFT_TOP;
+		Button->Texture = Texture;
+		Button->Clickable = true;
+		LightTypesElement->Children.push_back(Button);
+
+		// Update position
+		Offset.x += Button->BaseSize.x + Spacing.x;
+		if(Offset.x > LightsElement->BaseSize.x - Button->BaseSize.x) {
+			Offset.y += Button->BaseSize.y + Spacing.y;
+			Offset.x = Start.x;
+		}
+	}
+
+	LightsElement->CalculateBounds();
+	LightsElement->SetActive(true);
 }
 
 // Init event select
@@ -1023,9 +1122,10 @@ void _EditorState::InitLoadMap(const std::string &TempPath) {
 
 // Close all open windows
 bool _EditorState::CloseWindows() {
-	bool WasOpen = TexturesElement->Active | EventsElement->Active | NewMapElement->Active | ResizeMapElement->Active | SaveMapElement->Active | LoadMapElement->Active;
+	bool WasOpen = TexturesElement->Active | EventsElement->Active | NewMapElement->Active | ResizeMapElement->Active | SaveMapElement->Active | LoadMapElement->Active | LightsElement->Active;
 
 	TexturesElement->SetActive(false);
+	LightsElement->SetActive(false);
 	EventsElement->SetActive(false);
 	NewMapElement->SetActive(false);
 	ResizeMapElement->SetActive(false);
@@ -1040,12 +1140,12 @@ bool _EditorState::CloseWindows() {
 void _EditorState::SwitchMode(EditorModeType Value) {
 	Mode = Value;
 	switch(Mode) {
-		case EditorModeType::TILE:
+		case EditorModeType::TILES:
 			Filter = 0;
 			Filter |= MAP_RENDER_TEXTURE;
 			Filter |= MAP_RENDER_WALL;
 		break;
-		case EditorModeType::OBJECT:
+		case EditorModeType::LIGHTS:
 			Filter = 0;
 		break;
 	}
@@ -1194,23 +1294,23 @@ void _EditorState::LoadMap() {
 void _EditorState::SwitchBrushModes(int Key) {
 	switch(Key) {
 		case 1:
-			Mode = EditorModeType::TILE;
+			Mode = EditorModeType::TILES;
 			Filter = 0;
 			Filter |= MAP_RENDER_TEXTURE;
 			Filter |= MAP_RENDER_WALL;
 		break;
 		case 2:
-			Mode = EditorModeType::TILE;
+			Mode = EditorModeType::TILES;
 			Filter = 0;
 			Filter |= MAP_RENDER_ZONE;
 		break;
 		case 3:
-			Mode = EditorModeType::TILE;
+			Mode = EditorModeType::TILES;
 			Filter = 0;
 			Filter |= MAP_RENDER_PVP;
 		break;
 		case 4:
-			Mode = EditorModeType::TILE;
+			Mode = EditorModeType::TILES;
 			Filter = 0;
 			Filter |= MAP_RENDER_EVENTTYPE;
 			Filter |= MAP_RENDER_EVENTDATA;
@@ -1262,19 +1362,19 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 			// Apply filters
 			if(Filter & MAP_RENDER_TEXTURE) {
-				Tile.BaseTextureIndex = Brush->BaseTextureIndex;
+				Tile.BaseTextureIndex = TileBrush->BaseTextureIndex;
 				Tile.Hierarchy = ae::Assets.TileMaps["default"]->Index.at(Tile.BaseTextureIndex)->Hierarchy;
 			}
 			if(Filter & MAP_RENDER_WALL)
-				Tile.Wall = Brush->Wall;
+				Tile.Wall = TileBrush->Wall;
 			if(Filter & MAP_RENDER_ZONE)
-				Tile.ZoneID = Brush->ZoneID;
+				Tile.ZoneID = TileBrush->ZoneID;
 			if(Filter & MAP_RENDER_PVP)
-				Tile.PVP = Brush->PVP;
+				Tile.PVP = TileBrush->PVP;
 			if(Filter & MAP_RENDER_EVENTTYPE)
-				Tile.Event.Type = Brush->Event.Type;
+				Tile.Event.Type = TileBrush->Event.Type;
 			if(Filter & MAP_RENDER_EVENTDATA)
-				Tile.Event.Data = Brush->Event.Data;
+				Tile.Event.Data = TileBrush->Event.Data;
 
 			// Set new tile
 			Map->SetTile(TilePosition, &Tile);

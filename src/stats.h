@@ -155,12 +155,6 @@ struct _WeaponType {
 	std::vector<const _BaseSkill *> Skills;
 };
 
-struct _LightType {
-	uint32_t ID;
-	glm::vec3 Color;
-	float Radius;
-};
-
 // Classes
 class _Stats {
 

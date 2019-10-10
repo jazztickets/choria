@@ -825,9 +825,8 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 
 		// Draw light
 		glm::vec3 Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0);
-		glm::vec4 Color = glm::vec4(Light->Color, 1);
 		glm::vec2 Scale(Light->Radius * 2.0f);
-		ae::Graphics.SetColor(Color);
+		ae::Graphics.SetColor(Light->Color);
 		ae::Graphics.DrawSprite(Position, Light->Texture, 0.0f, Scale);
 
 		LightCount++;
