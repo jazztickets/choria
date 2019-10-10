@@ -801,6 +801,8 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 			continue;
 
 		_Light *Light = Object->Light;
+		if(Light->Radius == 0.0f)
+			continue;
 
 		// Check to see if light is in frustum
 		glm::vec2 Point(Object->Position.x + 0.5f, Object->Position.y + 0.5f);

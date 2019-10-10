@@ -302,7 +302,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					// Draw object
 					case EditorModeType::OBJECT:
 						DrawingObject = true;
-						DrawStart = WorldCursor;
+						DrawStart = glm::vec2(glm::ivec2(WorldCursor)) + glm::vec2(0.5f, 0.5f);
 					break;
 				}
 			break;
@@ -391,9 +391,9 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 			// Place object
 			if(Mode == EditorModeType::OBJECT) {
-				_Object *Object = new _Object;
+				_Object *Object = new _Object();
 				Object->Light->Color = glm::vec3(1.0f);
-				Object->Light->Radius = glm::length(DrawStart - WorldCursor);
+				Object->Light->Radius = GetLightRadius();
 				Object->Position = DrawStart;
 				Map->StaticObjects.push_back(Object);
 			}
@@ -547,7 +547,7 @@ void _EditorState::Render(double BlendFactor) {
 			if(DrawingObject) {
 				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 				ae::Graphics.SetColor(glm::vec4(1.0f));
-				ae::Graphics.DrawCircle(glm::vec3(DrawStart, 0.0f), glm::length(WorldCursor - DrawStart));
+				ae::Graphics.DrawCircle(glm::vec3(DrawStart, 0.0f), GetLightRadius());
 			}
 		break;
 	}
@@ -1214,6 +1214,12 @@ void _EditorState::SwitchBrushModes(int Key) {
 			Filter |= MAP_RENDER_EVENTDATA;
 		break;
 	}
+}
+
+// Get radius of light while drawing
+float _EditorState::GetLightRadius() {
+
+	return std::max(0.5f, 0.5f * int(2.0f * glm::length(DrawStart - WorldCursor)));
 }
 
 // Open browser or load map under cursor

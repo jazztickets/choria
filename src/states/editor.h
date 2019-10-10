@@ -97,6 +97,7 @@ class _EditorState : public ae::_State {
 		void DrawBrushInfo();
 		void AdjustValue(uint32_t &Value, int Direction);
 		void SwitchBrushModes(int Key);
+		float GetLightRadius();
 
 		// Copy/Paste
 		void CopyTiles();
