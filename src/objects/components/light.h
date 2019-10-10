@@ -23,12 +23,16 @@
 
 // Forward Declarations
 class _Object;
+namespace ae {
+	class _Texture;
+}
 
 // Classes
 class _Light {
 
 	public:
 
+		_Light() : _Light(nullptr) { }
 		_Light(_Object *Object);
 
 		// Base
@@ -36,7 +40,9 @@ class _Light {
 
 		// Attributes
 		uint32_t LightTypeID;
+		const ae::_Texture *Texture;
 		glm::vec3 Color;
+		float Intensity;
 		float Radius;
 
 	private:

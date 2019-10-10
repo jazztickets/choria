@@ -1042,6 +1042,8 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			// Check for valid light
 			const auto &Iterator = Stats->Lights.find(LightTypeID);
 			if(Iterator != Stats->Lights.end()) {
+				Object->Light->Texture = Iterator->second.Texture;
+				Object->Light->Intensity = Iterator->second.Intensity;
 				Object->Light->Radius = Iterator->second.Radius;
 				Object->Light->Color = Iterator->second.Color;
 			}

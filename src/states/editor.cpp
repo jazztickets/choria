@@ -392,6 +392,8 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			// Place object
 			if(Mode == EditorModeType::OBJECT) {
 				_Object *Object = new _Object();
+				Object->Light->Texture = ae::Assets.Textures["textures/lights/round.png"];
+				Object->Light->Intensity = 1.0f;
 				Object->Light->Color = glm::vec3(1.0f);
 				Object->Light->Radius = GetLightRadius();
 				Object->Position = DrawStart;
@@ -1280,12 +1282,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 	}
 
 	// Rebuild affected layers
-	Map->BuildLayers(
-		glm::ivec4(
-			glm::ivec2(Position) - glm::ivec2(BrushRadius + 1),
-			glm::ivec2(Position) + glm::ivec2(BrushRadius + 1)
-		),
-		ShowTransitions);
+	Map->BuildLayers(glm::ivec4(glm::ivec2(Position) - glm::ivec2(BrushRadius + 1), glm::ivec2(Position) + glm::ivec2(BrushRadius + 1)), ShowTransitions);
 }
 
 // Deletes the map

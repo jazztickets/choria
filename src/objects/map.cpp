@@ -804,6 +804,9 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 		if(Light->Radius == 0.0f)
 			continue;
 
+		if(!Light->Texture)
+			continue;
+
 		// Check to see if light is in frustum
 		glm::vec2 Point(Object->Position.x + 0.5f, Object->Position.y + 0.5f);
 		if(Point.x < AABB[0])
@@ -825,7 +828,7 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 		glm::vec4 Color = glm::vec4(Light->Color, 1);
 		glm::vec2 Scale(Light->Radius * 2.0f);
 		ae::Graphics.SetColor(Color);
-		ae::Graphics.DrawSprite(Position, ae::Assets.Textures["textures/lights/light0.png"], 0.0f, Scale);
+		ae::Graphics.DrawSprite(Position, Light->Texture, 0.0f, Scale);
 
 		LightCount++;
 	}
@@ -946,7 +949,25 @@ void _Map::Load(const std::string &Path, bool Static) {
 			// Object light
 			case 'l': {
 				if(Object) {
-					File >> Object->Light->Radius >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b;
+					char SubChunkType;
+					File >> SubChunkType;
+					switch(SubChunkType) {
+						case 't': {
+							char Buffer[1024];
+							File.ignore(1);
+							File.getline(Buffer, 1024, '\n');
+							Object->Light->Texture = ae::Assets.Textures[Buffer];
+						} break;
+						case 'i':
+							File >> Object->Light->Intensity;
+						break;
+						case 'r':
+							File >> Object->Light->Radius;
+						break;
+						case 'c':
+							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b;
+						break;
+					}
 				}
 			} break;
 			default:
@@ -1007,8 +1028,12 @@ bool _Map::Save(const std::string &Path) {
 	for(auto &Object : StaticObjects) {
 		Output << "O " << Object->Position.x << ' ' << Object->Position.y << '\n';
 
-		if(Object->Light)
-			Output << "l " << Object->Light->Radius << ' ' << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << '\n';
+		if(Object->Light) {
+			Output << "lt " << Object->Light->Texture->Name << '\n';
+			Output << "li " << Object->Light->Intensity << '\n';
+			Output << "lr " << Object->Light->Radius << '\n';
+			Output << "lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << '\n';
+		}
 	}
 
 	Output.close();
