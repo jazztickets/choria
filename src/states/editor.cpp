@@ -421,7 +421,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				CloseWindows();
 			}
 		}
-		else if(ae::Graphics.Element->HitElement == nullptr) {
+		else {
 
 			// Place object
 			switch(Mode) {
@@ -1144,6 +1144,8 @@ bool _EditorState::CloseWindows() {
 
 // Switch editor modes
 void _EditorState::SwitchMode(EditorModeType Value) {
+	CloseWindows();
+
 	Mode = Value;
 	switch(Mode) {
 		case EditorModeType::TILES:

@@ -1037,7 +1037,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 				Object->Character->Invisible = Invisible;
 				Object->Character->Bounty = Bounty;
 			}
-			Object->LightType = LightTypeID;
+			Object->Light->LightTypeID = LightTypeID;
 
 			// Check for valid light
 			const auto &Iterator = Stats->Lights.find(LightTypeID);

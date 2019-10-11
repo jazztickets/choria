@@ -75,8 +75,7 @@ _Object::_Object() :
 	ServerPosition(0, 0),
 
 	Model(nullptr),
-	BuildTexture(nullptr),
-	LightType(0) {
+	BuildTexture(nullptr) {
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);
@@ -728,13 +727,13 @@ void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<uint8_t>(Character->Status);
-	Data.WriteBit(LightType);
+	Data.WriteBit(Light->LightTypeID);
 	Data.WriteBit(Character->Invisible);
 	Data.WriteBit(Character->Bounty);
 	if(Character->Bounty)
 		Data.Write<int>(Character->Bounty);
-	if(LightType)
-		Data.Write<uint8_t>(LightType);
+	if(Light->LightTypeID)
+		Data.Write<uint8_t>(Light->LightTypeID);
 }
 
 // Serialize for ObjectCreate
@@ -747,7 +746,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	else
 		Data.Write<uint8_t>(0);
 	Data.Write<uint8_t>(Model->NetworkID);
-	Data.Write<uint8_t>(LightType);
+	Data.Write<uint8_t>(Light->LightTypeID);
 	Data.WriteBit(Character->Invisible);
 }
 
@@ -757,7 +756,7 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Name = Data.ReadString();
 	uint8_t PortraitID = Data.Read<uint8_t>();
 	Model = Stats->GetModel(Data.Read<uint8_t>());
-	LightType = Data.Read<uint8_t>();
+	Light->LightTypeID = Data.Read<uint8_t>();
 	bool Invisible = Data.ReadBit();
 
 	if(Character) {
@@ -769,7 +768,7 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 // Serialize object stats
 void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.WriteString(Name.c_str());
-	Data.Write<uint8_t>(LightType);
+	Data.Write<uint8_t>(Light->LightTypeID);
 	Data.Write<uint8_t>(Model->NetworkID);
 	Data.Write<uint8_t>(Character->Portrait->NetworkID);
 	Data.WriteString(Character->PartyName.c_str());
@@ -823,7 +822,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 // Unserialize object stats
 void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Name = Data.ReadString();
-	LightType = Data.Read<uint8_t>();
+	Light->LightTypeID = Data.Read<uint8_t>();
 	Model = Stats->GetModel(Data.Read<uint8_t>());
 	Character->Portrait = Stats->GetPortrait(Data.Read<uint8_t>());
 	Character->PartyName = Data.ReadString();

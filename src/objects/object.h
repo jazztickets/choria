@@ -153,7 +153,6 @@ class _Object : public ae::_BaseObject {
 		// Render
 		const _Model *Model;
 		const ae::_Texture *BuildTexture;
-		int LightType;
 
 	private:
 
