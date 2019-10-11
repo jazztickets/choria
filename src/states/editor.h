@@ -20,9 +20,11 @@
 // Libraries
 #include <ae/state.h>
 #include <vector>
+#include <list>
 #include <glm/vec2.hpp>
 
 struct _Tile;
+class _Object;
 class _Map;
 class _Stats;
 class _Light;
@@ -97,6 +99,9 @@ class _EditorState : public ae::_State {
 		// Modes
 		void SwitchMode(EditorModeType Value);
 
+		// Objects
+		void DeleteSelectedObjects();
+
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
 		void DrawBrushInfo();
@@ -137,7 +142,9 @@ class _EditorState : public ae::_State {
 		_Tile *TileBrush;
 
 		// Objects
+		std::list <_Object *> SelectedObjects;
 		bool DrawingObject;
+		bool DrawingSelect;
 		int ObjectType;
 		uint32_t ObjectData;
 		glm::vec2 DrawStart;

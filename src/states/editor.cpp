@@ -129,6 +129,7 @@ void _EditorState::Init() {
 	Copied = false;
 	DrawCopyBounds = false;
 	DrawingObject = false;
+	DrawingSelect = false;
 	DrawStart = glm::vec2(0.0f, 0.0f);
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
@@ -260,7 +261,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				PasteTiles();
 			break;
 			case SDL_SCANCODE_D:
-				Map->DeleteStaticObject(WorldCursor);
+				DeleteSelectedObjects();
 			break;
 			case SDL_SCANCODE_TAB:
 				ShowTransitions = !ShowTransitions;
@@ -307,11 +308,12 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		if(!Map)
 			return;
 
+		// Ignore UI elements
+		if(ae::Graphics.Element->HitElement)
+			return;
+
 		switch(MouseEvent.Button) {
 			case SDL_BUTTON_LEFT:
-				if(ae::Graphics.Element->HitElement)
-					break;
-
 				switch(Mode) {
 					// Eyedropper tool
 					case EditorModeType::TILES:
@@ -332,8 +334,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			break;
 			// Scroll map
 			case SDL_BUTTON_RIGHT:
-				if(!ae::Graphics.Element->HitElement)
-					Camera->Set2DPosition(WorldCursor);
+				Camera->Set2DPosition(WorldCursor);
 			break;
 			case SDL_BUTTON_MIDDLE: {
 				switch(Mode) {
@@ -344,6 +345,8 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					break;
 					// Select objects
 					case EditorModeType::LIGHTS:
+						DrawingSelect = true;
+						DrawStart = WorldCursor;
 					break;
 				}
 			} break;
@@ -378,7 +381,6 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			// Clicked light texture button
 			if(ClickedElement->Parent && ClickedElement->Parent == LightTypesElement) {
 				LightBrush->Texture = ClickedElement->Texture;
-				//CloseWindows();
 			}
 		}
 		// Event select
@@ -447,7 +449,20 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	}
 	// Release middle mouse
 	else if(MouseEvent.Button == SDL_BUTTON_MIDDLE) {
-		CopyTiles();
+		if(Mode == EditorModeType::TILES)
+			CopyTiles();
+
+		// Select objects
+		if(DrawingSelect) {
+			DrawingSelect = false;
+
+			SelectedObjects.clear();
+			glm::vec4 Bounds(DrawStart, WorldCursor);
+			for(const auto &Object : Map->StaticObjects) {
+				if(Object->CheckAABB(Bounds))
+					SelectedObjects.push_back(Object);
+			}
+		}
 	}
 }
 
@@ -576,13 +591,10 @@ void _EditorState::Render(double BlendFactor) {
 		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
 
 		// Render selected objects
-		/*
-		if(RenderFlags & MAP_RENDER_EDITOR_SELECTED) {
-			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-			ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-			for(const auto &Object : Map->StaticObjects)
-				ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f), 0), Object->Shape.HalfSize.x);
-		}*/
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		for(const auto &Object : SelectedObjects)
+			ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f), 0), Object->Shape.HalfSize.x);
 	}
 
 	switch(Mode) {
@@ -602,12 +614,20 @@ void _EditorState::Render(double BlendFactor) {
 			}
 		break;
 		case EditorModeType::LIGHTS:
+			// Draw potential light
 			if(DrawingObject) {
 				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 				ae::Graphics.SetColor(glm::vec4(1.0f));
 				ae::Graphics.DrawCircle(glm::vec3(DrawStart, 0.0f), GetLightRadius());
 			}
 		break;
+	}
+
+	// Draw select box
+	if(DrawingSelect) {
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetColor(glm::vec4(1.0f));
+		ae::Graphics.DrawRectangle3D(DrawStart, WorldCursor, false);
 	}
 
 	// Setup UI
@@ -1173,6 +1193,28 @@ void _EditorState::SwitchMode(EditorModeType Value) {
 
 	DrawCopyBounds = false;
 	DrawingObject = false;
+}
+
+// Delete all the selected objects
+void _EditorState::DeleteSelectedObjects() {
+	if(!Map)
+		return;
+
+	// Flag objects
+	for(auto &Object : SelectedObjects)
+		Object->Deleted = true;
+
+	// Delete from map
+	for(auto Iterator = Map->StaticObjects.begin(); Iterator != Map->StaticObjects.end(); ) {
+		if((*Iterator)->Deleted) {
+			delete *Iterator;
+			Iterator = Map->StaticObjects.erase(Iterator);
+		}
+		else
+			++Iterator;
+	}
+
+	SelectedObjects.clear();
 }
 
 // Creates a map with the given parameters

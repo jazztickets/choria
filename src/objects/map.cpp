@@ -1216,22 +1216,6 @@ bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) const {
 	return true;
 }
 
-// Delete static objects at the position
-void _Map::DeleteStaticObject(const glm::ivec2 &Position) {
-
-	// Update objects
-	for(auto Iterator = StaticObjects.begin(); Iterator != StaticObjects.end(); ) {
-		_Object *Object = *Iterator;
-		if(Position == Object->Position) {
-			Iterator = StaticObjects.erase(Iterator);
-			delete Object;
-		}
-		else {
-			++Iterator;
-		}
-	}
-}
-
 // Send complete object list to player
 void _Map::SendObjectList(ae::_Peer *Peer) {
 	if(!Server)

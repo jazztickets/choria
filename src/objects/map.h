@@ -139,7 +139,6 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, bool UsePVPZone);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(const _Event &Event, glm::ivec2 &Position) const;
-		void DeleteStaticObject(const glm::ivec2 &Position);
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
