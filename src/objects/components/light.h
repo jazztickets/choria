@@ -43,7 +43,6 @@ class _Light {
 		uint32_t LightTypeID;
 		const ae::_Texture *Texture;
 		glm::vec4 Color;
-		glm::vec2 Size;
 		float Intensity;
 
 	private:

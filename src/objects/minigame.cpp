@@ -60,14 +60,14 @@ _Minigame::_Minigame(const _MinigameStat *Minigame) :
 	Sprites = new ae::_Manager<_Sprite>();
 	Ball = Sprites->Create();
 	Ball->Scale = glm::vec2(0.7f);
-	Ball->Shape.HalfWidth[0] = 0.5f * Ball->Scale.x;
+	Ball->Shape.HalfSize[0] = 0.5f * Ball->Scale.x;
 	Ball->RigidBody.Acceleration.y = 10;
 	Ball->RigidBody.SetMass(0);
 	Ball->RigidBody.Restitution = 0.75f;
 	Ball->RigidBody.CollisionGroup = 0;
 	Ball->RigidBody.CollisionMask = 0;
 	Ball->RigidBody.CollisionResponse = false;
-	Ball->RigidBody.Position.y = Boundary.Start.y + Ball->Shape.HalfWidth[0] * 2;
+	Ball->RigidBody.Position.y = Boundary.Start.y + Ball->Shape.HalfSize[0] * 2;
 	Ball->Texture = ae::Assets.Textures["textures/minigames/ball.png"];
 
 	float SpacingX = 2.0f;
@@ -94,7 +94,7 @@ _Minigame::_Minigame(const _MinigameStat *Minigame) :
 			if(i == Rows-1) {
 				Sprite->Texture = ae::Assets.Textures["textures/minigames/bar.png"];
 				Sprite->Scale = glm::vec2(0.5f, 2.5f);
-				Sprite->Shape.HalfWidth = glm::vec2(0.5f, 0.5f) * glm::vec2(0.5f, 2.5f);
+				Sprite->Shape.HalfSize = glm::vec2(0.5f, 0.5f) * glm::vec2(0.5f, 2.5f);
 				Sprite->RigidBody.ForcePosition(glm::vec2(X, Y + 0.75f));
 
 				_Sprite *Tip = Sprites->Create();
@@ -106,16 +106,16 @@ _Minigame::_Minigame(const _MinigameStat *Minigame) :
 				Tip->RigidBody.ForcePosition(glm::vec2(X, Y-0.5f));
 				Tip->Texture = ae::Assets.Textures["textures/minigames/halfpeg.png"];
 				Tip->Scale = glm::vec2(0.5f, 0.5f);
-				Tip->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
-				Grid->AddObject(Tip, Tip->RigidBody.Position, Tip->Shape.HalfWidth);
+				Tip->Shape.HalfSize = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
+				Grid->AddObject(Tip, Tip->RigidBody.Position, Tip->Shape.HalfSize);
 			}
 			else {
 				Sprite->Texture = ae::Assets.Textures["textures/minigames/peg.png"];
 				Sprite->Scale = glm::vec2(0.5f, 0.5f);
-				Sprite->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
+				Sprite->Shape.HalfSize = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
 			}
 
-			Grid->AddObject(Sprite, Sprite->RigidBody.Position, Sprite->Shape.HalfWidth);
+			Grid->AddObject(Sprite, Sprite->RigidBody.Position, Sprite->Shape.HalfSize);
 		}
 
 		Odd = !Odd;
@@ -141,7 +141,7 @@ void _Minigame::Update(double FrameTime) {
 	if(Debug == -1 || (Camera && State == StateType::CANDROP)) {
 		glm::vec2 WorldPosition;
 		Camera->ConvertScreenToWorld(ae::Input.GetMouse(), WorldPosition);
-		WorldPosition.x = glm::clamp(WorldPosition.x, Boundary.Start.x + Ball->Shape.HalfWidth[0], Boundary.End.x - Ball->Shape.HalfWidth[0]);
+		WorldPosition.x = glm::clamp(WorldPosition.x, Boundary.Start.x + Ball->Shape.HalfSize[0], Boundary.End.x - Ball->Shape.HalfSize[0]);
 		WorldPosition.y = Ball->RigidBody.Position.y;
 		Ball->RigidBody.ForcePosition(WorldPosition);
 		Ball->Visible = true;
@@ -166,7 +166,7 @@ void _Minigame::Update(double FrameTime) {
 
 		// Get list of objects from grid
 		std::list<void *> PotentialObjects;
-		Grid->GetObjectList(Sprite->RigidBody.Position, Sprite->Shape.HalfWidth, PotentialObjects);
+		Grid->GetObjectList(Sprite->RigidBody.Position, Sprite->Shape.HalfSize, PotentialObjects);
 		for(auto &TestObject : PotentialObjects) {
 			_Sprite *TestSprite = (_Sprite *)TestObject;
 			if(!(Sprite->RigidBody.CollisionGroup & TestSprite->RigidBody.CollisionMask))
@@ -181,7 +181,7 @@ void _Minigame::Update(double FrameTime) {
 			else {
 				ae::_Manifold Manifold;
 				bool AxisAlignedPush = false;
-				if(TestSprite->CheckCircle(Sprite->RigidBody.Position, Sprite->Shape.HalfWidth[0], Manifold.Normal, Manifold.Penetration, AxisAlignedPush)) {
+				if(TestSprite->CheckCircle(Sprite->RigidBody.Position, Sprite->Shape.HalfSize[0], Manifold.Normal, Manifold.Penetration, AxisAlignedPush)) {
 					if(Sprite->RigidBody.InverseMass > 0.0f && TestSprite->RigidBody.CollisionResponse) {
 						Manifold.ObjectA = Sprite;
 						Manifold.ObjectB = TestSprite;

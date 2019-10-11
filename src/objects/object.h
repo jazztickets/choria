@@ -19,6 +19,7 @@
 
 // Libraries
 #include <ae/baseobject.h>
+#include <ae/physics.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
 #include <list>
@@ -138,6 +139,7 @@ class _Object : public ae::_BaseObject {
 		_Controller *Controller;
 		_Monster *Monster;
 		_Light *Light;
+		ae::_Shape Shape;
 
 		// Pointers
 		const _Stats *Stats;

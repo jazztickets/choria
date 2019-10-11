@@ -436,7 +436,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Intensity = LightBrush->Intensity;
 					Object->Light->Color = LightBrush->Color;
-					Object->Light->Size.x = GetLightRadius();
+					Object->Shape.HalfSize.x = GetLightRadius();
 					Object->Position = DrawStart;
 					Map->StaticObjects.push_back(Object);
 				break;
@@ -572,10 +572,17 @@ void _EditorState::Render(double BlendFactor) {
 		int RenderFilter = Filter | MAP_RENDER_BOUNDARY;
 		if(!UseClockAmbientLight)
 			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
-		if(Mode == EditorModeType::LIGHTS)
-			RenderFilter |= MAP_RENDER_EDITOR_LIGHTS;
 
 		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
+
+		// Render selected objects
+		/*
+		if(RenderFlags & MAP_RENDER_EDITOR_SELECTED) {
+			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+			ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+			for(const auto &Object : Map->StaticObjects)
+				ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f), 0), Object->Shape.HalfSize.x);
+		}*/
 	}
 
 	switch(Mode) {

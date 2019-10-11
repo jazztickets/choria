@@ -1032,11 +1032,13 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 		if(Object) {
 			Object->Character->Status = Status;
 
+			// Set stats
 			if(Object != Player) {
 				Object->Position = Position;
 				Object->Character->Invisible = Invisible;
 				Object->Character->Bounty = Bounty;
 			}
+			Object->ServerPosition = Position;
 			Object->Light->LightTypeID = LightTypeID;
 
 			// Check for valid light
@@ -1044,12 +1046,11 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			if(Iterator != Stats->Lights.end()) {
 				Object->Light->Texture = Iterator->second.Texture;
 				Object->Light->Intensity = Iterator->second.Intensity;
-				Object->Light->Size = Iterator->second.Size;
+				Object->Shape.HalfSize = Iterator->second.HalfSize;
 				Object->Light->Color = Iterator->second.Color;
 			}
 
-			Object->ServerPosition = Position;
-
+			// Set status texture
 			switch(Status) {
 				case _Character::STATUS_NONE:
 					Object->Character->StatusTexture = nullptr;
@@ -1086,8 +1087,6 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 				break;
 				case _Character::STATUS_DEAD:
 					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/dead.png"];
-				break;
-				default:
 				break;
 			}
 		}

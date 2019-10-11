@@ -19,6 +19,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
+#include <objects/components/light.h>
 #include <objects/object.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>

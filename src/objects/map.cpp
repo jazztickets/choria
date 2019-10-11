@@ -719,14 +719,6 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		ae::Graphics.DrawRectangle3D(glm::vec2(0), glm::vec2(Size), false);
 	}
 
-	// Render lights
-	if(RenderFlags & MAP_RENDER_EDITOR_LIGHTS) {
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		for(const auto &Object : StaticObjects)
-			ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f), 0), Object->Light->Size.x);
-	}
-
 	// Draw zone overlays
 	if(RenderFlags & MAP_RENDER_ZONE) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
@@ -808,7 +800,7 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 		if(!Object->Light)
 			continue;
 
-		if(Object->Light->Size.x == 0.0f)
+		if(Object->Shape.HalfSize.x == 0.0f)
 			continue;
 
 		_Light *Light = Object->Light;
@@ -828,12 +820,12 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 
 		// Compare distances
 		float DistanceSquared = glm::distance2(Point, glm::vec2(Object->Position) + glm::vec2(0.5f));
-		if(DistanceSquared >= (Object->Light->Size.x + 0.5f) * (Object->Light->Size.x + 0.5f))
+		if(DistanceSquared >= (Object->Shape.HalfSize.x + 0.5f) * (Object->Shape.HalfSize.x + 0.5f))
 			continue;
 
 		// Draw light
 		glm::vec3 Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0);
-		glm::vec2 Scale(Object->Light->Size.x * 2.0f);
+		glm::vec2 Scale(Object->Shape.HalfSize.x * 2.0f);
 		ae::Graphics.SetColor(Light->Color);
 		ae::Graphics.DrawSprite(Position, Light->Texture, 0.0f, Scale);
 
@@ -968,8 +960,8 @@ void _Map::Load(const std::string &Path, bool Static) {
 						case 'i':
 							File >> Object->Light->Intensity;
 						break;
-						case 'r':
-							File >> Object->Light->Size.x;
+						case 's':
+							File >> Object->Shape.HalfSize.x >> Object->Shape.HalfSize.y;
 						break;
 						case 'c':
 							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b;
@@ -1038,7 +1030,7 @@ bool _Map::Save(const std::string &Path) {
 		if(Object->Light) {
 			Output << "lt " << Object->Light->Texture->Name << '\n';
 			Output << "li " << Object->Light->Intensity << '\n';
-			Output << "lr " << Object->Light->Size.x << '\n';
+			Output << "ls " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
 			Output << "lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << '\n';
 		}
 	}

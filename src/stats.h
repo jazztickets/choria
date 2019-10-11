@@ -23,7 +23,6 @@
 #include <objects/item.h>
 #include <objects/skill.h>
 #include <objects/statchange.h>
-#include <objects/components/light.h>
 #include <enums.h>
 #include <unordered_map>
 #include <list>
@@ -155,6 +154,13 @@ struct _WeaponType {
 	std::vector<const _BaseSkill *> Skills;
 };
 
+struct _LightType {
+	const ae::_Texture *Texture;
+	glm::vec4 Color;
+	glm::vec2 HalfSize;
+	float Intensity;
+};
+
 // Classes
 class _Stats {
 
@@ -200,7 +206,7 @@ class _Stats {
 		std::unordered_map<std::string, _MonsterStat> Monsters;
 		std::unordered_map<std::string, _Zone> Zones;
 		std::unordered_map<std::string, const _Object *> Builds;
-		std::unordered_map<uint32_t, _Light> Lights;
+		std::unordered_map<uint32_t, _LightType> Lights;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 		std::vector<_Level> Levels;
 
