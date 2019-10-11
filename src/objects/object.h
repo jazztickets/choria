@@ -105,6 +105,11 @@ class _Object : public ae::_BaseObject {
 		void RemoveBattleElement();
 		void StopBattle();
 
+		// Collision
+
+		// Check collision with a min max AABB
+		bool CheckAABB(const glm::vec4 &AABB);
+
 		// Status effects
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
 

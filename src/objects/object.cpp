@@ -46,6 +46,7 @@
 #include <constants.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/norm.hpp>
 #include <json/reader.h>
 #include <algorithm>
 #include <sstream>
@@ -1094,6 +1095,42 @@ const _Tile *_Object::GetTile() const {
 void _Object::StopBattle() {
 	Character->Battle = nullptr;
 	Fighter->RemoveBattleElement();
+}
+
+// Check collision with a min max AABB
+bool _Object::CheckAABB(const glm::vec4 &AABB) {
+
+	// Shape is AABB
+	if(Shape.IsAABB()) {
+		if(Position.x - Shape.HalfSize[0] >= AABB[2])
+			return false;
+
+		if(Position.y - Shape.HalfSize[1] >= AABB[3])
+			return false;
+
+		if(Position.x + Shape.HalfSize[0] <= AABB[0])
+			return false;
+
+		if(Position.y + Shape.HalfSize[1] <= AABB[1])
+			return false;
+	}
+	else {
+
+		// Get closest point on AABB
+		glm::vec2 Point = Position;
+		if(Point.x < AABB[0])
+			Point.x = AABB[0];
+		if(Point.y < AABB[1])
+			Point.y = AABB[1];
+		if(Point.x > AABB[2])
+			Point.x = AABB[2];
+		if(Point.y > AABB[3])
+			Point.y = AABB[3];
+
+		return glm::distance2(Point, glm::vec2(Position)) < Shape.HalfSize[0] * Shape.HalfSize[0];
+	}
+
+	return true;
 }
 
 // Call update function for buff

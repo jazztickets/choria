@@ -779,6 +779,7 @@ void _EditorState::DrawBrushInfo() {
 	}
 	else if(Mode == EditorModeType::LIGHTS) {
 
+		// Draw light texture
 		ae::_Bounds TextureBounds;
 		TextureBounds.Start = DrawPosition - glm::vec2(64) / 2.0f;
 		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
@@ -789,11 +790,13 @@ void _EditorState::DrawBrushInfo() {
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
-		Buffer << "Lights";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
-		Buffer.str("");
-
-		DrawPosition.y += TextSpacingY;
+		// Draw light count
+		if(Map) {
+			Buffer << Map->LightCount << " visible";
+			ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
+			Buffer.str("");
+			DrawPosition.y += TextSpacingY;
+		}
 	}
 }
 

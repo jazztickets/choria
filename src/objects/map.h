@@ -174,6 +174,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		glm::vec4 AmbientLight;
 		int IsOutside;
 		double Clock;
+		int LightCount;
 
 		// Background
 		std::string BackgroundMapFile;

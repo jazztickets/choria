@@ -90,6 +90,7 @@ _Map::_Map() :
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	IsOutside(true),
 	Clock(0),
+	LightCount(0),
 	BackgroundOffset(0.0f),
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
@@ -638,7 +639,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		ae::Assets.Programs["map_object"]->AmbientLight = AmbientLight;
 
 		// Add lights
-		int LightCount = 0;
+		LightCount = 0;
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		LightCount += AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
@@ -808,19 +809,7 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 			continue;
 
 		// Check to see if light is in frustum
-		glm::vec2 Point(Object->Position.x + 0.5f, Object->Position.y + 0.5f);
-		if(Point.x < AABB[0])
-			Point.x = AABB[0];
-		if(Point.y < AABB[1])
-			Point.y = AABB[1];
-		if(Point.x > AABB[2])
-			Point.x = AABB[2];
-		if(Point.y > AABB[3])
-			Point.y = AABB[3];
-
-		// Compare distances
-		float DistanceSquared = glm::distance2(Point, glm::vec2(Object->Position) + glm::vec2(0.5f));
-		if(DistanceSquared >= (Object->Shape.HalfSize.x + 0.5f) * (Object->Shape.HalfSize.x + 0.5f))
+		if(!Object->CheckAABB(AABB))
 			continue;
 
 		// Draw light
