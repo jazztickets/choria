@@ -457,14 +457,20 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			DrawingSelect = false;
 
 			// Append to selection
-			bool Append = ae::Input.ModKeyDown(KMOD_SHIFT);
-			if(!Append)
+			bool ToggleMode = ae::Input.ModKeyDown(KMOD_SHIFT);
+			if(!ToggleMode)
 				SelectedObjects.clear();
 
 			glm::vec4 Bounds(DrawStart, WorldCursor);
 			for(const auto &Object : Map->StaticObjects) {
 				if(Object->CheckAABB(Bounds)) {
-					SelectedObjects[Object] = 1;
+
+					// Add or remove from selection
+					const auto &Iterator = SelectedObjects.find(Object);
+					if(ToggleMode && Iterator != SelectedObjects.end())
+						SelectedObjects.erase(Iterator);
+					else
+						SelectedObjects[Object] = 1;
 				}
 			}
 		}
