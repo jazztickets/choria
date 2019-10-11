@@ -456,11 +456,16 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		if(DrawingSelect) {
 			DrawingSelect = false;
 
-			SelectedObjects.clear();
+			// Append to selection
+			bool Append = ae::Input.ModKeyDown(KMOD_SHIFT);
+			if(!Append)
+				SelectedObjects.clear();
+
 			glm::vec4 Bounds(DrawStart, WorldCursor);
 			for(const auto &Object : Map->StaticObjects) {
-				if(Object->CheckAABB(Bounds))
-					SelectedObjects.push_back(Object);
+				if(Object->CheckAABB(Bounds)) {
+					SelectedObjects[Object] = 1;
+				}
 			}
 		}
 	}
@@ -593,8 +598,8 @@ void _EditorState::Render(double BlendFactor) {
 		// Render selected objects
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		for(const auto &Object : SelectedObjects)
-			ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f), 0), Object->Shape.HalfSize.x);
+		for(const auto &Iterator : SelectedObjects)
+			ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Iterator.first->Position) + glm::vec2(0.5f, 0.5f), 0), Iterator.first->Shape.HalfSize.x);
 	}
 
 	switch(Mode) {
@@ -817,6 +822,12 @@ void _EditorState::DrawBrushInfo() {
 			Buffer.str("");
 			DrawPosition.y += TextSpacingY;
 		}
+
+		// Draw light count
+		Buffer << SelectedObjects.size() << " selected";
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
+		Buffer.str("");
+		DrawPosition.y += TextSpacingY;
 	}
 }
 
@@ -1201,8 +1212,8 @@ void _EditorState::DeleteSelectedObjects() {
 		return;
 
 	// Flag objects
-	for(auto &Object : SelectedObjects)
-		Object->Deleted = true;
+	for(auto &Iterator : SelectedObjects)
+		Iterator.first->Deleted = true;
 
 	// Delete from map
 	for(auto Iterator = Map->StaticObjects.begin(); Iterator != Map->StaticObjects.end(); ) {

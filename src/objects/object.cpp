@@ -1099,25 +1099,26 @@ void _Object::StopBattle() {
 
 // Check collision with a min max AABB
 bool _Object::CheckAABB(const glm::vec4 &AABB) {
+	glm::vec2 CenterPosition = glm::vec2(Position) + glm::vec2(0.5f);
 
 	// Shape is AABB
 	if(Shape.IsAABB()) {
-		if(Position.x - Shape.HalfSize[0] >= AABB[2])
+		if(CenterPosition.x - Shape.HalfSize[0] >= AABB[2])
 			return false;
 
-		if(Position.y - Shape.HalfSize[1] >= AABB[3])
+		if(CenterPosition.y - Shape.HalfSize[1] >= AABB[3])
 			return false;
 
-		if(Position.x + Shape.HalfSize[0] <= AABB[0])
+		if(CenterPosition.x + Shape.HalfSize[0] <= AABB[0])
 			return false;
 
-		if(Position.y + Shape.HalfSize[1] <= AABB[1])
+		if(CenterPosition.y + Shape.HalfSize[1] <= AABB[1])
 			return false;
 	}
 	else {
 
 		// Get closest point on AABB
-		glm::vec2 Point = Position;
+		glm::vec2 Point = CenterPosition;
 		if(Point.x < AABB[0])
 			Point.x = AABB[0];
 		if(Point.y < AABB[1])
@@ -1127,7 +1128,7 @@ bool _Object::CheckAABB(const glm::vec4 &AABB) {
 		if(Point.y > AABB[3])
 			Point.y = AABB[3];
 
-		return glm::distance2(Point, glm::vec2(Position)) < Shape.HalfSize[0] * Shape.HalfSize[0];
+		return glm::distance2(Point, CenterPosition) < Shape.HalfSize[0] * Shape.HalfSize[0];
 	}
 
 	return true;

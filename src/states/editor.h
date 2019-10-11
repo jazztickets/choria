@@ -20,7 +20,7 @@
 // Libraries
 #include <ae/state.h>
 #include <vector>
-#include <list>
+#include <unordered_map>
 #include <glm/vec2.hpp>
 
 struct _Tile;
@@ -142,7 +142,7 @@ class _EditorState : public ae::_State {
 		_Tile *TileBrush;
 
 		// Objects
-		std::list <_Object *> SelectedObjects;
+		std::unordered_map <_Object *, int> SelectedObjects;
 		bool DrawingObject;
 		bool DrawingSelect;
 		int ObjectType;

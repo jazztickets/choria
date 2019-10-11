@@ -93,13 +93,11 @@ Singleplayer games will start a server in the background on port 31234 by defaul
 ----- MAP EDITOR -----
 
 -- Modes --
+Hit F1 to select "tiles" mode
 Hit 1 to draw textures
 Hit 2 to draw zones
 Hit 3 to draw PVP/safe areas
 Hit 4 to draw events
-
-Hit F1-F2 to change modes
-Hit Spacebar to list textures
 Hit Tab to change from transition/block mode
 Hit W to change from Wall/Walkable
 Hit P to change from PVP/Safe zone
@@ -107,11 +105,17 @@ Hit E to open the event menu
 Hit G on an map event to switch maps
 Hit V to paste a copied area of tiles
 Hit Z to rotate through different zone colors
+Hit Spacebar to show the tile palette
+
+Hit F2 to select "lights" mode
+Hit Spacebar to show the lights menu
+
 Hit T/Shift-T to cycle the clock
 Hit Ctrl+T to toggle day/night ambient light
 
 -- Mouse --
 Use Left-mouse button to apply the current brush
+Click and drag the Left-mouse  button to draw objects at different sizes
 Use Right-mouse button to pan the camera
 
 Use Mousewheel to zoom the camera in or out
@@ -120,8 +124,13 @@ Use Shift+Mousewheel to quickly zoom the camera in or out
 Use Ctrl+Mousewheel to change brush size
 Use Shift+Ctrl+Mousewheel to change brush size by 10
 
+-- Tiles Mode --
 Hit Ctrl+Left-mouse button to copy an existing tile into the brush
 Use Middle-click drag to highlight an area to copy, then V to paste
+
+-- Object Mode --
+Use Middle-click drag to select objects
+Use Shift Middle-click to add objects to the selection
 
 -- Misc --
 Hit N to start a new map
