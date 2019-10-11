@@ -19,6 +19,7 @@
 
 // Libraries
 #include <glm/vec4.hpp>
+#include <glm/vec2.hpp>
 #include <cstdint>
 
 // Forward Declarations
@@ -42,8 +43,8 @@ class _Light {
 		uint32_t LightTypeID;
 		const ae::_Texture *Texture;
 		glm::vec4 Color;
+		glm::vec2 Size;
 		float Intensity;
-		float Radius;
 
 	private:
 

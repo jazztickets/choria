@@ -678,7 +678,7 @@ void _Stats::LoadLights(const std::string &Path) {
 	while(!File.eof() && File.peek() != EOF) {
 		_Light Light(nullptr);
 		std::string Texture;
-		File >> Light.LightTypeID >> Light.Intensity >> Light.Radius >> Light.Color.r >> Light.Color.g >> Light.Color.b >> Texture;
+		File >> Light.LightTypeID >> Light.Intensity >> Light.Size.x >> Light.Color.r >> Light.Color.g >> Light.Color.b >> Texture;
 		const auto &Iterator = ae::Assets.Textures.find(Texture);
 		if(Iterator == ae::Assets.Textures.end())
 			throw std::runtime_error("Cannot find texture '" + Texture + "' for light id " + std::to_string(Light.LightTypeID) + " in " + Path);

@@ -1044,7 +1044,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			if(Iterator != Stats->Lights.end()) {
 				Object->Light->Texture = Iterator->second.Texture;
 				Object->Light->Intensity = Iterator->second.Intensity;
-				Object->Light->Radius = Iterator->second.Radius;
+				Object->Light->Size = Iterator->second.Size;
 				Object->Light->Color = Iterator->second.Color;
 			}
 

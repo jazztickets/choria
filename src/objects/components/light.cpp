@@ -23,7 +23,7 @@ _Light::_Light(_Object *Object) :
 	LightTypeID(0),
 	Texture(nullptr),
 	Color(1.0f),
-	Intensity(0.0f),
-	Radius(0.0f) {
+	Size(0.0f),
+	Intensity(0.0f) {
 
 }
