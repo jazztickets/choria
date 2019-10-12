@@ -603,7 +603,7 @@ void _EditorState::Render(double BlendFactor) {
 
 		// Render selected objects
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
 		for(const auto &Iterator : SelectedObjects)
 			ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Iterator.first->Position) + glm::vec2(0.5f, 0.5f), 0), Iterator.first->Shape.HalfSize.x);
 	}
