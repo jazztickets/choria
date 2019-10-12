@@ -681,11 +681,14 @@ void _Stats::LoadLights(const std::string &Path) {
 		uint32_t ID;
 		File >> ID >> LightType.Intensity >> LightType.HalfSize.x >> LightType.Color.r >> LightType.Color.g >> LightType.Color.b >> Texture;
 		const auto &Iterator = ae::Assets.Textures.find(Texture);
-		if(Iterator == ae::Assets.Textures.end())
-			throw std::runtime_error("Cannot find texture '" + Texture + "' for light id " + std::to_string(ID) + " in " + Path);
+		if(!Headless) {
+			if(Iterator == ae::Assets.Textures.end())
+				throw std::runtime_error("Cannot find texture '" + Texture + "' for light id " + std::to_string(ID) + " in " + Path);
+
+			LightType.Texture = Iterator->second;
+		}
 
 		LightType.Color.a = 1.0f;
-		LightType.Texture = Iterator->second;
 		Lights[ID] = LightType;
 
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

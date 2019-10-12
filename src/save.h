@@ -71,5 +71,6 @@ class _Save {
 
 		int GetSaveVersion();
 		void CreateDefaultDatabase();
+		std::string GenerateSalt();
 
 };

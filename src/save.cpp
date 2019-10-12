@@ -30,13 +30,15 @@
 #include <constants.h>
 #include <json/writer.h>
 #include <json/reader.h>
+#include <picosha2/picosha2.h>
+#include <ctime>
 #include <stdexcept>
 #include <limits>
 #include <algorithm>
 
 // Constants
 const double DEFAULT_CLOCK = 8.0*60.0;
-const int SAVE_VERSION = 5;
+const int SAVE_VERSION = 6;
 
 // Constructor
 _Save::_Save() :
@@ -149,23 +151,37 @@ bool _Save::CheckUsername(const std::string &Username) {
 void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
 	std::string TrimmedUsername = ae::TrimString(Username);
 
-	Database->PrepareQuery("INSERT INTO account(username, password, data) VALUES(@username, @password, '')");
+	std::string Salt = GenerateSalt();
+	std::string Hash = picosha2::hash256_hex_string(Password + Salt);
+
+	Database->PrepareQuery("INSERT INTO account(username, password, salt, data) VALUES(@username, @password, @salt, '')");
 	Database->BindString(1, TrimmedUsername);
-	Database->BindString(2, Password);
+	Database->BindString(2, Hash);
+	Database->BindString(3, Salt);
 	Database->FetchRow();
 	Database->CloseQuery();
 }
 
 // Get account id from login credentials
 uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Password) {
-	uint32_t AccountID = 0;
-
 	std::string TrimmedUsername = ae::TrimString(Username);
 
+	// Get salt
+	std::string Salt;
+	Database->PrepareQuery("SELECT salt FROM account WHERE username = @username");
+	Database->BindString(1, TrimmedUsername);
+	if(Database->FetchRow())
+		Salt = Database->GetString(0);
+	Database->CloseQuery();
+
+	// Get hashed password
+	std::string Hash = picosha2::hash256_hex_string(Password + Salt);
+
 	// Get account information
+	uint32_t AccountID = 0;
 	Database->PrepareQuery("SELECT id FROM account WHERE username = @username AND password = @password");
 	Database->BindString(1, TrimmedUsername);
-	Database->BindString(2, Password);
+	Database->BindString(2, Hash);
 	if(Database->FetchRow())
 		AccountID = Database->GetInt<uint32_t>(0);
 	Database->CloseQuery();
@@ -360,12 +376,20 @@ void _Save::CreateDefaultDatabase() {
 		"	id INTEGER PRIMARY KEY,\n"
 		"	username TEXT,\n"
 		"	password TEXT,\n"
+		"	salt TEXT,\n"
 		"	data TEXT\n"
 		")"
 	);
 
-	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(" + std::to_string(ACCOUNT_SINGLEPLAYER_ID) + ", 'singleplayer', '', '')");
-	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(" + std::to_string(ACCOUNT_BOTS_ID) + ", 'bots', '', '')");
+	// Singleplayer account
+	std::string Salt = GenerateSalt();
+	std::string Hash = picosha2::hash256_hex_string(Salt);
+	Database->RunQuery("INSERT INTO account(id, username, password, salt, data) VALUES(" + std::to_string(ACCOUNT_SINGLEPLAYER_ID) + ", 'singleplayer', '" + Hash + "', '" + Salt + "', '')");
+
+	// Create bot account
+	Salt = GenerateSalt();
+	Hash = picosha2::hash256_hex_string(Salt);
+	Database->RunQuery("INSERT INTO account(id, username, password, salt, data) VALUES(" + std::to_string(ACCOUNT_BOTS_ID) + ", 'bots', '" + Hash + "', '" + Salt + "', '')");
 
 	// Characters
 	Database->RunQuery(
@@ -383,4 +407,13 @@ void _Save::CreateDefaultDatabase() {
 	Database->RunQuery("CREATE INDEX character_name ON character(name)");
 
 	EndTransaction();
+}
+
+// Generate random salt
+std::string _Save::GenerateSalt() {
+	char Buffer[256];
+	time_t Now = time(nullptr);
+	tm *UTC = std::gmtime(&Now);
+	std::strftime(Buffer, 256, "%c_", UTC);
+	return Buffer + std::to_string(ae::GetRandomInt((uint64_t)1, std::numeric_limits<uint64_t>::max()));
 }
