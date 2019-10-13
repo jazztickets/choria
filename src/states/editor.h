@@ -108,6 +108,7 @@ class _EditorState : public ae::_State {
 		void AdjustValue(uint32_t &Value, int Direction);
 		void SwitchBrushModes(int Key);
 		float GetLightRadius();
+		void GetLightSize(glm::vec2 &Size);
 
 		// Copy/Paste
 		void CopyTiles();

@@ -438,7 +438,10 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Intensity = LightBrush->Intensity;
 					Object->Light->Color = LightBrush->Color;
-					Object->Shape.HalfSize.x = GetLightRadius();
+					if(ae::Input.ModKeyDown(KMOD_SHIFT))
+						GetLightSize(Object->Shape.HalfSize);
+					else
+						Object->Shape.HalfSize.x = GetLightRadius();
 					Object->Position = DrawStart;
 					Map->StaticObjects.push_back(Object);
 				break;
@@ -604,8 +607,14 @@ void _EditorState::Render(double BlendFactor) {
 		// Render selected objects
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
-		for(const auto &Iterator : SelectedObjects)
-			ae::Graphics.DrawCircle(glm::vec3(glm::vec2(Iterator.first->Position) + glm::vec2(0.5f, 0.5f), 0), Iterator.first->Shape.HalfSize.x);
+		for(const auto &Iterator : SelectedObjects) {
+			const _Object *Object = Iterator.first;
+			glm::vec2 Position = glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f);
+			if(Object->Shape.IsAABB())
+				ae::Graphics.DrawRectangle3D(Position - Object->Shape.HalfSize, Position + Object->Shape.HalfSize, false);
+			else
+				ae::Graphics.DrawCircle(glm::vec3(Position , 0), Object->Shape.HalfSize.x);
+		}
 	}
 
 	switch(Mode) {
@@ -629,7 +638,14 @@ void _EditorState::Render(double BlendFactor) {
 			if(DrawingObject) {
 				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 				ae::Graphics.SetColor(glm::vec4(1.0f));
-				ae::Graphics.DrawCircle(glm::vec3(DrawStart, 0.0f), GetLightRadius());
+
+				if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
+					glm::vec2 Size;
+					GetLightSize(Size);
+					ae::Graphics.DrawRectangle3D(DrawStart - Size, DrawStart + Size, false);
+				}
+				else
+					ae::Graphics.DrawCircle(glm::vec3(DrawStart, 0.0f), GetLightRadius());
 			}
 		break;
 	}
@@ -1402,6 +1418,12 @@ void _EditorState::SwitchBrushModes(int Key) {
 float _EditorState::GetLightRadius() {
 
 	return std::max(0.5f, 0.5f * int(2.0f * glm::length(DrawStart - WorldCursor)));
+}
+
+// Get size of rectangular light while drawing
+void _EditorState::GetLightSize(glm::vec2 &Size) {
+	Size = glm::ivec2(glm::abs(WorldCursor - DrawStart) * 2.0f) / 2;
+	Size += glm::vec2(0.5f, 0.5f);
 }
 
 // Open browser or load map under cursor

@@ -814,7 +814,12 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 
 		// Draw light
 		glm::vec3 Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0);
-		glm::vec2 Scale(Object->Shape.HalfSize.x * 2.0f);
+		glm::vec2 Scale;
+		if(Object->Shape.IsAABB())
+			Scale = Object->Shape.HalfSize * 2.0f;
+		else
+			Scale = glm::vec2(Object->Shape.HalfSize.x * 2.0f);
+
 		ae::Graphics.SetColor(Light->Color);
 		ae::Graphics.DrawSprite(Position, Light->Texture, 0.0f, Scale);
 
