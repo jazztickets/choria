@@ -468,7 +468,12 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(!ToggleMode)
 				SelectedObjects.clear();
 
-			glm::vec4 Bounds(ObjectStart, WorldCursor);
+			// Get bounds of drawn box
+			glm::vec4 Bounds;
+			Bounds[0] = std::min(ObjectStart.x, WorldCursor.x);
+			Bounds[1] = std::min(ObjectStart.y, WorldCursor.y);
+			Bounds[2] = std::max(ObjectStart.x, WorldCursor.x);
+			Bounds[3] = std::max(ObjectStart.y, WorldCursor.y);
 			for(const auto &Object : Map->StaticObjects) {
 				if(Object->CheckAABB(Bounds)) {
 
