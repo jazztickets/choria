@@ -506,15 +506,16 @@
 				<element id="label_editor_loadmap" font="hud_medium" text="Load" offset_y="30" size_x="506" alignment_x="2" alignment_y="3"/>
 			</element>
 		</element>
-		<element id="element_editor_textures" style="style_hud_bg" size_x="1028" size_y="692" clickable="true"/>
-		<element id="element_editor_events" style="style_hud_bg" clickable="true">
+		<element id="element_editor_textures" style="style_editor_bg" size_x="1028" size_y="692" clickable="true"/>
+		<element id="element_editor_events" style="style_editor_bg" clickable="true">
 			<element id="element_editor_event_types"/>
-			<element id="element_editor_eventdata" style="style_menu_textbox" offset_x="104" offset_y="-30" size_x="600" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
-				<element id="textbox_editor_eventdata" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="50"/>
-				<element id="label_editor_eventdata" font="hud_medium" text="Data" offset_y="30" size_x="620" alignment_x="2" alignment_y="3"/>
+			<element id="element_editor_event_data" style="style_menu_textbox" offset_x="104" offset_y="-30" size_x="600" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
+				<element id="textbox_editor_event_data" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="50"/>
+				<element id="label_editor_event_data" font="hud_medium" text="Data" offset_y="30" size_x="620" alignment_x="2" alignment_y="3"/>
+				<element id="label_editor_event_message" font="hud_medium" color="red" offset_y="-30" size_x="620" alignment_x="0" alignment_y="3"/>
 			</element>
 		</element>
-		<element id="element_editor_lights" style="style_hud_bg" size_x="500" size_y="400" clickable="true">
+		<element id="element_editor_lights" style="style_editor_bg" size_x="500" size_y="400" clickable="true">
 			<element id="element_editor_light_types"/>
 			<element id="element_editor_light_r" style="style_menu_textbox" offset_x="150" offset_y="130" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
 				<element id="button_editor_light_r" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>

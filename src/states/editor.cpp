@@ -64,7 +64,8 @@ void _EditorState::Init() {
 	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
 	EventTypesElement = ae::Assets.Elements["element_editor_event_types"];
-	EventDataElement = ae::Assets.Elements["textbox_editor_eventdata"];
+	EventDataElement = ae::Assets.Elements["textbox_editor_event_data"];
+	EventMessageElement = ae::Assets.Elements["label_editor_event_message"];
 	NewMapElement = ae::Assets.Elements["element_editor_newmap"];
 	ResizeMapElement = ae::Assets.Elements["element_editor_resizemap"];
 	SaveMapElement = ae::Assets.Elements["element_editor_savemap"];
@@ -398,8 +399,28 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				// Validate data
 				switch((EventType)ClickedElement->Index) {
 					case EventType::VENDOR:
-						if(Stats->Vendors.find(EventDataElement->Text) == Stats->Vendors.end())
+						if(Stats->Vendors.find(EventDataElement->Text) == Stats->Vendors.end()) {
+							EventMessageElement->Text = "Vendor \"" + EventDataElement->Text + "\" not found!";
 							return;
+						}
+					break;
+					case EventType::TRADER:
+						if(Stats->Traders.find(EventDataElement->Text) == Stats->Traders.end()) {
+							EventMessageElement->Text = "Trader \"" + EventDataElement->Text + "\" not found!";
+							return;
+						}
+					break;
+					case EventType::BLACKSMITH:
+						if(Stats->Blacksmiths.find(EventDataElement->Text) == Stats->Blacksmiths.end()) {
+							EventMessageElement->Text = "Blacksmith \"" + EventDataElement->Text + "\" not found!";
+							return;
+						}
+					break;
+					case EventType::MINIGAME:
+						if(Stats->Minigames.find(EventDataElement->Text) == Stats->Minigames.end()) {
+							EventMessageElement->Text = "Minigame \"" + EventDataElement->Text + "\" not found!";
+							return;
+						}
 					break;
 				}
 
@@ -1180,7 +1201,7 @@ void _EditorState::InitEvents() {
 
 	size_t Count = Stats->EventTypes.size();
 	EventsElement->BaseSize.x = Start.x + (Spacing.x + Size.x) * 4;
-	EventsElement->BaseSize.y = Start.y + (Spacing.y + Size.y) * (Count / 4) + 80;
+	EventsElement->BaseSize.y = Start.y + (Spacing.y + Size.y) * (Count / 4) + 130;
 	EventTypesElement->BaseSize = EventsElement->BaseSize;
 	for(size_t i = 0; i < Count; i++) {
 
@@ -1212,6 +1233,7 @@ void _EditorState::InitEvents() {
 		}
 	}
 
+	EventMessageElement->Text = "";
 	EventsElement->CalculateBounds();
 	EventsElement->SetActive(true);
 }
