@@ -1098,7 +1098,7 @@ void _Object::StopBattle() {
 }
 
 // Check collision with a min max AABB
-bool _Object::CheckAABB(const glm::vec4 &AABB) {
+bool _Object::CheckAABB(const glm::vec4 &AABB) const {
 	glm::vec2 CenterPosition = glm::vec2(Position) + glm::vec2(0.5f);
 
 	// Shape is AABB

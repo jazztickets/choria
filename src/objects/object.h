@@ -106,7 +106,7 @@ class _Object : public ae::_BaseObject {
 		void StopBattle();
 
 		// Collision
-		bool CheckAABB(const glm::vec4 &AABB);
+		bool CheckAABB(const glm::vec4 &AABB) const;
 
 		// Status effects
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);

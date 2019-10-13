@@ -100,6 +100,8 @@ class _EditorState : public ae::_State {
 		void SwitchMode(EditorModeType Value);
 
 		// Objects
+		bool TouchingSelectedObjects(const glm::vec2 &Position);
+		void GetMovingOffset(glm::vec2 &Offset);
 		void DeleteSelectedObjects();
 
 		// Brushes
@@ -146,9 +148,10 @@ class _EditorState : public ae::_State {
 		std::unordered_map <_Object *, int> SelectedObjects;
 		bool DrawingObject;
 		bool DrawingSelect;
+		bool MovingObjects;
 		int ObjectType;
 		uint32_t ObjectData;
-		glm::vec2 DrawStart;
+		glm::vec2 ObjectStart;
 		_Light *LightBrush;
 
 		// Filter

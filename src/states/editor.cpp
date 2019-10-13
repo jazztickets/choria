@@ -130,7 +130,8 @@ void _EditorState::Init() {
 	DrawCopyBounds = false;
 	DrawingObject = false;
 	DrawingSelect = false;
-	DrawStart = glm::vec2(0.0f, 0.0f);
+	MovingObjects = false;
+	ObjectStart = glm::vec2(0.0f, 0.0f);
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
 	WorldCursor = glm::vec2(0.0f, 0.0f);
@@ -328,7 +329,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							break;
 
 						DrawingObject = true;
-						DrawStart = glm::vec2(glm::ivec2(WorldCursor)) + glm::vec2(0.5f, 0.5f);
+						ObjectStart = glm::vec2(glm::ivec2(WorldCursor)) + glm::vec2(0.5f, 0.5f);
 					break;
 				}
 			break;
@@ -343,10 +344,13 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						DrawCopyBounds = true;
 						CopyStart = Map->GetValidCoord(WorldCursor);
 					break;
-					// Select objects
+					// Select or move objects
 					case EditorModeType::LIGHTS:
-						DrawingSelect = true;
-						DrawStart = WorldCursor;
+						if(TouchingSelectedObjects(WorldCursor))
+							MovingObjects = true;
+						else
+							DrawingSelect = true;
+						ObjectStart = WorldCursor;
 					break;
 				}
 			} break;
@@ -442,7 +446,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						GetLightSize(Object->Shape.HalfSize);
 					else
 						Object->Shape.HalfSize.x = GetLightRadius();
-					Object->Position = DrawStart;
+					Object->Position = ObjectStart;
 					Map->StaticObjects.push_back(Object);
 				break;
 			}
@@ -464,7 +468,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(!ToggleMode)
 				SelectedObjects.clear();
 
-			glm::vec4 Bounds(DrawStart, WorldCursor);
+			glm::vec4 Bounds(ObjectStart, WorldCursor);
 			for(const auto &Object : Map->StaticObjects) {
 				if(Object->CheckAABB(Bounds)) {
 
@@ -476,6 +480,17 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						SelectedObjects[Object] = 1;
 				}
 			}
+		}
+
+		// Translate objects
+		if(MovingObjects) {
+			MovingObjects = false;
+
+			// Update object positions
+			glm::vec2 Offset;
+			GetMovingOffset(Offset);
+			for(const auto &Iterator : SelectedObjects)
+				Iterator.first->Position += Offset;
 		}
 	}
 }
@@ -604,12 +619,17 @@ void _EditorState::Render(double BlendFactor) {
 
 		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
 
+		// Handle moving objects
+		glm::vec2 Offset(0.0f, 0.0f);
+		if(MovingObjects)
+			GetMovingOffset(Offset);
+
 		// Render selected objects
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
 		for(const auto &Iterator : SelectedObjects) {
 			const _Object *Object = Iterator.first;
-			glm::vec2 Position = glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f);
+			glm::vec2 Position = Offset + glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f);
 			if(Object->Shape.IsAABB())
 				ae::Graphics.DrawRectangle3D(Position - Object->Shape.HalfSize, Position + Object->Shape.HalfSize, false);
 			else
@@ -642,10 +662,10 @@ void _EditorState::Render(double BlendFactor) {
 				if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
 					glm::vec2 Size;
 					GetLightSize(Size);
-					ae::Graphics.DrawRectangle3D(DrawStart - Size, DrawStart + Size, false);
+					ae::Graphics.DrawRectangle3D(ObjectStart - Size, ObjectStart + Size, false);
 				}
 				else
-					ae::Graphics.DrawCircle(glm::vec3(DrawStart, 0.0f), GetLightRadius());
+					ae::Graphics.DrawCircle(glm::vec3(ObjectStart, 0.0f), GetLightRadius());
 			}
 		break;
 	}
@@ -654,7 +674,7 @@ void _EditorState::Render(double BlendFactor) {
 	if(DrawingSelect) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawRectangle3D(DrawStart, WorldCursor, false);
+		ae::Graphics.DrawRectangle3D(ObjectStart, WorldCursor, false);
 	}
 
 	// Setup UI
@@ -1228,6 +1248,24 @@ void _EditorState::SwitchMode(EditorModeType Value) {
 	DrawingObject = false;
 }
 
+// Return true if the position is within one of the selected objects
+bool _EditorState::TouchingSelectedObjects(const glm::vec2 &Position) {
+
+	// Test objects
+	for(auto &Iterator : SelectedObjects) {
+		const _Object *Object = Iterator.first;
+		if(Object->CheckAABB(glm::vec4(Position, Position)))
+			return true;
+	}
+
+	return false;
+}
+
+// Get offset while moving objects
+void _EditorState::GetMovingOffset(glm::vec2 &Offset) {
+	Offset = glm::ivec2((WorldCursor - ObjectStart) * 2.0f) / 2;
+}
+
 // Delete all the selected objects
 void _EditorState::DeleteSelectedObjects() {
 	if(!Map)
@@ -1417,12 +1455,12 @@ void _EditorState::SwitchBrushModes(int Key) {
 // Get radius of light while drawing
 float _EditorState::GetLightRadius() {
 
-	return std::max(0.5f, 0.5f * int(2.0f * glm::length(DrawStart - WorldCursor)));
+	return std::max(0.5f, 0.5f * int(2.0f * glm::length(ObjectStart - WorldCursor)));
 }
 
 // Get size of rectangular light while drawing
 void _EditorState::GetLightSize(glm::vec2 &Size) {
-	Size = glm::ivec2(glm::abs(WorldCursor - DrawStart) * 2.0f) / 2;
+	Size = glm::ivec2(glm::abs(WorldCursor - ObjectStart) * 2.0f) / 2;
 	Size += glm::vec2(0.5f, 0.5f);
 }
 
