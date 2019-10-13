@@ -1498,6 +1498,7 @@ void _EditorState::UpdateSliders() {
 	};
 
 	// Loop through sliders
+	bool Changed = false;
 	size_t Count = sizeof(Data) / sizeof(Data[0]);
 	for(size_t i = 0; i < Count; i++) {
 		ae::_Element *Slider = ae::Assets.Elements["element_editor_" + Data[i].first];
@@ -1521,13 +1522,15 @@ void _EditorState::UpdateSliders() {
 
 			// Update data source
 			*Data[i].second = std::stof(Value->Text);
+			Changed = true;
 		}
 	}
 
 	// Update selected objects
-	for(const auto &Iterator : SelectedObjects) {
-		_Object *Object = Iterator.first;
-		Object->Light->Color = LightBrush->Color;
+	if(Changed) {
+		for(const auto &Iterator : SelectedObjects) {
+			Iterator.first->Light->Color = LightBrush->Color;
+		}
 	}
 }
 
