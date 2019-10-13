@@ -329,7 +329,8 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							break;
 
 						DrawingObject = true;
-						ObjectStart = glm::ivec2(WorldCursor);
+						ObjectStart = glm::ivec2(WorldCursor * 2.0f);
+						ObjectStart *= 0.5f;
 					break;
 				}
 			break;
@@ -442,10 +443,10 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Color = LightBrush->Color;
 					if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
-						glm::vec2 Size;
-						GetLightSize(Size);
-						Object->Shape.HalfSize = Size * 0.5f;
-						Object->Position = ObjectStart;
+						ae::_Bounds Bounds;
+						GetDrawBounds(Bounds, true);
+						Object->Shape.HalfSize = (Bounds.End - Bounds.Start) * 0.5f;
+						Object->Position = Bounds.Start + Object->Shape.HalfSize;
 					}
 					else {
 						Object->Shape.HalfSize.x = GetLightRadius();
@@ -473,11 +474,8 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				SelectedObjects.clear();
 
 			// Get bounds of drawn box
-			glm::vec4 Bounds;
-			Bounds[0] = std::min(ObjectStart.x, WorldCursor.x);
-			Bounds[1] = std::min(ObjectStart.y, WorldCursor.y);
-			Bounds[2] = std::max(ObjectStart.x, WorldCursor.x);
-			Bounds[3] = std::max(ObjectStart.y, WorldCursor.y);
+			ae::_Bounds Bounds;
+			GetDrawBounds(Bounds, false);
 			for(const auto &Object : Map->StaticObjects) {
 				if(Object->CheckAABB(Bounds)) {
 
@@ -638,15 +636,15 @@ void _EditorState::Render(double BlendFactor) {
 		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
 		for(const auto &Iterator : SelectedObjects) {
 			const _Object *Object = Iterator.first;
-			glm::vec2 Position = Offset + glm::vec2(Object->Position) + glm::vec2(0.5f, 0.5f);
+			glm::vec2 Position = Offset + Object->Position;
 			if(Object->Shape.IsAABB())
 				ae::Graphics.DrawRectangle3D(Position - Object->Shape.HalfSize, Position + Object->Shape.HalfSize, false);
 			else
-				ae::Graphics.DrawCircle(glm::vec3(Position , 0), Object->Shape.HalfSize.x);
+				ae::Graphics.DrawCircle(glm::vec3(Position, 0), Object->Shape.HalfSize.x);
 		}
 	}
 
-	glm::ivec2 SelectionSize(0, 0);
+	glm::vec2 SelectionSize(0, 0);
 	bool DrawSelectionSize = false;
 	switch(Mode) {
 		case EditorModeType::TILES:
@@ -656,7 +654,7 @@ void _EditorState::Render(double BlendFactor) {
 
 				// Draw copy tool boundaries
 				glm::ivec2 Start, End;
-				GetDrawBounds(Start, End);
+				GetTileDrawBounds(Start, End);
 				ae::Graphics.DrawRectangle(Start, End + 1, true);
 
 				// Get size
@@ -679,16 +677,14 @@ void _EditorState::Render(double BlendFactor) {
 				ae::Graphics.SetColor(glm::vec4(1.0f));
 
 				if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
-					glm::vec2 Size;
-					GetLightSize(Size);
-					SelectionSize = Size;
-
-					Size *= 0.5f;
-					ae::Graphics.DrawRectangle3D(ObjectStart - Size  + glm::vec2(0.5f, 0.5f), ObjectStart + Size + glm::vec2(0.5f, 0.5f), false);
+					ae::_Bounds Bounds;
+					GetDrawBounds(Bounds, true);
+					SelectionSize = Bounds.End - Bounds.Start;
+					ae::Graphics.DrawRectangle3D(Bounds.Start, Bounds.End, false);
 				}
 				else {
 					float Radius = GetLightRadius();
-					ae::Graphics.DrawCircle(glm::vec3(ObjectStart + glm::vec2(0.5f, 0.5f), 0.0f), Radius);
+					ae::Graphics.DrawCircle(glm::vec3(ObjectStart, 0.0f), Radius);
 
 					SelectionSize = glm::ivec2(Radius * 2);
 				}
@@ -928,7 +924,7 @@ void _EditorState::CopyTiles() {
 	Copied = true;
 
 	// Get copy bounds
-	GetDrawBounds(CopyStart, CopyEnd);
+	GetTileDrawBounds(CopyStart, CopyEnd);
 
 	// Copy tiles
 	for(int j = 0; j < CopyEnd.y - CopyStart.y + 1; j++) {
@@ -967,8 +963,28 @@ void _EditorState::PasteTiles() {
 	Map->BuildLayers(glm::ivec4(PastePosition - glm::ivec2(1), PastePosition + glm::ivec2(CopyWidth, CopyHeight)), ShowTransitions);
 }
 
+// Get bounds of drawn rectangle
+void _EditorState::GetDrawBounds(ae::_Bounds &Bounds, bool Round) {
+	Bounds.Start.x = std::min(ObjectStart.x, WorldCursor.x);
+	Bounds.Start.y = std::min(ObjectStart.y, WorldCursor.y);
+	Bounds.End.x = std::max(ObjectStart.x, WorldCursor.x);
+	Bounds.End.y = std::max(ObjectStart.y, WorldCursor.y);
+
+	if(Round) {
+		Bounds.Start = glm::ivec2(Bounds.Start * 2.0f);
+		Bounds.Start *= 0.5f;
+		Bounds.End = glm::ivec2(Bounds.End * 2.0f + 1.0f);
+		Bounds.End *= 0.5f;
+
+		if(Bounds.Start.x == Bounds.End.x)
+			Bounds.End.x += 0.5f;
+		if(Bounds.Start.y == Bounds.End.y)
+			Bounds.End.y += 0.5f;
+	}
+}
+
 // Get tile range from anchor point to world cursor
-void _EditorState::GetDrawBounds(glm::ivec2 &Start, glm::ivec2 &End) {
+void _EditorState::GetTileDrawBounds(glm::ivec2 &Start, glm::ivec2 &End) {
 	Start = CopyStart;
 	End = Map->GetValidCoord(WorldCursor);
 
@@ -1298,7 +1314,8 @@ bool _EditorState::TouchingSelectedObjects(const glm::vec2 &Position) {
 
 // Get offset while moving objects
 void _EditorState::GetMovingOffset(glm::vec2 &Offset) {
-	Offset = glm::ivec2((WorldCursor - ObjectStart) * 2.0f) / 2;
+	Offset = glm::ivec2((WorldCursor - ObjectStart) * 2.0f);
+	Offset *= 0.5f;
 }
 
 // Delete all the selected objects
@@ -1491,11 +1508,6 @@ void _EditorState::SwitchBrushModes(int Key) {
 float _EditorState::GetLightRadius() {
 
 	return std::max(0.5f, 0.5f * int(2.0f * glm::length(ObjectStart - WorldCursor)));
-}
-
-// Get size of rectangular light while drawing
-void _EditorState::GetLightSize(glm::vec2 &Size) {
-	Size = glm::ivec2(glm::abs(WorldCursor - ObjectStart) * 2.0f) / 2 + 1;
 }
 
 // Open browser or load map under cursor

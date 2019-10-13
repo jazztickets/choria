@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <ae/bounds.h>
 #include <ae/state.h>
 #include <vector>
 #include <unordered_map>
@@ -110,12 +111,12 @@ class _EditorState : public ae::_State {
 		void AdjustValue(uint32_t &Value, int Direction);
 		void SwitchBrushModes(int Key);
 		float GetLightRadius();
-		void GetLightSize(glm::vec2 &Size);
 
 		// Copy/Paste
 		void CopyTiles();
 		void PasteTiles();
-		void GetDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
+		void GetDrawBounds(ae::_Bounds &Bounds, bool Round);
+		void GetTileDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
 
 		// General
 		const _Stats *Stats;

@@ -72,8 +72,8 @@ _Object::_Object() :
 	Server(nullptr),
 	Peer(nullptr),
 
-	Position(0, 0),
-	ServerPosition(0, 0),
+	Position(0.0f, 0.0f),
+	ServerPosition(0.0f, 0.0f),
 
 	Model(nullptr),
 	BuildTexture(nullptr) {
@@ -356,7 +356,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 			Alpha = PLAYER_INVIS_ALPHA;
 
 		// Draw model
-		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+		DrawPosition = glm::vec3(Position, 0.0f);
 		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
 		ae::Graphics.DrawSprite(DrawPosition, Model->Texture);
 		if(Character->StatusTexture) {
@@ -534,8 +534,8 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	// Write stats
 	Json::Value StatsNode;
 	StatsNode["hardcore"] = Character->Hardcore;
-	StatsNode["map_x"] = Position.x;
-	StatsNode["map_y"] = Position.y;
+	StatsNode["map_x"] = (int)Position.x;
+	StatsNode["map_y"] = (int)Position.y;
 	StatsNode["map"] = Character->LoadMap ? Character->LoadMap->Name : "";
 	StatsNode["spawnmap"] = Character->SpawnMap ? Character->SpawnMap->Name : DEFAULT_MAP;
 	StatsNode["spawnpoint"] = Character->SpawnPoint;
@@ -644,6 +644,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->LoadMap = Server->MapManager->GetObject(Stats->MapsIndex.at(StatsNode["map"].asString()));
 	Position.x = StatsNode["map_x"].asInt();
 	Position.y = StatsNode["map_y"].asInt();
+	Position += 0.5f;
 	Model = &Stats->Models.at(StatsNode["model"].asString());
 	Character->SpawnMap = Server->MapManager->GetObject(Stats->MapsIndex.at(StatsNode["spawnmap"].asString()));
 	Character->SpawnPoint = StatsNode["spawnpoint"].asString();
@@ -753,7 +754,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 
 // Unserialize for ObjectCreate
 void _Object::UnserializeCreate(ae::_Buffer &Data) {
-	Position = Data.Read<glm::ivec2>();
+	SetPositionFromCoords(Data.Read<glm::ivec2>());
 	Name = Data.ReadString();
 	uint8_t PortraitID = Data.Read<uint8_t>();
 	Model = Stats->GetModel(Data.Read<uint8_t>());
@@ -910,7 +911,8 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Controller->InputStates.clear();
 
 	// Get object type
-	Position = ServerPosition = Data.Read<glm::ivec2>();
+	SetPositionFromCoords(Data.Read<glm::ivec2>());
+	ServerPosition = Position;
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
@@ -1098,37 +1100,36 @@ void _Object::StopBattle() {
 }
 
 // Check collision with a min max AABB
-bool _Object::CheckAABB(const glm::vec4 &AABB) const {
-	glm::vec2 CenterPosition = glm::vec2(Position) + glm::vec2(0.5f);
+bool _Object::CheckAABB(const ae::_Bounds &Bounds) const {
 
 	// Shape is AABB
 	if(Shape.IsAABB()) {
-		if(CenterPosition.x - Shape.HalfSize[0] >= AABB[2])
+		if(Position.x - Shape.HalfSize.x >= Bounds.End.x)
 			return false;
 
-		if(CenterPosition.y - Shape.HalfSize[1] >= AABB[3])
+		if(Position.y - Shape.HalfSize.y >= Bounds.End.y)
 			return false;
 
-		if(CenterPosition.x + Shape.HalfSize[0] <= AABB[0])
+		if(Position.x + Shape.HalfSize.x <= Bounds.Start.x)
 			return false;
 
-		if(CenterPosition.y + Shape.HalfSize[1] <= AABB[1])
+		if(Position.y + Shape.HalfSize.y <= Bounds.Start.y)
 			return false;
 	}
 	else {
 
 		// Get closest point on AABB
-		glm::vec2 Point = CenterPosition;
-		if(Point.x < AABB[0])
-			Point.x = AABB[0];
-		if(Point.y < AABB[1])
-			Point.y = AABB[1];
-		if(Point.x > AABB[2])
-			Point.x = AABB[2];
-		if(Point.y > AABB[3])
-			Point.y = AABB[3];
+		glm::vec2 Point = Position;
+		if(Point.x < Bounds.Start.x)
+			Point.x = Bounds.Start.x;
+		if(Point.y < Bounds.Start.y)
+			Point.y = Bounds.Start.y;
+		if(Point.x > Bounds.End.x)
+			Point.x = Bounds.End.x;
+		if(Point.y > Bounds.End.y)
+			Point.y = Bounds.End.y;
 
-		return glm::distance2(Point, CenterPosition) < Shape.HalfSize[0] * Shape.HalfSize[0];
+		return glm::distance2(Point, Position) < Shape.HalfSize.x * Shape.HalfSize.x;
 	}
 
 	return true;

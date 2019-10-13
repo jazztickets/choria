@@ -812,16 +812,16 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 		if(!Object->CheckAABB(AABB))
 			continue;
 
-		// Draw light
-		glm::vec3 Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0);
+		// Get size
 		glm::vec2 Scale;
 		if(Object->Shape.IsAABB())
 			Scale = Object->Shape.HalfSize * 2.0f;
 		else
 			Scale = glm::vec2(Object->Shape.HalfSize.x * 2.0f);
 
+		// Draw light
 		ae::Graphics.SetColor(Light->Color);
-		ae::Graphics.DrawSprite(Position, Light->Texture, 0.0f, Scale);
+		ae::Graphics.DrawSprite(glm::vec3(Object->Position, 0), Light->Texture, 0.0f, Scale);
 
 		LightCount++;
 	}
@@ -933,10 +933,10 @@ void _Map::Load(const std::string &Path, bool Static) {
 			} break;
 			// Object
 			case 'O': {
-				glm::ivec2 Coordinate;
-				File >> Coordinate.x >> Coordinate.y;
+				glm::vec2 Position;
+				File >> Position.x >> Position.y;
 				Object = new _Object();
-				Object->Position = Coordinate;
+				Object->Position = Position;
 				StaticObjects.push_back(Object);
 			} break;
 			// Object light
@@ -1121,7 +1121,7 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 		if(Object == Player)
 			continue;
 
-		if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Character->Battle && !Object->Character->Battle->PVP && Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
+		if(Object->GetTilePosition() == Player->GetTilePosition() && Object->Character->IsAlive() && Object->Character->Battle && !Object->Character->Battle->PVP && Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
 			if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
 				return Object->Character->Battle;
 			else

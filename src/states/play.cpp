@@ -666,7 +666,7 @@ void _PlayState::Update(double FrameTime) {
 	}
 
 	// Update camera
-	Camera->Set2DPosition(Player->Position + glm::vec2(0.5f, 0.5f));
+	Camera->Set2DPosition(Player->Position);
 	Camera->Update(FrameTime);
 
 	// Update the HUD
@@ -960,7 +960,7 @@ void _PlayState::HandleObjectList(ae::_Buffer &Data) {
 	}
 
 	if(Player) {
-		Camera->ForcePosition(glm::vec3(Player->Position, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
+		Camera->ForcePosition(glm::vec3(Player->Position, CAMERA_DISTANCE));
 	}
 	else {
 		// Error
@@ -1034,7 +1034,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 
 			// Set stats
 			if(Object != Player) {
-				Object->Position = Position;
+				Object->SetPositionFromCoords(Position);
 				Object->Character->Invisible = Invisible;
 				Object->Character->Bounty = Bounty;
 			}
@@ -1097,7 +1097,7 @@ void _PlayState::HandlePlayerPosition(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->Position = Data.Read<glm::ivec2>();
+	Player->SetPositionFromCoords(Data.Read<glm::ivec2>());
 	Player->Controller->WaitForServer = false;
 	Player->Character->TeleportTime = -1;
 	HUD->StopTeleport();
@@ -1124,7 +1124,7 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 	// Read packet
 	EventType Event = Data.Read<EventType>();
 	std::string EventData = Data.ReadString();
-	Player->Position = Data.Read<glm::ivec2>();
+	Player->SetPositionFromCoords(Data.Read<glm::ivec2>());
 
 	// Handle event
 	switch(Event) {

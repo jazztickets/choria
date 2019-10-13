@@ -319,7 +319,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			if(!Player)
 				break;
 
-			Player->Position = Data.Read<glm::ivec2>();
+			Player->SetPositionFromCoords(Data.Read<glm::ivec2>());
 			Player->Controller->WaitForServer = false;
 			Player->Character->TeleportTime = -1;
 		} break;

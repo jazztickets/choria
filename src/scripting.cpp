@@ -435,10 +435,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
 
-	lua_pushinteger(LuaState, Object->Position.x);
+	lua_pushinteger(LuaState, (int)Object->Position.x);
 	lua_setfield(LuaState, -2, "X");
 
-	lua_pushinteger(LuaState, Object->Position.y);
+	lua_pushinteger(LuaState, (int)Object->Position.y);
 	lua_setfield(LuaState, -2, "Y");
 
 	if(Object->Map)
@@ -926,8 +926,8 @@ int _Scripting::ObjectFindEvent(lua_State *LuaState) {
 	if(!Object->Map->FindEvent(_Event(Type, Data), Position))
 		return 0;
 
-	lua_pushinteger(LuaState, Position.x);
-	lua_pushinteger(LuaState, Position.y);
+	lua_pushinteger(LuaState, (int)Position.x);
+	lua_pushinteger(LuaState, (int)Position.y);
 
 	return 2;
 }

@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <ae/bounds.h>
 #include <ae/baseobject.h>
 #include <ae/physics.h>
 #include <glm/vec2.hpp>
@@ -106,7 +107,7 @@ class _Object : public ae::_BaseObject {
 		void StopBattle();
 
 		// Collision
-		bool CheckAABB(const glm::vec4 &AABB) const;
+		bool CheckAABB(const ae::_Bounds &Bounds) const;
 
 		// Status effects
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
@@ -115,7 +116,9 @@ class _Object : public ae::_BaseObject {
 		void SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager);
 
 		// Movement
+		void SetPositionFromCoords(const glm::ivec2 &Coords) { Position = glm::vec2(Coords) + glm::vec2(0.5f); }
 		void GetDirectionFromInput(int InputState, glm::vec2 &Direction);
+		glm::ivec2 GetTilePosition() const { return Position; }
 		int Move();
 
 		// Trader

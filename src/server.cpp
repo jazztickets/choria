@@ -1668,7 +1668,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		uint8_t X = Data.Read<uint8_t>();
 		uint8_t Y = Data.Read<uint8_t>();
 
-		Player->Position = Player->Map->GetValidCoord(glm::ivec2(X, Y));
+		Player->SetPositionFromCoords(Player->Map->GetValidCoord(glm::ivec2(X, Y)));
 		SendPlayerPosition(Player->Peer);
 	}
 }
