@@ -1523,6 +1523,12 @@ void _EditorState::UpdateSliders() {
 			*Data[i].second = std::stof(Value->Text);
 		}
 	}
+
+	// Update selected objects
+	for(const auto &Iterator : SelectedObjects) {
+		_Object *Object = Iterator.first;
+		Object->Light->Color = LightBrush->Color;
+	}
 }
 
 // Apply brush to map
