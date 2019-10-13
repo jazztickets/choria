@@ -115,7 +115,7 @@ class _Object : public ae::_BaseObject {
 		void SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager);
 
 		// Movement
-		void GetDirectionFromInput(int InputState, glm::ivec2 &Direction);
+		void GetDirectionFromInput(int InputState, glm::vec2 &Direction);
 		int Move();
 
 		// Trader
@@ -152,8 +152,8 @@ class _Object : public ae::_BaseObject {
 		ae::_Peer *Peer;
 
 		// Movement
-		glm::ivec2 Position;
-		glm::ivec2 ServerPosition;
+		glm::vec2 Position;
+		glm::vec2 ServerPosition;
 
 		// Render
 		const _Model *Model;

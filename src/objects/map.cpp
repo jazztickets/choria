@@ -303,7 +303,7 @@ void _Map::CheckEvents(_Object *Object) {
 
 	//TODO fix
 	// Handle events
-	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
+	const _Tile *Tile = &Tiles[(int)Object->Position.x][(int)Object->Position.y];
 	switch(Tile->Event.Type) {
 		case EventType::SPAWN:
 			if(Server && !(Object->Character->SpawnMap == this && Object->Character->SpawnPoint == Tile->Event.Data))
@@ -1195,7 +1195,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 }
 
 // Find closest event on the map, returns true on found
-bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) const {
+bool _Map::FindEvent(const _Event &Event, glm::vec2 &Position) const {
 
 	// Find event
 	auto Iterator = IndexedEvents.find(Event);
@@ -1203,7 +1203,7 @@ bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) const {
 		return false;
 
 	// Return closest position
-	glm::ivec2 StartPosition = Position;
+	glm::vec2 StartPosition = Position;
 	float ClosestDistanceSquared = std::numeric_limits<float>::infinity();
 	for(const auto &CheckPosition : Iterator->second) {
 		glm::vec2 Delta = StartPosition - CheckPosition;

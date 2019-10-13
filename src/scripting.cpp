@@ -922,7 +922,7 @@ int _Scripting::ObjectFindEvent(lua_State *LuaState) {
 	if(!Object->Map)
 		return 0;
 
-	glm::ivec2 Position = Object->Position;
+	glm::vec2 Position = Object->Position;
 	if(!Object->Map->FindEvent(_Event(Type, Data), Position))
 		return 0;
 

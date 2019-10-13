@@ -1060,7 +1060,7 @@ int _Object::Move() {
 	Controller->InputStates.pop_front();
 
 	// Get new position
-	glm::ivec2 Direction(0, 0);
+	glm::vec2 Direction(0, 0);
 	GetDirectionFromInput(InputState, Direction);
 
 	// Move player
@@ -1243,7 +1243,7 @@ void _Object::SendSeed(bool Generate) {
 }
 
 // Convert input state bitfield to direction
-void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
+void _Object::GetDirectionFromInput(int InputState, glm::vec2 &Direction) {
 	if(InputState & MOVE_UP)
 		Direction.y += -1;
 	if(InputState & MOVE_DOWN)
@@ -1300,7 +1300,7 @@ int _Object::GetInputStateFromPath() {
 		glm::ivec2 NodePosition;
 		Map->NodeToPosition(*Iterator, NodePosition);
 
-		if(Position == NodePosition) {
+		if(glm::ivec2(Position) == NodePosition) {
 			auto NextIterator = std::next(Iterator, 1);
 			if(NextIterator == Character->Path.end()) {
 				Character->Path.clear();
@@ -1311,7 +1311,7 @@ int _Object::GetInputStateFromPath() {
 			Map->NodeToPosition(*NextIterator, NodePosition);
 
 			// Get direction to next node
-			glm::ivec2 Direction = NodePosition - Position;
+			glm::ivec2 Direction = NodePosition - glm::ivec2(Position);
 			if(Direction.x < 0)
 				InputState = _Object::MOVE_LEFT;
 			else if(Direction.x > 0)

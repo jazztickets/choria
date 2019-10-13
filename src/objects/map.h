@@ -138,7 +138,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty);
 		void GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, bool UsePVPZone);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
-		bool FindEvent(const _Event &Event, glm::ivec2 &Position) const;
+		bool FindEvent(const _Event &Event, glm::vec2 &Position) const;
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
@@ -166,7 +166,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		std::string Name;
 		_Tile **Tiles;
 		glm::ivec2 Size;
-		std::map<_Event, std::vector<glm::ivec2>> IndexedEvents;
+		std::map<_Event, std::vector<glm::vec2>> IndexedEvents;
 
 		// Graphics
 		bool Headless;

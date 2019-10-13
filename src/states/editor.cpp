@@ -1442,7 +1442,7 @@ void _EditorState::LoadMap() {
 		AllocateCopy();
 
 		// Set camera position
-		glm::ivec2 Position(Map->Size.x/2, Map->Size.y/2);
+		glm::vec2 Position(Map->Size.x/2, Map->Size.y/2);
 		if(!Map->FindEvent(_Event(EventType::SPAWN, ""), Position)) {
 			//TODO fix
 			//if(!Map->FindEvent(_Event(EventType::MAPCHANGE, OldMapID), Position))

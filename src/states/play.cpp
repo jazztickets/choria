@@ -631,7 +631,7 @@ void _PlayState::Update(double FrameTime) {
 			InputState |= _Object::MOVE_RIGHT;
 
 		// Get player direction
-		glm::ivec2 Direction(0, 0);
+		glm::vec2 Direction(0, 0);
 		Player->GetDirectionFromInput(InputState, Direction);
 
 		// Append input state if moving
@@ -666,7 +666,7 @@ void _PlayState::Update(double FrameTime) {
 	}
 
 	// Update camera
-	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
+	Camera->Set2DPosition(Player->Position + glm::vec2(0.5f, 0.5f));
 	Camera->Update(FrameTime);
 
 	// Update the HUD
