@@ -22,7 +22,6 @@ _Light::_Light(_Object *Object) :
 	Object(Object),
 	LightTypeID(0),
 	Texture(nullptr),
-	Color(1.0f),
-	Intensity(0.0f) {
+	Color(1.0f) {
 
 }

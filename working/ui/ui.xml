@@ -514,22 +514,27 @@
 				<element id="label_editor_eventdata" font="hud_medium" text="Data" offset_y="30" size_x="620" alignment_x="2" alignment_y="3"/>
 			</element>
 		</element>
-		<element id="element_editor_lights" style="style_hud_bg" size_x="1028" size_y="692" clickable="true">
+		<element id="element_editor_lights" style="style_hud_bg" size_x="500" size_y="400" clickable="true">
 			<element id="element_editor_light_types"/>
-			<element id="element_editor_light_r" style="style_menu_textbox" offset_x="150" offset_y="140" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
+			<element id="element_editor_light_r" style="style_menu_textbox" offset_x="150" offset_y="130" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
 				<element id="button_editor_light_r" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
 				<element id="label_editor_light_r_value" font="hud_medium" text="1.00" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
 				<element id="label_editor_light_r" font="hud_medium" text="R" offset_x="-220" offset_y="30" alignment_x="2" alignment_y="3"/>
 			</element>
-			<element id="element_editor_light_g" style="style_menu_textbox" offset_x="150" offset_y="200" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
+			<element id="element_editor_light_g" style="style_menu_textbox" offset_x="150" offset_y="190" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
 				<element id="button_editor_light_g" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
 				<element id="label_editor_light_g_value" font="hud_medium" text="1.00" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
 				<element id="label_editor_light_g" font="hud_medium" text="G" offset_x="-220" offset_y="30" alignment_x="2" alignment_y="3"/>
 			</element>
-			<element id="element_editor_light_b" style="style_menu_textbox" offset_x="150" offset_y="260" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
+			<element id="element_editor_light_b" style="style_menu_textbox" offset_x="150" offset_y="250" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
 				<element id="button_editor_light_b" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
 				<element id="label_editor_light_b_value" font="hud_medium" text="1.00" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
 				<element id="label_editor_light_b" font="hud_medium" text="B" offset_x="-220" offset_y="30" alignment_x="2" alignment_y="3"/>
+			</element>
+			<element id="element_editor_light_a" style="style_menu_textbox" offset_x="150" offset_y="310" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
+				<element id="button_editor_light_a" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
+				<element id="label_editor_light_a_value" font="hud_medium" text="1.00" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
+				<element id="label_editor_light_a" font="hud_medium" text="A" offset_x="-220" offset_y="30" alignment_x="2" alignment_y="3"/>
 			</element>
 		</element>
 	</element>

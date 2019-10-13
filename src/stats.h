@@ -159,7 +159,6 @@ struct _LightType {
 	const ae::_Texture *Texture;
 	glm::vec4 Color;
 	glm::vec2 HalfSize;
-	float Intensity;
 };
 
 // Classes

@@ -679,7 +679,7 @@ void _Stats::LoadLights(const std::string &Path) {
 		_LightType LightType;
 		std::string Texture;
 		uint32_t ID;
-		File >> ID >> LightType.Intensity >> LightType.HalfSize.x >> LightType.Color.r >> LightType.Color.g >> LightType.Color.b >> Texture;
+		File >> ID >> LightType.HalfSize.x >> LightType.Color.r >> LightType.Color.g >> LightType.Color.b >> LightType.Color.a >> Texture;
 		const auto &Iterator = ae::Assets.Textures.find(Texture);
 		if(!Headless) {
 			if(Iterator == ae::Assets.Textures.end())
@@ -688,7 +688,6 @@ void _Stats::LoadLights(const std::string &Path) {
 			LightType.Texture = Iterator->second;
 		}
 
-		LightType.Color.a = 1.0f;
 		Lights[ID] = LightType;
 
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

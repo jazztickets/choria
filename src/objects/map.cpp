@@ -951,14 +951,11 @@ void _Map::Load(const std::string &Path, bool Static) {
 							File.getline(Buffer, 1024, '\n');
 							Object->Light->Texture = ae::Assets.Textures[Buffer];
 						} break;
-						case 'i':
-							File >> Object->Light->Intensity;
-						break;
 						case 's':
 							File >> Object->Shape.HalfSize.x >> Object->Shape.HalfSize.y;
 						break;
 						case 'c':
-							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b;
+							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b >> Object->Light->Color.a;
 						break;
 					}
 				}
@@ -1023,9 +1020,8 @@ bool _Map::Save(const std::string &Path) {
 
 		if(Object->Light) {
 			Output << "lt " << Object->Light->Texture->Name << '\n';
-			Output << "li " << Object->Light->Intensity << '\n';
 			Output << "ls " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
-			Output << "lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << '\n';
+			Output << "lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << ' ' << Object->Light->Color.a << '\n';
 		}
 	}
 

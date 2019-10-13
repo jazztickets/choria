@@ -90,6 +90,7 @@ void _EditorState::Init() {
 	ae::Assets.Elements["button_editor_light_r"]->SetOffsetPercent(glm::vec2(1.0f, 0));
 	ae::Assets.Elements["button_editor_light_g"]->SetOffsetPercent(glm::vec2(1.0f, 0));
 	ae::Assets.Elements["button_editor_light_b"]->SetOffsetPercent(glm::vec2(1.0f, 0));
+	ae::Assets.Elements["button_editor_light_a"]->SetOffsetPercent(glm::vec2(1.0f, 0));
 
 	// Load stats database
 	Stats = new _Stats();
@@ -98,7 +99,6 @@ void _EditorState::Init() {
 	TileBrush = new _Tile();
 	LightBrush = new _Light();
 	LightBrush->Color = glm::vec4(1.0f);
-	LightBrush->Intensity = 1.0f;
 	BrushRadius = 0.5f;
 
 	// Create camera
@@ -440,7 +440,6 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					_Object *Object = new _Object();
 					Object->Light->Texture = LightBrush->Texture;
-					Object->Light->Intensity = LightBrush->Intensity;
 					Object->Light->Color = LightBrush->Color;
 					if(ae::Input.ModKeyDown(KMOD_SHIFT))
 						GetLightSize(Object->Shape.HalfSize);
@@ -1491,17 +1490,18 @@ void _EditorState::Go() {
 void _EditorState::UpdateSliders() {
 
 	// Set up slider data
-	std::pair<std::string, float *> Data[3] = {
-		{ "r", &LightBrush->Color.r },
-		{ "g", &LightBrush->Color.g },
-		{ "b", &LightBrush->Color.b },
+	std::pair<std::string, float *> Data[] = {
+		{ "light_r", &LightBrush->Color.r },
+		{ "light_g", &LightBrush->Color.g },
+		{ "light_b", &LightBrush->Color.b },
+		{ "light_a", &LightBrush->Color.a },
 	};
 
 	// Loop through sliders
 	size_t Count = sizeof(Data) / sizeof(Data[0]);
 	for(size_t i = 0; i < Count; i++) {
-		ae::_Element *Slider = ae::Assets.Elements["element_editor_light_" + Data[i].first];
-		ae::_Element *Button = ae::Assets.Elements["button_editor_light_" + Data[i].first];
+		ae::_Element *Slider = ae::Assets.Elements["element_editor_" + Data[i].first];
+		ae::_Element *Button = ae::Assets.Elements["button_editor_" + Data[i].first];
 
 		// Handle clicking inside slider elements
 		if(!Button->PressedElement && Slider->PressedElement) {
@@ -1511,7 +1511,7 @@ void _EditorState::UpdateSliders() {
 
 		// Update value
 		if(Button->PressedElement) {
-			ae::_Element *Value = ae::Assets.Elements["label_editor_light_" + Data[i].first + "_value"];
+			ae::_Element *Value = ae::Assets.Elements["label_editor_" + Data[i].first + "_value"];
 
 			// Convert slider percent to number
 			std::stringstream Buffer;

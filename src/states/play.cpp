@@ -1045,7 +1045,6 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			const auto &Iterator = Stats->Lights.find(LightTypeID);
 			if(Iterator != Stats->Lights.end()) {
 				Object->Light->Texture = Iterator->second.Texture;
-				Object->Light->Intensity = Iterator->second.Intensity;
 				Object->Shape.HalfSize = Iterator->second.HalfSize;
 				Object->Light->Color = Iterator->second.Color;
 			}
