@@ -329,7 +329,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							break;
 
 						DrawingObject = true;
-						ObjectStart = glm::vec2(glm::ivec2(WorldCursor)) + glm::vec2(0.5f, 0.5f);
+						ObjectStart = glm::ivec2(WorldCursor);
 					break;
 				}
 			break;
@@ -441,11 +441,16 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					_Object *Object = new _Object();
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Color = LightBrush->Color;
-					if(ae::Input.ModKeyDown(KMOD_SHIFT))
-						GetLightSize(Object->Shape.HalfSize);
-					else
+					if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
+						glm::vec2 Size;
+						GetLightSize(Size);
+						Object->Shape.HalfSize = Size * 0.5f;
+						Object->Position = ObjectStart;
+					}
+					else {
 						Object->Shape.HalfSize.x = GetLightRadius();
-					Object->Position = ObjectStart;
+						Object->Position = ObjectStart;
+					}
 					Map->StaticObjects.push_back(Object);
 				break;
 			}
@@ -641,23 +646,33 @@ void _EditorState::Render(double BlendFactor) {
 		}
 	}
 
+	glm::ivec2 SelectionSize(0, 0);
+	bool DrawSelectionSize = false;
 	switch(Mode) {
-		// Draw tile brush size
 		case EditorModeType::TILES:
-			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-			ae::Graphics.SetColor(glm::vec4(1.0f));
-			ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
-			// Draw copy tool boundaries
 			if(DrawCopyBounds) {
 				ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
 
+				// Draw copy tool boundaries
 				glm::ivec2 Start, End;
 				GetDrawBounds(Start, End);
 				ae::Graphics.DrawRectangle(Start, End + 1, true);
+
+				// Get size
+				SelectionSize = End - Start + 1;
+				DrawSelectionSize = true;
+			}
+			else {
+
+				// Draw tile brush size
+				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+				ae::Graphics.SetColor(glm::vec4(1.0f));
+				ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 			}
 		break;
 		case EditorModeType::LIGHTS:
+
 			// Draw potential light
 			if(DrawingObject) {
 				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
@@ -666,10 +681,19 @@ void _EditorState::Render(double BlendFactor) {
 				if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
 					glm::vec2 Size;
 					GetLightSize(Size);
-					ae::Graphics.DrawRectangle3D(ObjectStart - Size, ObjectStart + Size, false);
+					SelectionSize = Size;
+
+					Size *= 0.5f;
+					ae::Graphics.DrawRectangle3D(ObjectStart - Size  + glm::vec2(0.5f, 0.5f), ObjectStart + Size + glm::vec2(0.5f, 0.5f), false);
 				}
-				else
-					ae::Graphics.DrawCircle(glm::vec3(ObjectStart, 0.0f), GetLightRadius());
+				else {
+					float Radius = GetLightRadius();
+					ae::Graphics.DrawCircle(glm::vec3(ObjectStart + glm::vec2(0.5f, 0.5f), 0.0f), Radius);
+
+					SelectionSize = glm::ivec2(Radius * 2);
+				}
+
+				DrawSelectionSize = true;
 			}
 		break;
 	}
@@ -693,8 +717,15 @@ void _EditorState::Render(double BlendFactor) {
 	// Draw brush info
 	DrawBrushInfo();
 
-	// Draw map name
+	// Draw size of selection
 	std::stringstream Buffer;
+	if(DrawSelectionSize) {
+		Buffer << SelectionSize.x << "x" << SelectionSize.y;
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(ae::Input.GetMouse()) + glm::vec2(25, 16) * ae::_Element::GetUIScale());
+		Buffer.str("");
+	}
+
+	// Draw map name
 	Buffer << FilePath;
 	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(20, 36) * ae::_Element::GetUIScale());
 	Buffer.str("");
@@ -1464,8 +1495,7 @@ float _EditorState::GetLightRadius() {
 
 // Get size of rectangular light while drawing
 void _EditorState::GetLightSize(glm::vec2 &Size) {
-	Size = glm::ivec2(glm::abs(WorldCursor - ObjectStart) * 2.0f) / 2;
-	Size += glm::vec2(0.5f, 0.5f);
+	Size = glm::ivec2(glm::abs(WorldCursor - ObjectStart) * 2.0f) / 2 + 1;
 }
 
 // Open browser or load map under cursor
