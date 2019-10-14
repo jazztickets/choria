@@ -62,6 +62,8 @@ void _EditorState::Init() {
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
 	LightsElement = ae::Assets.Elements["element_editor_lights"];
 	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
+	PropsElement = ae::Assets.Elements["element_editor_props"];
+	PropTypesElement = ae::Assets.Elements["element_editor_prop_types"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
 	EventTypesElement = ae::Assets.Elements["element_editor_event_types"];
 	EventDataElement = ae::Assets.Elements["textbox_editor_event_data"];
@@ -82,6 +84,7 @@ void _EditorState::Init() {
 	EditorElement->SetActive(true);
 	TexturesElement->SetActive(false);
 	LightsElement->SetActive(false);
+	PropsElement->SetActive(false);
 	EventsElement->SetActive(false);
 	NewMapElement->SetActive(false);
 	ResizeMapElement->SetActive(false);
@@ -97,6 +100,7 @@ void _EditorState::Init() {
 	TileBrush = new _Tile();
 	LightBrush = new _Light();
 	LightBrush->Color = glm::vec4(1.0f);
+	ObjectBrush = new _Object();
 	BrushRadius = 0.5f;
 
 	// Create camera
@@ -135,8 +139,6 @@ void _EditorState::Init() {
 	CopyEnd = glm::ivec2(0, 0);
 	WorldCursor = glm::vec2(0.0f, 0.0f);
 	Mode = EditorModeType::TILES;
-	ObjectType = 0;
-	ObjectData = 1;
 }
 
 // Shuts the state down
@@ -144,10 +146,13 @@ void _EditorState::Close() {
 	delete Stats;
 	delete Camera;
 	delete TileBrush;
+	delete ObjectBrush;
 	delete LightBrush;
 	delete Framebuffer;
 
 	ClearTextures();
+	ClearLights();
+	ClearProps();
 	ClearEvents();
 	CloseMap();
 }
@@ -275,6 +280,9 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 					case EditorModeType::LIGHTS:
 						ToggleLights();
 					break;
+					case EditorModeType::PROPS:
+						ToggleProps();
+					break;
 				}
 			break;
 			case SDL_SCANCODE_F1:
@@ -282,6 +290,9 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			break;
 			case SDL_SCANCODE_F2:
 				SwitchMode(EditorModeType::LIGHTS);
+			break;
+			case SDL_SCANCODE_F3:
+				SwitchMode(EditorModeType::PROPS);
 			break;
 			case SDL_SCANCODE_Z:
 				if(Map) {
@@ -346,6 +357,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					break;
 					// Select or move objects
 					case EditorModeType::LIGHTS:
+					case EditorModeType::PROPS:
 						if(TouchingSelectedObjects(WorldCursor)) {
 							if(ae::Input.ModKeyDown(KMOD_SHIFT) && SelectedObjects.size() == 1)
 								ResizingObject = true;
@@ -394,10 +406,15 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		// Light select
 		else if(LightsElement->GetClickedElement()) {
 			ae::_Element *ClickedElement = LightsElement->GetClickedElement();
-
-			// Clicked light texture button
 			if(ClickedElement->Parent && ClickedElement->Parent == LightTypesElement) {
 				LightBrush->Texture = ClickedElement->Texture;
+			}
+		}
+		// Props select
+		else if(PropsElement->GetClickedElement()) {
+			ae::_Element *ClickedElement = PropsElement->GetClickedElement();
+			if(ClickedElement->Parent && ClickedElement->Parent == PropTypesElement) {
+				CloseWindows();
 			}
 		}
 		// Event select
@@ -1091,6 +1108,17 @@ void _EditorState::ToggleLights() {
 	}
 }
 
+// Show the props screen
+void _EditorState::ToggleProps() {
+	if(!PropsElement->Active) {
+		CloseWindows();
+		InitProps();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Show the event select screen
 void _EditorState::ToggleEvents() {
 	if(!EventsElement->Active) {
@@ -1141,6 +1169,14 @@ void _EditorState::ClearLights() {
 		delete Child;
 
 	LightTypesElement->Children.clear();
+}
+
+// Delete memory used by props screen
+void _EditorState::ClearProps() {
+	for(auto &Child : PropTypesElement->Children)
+		delete Child;
+
+	PropTypesElement->Children.clear();
 }
 
 // Delete memory used by events screen
@@ -1220,6 +1256,42 @@ void _EditorState::InitLights() {
 
 	LightsElement->CalculateBounds();
 	LightsElement->SetActive(true);
+}
+
+// Init props screen
+void _EditorState::InitProps() {
+	ClearProps();
+
+	glm::vec2 Start = glm::vec2(20, 20);
+	glm::vec2 Spacing = glm::vec2(20, 20);
+	glm::vec2 Offset(Start);
+
+	std::string PropsPath = "textures/props/";
+	ae::_Files Files(PropsPath);
+	PropTypesElement->BaseSize = PropsElement->BaseSize;
+	for(const auto &File : Files.Nodes) {
+		const ae::_Texture *Texture = ae::Assets.Textures[PropsPath + File];
+
+		// Add button
+		ae::_Element *Button = new ae::_Element();
+		Button->Parent = PropTypesElement;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = glm::vec2(64, 64);
+		Button->Alignment = ae::LEFT_TOP;
+		Button->Texture = Texture;
+		Button->Clickable = true;
+		PropTypesElement->Children.push_back(Button);
+
+		// Update position
+		Offset.x += Button->BaseSize.x + Spacing.x;
+		if(Offset.x > PropsElement->BaseSize.x - Button->BaseSize.x) {
+			Offset.y += Button->BaseSize.y + Spacing.y;
+			Offset.x = Start.x;
+		}
+	}
+
+	PropsElement->CalculateBounds();
+	PropsElement->SetActive(true);
 }
 
 // Init event select
@@ -1319,10 +1391,19 @@ void _EditorState::InitLoadMap(const std::string &TempPath) {
 
 // Close all open windows
 bool _EditorState::CloseWindows() {
-	bool WasOpen = TexturesElement->Active | EventsElement->Active | NewMapElement->Active | ResizeMapElement->Active | SaveMapElement->Active | LoadMapElement->Active | LightsElement->Active;
+	bool WasOpen =
+		TexturesElement->Active |
+		EventsElement->Active |
+		NewMapElement->Active |
+		ResizeMapElement->Active |
+		SaveMapElement->Active |
+		LoadMapElement->Active |
+		LightsElement->Active |
+		PropsElement->Active;
 
 	TexturesElement->SetActive(false);
 	LightsElement->SetActive(false);
+	PropsElement->SetActive(false);
 	EventsElement->SetActive(false);
 	NewMapElement->SetActive(false);
 	ResizeMapElement->SetActive(false);

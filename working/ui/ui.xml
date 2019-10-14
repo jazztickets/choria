@@ -538,6 +538,9 @@
 				<element id="label_editor_light_a" font="hud_medium" text="A" offset_x="-220" offset_y="30" alignment_x="2" alignment_y="3"/>
 			</element>
 		</element>
+		<element id="element_editor_props" style="style_editor_bg" size_x="1028" size_y="692" clickable="true">
+			<element id="element_editor_prop_types"/>
+		</element>
 	</element>
 	<element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>
 </element>
