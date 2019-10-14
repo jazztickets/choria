@@ -30,6 +30,7 @@
 #include <ae/files.h>
 #include <ae/framebuffer.h>
 #include <objects/components/light.h>
+#include <objects/components/prop.h>
 #include <objects/object.h>
 #include <objects/map.h>
 #include <framework.h>
@@ -98,8 +99,9 @@ void _EditorState::Init() {
 
 	// Create brush
 	TileBrush = new _Tile();
-	ObjectBrush = new _Object();
-	ObjectBrush->Light->Color = glm::vec4(1.0f);
+	LightBrush = new _Light();
+	LightBrush->Color = glm::vec4(1.0f);
+	PropBrush = new _Prop();
 	BrushRadius = 0.5f;
 
 	// Create camera
@@ -145,7 +147,8 @@ void _EditorState::Close() {
 	delete Stats;
 	delete Camera;
 	delete TileBrush;
-	delete ObjectBrush;
+	delete PropBrush;
+	delete LightBrush;
 	delete Framebuffer;
 
 	ClearTextures();
@@ -333,7 +336,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					break;
 					// Start drawing object
 					case EditorModeType::LIGHTS:
-						if(!ObjectBrush->Light->Texture)
+						if(!LightBrush->Texture)
 							break;
 
 						DrawingObject = true;
@@ -405,13 +408,14 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(LightsElement->GetClickedElement()) {
 			ae::_Element *ClickedElement = LightsElement->GetClickedElement();
 			if(ClickedElement->Parent && ClickedElement->Parent == LightTypesElement) {
-				ObjectBrush->Light->Texture = ClickedElement->Texture;
+				LightBrush->Texture = ClickedElement->Texture;
 			}
 		}
 		// Props select
 		else if(PropsElement->GetClickedElement()) {
 			ae::_Element *ClickedElement = PropsElement->GetClickedElement();
 			if(ClickedElement->Parent && ClickedElement->Parent == PropTypesElement) {
+				PropBrush->Texture = ClickedElement->Texture;
 				CloseWindows();
 			}
 		}
@@ -483,12 +487,12 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					if(!DrawingObject)
 						break;
 
-					if(!ObjectBrush->Light->Texture)
+					if(!LightBrush->Texture)
 						break;
 
 					_Object *Object = new _Object();
-					Object->Light->Texture = ObjectBrush->Light->Texture;
-					Object->Light->Color = ObjectBrush->Light->Color;
+					Object->Light->Texture = LightBrush->Texture;
+					Object->Light->Color = LightBrush->Color;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
 				break;
@@ -530,9 +534,9 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(ae::Input.ModKeyDown(KMOD_CTRL)) {
 				_Object *Object = GetSingleSelectedObject();
 				if(Object) {
-					ObjectBrush->Light->Color = Object->Light->Color;
-					ObjectBrush->Light->Texture = Object->Light->Texture;
-					SetLightSliders(ObjectBrush->Light->Color);
+					LightBrush->Color = Object->Light->Color;
+					LightBrush->Texture = Object->Light->Texture;
+					SetLightSliders(LightBrush->Color);
 				}
 			}
 		}
@@ -950,9 +954,9 @@ void _EditorState::DrawBrushInfo() {
 		TextureBounds.Start = DrawPosition - glm::vec2(64) / 2.0f;
 		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.SetColor(ObjectBrush->Light->Color);
-		if(ObjectBrush->Light->Texture)
-			ae::Graphics.DrawImage(TextureBounds, ObjectBrush->Light->Texture);
+		ae::Graphics.SetColor(LightBrush->Color);
+		if(LightBrush->Texture)
+			ae::Graphics.DrawImage(TextureBounds, LightBrush->Texture);
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
@@ -1701,10 +1705,10 @@ void _EditorState::UpdateSliders() {
 
 	// Set up slider data
 	std::pair<std::string, float *> Data[] = {
-		{ "light_r", &ObjectBrush->Light->Color.r },
-		{ "light_g", &ObjectBrush->Light->Color.g },
-		{ "light_b", &ObjectBrush->Light->Color.b },
-		{ "light_a", &ObjectBrush->Light->Color.a },
+		{ "light_r", &LightBrush->Color.r },
+		{ "light_g", &LightBrush->Color.g },
+		{ "light_b", &LightBrush->Color.b },
+		{ "light_a", &LightBrush->Color.a },
 	};
 
 	// Loop through sliders
@@ -1739,7 +1743,7 @@ void _EditorState::UpdateSliders() {
 	// Update selected objects
 	if(Changed) {
 		for(const auto &Iterator : SelectedObjects) {
-			Iterator.first->Light->Color = ObjectBrush->Light->Color;
+			Iterator.first->Light->Color = LightBrush->Color;
 		}
 	}
 }

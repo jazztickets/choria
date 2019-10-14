@@ -29,6 +29,7 @@ class _Object;
 class _Map;
 class _Stats;
 class _Light;
+class _Prop;
 
 namespace ae {
 	class _Camera;
@@ -159,7 +160,8 @@ class _EditorState : public ae::_State {
 		bool MovingObjects;
 		bool ResizingObject;
 		glm::vec2 ObjectStart;
-		_Object *ObjectBrush;
+		_Light *LightBrush;
+		_Prop *PropBrush;
 
 		// Filter
 		int Filter;
