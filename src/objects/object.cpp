@@ -1065,8 +1065,36 @@ int _Object::Move() {
 	glm::vec2 Direction(0, 0);
 	GetDirectionFromInput(InputState, Direction);
 
-	// Move player
-	if(Map->CanMoveTo(Position + Direction, this)) {
+	// Test movement
+	bool Moved = false;
+	if(!Map->CanMoveTo(Position + Direction, this)) {
+
+		// Check for moving diagonally
+		if(Direction.x != 0.0f && Direction.y != 0.0f) {
+
+			// Try moving horizontally
+			glm::vec2 TestDirection(Direction.x, 0);
+			if(Map->CanMoveTo(Position + TestDirection, this)) {
+				Direction = TestDirection;
+				Moved = true;
+			}
+			else {
+
+				// Try moving vertically
+				TestDirection.x = 0;
+				TestDirection.y = Direction.y;
+				if(Map->CanMoveTo(Position + TestDirection, this)) {
+					Direction = TestDirection;
+					Moved = true;
+				}
+			}
+		}
+	}
+	else
+		Moved = true;
+
+	// Update position
+	if(Moved) {
 		Position += Direction;
 
 		// Update next battle counter

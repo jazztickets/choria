@@ -124,7 +124,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		int AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB);
 
 		// Collision
-		bool CanMoveTo(const glm::ivec2 &Position, _Object *Object);
+		bool CanMoveTo(const glm::vec2 &Position, _Object *Object);
 
 		// Network
 		void BroadcastPacket(ae::_Buffer &Buffer, ae::_Network::SendType Type=ae::_Network::RELIABLE);

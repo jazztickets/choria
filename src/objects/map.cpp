@@ -1031,13 +1031,13 @@ bool _Map::Save(const std::string &Path) {
 }
 
 // Determines if a square can be moved to
-bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
+bool _Map::CanMoveTo(const glm::vec2 &Position, _Object *Object) {
 
 	// Bounds
 	if(Position.x < 0 || Position.x >= Size.x || Position.y < 0 || Position.y >= Size.y)
 		return false;
 
-	const _Tile *Tile = &Tiles[Position.x][Position.y];
+	const _Tile *Tile = &Tiles[(int)Position.x][(int)Position.y];
 	if(Tile->Event.Type == EventType::KEY) {
 		if(Object->Inventory->HasItem(Tile->Event.Data))
 			return true;
