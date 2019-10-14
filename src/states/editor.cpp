@@ -1432,6 +1432,10 @@ void _EditorState::SwitchMode(EditorModeType Value) {
 
 	DrawCopyBounds = false;
 	DrawingObject = false;
+	DrawingSelect = false;
+	MovingObjects = false;
+	ResizingObject = false;
+	SelectedObjects.clear();
 }
 
 // Return true if the position is within one of the selected objects
@@ -1637,23 +1641,23 @@ void _EditorState::LoadMap() {
 void _EditorState::SwitchBrushModes(int Key) {
 	switch(Key) {
 		case 1:
-			Mode = EditorModeType::TILES;
+			SwitchMode(EditorModeType::TILES);
 			Filter = 0;
 			Filter |= MAP_RENDER_TEXTURE;
 			Filter |= MAP_RENDER_WALL;
 		break;
 		case 2:
-			Mode = EditorModeType::TILES;
+			SwitchMode(EditorModeType::TILES);
 			Filter = 0;
 			Filter |= MAP_RENDER_ZONE;
 		break;
 		case 3:
-			Mode = EditorModeType::TILES;
+			SwitchMode(EditorModeType::TILES);
 			Filter = 0;
 			Filter |= MAP_RENDER_PVP;
 		break;
 		case 4:
-			Mode = EditorModeType::TILES;
+			SwitchMode(EditorModeType::TILES);
 			Filter = 0;
 			Filter |= MAP_RENDER_EVENTTYPE;
 			Filter |= MAP_RENDER_EVENTDATA;
