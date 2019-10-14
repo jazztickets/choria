@@ -75,6 +75,7 @@ class _EditorState : public ae::_State {
 		void SaveMap();
 		void LoadMap();
 		void Go();
+		void SetLightSliders(const glm::vec4 &Color);
 		void UpdateSliders();
 
 		void ToggleTextures();

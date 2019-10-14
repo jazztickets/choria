@@ -88,10 +88,7 @@ void _EditorState::Init() {
 	SaveMapElement->SetActive(false);
 	LoadMapElement->SetActive(false);
 
-	ae::Assets.Elements["button_editor_light_r"]->SetOffsetPercent(glm::vec2(1.0f, 0));
-	ae::Assets.Elements["button_editor_light_g"]->SetOffsetPercent(glm::vec2(1.0f, 0));
-	ae::Assets.Elements["button_editor_light_b"]->SetOffsetPercent(glm::vec2(1.0f, 0));
-	ae::Assets.Elements["button_editor_light_a"]->SetOffsetPercent(glm::vec2(1.0f, 0));
+	SetLightSliders(glm::vec4(1.0f));
 
 	// Load stats database
 	Stats = new _Stats();
@@ -507,6 +504,14 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					else
 						SelectedObjects[Object] = 1;
 				}
+			}
+
+			// Eyedropper tool for light
+			if(ae::Input.ModKeyDown(KMOD_CTRL) && SelectedObjects.size() == 1) {
+				_Light *Light = SelectedObjects.begin()->first->Light;
+				LightBrush->Color = Light->Color;
+				LightBrush->Texture = Light->Texture;
+				SetLightSliders(LightBrush->Color);
 			}
 		}
 
@@ -1548,6 +1553,14 @@ void _EditorState::Go() {
 			break;
 		}
 	}
+}
+
+// Set light slider offsets
+void _EditorState::SetLightSliders(const glm::vec4 &Color) {
+	ae::Assets.Elements["button_editor_light_r"]->SetOffsetPercent(glm::vec2(Color.r, 0));
+	ae::Assets.Elements["button_editor_light_g"]->SetOffsetPercent(glm::vec2(Color.g, 0));
+	ae::Assets.Elements["button_editor_light_b"]->SetOffsetPercent(glm::vec2(Color.b, 0));
+	ae::Assets.Elements["button_editor_light_a"]->SetOffsetPercent(glm::vec2(Color.a, 0));
 }
 
 // Update slider boxes
