@@ -129,6 +129,7 @@ void _EditorState::Init() {
 	DrawingObject = false;
 	DrawingSelect = false;
 	MovingObjects = false;
+	ResizingObject = false;
 	ObjectStart = glm::vec2(0.0f, 0.0f);
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
@@ -345,11 +346,24 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					break;
 					// Select or move objects
 					case EditorModeType::LIGHTS:
-						if(TouchingSelectedObjects(WorldCursor))
-							MovingObjects = true;
+						if(TouchingSelectedObjects(WorldCursor)) {
+							if(ae::Input.ModKeyDown(KMOD_SHIFT) && SelectedObjects.size() == 1)
+								ResizingObject = true;
+							else
+								MovingObjects = true;
+						}
 						else
 							DrawingSelect = true;
-						ObjectStart = WorldCursor;
+
+						if(ResizingObject) {
+							_Object *SelectedObject = GetSingleSelectedObject();
+							if(SelectedObject->Shape.IsAABB())
+								ObjectStart = SelectedObject->Position - SelectedObject->Shape.HalfSize;
+							else
+								ObjectStart = SelectedObject->Position;
+						}
+						else
+							ObjectStart = WorldCursor;
 					break;
 				}
 			} break;
@@ -460,16 +474,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					_Object *Object = new _Object();
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Color = LightBrush->Color;
-					if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
-						ae::_Bounds Bounds;
-						GetDrawBounds(Bounds, true);
-						Object->Shape.HalfSize = (Bounds.End - Bounds.Start) * 0.5f;
-						Object->Position = Bounds.Start + Object->Shape.HalfSize;
-					}
-					else {
-						Object->Shape.HalfSize.x = GetLightRadius();
-						Object->Position = ObjectStart;
-					}
+					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
 				break;
 			}
@@ -507,11 +512,13 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			}
 
 			// Eyedropper tool for light
-			if(ae::Input.ModKeyDown(KMOD_CTRL) && SelectedObjects.size() == 1) {
-				_Light *Light = SelectedObjects.begin()->first->Light;
-				LightBrush->Color = Light->Color;
-				LightBrush->Texture = Light->Texture;
-				SetLightSliders(LightBrush->Color);
+			if(ae::Input.ModKeyDown(KMOD_CTRL)) {
+				_Object *Object = GetSingleSelectedObject();
+				if(Object) {
+					LightBrush->Color = Object->Light->Color;
+					LightBrush->Texture = Object->Light->Texture;
+					SetLightSliders(LightBrush->Color);
+				}
 			}
 		}
 
@@ -524,6 +531,14 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			GetMovingOffset(Offset);
 			for(const auto &Iterator : SelectedObjects)
 				Iterator.first->Position += Offset;
+		}
+
+		// Resizing an object
+		if(ResizingObject) {
+			ResizingObject = false;
+			_Object *Object = GetSingleSelectedObject();
+			if(Object)
+				SetObjectSize(Object, Object->Shape.IsAABB());
 		}
 	}
 }
@@ -698,11 +713,23 @@ void _EditorState::Render(double BlendFactor) {
 		case EditorModeType::LIGHTS:
 
 			// Draw potential light
-			if(DrawingObject) {
+			if(DrawingObject || ResizingObject) {
 				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-				ae::Graphics.SetColor(glm::vec4(1.0f));
 
-				if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
+				bool AsRectangle = false;
+				if(ae::Input.ModKeyDown(KMOD_SHIFT))
+					AsRectangle = true;
+
+				if(ResizingObject) {
+					_Object *Object = GetSingleSelectedObject();
+					if(Object)
+						AsRectangle = Object->Shape.IsAABB() ? true : false;
+					ae::Graphics.SetColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+				else
+					ae::Graphics.SetColor(glm::vec4(1.0f));
+
+				if(AsRectangle) {
 					ae::_Bounds Bounds;
 					GetDrawBounds(Bounds, true);
 					SelectionSize = Bounds.End - Bounds.Start;
@@ -1365,6 +1392,28 @@ void _EditorState::DeleteSelectedObjects() {
 	}
 
 	SelectedObjects.clear();
+}
+
+// Set object size while drawing or resizing
+void _EditorState::SetObjectSize(_Object *Object, bool AsRectangle) {
+	if(AsRectangle) {
+		ae::_Bounds Bounds;
+		GetDrawBounds(Bounds, true);
+		Object->Shape.HalfSize = (Bounds.End - Bounds.Start) * 0.5f;
+		Object->Position = Bounds.Start + Object->Shape.HalfSize;
+	}
+	else {
+		Object->Shape.HalfSize.x = GetLightRadius();
+		Object->Position = ObjectStart;
+	}
+}
+
+// Return the only selected object, null otherwise
+_Object *_EditorState::GetSingleSelectedObject() {
+	if(SelectedObjects.size() != 1)
+		return nullptr;
+
+	return SelectedObjects.begin()->first;
 }
 
 // Creates a map with the given parameters

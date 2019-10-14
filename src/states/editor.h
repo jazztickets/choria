@@ -105,6 +105,8 @@ class _EditorState : public ae::_State {
 		bool TouchingSelectedObjects(const glm::vec2 &Position);
 		void GetMovingOffset(glm::vec2 &Offset);
 		void DeleteSelectedObjects();
+		void SetObjectSize(_Object *Object, bool AsRectangle);
+		_Object *GetSingleSelectedObject();
 
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
@@ -151,6 +153,7 @@ class _EditorState : public ae::_State {
 		bool DrawingObject;
 		bool DrawingSelect;
 		bool MovingObjects;
+		bool ResizingObject;
 		int ObjectType;
 		uint32_t ObjectData;
 		glm::vec2 ObjectStart;

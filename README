@@ -129,8 +129,12 @@ Hit Ctrl+Left-mouse button to copy an existing tile into the brush
 Use Middle-click drag to highlight an area to copy, then V to paste
 
 -- Object Mode --
+Hold Shift while drawing to make the shape rectangular
 Use Middle-click drag to select objects
 Use Shift Middle-click to add objects to the selection
+Use Middle-click on selected objects to move them
+Use Ctrl Middle-click to copy an existing object into the brush
+Use Shift Middle-click drag to resize a selected object
 
 -- Misc --
 Hit N to start a new map
