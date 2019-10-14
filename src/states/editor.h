@@ -159,7 +159,6 @@ class _EditorState : public ae::_State {
 		bool MovingObjects;
 		bool ResizingObject;
 		glm::vec2 ObjectStart;
-		_Light *LightBrush;
 		_Object *ObjectBrush;
 
 		// Filter
