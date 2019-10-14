@@ -956,7 +956,7 @@ void _EditorState::DrawBrushInfo() {
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
-		// Draw light count
+		// Draw number of visible lights
 		if(Map) {
 			Buffer << Map->LightCount << " visible";
 			ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -964,7 +964,7 @@ void _EditorState::DrawBrushInfo() {
 			DrawPosition.y += TextSpacingY;
 		}
 
-		// Draw light count
+		// Draw selected count
 		Buffer << SelectedObjects.size() << " selected";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");

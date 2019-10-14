@@ -34,6 +34,7 @@ class _Fighter;
 class _Controller;
 class _Monster;
 class _Light;
+class _Prop;
 class _Map;
 class _Battle;
 class _Buff;
@@ -145,6 +146,7 @@ class _Object : public ae::_BaseObject {
 		_Controller *Controller;
 		_Monster *Monster;
 		_Light *Light;
+		_Prop *Prop;
 		ae::_Shape Shape;
 
 		// Pointers

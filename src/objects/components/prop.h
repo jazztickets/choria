@@ -28,18 +28,17 @@ namespace ae {
 }
 
 // Classes
-class _Light {
+class _Prop {
 
 	public:
 
-		_Light() : _Light(nullptr) { }
-		_Light(_Object *Object);
+		_Prop() : _Prop(nullptr) { }
+		_Prop(_Object *Object);
 
 		// Base
 		_Object *Object;
 
 		// Attributes
-		uint32_t LightTypeID;
 		const ae::_Texture *Texture;
 		glm::vec4 Color;
 

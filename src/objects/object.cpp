@@ -24,6 +24,7 @@
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
 #include <objects/components/light.h>
+#include <objects/components/prop.h>
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
@@ -65,6 +66,7 @@ _Object::_Object() :
 	Controller(nullptr),
 	Monster(nullptr),
 	Light(nullptr),
+	Prop(nullptr),
 
 	Stats(nullptr),
 	Map(nullptr),
@@ -110,6 +112,7 @@ _Object::~_Object() {
 		Peer = nullptr;
 	}
 
+	delete Prop;
 	delete Light;
 	delete Monster;
 	delete Controller;

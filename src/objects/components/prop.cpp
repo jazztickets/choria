@@ -15,34 +15,12 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
+#include <objects/components/prop.h>
 
-// Libraries
-#include <glm/vec4.hpp>
-#include <cstdint>
+// Constructor
+_Prop::_Prop(_Object *Object) :
+	Object(Object),
+	Texture(nullptr),
+	Color(1.0f) {
 
-// Forward Declarations
-class _Object;
-namespace ae {
-	class _Texture;
 }
-
-// Classes
-class _Light {
-
-	public:
-
-		_Light() : _Light(nullptr) { }
-		_Light(_Object *Object);
-
-		// Base
-		_Object *Object;
-
-		// Attributes
-		uint32_t LightTypeID;
-		const ae::_Texture *Texture;
-		glm::vec4 Color;
-
-	private:
-
-};
