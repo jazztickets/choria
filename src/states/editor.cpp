@@ -96,8 +96,6 @@ void _EditorState::Init() {
 	SaveMapElement->SetActive(false);
 	LoadMapElement->SetActive(false);
 
-	SetLightSliders(glm::vec4(1.0f));
-
 	// Load stats database
 	Stats = new _Stats();
 	Scripting = new _Scripting();
@@ -148,6 +146,16 @@ void _EditorState::Init() {
 	CopyEnd = glm::ivec2(0, 0);
 	WorldCursor = glm::vec2(0.0f, 0.0f);
 	Mode = EditorModeType::TILES;
+
+	// Set up slider data
+	SliderData = {
+		{ "light_r", &LightBrush->Color.r },
+		{ "light_g", &LightBrush->Color.g },
+		{ "light_b", &LightBrush->Color.b },
+		{ "light_a", &LightBrush->Color.a },
+	};
+
+	SetLightUI(glm::vec4(1.0f), "");
 }
 
 // Shuts the state down
@@ -581,7 +589,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				if(Object) {
 					LightBrush->Color = Object->Light->Color;
 					LightBrush->Texture = Object->Light->Texture;
-					SetLightSliders(LightBrush->Color);
+					SetLightUI(LightBrush->Color, Object->Light->Script);
 				}
 			}
 		}
@@ -1876,30 +1884,22 @@ void _EditorState::Go() {
 }
 
 // Set light slider offsets
-void _EditorState::SetLightSliders(const glm::vec4 &Color) {
+void _EditorState::SetLightUI(const glm::vec4 &Color, const std::string &Script) {
 	ae::Assets.Elements["button_editor_light_r"]->SetOffsetPercent(glm::vec2(Color.r, 0));
 	ae::Assets.Elements["button_editor_light_g"]->SetOffsetPercent(glm::vec2(Color.g, 0));
 	ae::Assets.Elements["button_editor_light_b"]->SetOffsetPercent(glm::vec2(Color.b, 0));
 	ae::Assets.Elements["button_editor_light_a"]->SetOffsetPercent(glm::vec2(Color.a, 0));
+	LightDataElement->Text = Script;
 }
 
 // Update slider boxes
 void _EditorState::UpdateSliders() {
 
-	// Set up slider data
-	std::pair<std::string, float *> Data[] = {
-		{ "light_r", &LightBrush->Color.r },
-		{ "light_g", &LightBrush->Color.g },
-		{ "light_b", &LightBrush->Color.b },
-		{ "light_a", &LightBrush->Color.a },
-	};
-
 	// Loop through sliders
 	bool Changed = false;
-	size_t Count = sizeof(Data) / sizeof(Data[0]);
-	for(size_t i = 0; i < Count; i++) {
-		ae::_Element *Slider = ae::Assets.Elements["element_editor_" + Data[i].first];
-		ae::_Element *Button = ae::Assets.Elements["button_editor_" + Data[i].first];
+	for(size_t i = 0; i < SliderData.size(); i++) {
+		ae::_Element *Slider = ae::Assets.Elements["element_editor_" + SliderData[i].first];
+		ae::_Element *Button = ae::Assets.Elements["button_editor_" + SliderData[i].first];
 
 		// Handle clicking inside slider elements
 		if(!Button->PressedElement && Slider->PressedElement) {
@@ -1909,7 +1909,7 @@ void _EditorState::UpdateSliders() {
 
 		// Update value
 		if(Button->PressedElement) {
-			ae::_Element *Value = ae::Assets.Elements["label_editor_" + Data[i].first + "_value"];
+			ae::_Element *Value = ae::Assets.Elements["label_editor_" + SliderData[i].first + "_value"];
 
 			// Convert slider percent to number
 			std::stringstream Buffer;
@@ -1918,7 +1918,7 @@ void _EditorState::UpdateSliders() {
 			Buffer.str("");
 
 			// Update data source
-			*Data[i].second = std::stof(Value->Text);
+			*SliderData[i].second = std::stof(Value->Text);
 			Changed = true;
 		}
 	}

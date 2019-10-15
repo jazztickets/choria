@@ -1072,7 +1072,8 @@ bool _Map::Save(const std::string &Path) {
 
 		if(Object->Light && Object->Light->Texture) {
 			Output << "Lt " << Object->Light->Texture->Name << '\n';
-			Output << "Ls " << Object->Light->Script << '\n';
+			if(Object->Light->Script.length())
+				Output << "Ls " << Object->Light->Script << '\n';
 			Output << "Lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << ' ' << Object->Light->Color.a << '\n';
 		}
 		if(Object->Prop && Object->Prop->Texture) {

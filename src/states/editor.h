@@ -106,7 +106,7 @@ class _EditorState : public ae::_State {
 		bool CloseWindows();
 
 		// UI
-		void SetLightSliders(const glm::vec4 &Color);
+		void SetLightUI(const glm::vec4 &Color, const std::string &Script);
 		void UpdateSliders();
 		void GetDrawBounds(ae::_Bounds &Bounds, bool Round);
 		void GetTileDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
@@ -135,6 +135,7 @@ class _EditorState : public ae::_State {
 		void PasteTiles();
 
 		// General
+		std::vector<std::pair<std::string, float *> > SliderData;
 		const _Stats *Stats;
 		_Scripting *Scripting;
 
