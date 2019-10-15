@@ -239,6 +239,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 					UseClockAmbientLight = !UseClockAmbientLight;
 			break;
 			case SDL_SCANCODE_E:
+				SwitchBrushModes(4);
 				ToggleEvents();
 			break;
 			case SDL_SCANCODE_W:
@@ -1045,7 +1046,7 @@ void _EditorState::DrawBrushInfo() {
 
 // Copy tiles
 void _EditorState::CopyTiles() {
-	if(Mode != EditorModeType::TILES)
+	if(!Map || Mode != EditorModeType::TILES)
 		return;
 
 	// Set state
@@ -1114,6 +1115,9 @@ void _EditorState::GetDrawBounds(ae::_Bounds &Bounds, bool Round) {
 
 // Get tile range from anchor point to world cursor
 void _EditorState::GetTileDrawBounds(glm::ivec2 &Start, glm::ivec2 &End) {
+	if(!Map)
+		return;
+
 	Start = CopyStart;
 	End = Map->GetValidCoord(WorldCursor);
 
