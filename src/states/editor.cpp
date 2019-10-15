@@ -212,6 +212,13 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				else if(LoadMapElement->Active) {
 					LoadMap();
 				}
+				else if(LightsElement->Active) {
+					if(LightDataElement == ae::FocusedElement) {
+						for(auto &Iterator : SelectedObjects) {
+							Iterator.first->Light->Script = LightDataElement->Text;
+						}
+					}
+				}
 			}
 			else if(KeyEvent.Scancode == SDL_SCANCODE_TAB) {
 				if(ae::FocusedElement == NewMapFilenameTextBox)
