@@ -1801,6 +1801,7 @@ void _EditorState::ResizeMap() {
 	// Resize map
 	CloseCopy();
 	Map->ResizeMap(Min, NewSize);
+	Map->BuildLayers(glm::ivec4(0, 0, Map->Size.x, Map->Size.y), ShowTransitions);
 	AllocateCopy();
 
 	// Close
