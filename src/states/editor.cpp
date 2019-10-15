@@ -289,7 +289,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 							ToggleZones();
 						else if(Filter & MAP_RENDER_PVP)
 							TileBrush->PVP = !TileBrush->PVP;
-						else if(Filter & MAP_RENDER_EVENTTYPE)
+						else if(Filter & MAP_RENDER_EVENT_TYPE)
 							ToggleEvents();
 					break;
 					case EditorModeType::LIGHTS:
@@ -427,7 +427,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(ZonesElement->GetClickedElement()) {
 			if(ZonesElement->GetClickedElement() != ZonesElement) {
 				ae::_Element *Button = ZonesElement->GetClickedElement();
-				//TileBrush->BaseTextureIndex = Button->TextureIndex;
+				TileBrush->ZoneID = Button->Children.front()->Text;
 				CloseWindows();
 			}
 		}
@@ -946,7 +946,7 @@ void _EditorState::DrawBrushInfo() {
 		if(TileBrush->Wall)
 			Buffer << "Wall";
 		else
-			Buffer << "Floor";
+			Buffer << "Walkable";
 
 		Filter & MAP_RENDER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -955,7 +955,10 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw zone
-		Buffer << "Zone " << TileBrush->ZoneID;
+		if(TileBrush->ZoneID.length())
+			Buffer << TileBrush->ZoneID;
+		else
+			Buffer << "No zone";
 
 		Filter & MAP_RENDER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -978,7 +981,7 @@ void _EditorState::DrawBrushInfo() {
 		// Draw event type
 		Buffer << Stats->EventTypes.at(TileBrush->Event.Type).second;
 
-		Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
+		Filter & MAP_RENDER_EVENT_TYPE ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
@@ -987,7 +990,7 @@ void _EditorState::DrawBrushInfo() {
 		// Draw event data
 		Buffer << TileBrush->Event.Data;
 
-		Filter & MAP_RENDER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
+		Filter & MAP_RENDER_EVENT_DATA ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 	}
@@ -1311,15 +1314,27 @@ void _EditorState::InitZones() {
 	glm::vec2 Start = glm::vec2(20, 20);
 	glm::vec2 Spacing = glm::vec2(20, 20);
 	glm::vec2 Offset(Start);
-	for(size_t i = 0; i < Stats->Zones.size(); i++) {
+	int ZoneIndex = 0;
+	for(const auto &Zone : Stats->Zones) {
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
 		Button->Parent = ZonesElement;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = glm::vec2(64, 64);
+		Button->BaseSize = glm::vec2(200, 32);
+		Button->Style = ae::Assets.Styles["style_editor_zone" + std::to_string(ZoneIndex % MAP_ZONE_COLORS)];
+		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Clickable = true;
+
+		ae::_Element *Label = new ae::_Element();
+		Label->Parent = Button;
+		Label->BaseOffset = glm::vec2(0, 22);
+		Label->Alignment = ae::CENTER_BASELINE;
+		Label->Text = Zone.second.ID;
+		Label->Font = ae::Assets.Fonts["hud_tiny"];
+		Button->Children.push_back(Label);
+
 		ZonesElement->Children.push_back(Button);
 
 		// Update position
@@ -1328,6 +1343,8 @@ void _EditorState::InitZones() {
 			Offset.y += Button->BaseSize.x + Spacing.y;
 			Offset.x = Start.x;
 		}
+
+		ZoneIndex++;
 	}
 
 	ZonesElement->CalculateBounds();
@@ -1819,8 +1836,8 @@ void _EditorState::SwitchBrushModes(int Key) {
 		case 4:
 			SwitchMode(EditorModeType::TILES);
 			Filter = 0;
-			Filter |= MAP_RENDER_EVENTTYPE;
-			Filter |= MAP_RENDER_EVENTDATA;
+			Filter |= MAP_RENDER_EVENT_TYPE;
+			Filter |= MAP_RENDER_EVENT_DATA;
 		break;
 	}
 }
@@ -1934,9 +1951,9 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 				Tile.ZoneID = TileBrush->ZoneID;
 			if(Filter & MAP_RENDER_PVP)
 				Tile.PVP = TileBrush->PVP;
-			if(Filter & MAP_RENDER_EVENTTYPE)
+			if(Filter & MAP_RENDER_EVENT_TYPE)
 				Tile.Event.Type = TileBrush->Event.Type;
-			if(Filter & MAP_RENDER_EVENTDATA)
+			if(Filter & MAP_RENDER_EVENT_DATA)
 				Tile.Event.Data = TileBrush->Event.Data;
 
 			// Set new tile

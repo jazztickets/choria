@@ -143,7 +143,7 @@ enum MapRenderType {
 	MAP_RENDER_WALL              = (1 << 3),
 	MAP_RENDER_PVP               = (1 << 4),
 	MAP_RENDER_ZONE              = (1 << 5),
-	MAP_RENDER_EVENTTYPE         = (1 << 6),
-	MAP_RENDER_EVENTDATA         = (1 << 7),
+	MAP_RENDER_EVENT_TYPE        = (1 << 6),
+	MAP_RENDER_EVENT_DATA        = (1 << 7),
 	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
 };

@@ -98,8 +98,8 @@ Hit 1 to draw textures
 Hit 2 to draw zones
 Hit 3 to draw PVP/safe areas
 Hit 4 to draw events
-Hit Tab to change from transition/block mode
-Hit W to change from Wall/Walkable
+Hit Tab to toggle transition/block mode
+Hit W to change from wall/walkable
 Hit E to open the event menu
 Hit G on an map event to switch maps
 Hit V to paste a copied area of tiles
