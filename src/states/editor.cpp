@@ -1678,6 +1678,7 @@ void _EditorState::PasteObjects() {
 		if(SourceObject->Light->Texture) {
 			Object->Light->Texture = SourceObject->Light->Texture;
 			Object->Light->Color = SourceObject->Light->Color;
+			Object->Light->Script = SourceObject->Light->Script;
 		}
 		Object->Shape = SourceObject->Shape;
 		Object->Position = SourceObject->Position + Offset;
@@ -1883,12 +1884,16 @@ void _EditorState::Go() {
 	}
 }
 
-// Set light slider offsets
+// Set light ui state
 void _EditorState::SetLightUI(const glm::vec4 &Color, const std::string &Script) {
-	ae::Assets.Elements["button_editor_light_r"]->SetOffsetPercent(glm::vec2(Color.r, 0));
-	ae::Assets.Elements["button_editor_light_g"]->SetOffsetPercent(glm::vec2(Color.g, 0));
-	ae::Assets.Elements["button_editor_light_b"]->SetOffsetPercent(glm::vec2(Color.b, 0));
-	ae::Assets.Elements["button_editor_light_a"]->SetOffsetPercent(glm::vec2(Color.a, 0));
+	for(size_t i = 0; i < SliderData.size(); i++) {
+		ae::Assets.Elements["button_editor_" + SliderData[i].first]->SetOffsetPercent(glm::vec2(Color[(int)i], 0));
+		ae::_Element *Value = ae::Assets.Elements["label_editor_" + SliderData[i].first + "_value"];
+		std::stringstream Buffer;
+		Buffer << std::fixed << std::setprecision(2) << Color[(int)i];
+		Value->Text = Buffer.str();
+	}
+
 	LightDataElement->Text = Script;
 }
 
