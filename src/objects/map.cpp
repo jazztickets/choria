@@ -909,6 +909,10 @@ void _Map::Load(const std::string &Path, bool Static) {
 				File >> Size.x >> Size.y;
 				AllocateMap();
 			} break;
+			// Music
+			case 'M': {
+				File >> Music;
+			} break;
 			// Begin new tile
 			case 'T': {
 				glm::ivec2 Coordinate;
@@ -1046,6 +1050,8 @@ bool _Map::Save(const std::string &Path) {
 	// Header
 	Output << "V " << MAP_VERSION << '\n';
 	Output << "S " << Size.x << ' ' << Size.y << '\n';
+	if(Music.length())
+		Output << "M " << Music << '\n';
 
 	// Write tile map
 	for(int j = 0; j < Size.y; j++) {

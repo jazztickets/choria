@@ -29,6 +29,7 @@
 #include <ae/graphics.h>
 #include <ae/files.h>
 #include <ae/framebuffer.h>
+#include <ae/util.h>
 #include <objects/components/light.h>
 #include <objects/components/prop.h>
 #include <objects/object.h>
@@ -62,6 +63,8 @@ void _EditorState::Init() {
 	ButtonBarElement = ae::Assets.Elements["element_editor_buttonbar"];
 	ClockElement = ae::Assets.Elements["element_editor_clock"];
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
+	InfoElement = ae::Assets.Elements["element_editor_info"];
+	InfoMusicElement = ae::Assets.Elements["textbox_editor_info_music"];
 	ZonesElement = ae::Assets.Elements["element_editor_zones"];
 	LightsElement = ae::Assets.Elements["element_editor_lights"];
 	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
@@ -86,6 +89,7 @@ void _EditorState::Init() {
 	SaveMapTextBox = ae::Assets.Elements["textbox_editor_savemap"];
 	LoadMapTextBox = ae::Assets.Elements["textbox_editor_loadmap"];
 	EditorElement->SetActive(true);
+	InfoElement->SetActive(false);
 	TexturesElement->SetActive(false);
 	ZonesElement->SetActive(false);
 	LightsElement->SetActive(false);
@@ -148,7 +152,7 @@ void _EditorState::Init() {
 	Mode = EditorModeType::TILES;
 
 	// Set up slider data
-	SliderData = {
+	LightSliderData = {
 		{ "light_r", &LightBrush->Color.r },
 		{ "light_g", &LightBrush->Color.g },
 		{ "light_b", &LightBrush->Color.b },
@@ -215,8 +219,15 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				else if(LightsElement->Active) {
 					if(LightDataElement == ae::FocusedElement) {
 						for(auto &Iterator : SelectedObjects) {
-							Iterator.first->Light->Script = LightDataElement->Text;
+							Iterator.first->Light->Script = ae::TrimString(LightDataElement->Text);
 						}
+						ae::FocusedElement = nullptr;
+					}
+				}
+				else if(Map && InfoElement->Active) {
+					if(InfoMusicElement == ae::FocusedElement) {
+						Map->Music = ae::TrimString(InfoMusicElement->Text);
+						ae::FocusedElement = nullptr;
 					}
 				}
 			}
@@ -264,6 +275,9 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			break;
 			case SDL_SCANCODE_W:
 				TileBrush->Wall = !TileBrush->Wall;
+			break;
+			case SDL_SCANCODE_A:
+				ToggleInfo();
 			break;
 			case SDL_SCANCODE_N:
 				Framework.IgnoreNextInputEvent = true;
@@ -429,6 +443,17 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_editor_buttonbar_load")
 				ToggleLoadMap();
 		}
+		else if(InfoElement->GetClickedElement()) {
+			if(InfoElement->GetClickedElement()->Name == "button_editor_info_outside") {
+				ae::_Element *Check = ae::Assets.Elements["label_editor_info_outside_check"];
+				Check->Text = Check->Text.empty() ? "X" : "";
+
+				if(Map) {
+					Map->IsOutside = !Check->Text.empty();
+					UpdateSliders(MapInfoData, true);
+				}
+			}
+		}
 		// Texture select
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
@@ -497,7 +522,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 				// Set brush data
 				TileBrush->Event.Type = (EventType)ClickedElement->Index;
-				TileBrush->Event.Data = EventDataElement->Text;
+				TileBrush->Event.Data = ae::TrimString(EventDataElement->Text);
 				SwitchBrushModes(4);
 				CloseWindows();
 			}
@@ -718,7 +743,10 @@ void _EditorState::Update(double FrameTime) {
 	}
 
 	// Update UI
-	UpdateSliders();
+	if(LightsElement->Active)
+		UpdateSliders(LightSliderData);
+	if(Map && InfoElement->Active)
+		UpdateSliders(MapInfoData);
 }
 
 // Draws the current state
@@ -1173,6 +1201,17 @@ void _EditorState::ToggleResize() {
 	}
 }
 
+// Show the map info screen
+void _EditorState::ToggleInfo() {
+	if(!InfoElement->Active) {
+		CloseWindows();
+		InitInfo();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Show the texture select screen
 void _EditorState::ToggleTextures() {
 	if(!TexturesElement->Active) {
@@ -1253,6 +1292,10 @@ void _EditorState::ToggleLoadMap(const std::string &TempPath) {
 	}
 }
 
+// Delete memory used by info screen
+void _EditorState::ClearInfo() {
+}
+
 // Delete memory used by textures screen
 void _EditorState::ClearTextures() {
 	for(auto &Child : TexturesElement->Children)
@@ -1291,6 +1334,12 @@ void _EditorState::ClearEvents() {
 		delete Child;
 
 	EventTypesElement->Children.clear();
+}
+
+// Show map info screen
+void _EditorState::InitInfo() {
+	ClearInfo();
+	InfoElement->SetActive(true);
 }
 
 // Init texture select
@@ -1542,6 +1591,7 @@ void _EditorState::InitLoadMap(const std::string &TempPath) {
 // Close all open windows
 bool _EditorState::CloseWindows() {
 	bool WasOpen =
+		InfoElement->Active |
 		TexturesElement->Active |
 		ZonesElement->Active |
 		EventsElement->Active |
@@ -1552,6 +1602,7 @@ bool _EditorState::CloseWindows() {
 		LightsElement->Active |
 		PropsElement->Active;
 
+	InfoElement->SetActive(false);
 	TexturesElement->SetActive(false);
 	ZonesElement->SetActive(false);
 	LightsElement->SetActive(false);
@@ -1722,6 +1773,7 @@ void _EditorState::CreateMap() {
 	Map->AllocateMap();
 	AllocateCopy();
 	FilePath = NewMapFilenameTextBox->Text;
+	SetInfoUI();
 
 	CloseWindows();
 }
@@ -1830,10 +1882,12 @@ void _EditorState::LoadMap() {
 		}
 		Camera->ForcePosition(glm::vec3(Position, CAMERA_DISTANCE));
 
-		// Save map id
+		// Set editor state
 		UseClockAmbientLight = false;
 		if(Map->IsOutside)
 			UseClockAmbientLight = true;
+
+		SetInfoUI();
 	}
 
 	CloseWindows();
@@ -1893,9 +1947,9 @@ void _EditorState::Go() {
 
 // Set light ui state
 void _EditorState::SetLightUI(const glm::vec4 &Color, const std::string &Script) {
-	for(size_t i = 0; i < SliderData.size(); i++) {
-		ae::Assets.Elements["button_editor_" + SliderData[i].first]->SetOffsetPercent(glm::vec2(Color[(int)i], 0));
-		ae::_Element *Value = ae::Assets.Elements["label_editor_" + SliderData[i].first + "_value"];
+	for(size_t i = 0; i < LightSliderData.size(); i++) {
+		ae::Assets.Elements["button_editor_" + LightSliderData[i].first]->SetOffsetPercent(glm::vec2(Color[(int)i], 0));
+		ae::_Element *Value = ae::Assets.Elements["label_editor_" + LightSliderData[i].first + "_value"];
 		std::stringstream Buffer;
 		Buffer << std::fixed << std::setprecision(2) << Color[(int)i];
 		Value->Text = Buffer.str();
@@ -1904,14 +1958,41 @@ void _EditorState::SetLightUI(const glm::vec4 &Color, const std::string &Script)
 	LightDataElement->Text = Script;
 }
 
+// Set UI state of info screen from map
+void _EditorState::SetInfoUI() {
+	if(!Map)
+		return;
+
+	MapInfoData.clear();
+	MapInfoData = {
+		{ "info_ambient_r", &Map->AmbientLight.r },
+		{ "info_ambient_g", &Map->AmbientLight.g },
+		{ "info_ambient_b", &Map->AmbientLight.b },
+	};
+
+	// Update slider values
+	for(size_t i = 0; i < MapInfoData.size(); i++) {
+		ae::Assets.Elements["button_editor_" + MapInfoData[i].first]->SetOffsetPercent(glm::vec2(*(MapInfoData[i].second), 0));
+		ae::_Element *Value = ae::Assets.Elements["label_editor_" + MapInfoData[i].first + "_value"];
+		std::stringstream Buffer;
+		Buffer << std::fixed << std::setprecision(2) << *MapInfoData[i].second;
+		Value->Text = Buffer.str();
+	}
+
+	// Set attributes
+	ae::_Element *Check = ae::Assets.Elements["label_editor_info_outside_check"];
+	Check->Text = Map->IsOutside ? "X" : "";
+	InfoMusicElement->Text = Map->Music;
+}
+
 // Update slider boxes
-void _EditorState::UpdateSliders() {
+void _EditorState::UpdateSliders(std::vector<std::pair<std::string, float *> > &Data, bool Force) {
 
 	// Loop through sliders
 	bool Changed = false;
-	for(size_t i = 0; i < SliderData.size(); i++) {
-		ae::_Element *Slider = ae::Assets.Elements["element_editor_" + SliderData[i].first];
-		ae::_Element *Button = ae::Assets.Elements["button_editor_" + SliderData[i].first];
+	for(size_t i = 0; i < Data.size(); i++) {
+		ae::_Element *Slider = ae::Assets.Elements["element_editor_" + Data[i].first];
+		ae::_Element *Button = ae::Assets.Elements["button_editor_" + Data[i].first];
 
 		// Handle clicking inside slider elements
 		if(!Button->PressedElement && Slider->PressedElement) {
@@ -1920,8 +2001,8 @@ void _EditorState::UpdateSliders() {
 		}
 
 		// Update value
-		if(Button->PressedElement) {
-			ae::_Element *Value = ae::Assets.Elements["label_editor_" + SliderData[i].first + "_value"];
+		if(Button->PressedElement || Force) {
+			ae::_Element *Value = ae::Assets.Elements["label_editor_" + Data[i].first + "_value"];
 
 			// Convert slider percent to number
 			std::stringstream Buffer;
@@ -1930,15 +2011,17 @@ void _EditorState::UpdateSliders() {
 			Buffer.str("");
 
 			// Update data source
-			*SliderData[i].second = std::stof(Value->Text);
+			*Data[i].second = std::stof(Value->Text);
 			Changed = true;
 		}
 	}
 
 	// Update selected objects
 	if(Changed) {
-		for(const auto &Iterator : SelectedObjects) {
-			Iterator.first->Light->Color = LightBrush->Color;
+		if(LightsElement->Active) {
+			for(const auto &Iterator : SelectedObjects) {
+				Iterator.first->Light->Color = LightBrush->Color;
+			}
 		}
 	}
 }

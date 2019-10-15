@@ -79,6 +79,7 @@ class _EditorState : public ae::_State {
 		void LoadMap();
 		void Go();
 
+		void ToggleInfo();
 		void ToggleTextures();
 		void ToggleZones();
 		void ToggleLights();
@@ -89,6 +90,7 @@ class _EditorState : public ae::_State {
 		void ToggleSaveMap();
 		void ToggleLoadMap(const std::string &TempPath = "");
 
+		void InitInfo();
 		void InitTextures();
 		void InitZones();
 		void InitLights();
@@ -98,6 +100,7 @@ class _EditorState : public ae::_State {
 		void InitResize();
 		void InitSaveMap();
 		void InitLoadMap(const std::string &TempPath = "");
+		void ClearInfo();
 		void ClearTextures();
 		void ClearZones();
 		void ClearLights();
@@ -107,7 +110,8 @@ class _EditorState : public ae::_State {
 
 		// UI
 		void SetLightUI(const glm::vec4 &Color, const std::string &Script);
-		void UpdateSliders();
+		void SetInfoUI();
+		void UpdateSliders(std::vector<std::pair<std::string, float *> > &Data, bool Force=false);
 		void GetDrawBounds(ae::_Bounds &Bounds, bool Round);
 		void GetTileDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
 
@@ -135,7 +139,8 @@ class _EditorState : public ae::_State {
 		void PasteTiles();
 
 		// General
-		std::vector<std::pair<std::string, float *> > SliderData;
+		std::vector<std::pair<std::string, float *> > LightSliderData;
+		std::vector<std::pair<std::string, float *> > MapInfoData;
 		const _Stats *Stats;
 		_Scripting *Scripting;
 
@@ -182,6 +187,8 @@ class _EditorState : public ae::_State {
 		ae::_Element *EditorElement;
 		ae::_Element *ButtonBarElement;
 		ae::_Element *ClockElement;
+		ae::_Element *InfoElement;
+		ae::_Element *InfoMusicElement;
 		ae::_Element *TexturesElement;
 		ae::_Element *ZonesElement;
 		ae::_Element *LightsElement;
