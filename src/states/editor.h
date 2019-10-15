@@ -107,6 +107,7 @@ class _EditorState : public ae::_State {
 		void SwitchMode(EditorModeType Value);
 
 		// Objects
+		void StartDrawingObject();
 		bool TouchingSelectedObjects(const glm::vec2 &Position);
 		void GetMovingOffset(glm::vec2 &Offset);
 		void DeleteSelectedObjects();
@@ -118,7 +119,7 @@ class _EditorState : public ae::_State {
 		void DrawBrushInfo();
 		void AdjustValue(uint32_t &Value, int Direction);
 		void SwitchBrushModes(int Key);
-		float GetLightRadius();
+		float GetObjectRadius();
 
 		// Copy/Paste
 		void CopyTiles();

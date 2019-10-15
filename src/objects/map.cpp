@@ -21,6 +21,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
 #include <objects/components/light.h>
+#include <objects/components/prop.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <hud/hud.h>
@@ -91,6 +92,7 @@ _Map::_Map() :
 	IsOutside(true),
 	Clock(0),
 	LightCount(0),
+	PropCount(0),
 	BackgroundOffset(0.0f),
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
@@ -642,8 +644,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		LightCount = 0;
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		LightCount += AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
-		LightCount += AddLights(&StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(&StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -702,8 +704,13 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 	// Set program for objects
 	ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+
+	// Render floor props
+	PropCount = 0;
+	RenderProps(ae::Assets.Programs["map_object"], Bounds);
 
 	// Render objects
 	for(const auto &Object : Objects)
@@ -790,13 +797,40 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 	ae::Graphics.DirtyState();
 }
 
+// Render map props
+void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
+	ae::Graphics.SetProgram(Program);
+
+	// Iterate over objects
+	for(const auto &Object : StaticObjects) {
+		if(!Object->Prop)
+			continue;
+
+		// Check to see if object is in frustum
+		if(!Object->CheckAABB(Bounds))
+			continue;
+
+		// Get size
+		glm::vec2 Scale;
+		if(Object->Shape.IsAABB())
+			Scale = Object->Shape.HalfSize * 2.0f;
+		else
+			Scale = glm::vec2(Object->Shape.HalfSize.x * 2.0f);
+
+		// Draw object
+		ae::Graphics.SetColor(Object->Prop->Color);
+		ae::Graphics.DrawSprite(glm::vec3(Object->Position, 0), Object->Prop->Texture, 0.0f, Scale);
+
+		PropCount++;
+	}
+}
+
 // Add lights from objects
-int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
+void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
 	ae::Graphics.SetProgram(Program);
 	glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	// Iterate over objects
-	int LightCount = 0;
 	for(const auto &Object : *ObjectList) {
 		if(!Object->Light)
 			continue;
@@ -825,8 +859,6 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 
 		LightCount++;
 	}
-
-	return LightCount;
 }
 
 // Load map
@@ -939,8 +971,12 @@ void _Map::Load(const std::string &Path, bool Static) {
 				Object->Position = Position;
 				StaticObjects.push_back(Object);
 			} break;
-			// Object light
-			case 'l': {
+			// Object shape
+			case 's': {
+				File >> Object->Shape.HalfSize.x >> Object->Shape.HalfSize.y;
+			} break;
+			// light
+			case 'L': {
 				if(Object) {
 					char SubChunkType;
 					File >> SubChunkType;
@@ -951,11 +987,29 @@ void _Map::Load(const std::string &Path, bool Static) {
 							File.getline(Buffer, 1024, '\n');
 							Object->Light->Texture = ae::Assets.Textures[Buffer];
 						} break;
-						case 's':
-							File >> Object->Shape.HalfSize.x >> Object->Shape.HalfSize.y;
-						break;
 						case 'c':
 							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b >> Object->Light->Color.a;
+						break;
+					}
+				}
+			} break;
+			// Prop
+			case 'P': {
+				if(Object) {
+					if(!Object->Prop)
+						Object->Prop = new _Prop(Object);
+
+					char SubChunkType;
+					File >> SubChunkType;
+					switch(SubChunkType) {
+						case 't': {
+							char Buffer[1024];
+							File.ignore(1);
+							File.getline(Buffer, 1024, '\n');
+							Object->Prop->Texture = ae::Assets.Textures[Buffer];
+						} break;
+						case 'c':
+							File >> Object->Prop->Color.r >> Object->Prop->Color.g >> Object->Prop->Color.b >> Object->Prop->Color.a;
 						break;
 					}
 				}
@@ -1017,11 +1071,15 @@ bool _Map::Save(const std::string &Path) {
 	// Write static objects
 	for(auto &Object : StaticObjects) {
 		Output << "O " << Object->Position.x << ' ' << Object->Position.y << '\n';
+		Output << "s " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
 
-		if(Object->Light) {
-			Output << "lt " << Object->Light->Texture->Name << '\n';
-			Output << "ls " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
-			Output << "lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << ' ' << Object->Light->Color.a << '\n';
+		if(Object->Light && Object->Light->Texture) {
+			Output << "Lt " << Object->Light->Texture->Name << '\n';
+			Output << "Lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << ' ' << Object->Light->Color.a << '\n';
+		}
+		if(Object->Prop && Object->Prop->Texture) {
+			Output << "Pt " << Object->Prop->Texture->Name << '\n';
+			Output << "Pc " << Object->Prop->Color.r << ' ' << Object->Prop->Color.g << ' ' << Object->Prop->Color.b << ' ' << Object->Prop->Color.a << '\n';
 		}
 	}
 

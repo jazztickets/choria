@@ -334,14 +334,19 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							EventDataElement->Text = TileBrush->Event.Data;
 						}
 					break;
-					// Start drawing object
+					// Start drawing light
 					case EditorModeType::LIGHTS:
 						if(!LightBrush->Texture)
 							break;
 
-						DrawingObject = true;
-						ObjectStart = glm::ivec2(WorldCursor * 2.0f);
-						ObjectStart *= 0.5f;
+						StartDrawingObject();
+					break;
+					// Start drawing props
+					case EditorModeType::PROPS:
+						if(!PropBrush->Texture)
+							break;
+
+						StartDrawingObject();
 					break;
 				}
 			break;
@@ -483,7 +488,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 			// Place object
 			switch(Mode) {
-				case EditorModeType::LIGHTS:
+				case EditorModeType::LIGHTS: {
 					if(!DrawingObject)
 						break;
 
@@ -495,7 +500,21 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Light->Color = LightBrush->Color;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
-				break;
+				} break;
+				case EditorModeType::PROPS: {
+					if(!DrawingObject)
+						break;
+
+					if(!PropBrush->Texture)
+						break;
+
+					_Object *Object = new _Object();
+					Object->Prop = new _Prop(Object);
+					Object->Prop->Texture = PropBrush->Texture;
+					Object->Prop->Color = PropBrush->Color;
+					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
+					Map->StaticObjects.push_back(Object);
+				} break;
 			}
 		}
 
@@ -730,6 +749,7 @@ void _EditorState::Render(double BlendFactor) {
 			}
 		break;
 		case EditorModeType::LIGHTS:
+		case EditorModeType::PROPS:
 
 			// Draw potential light
 			if(DrawingObject || ResizingObject) {
@@ -737,7 +757,7 @@ void _EditorState::Render(double BlendFactor) {
 
 				bool AsRectangle = false;
 				if(ae::Input.ModKeyDown(KMOD_SHIFT))
-					AsRectangle = true;
+					AsRectangle = !AsRectangle;
 
 				if(ResizingObject) {
 					_Object *Object = GetSingleSelectedObject();
@@ -755,7 +775,7 @@ void _EditorState::Render(double BlendFactor) {
 					ae::Graphics.DrawRectangle3D(Bounds.Start, Bounds.End, false);
 				}
 				else {
-					float Radius = GetLightRadius();
+					float Radius = GetObjectRadius();
 					ae::Graphics.DrawCircle(glm::vec3(ObjectStart, 0.0f), Radius);
 
 					SelectionSize = glm::ivec2(Radius * 2);
@@ -949,7 +969,7 @@ void _EditorState::DrawBrushInfo() {
 	}
 	else if(Mode == EditorModeType::LIGHTS) {
 
-		// Draw light texture
+		// Draw texture
 		ae::_Bounds TextureBounds;
 		TextureBounds.Start = DrawPosition - glm::vec2(64) / 2.0f;
 		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
@@ -963,6 +983,33 @@ void _EditorState::DrawBrushInfo() {
 		// Draw number of visible lights
 		if(Map) {
 			Buffer << Map->LightCount << " visible";
+			ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
+			Buffer.str("");
+			DrawPosition.y += TextSpacingY;
+		}
+
+		// Draw selected count
+		Buffer << SelectedObjects.size() << " selected";
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
+		Buffer.str("");
+		DrawPosition.y += TextSpacingY;
+	}
+	else if(Mode == EditorModeType::PROPS) {
+
+		// Draw texture
+		ae::_Bounds TextureBounds;
+		TextureBounds.Start = DrawPosition - glm::vec2(64) / 2.0f;
+		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.SetColor(PropBrush->Color);
+		if(PropBrush->Texture)
+			ae::Graphics.DrawImage(TextureBounds, PropBrush->Texture);
+
+		DrawPosition.y += 70 * ae::_Element::GetUIScale();
+
+		// Draw number of visible objects
+		if(Map) {
+			Buffer << Map->PropCount << " visible";
 			ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 			Buffer.str("");
 			DrawPosition.y += TextSpacingY;
@@ -1441,6 +1488,13 @@ void _EditorState::SwitchMode(EditorModeType Value) {
 	SelectedObjects.clear();
 }
 
+// Start object drawing
+void _EditorState::StartDrawingObject() {
+	DrawingObject = true;
+	ObjectStart = glm::ivec2(WorldCursor * 2.0f);
+	ObjectStart *= 0.5f;
+}
+
 // Return true if the position is within one of the selected objects
 bool _EditorState::TouchingSelectedObjects(const glm::vec2 &Position) {
 
@@ -1491,7 +1545,7 @@ void _EditorState::SetObjectSize(_Object *Object, bool AsRectangle) {
 		Object->Position = Bounds.Start + Object->Shape.HalfSize;
 	}
 	else {
-		Object->Shape.HalfSize.x = GetLightRadius();
+		Object->Shape.HalfSize.x = GetObjectRadius();
 		Object->Position = ObjectStart;
 	}
 }
@@ -1669,7 +1723,7 @@ void _EditorState::SwitchBrushModes(int Key) {
 }
 
 // Get radius of light while drawing
-float _EditorState::GetLightRadius() {
+float _EditorState::GetObjectRadius() {
 
 	return std::max(0.5f, 0.5f * int(2.0f * glm::length(ObjectStart - WorldCursor)));
 }
