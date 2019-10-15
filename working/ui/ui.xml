@@ -566,9 +566,9 @@
 				<element id="label_editor_light_a_value" font="hud_medium" text="1.00" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
 				<element id="label_editor_light_a" font="hud_medium" text="A" offset_x="-220" offset_y="30" alignment_x="2" alignment_y="3"/>
 			</element>
-			<element id="element_editor_light_data" style="style_menu_textbox" offset_x="110" offset_y="-30" size_x="500" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
-				<element id="textbox_editor_light_data" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="50"/>
-				<element id="label_editor_light_data" font="hud_medium" text="Script" offset_y="30" size_x="520" alignment_x="2" alignment_y="3"/>
+			<element id="element_editor_light_script" style="style_menu_textbox" offset_x="110" offset_y="-30" size_x="500" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
+				<element id="textbox_editor_light_script" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="50"/>
+				<element id="label_editor_light_script" font="hud_medium" text="Script" offset_y="30" size_x="520" alignment_x="2" alignment_y="3"/>
 			</element>
 		</element>
 		<element id="element_editor_props" style="style_editor_bg" size_x="1028" size_y="692" clickable="true">

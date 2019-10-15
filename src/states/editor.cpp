@@ -68,7 +68,7 @@ void _EditorState::Init() {
 	ZonesElement = ae::Assets.Elements["element_editor_zones"];
 	LightsElement = ae::Assets.Elements["element_editor_lights"];
 	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
-	LightDataElement = ae::Assets.Elements["textbox_editor_light_data"];
+	LightScriptElement = ae::Assets.Elements["textbox_editor_light_script"];
 	PropsElement = ae::Assets.Elements["element_editor_props"];
 	PropTypesElement = ae::Assets.Elements["element_editor_prop_types"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
@@ -217,9 +217,9 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 					LoadMap();
 				}
 				else if(LightsElement->Active) {
-					if(LightDataElement == ae::FocusedElement) {
+					if(LightScriptElement == ae::FocusedElement) {
 						for(auto &Iterator : SelectedObjects) {
-							Iterator.first->Light->Script = ae::TrimString(LightDataElement->Text);
+							Iterator.first->Light->Script = ae::TrimString(LightScriptElement->Text);
 						}
 						ae::FocusedElement = nullptr;
 					}
@@ -560,7 +560,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Scripting = Scripting;
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Color = LightBrush->Color;
-					Object->Light->Script = LightDataElement->Text;
+					Object->Light->Script = LightScriptElement->Text;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
 				} break;
@@ -1956,7 +1956,7 @@ void _EditorState::SetLightUI(const glm::vec4 &Color, const std::string &Script)
 		Value->Text = Buffer.str();
 	}
 
-	LightDataElement->Text = Script;
+	LightScriptElement->Text = Script;
 }
 
 // Set UI state of info screen from map

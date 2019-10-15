@@ -193,7 +193,7 @@ class _EditorState : public ae::_State {
 		ae::_Element *ZonesElement;
 		ae::_Element *LightsElement;
 		ae::_Element *LightTypesElement;
-		ae::_Element *LightDataElement;
+		ae::_Element *LightScriptElement;
 		ae::_Element *PropsElement;
 		ae::_Element *PropTypesElement;
 		ae::_Element *EventsElement;
