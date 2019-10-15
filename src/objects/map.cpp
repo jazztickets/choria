@@ -87,6 +87,7 @@ _Map::_Map() :
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
 	Stats(nullptr),
+	Scripting(nullptr),
 	Server(nullptr),
 	Pather(nullptr),
 	MapVertexBufferID(0),
@@ -278,6 +279,11 @@ void _Map::Update(double FrameTime) {
 	Clock += FrameTime * MAP_CLOCK_SPEED;
 	if(Clock >= MAP_DAY_LENGTH)
 		Clock -= MAP_DAY_LENGTH;
+
+	// Update static objects
+	for(const auto &Object : StaticObjects) {
+		Object->UpdateStatic(FrameTime);
+	}
 }
 
 // Check for events
@@ -843,7 +849,7 @@ void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program 
 			Scale = glm::vec2(Object->Shape.HalfSize.x * 2.0f);
 
 		// Draw light
-		ae::Graphics.SetColor(Light->Color);
+		ae::Graphics.SetColor(Light->FinalColor);
 		ae::Graphics.DrawSprite(glm::vec3(Object->Position, 0), Light->Texture, 0.0f, Scale);
 
 		LightCount++;
@@ -957,6 +963,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 				glm::vec2 Position;
 				File >> Position.x >> Position.y;
 				Object = new _Object();
+				Object->Scripting = Scripting;
 				Object->Position = Position;
 				StaticObjects.push_back(Object);
 			} break;
@@ -971,11 +978,13 @@ void _Map::Load(const std::string &Path, bool Static) {
 					File >> SubChunkType;
 					switch(SubChunkType) {
 						case 't': {
-							char Buffer[1024];
-							File.ignore(1);
-							File.getline(Buffer, 1024, '\n');
-							Object->Light->Texture = ae::Assets.Textures[Buffer];
+							std::string TextureName;
+							File >> TextureName;
+							Object->Light->Texture = ae::Assets.Textures[TextureName];
 						} break;
+						case 's':
+							File >> Object->Light->Script;
+						break;
 						case 'c':
 							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b >> Object->Light->Color.a;
 						break;
@@ -992,10 +1001,9 @@ void _Map::Load(const std::string &Path, bool Static) {
 					File >> SubChunkType;
 					switch(SubChunkType) {
 						case 't': {
-							char Buffer[1024];
-							File.ignore(1);
-							File.getline(Buffer, 1024, '\n');
-							Object->Prop->Texture = ae::Assets.Textures[Buffer];
+							std::string TextureName;
+							File >> TextureName;
+							Object->Prop->Texture = ae::Assets.Textures[TextureName];
 						} break;
 						case 'c':
 							File >> Object->Prop->Color.r >> Object->Prop->Color.g >> Object->Prop->Color.b >> Object->Prop->Color.a;
@@ -1064,6 +1072,7 @@ bool _Map::Save(const std::string &Path) {
 
 		if(Object->Light && Object->Light->Texture) {
 			Output << "Lt " << Object->Light->Texture->Name << '\n';
+			Output << "Ls " << Object->Light->Script << '\n';
 			Output << "Lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << ' ' << Object->Light->Color.a << '\n';
 		}
 		if(Object->Prop && Object->Prop->Texture) {

@@ -123,6 +123,7 @@ void _PlayState::Init() {
 	try {
 		MenuMap = new _Map();
 		MenuMap->Stats = Stats;
+		MenuMap->Scripting = Scripting;
 		MenuMap->Clock = ae::GetRandomInt(0, MAP_DAY_LENGTH);
 		MenuMap->Load("maps/start.map.gz");
 	}
@@ -613,7 +614,7 @@ void _PlayState::Update(double FrameTime) {
 		// Update camera movement
 		MenuCamera->Update(FrameTime);
 		if(MenuMap)
-			MenuMap->Update(FrameTime * 10.0f);
+			MenuMap->Update(FrameTime);
 
 		return;
 	}
@@ -924,6 +925,7 @@ void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 
 		Map = new _Map();
 		Map->Stats = Stats;
+		Map->Scripting = Scripting;
 		Map->Clock = Clock;
 		Map->NetworkID = MapID;
 		for(const auto &Iterator : Stats->MapsIndex) {

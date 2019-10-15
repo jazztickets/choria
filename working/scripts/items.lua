@@ -14,7 +14,7 @@ Base_Potion = {
 	end
 }
 
--- Healing Salve  --
+-- Healing Salve --
 
 Item_HealingSalve = Base_Potion:New()
 

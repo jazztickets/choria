@@ -27,6 +27,7 @@ const std::string GAME_SCRIPTS = "scripts/game.lua";
 
 // Forward Declarations
 class _Object;
+class _Light;
 class _Battle;
 class _BaseItem;
 class _Stats;
@@ -57,6 +58,7 @@ class _Scripting {
 		void DeleteBattle(_Battle *Battle);
 
 		void PushObject(_Object *Object);
+		void PushLight(_Light *Light);
 		void PushActionResult(_ActionResult *ActionResult);
 		void PushStatChange(_StatChange *StatChange);
 		void PushStatusEffect(_StatusEffect *StatusEffect);
@@ -74,6 +76,7 @@ class _Scripting {
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 		void GetStatChange(int Index, _StatChange &StatChange);
 		void GetSummon(int Index, _Summon &Summon);
+		void GetLight(int Index, _Light *Light);
 
 		bool StartMethodCall(const std::string &TableName, const std::string &Function);
 		void MethodCall(int ParameterCount, int ReturnCount);
@@ -90,6 +93,7 @@ class _Scripting {
 		static void PushItem(lua_State *LuaState, const _BaseItem *Item, int Upgrades);
 
 		static int RandomGetInt(lua_State *LuaState);
+		static int RandomGetReal(lua_State *LuaState);
 		static int AudioPlay(lua_State *LuaState);
 
 		static int ObjectAddTarget(lua_State *LuaState);

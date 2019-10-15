@@ -245,6 +245,12 @@ void _Object::Update(double FrameTime) {
 		Character->UpdateStatus();
 }
 
+// Update static components
+void _Object::UpdateStatic(double FrameTime) {
+	if(Light)
+		Light->Update(FrameTime);
+}
+
 // Update bot AI
 void _Object::UpdateBot(double FrameTime) {
 

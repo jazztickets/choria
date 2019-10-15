@@ -16,12 +16,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/components/light.h>
+#include <objects/object.h>
+#include <scripting.h>
 
 // Constructor
 _Light::_Light(_Object *Object) :
 	Object(Object),
 	LightTypeID(0),
 	Texture(nullptr),
-	Color(1.0f) {
+	Color(1.0f),
+	FinalColor(1.0f),
+	Time(0.0) {
 
+}
+
+// Update light
+void _Light::Update(double FrameTime) {
+	FinalColor = Color;
+	Time += FrameTime;
+
+	// Check scripting
+	if(Script.empty())
+		return;
+
+	// Call update
+	_Scripting *Scripting = Object->Scripting;
+	if(Scripting && Scripting->StartMethodCall("Light_" + Script, "Update")) {
+		Scripting->PushLight(this);
+		Scripting->PushReal(Time);
+		Object->Scripting->MethodCall(2, 1);
+		Object->Scripting->GetLight(1, this);
+		Object->Scripting->FinishMethodCall();
+	}
 }

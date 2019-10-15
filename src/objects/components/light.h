@@ -19,6 +19,7 @@
 
 // Libraries
 #include <glm/vec4.hpp>
+#include <string>
 #include <cstdint>
 
 // Forward Declarations
@@ -35,13 +36,18 @@ class _Light {
 		_Light() : _Light(nullptr) { }
 		_Light(_Object *Object);
 
+		void Update(double FrameTime);
+
 		// Base
 		_Object *Object;
 
 		// Attributes
+		std::string Script;
 		uint32_t LightTypeID;
 		const ae::_Texture *Texture;
 		glm::vec4 Color;
+		glm::vec4 FinalColor;
+		double Time;
 
 	private:
 

@@ -78,6 +78,7 @@ class _Object : public ae::_BaseObject {
 
 		// Updates
 		void Update(double FrameTime) override;
+		void UpdateStatic(double FrameTime);
 		void UpdateBot(double FrameTime);
 		void Render(const _Object *ClientPlayer=nullptr);
 		void RenderBattle(_Object *ClientPlayer, double Time);

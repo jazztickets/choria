@@ -35,6 +35,7 @@
 #include <objects/map.h>
 #include <framework.h>
 #include <stats.h>
+#include <scripting.h>
 #include <config.h>
 #include <actiontype.h>
 #include <constants.h>
@@ -64,6 +65,7 @@ void _EditorState::Init() {
 	ZonesElement = ae::Assets.Elements["element_editor_zones"];
 	LightsElement = ae::Assets.Elements["element_editor_lights"];
 	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
+	LightDataElement = ae::Assets.Elements["textbox_editor_light_data"];
 	PropsElement = ae::Assets.Elements["element_editor_props"];
 	PropTypesElement = ae::Assets.Elements["element_editor_prop_types"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
@@ -98,6 +100,8 @@ void _EditorState::Init() {
 
 	// Load stats database
 	Stats = new _Stats();
+	Scripting = new _Scripting();
+	Scripting->Setup(Stats, GAME_SCRIPTS);
 
 	// Create brush
 	TileBrush = new _Tile();
@@ -148,6 +152,7 @@ void _EditorState::Init() {
 
 // Shuts the state down
 void _EditorState::Close() {
+	delete Scripting;
 	delete Stats;
 	delete Camera;
 	delete TileBrush;
@@ -512,8 +517,10 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						break;
 
 					_Object *Object = new _Object();
+					Object->Scripting = Scripting;
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Color = LightBrush->Color;
+					Object->Light->Script = LightDataElement->Text;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
 				} break;
@@ -525,6 +532,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						break;
 
 					_Object *Object = new _Object();
+					Object->Scripting = Scripting;
 					Object->Prop = new _Prop(Object);
 					Object->Prop->Texture = PropBrush->Texture;
 					Object->Prop->Color = PropBrush->Color;
@@ -655,6 +663,7 @@ void _EditorState::Update(double FrameTime) {
 		return;
 
 	// Set clock
+	Map->Update(FrameTime);
 	Map->Clock = Clock;
 
 	// Update camera
@@ -1652,6 +1661,7 @@ void _EditorState::PasteObjects() {
 
 		// Create new object
 		_Object *Object = new _Object();
+		Object->Scripting = Scripting;
 		if(SourceObject->Prop) {
 			Object->Prop = new _Prop(Object);
 			Object->Prop->Texture = SourceObject->Prop->Texture;
@@ -1690,6 +1700,7 @@ void _EditorState::CreateMap() {
 	// Create map
 	Map = new _Map();
 	Map->Stats = Stats;
+	Map->Scripting = Scripting;
 	Map->Size = Size;
 	Map->InitVertices();
 	Map->AllocateMap();
@@ -1773,6 +1784,7 @@ void _EditorState::LoadMap() {
 	// Attempt to load map
 	_Map *NewMap = new _Map();
 	NewMap->Stats = Stats;
+	NewMap->Scripting = Scripting;
 	try {
 		NewMap->Load(Path);
 	}

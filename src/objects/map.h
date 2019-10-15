@@ -52,6 +52,7 @@ class _Object;
 class _Server;
 class _Stats;
 class _Battle;
+class _Scripting;
 
 namespace ae {
 	class _Buffer;
@@ -190,6 +191,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 		// Stats
 		const _Stats *Stats;
+		_Scripting *Scripting;
 
 		// Audio
 		std::string Music;

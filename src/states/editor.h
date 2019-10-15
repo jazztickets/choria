@@ -30,6 +30,7 @@ class _Map;
 class _Stats;
 class _Light;
 class _Prop;
+class _Scripting;
 
 namespace ae {
 	class _Camera;
@@ -135,6 +136,7 @@ class _EditorState : public ae::_State {
 
 		// General
 		const _Stats *Stats;
+		_Scripting *Scripting;
 
 		// Graphics
 		ae::_Camera *Camera;
@@ -183,6 +185,7 @@ class _EditorState : public ae::_State {
 		ae::_Element *ZonesElement;
 		ae::_Element *LightsElement;
 		ae::_Element *LightTypesElement;
+		ae::_Element *LightDataElement;
 		ae::_Element *PropsElement;
 		ae::_Element *PropTypesElement;
 		ae::_Element *EventsElement;

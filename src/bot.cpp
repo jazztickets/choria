@@ -257,6 +257,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 				Map = new _Map();
 				Map->Stats = Stats;
+				Map->Scripting = Scripting;
 				Map->Clock = Clock;
 				Map->NetworkID = MapID;
 				//Map->Load(&Stats->Maps.at(MapID));

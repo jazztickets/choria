@@ -1,3 +1,4 @@
+require("scripts/lights")
 require("scripts/battle")
 require("scripts/items")
 require("scripts/buffs")

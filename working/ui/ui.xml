@@ -513,10 +513,10 @@
 			<element id="element_editor_event_data" style="style_menu_textbox" offset_x="104" offset_y="-30" size_x="600" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
 				<element id="textbox_editor_event_data" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="50"/>
 				<element id="label_editor_event_data" font="hud_medium" text="Data" offset_y="30" size_x="620" alignment_x="2" alignment_y="3"/>
-				<element id="label_editor_event_message" font="hud_medium" color="red" offset_y="-30" size_x="620" alignment_x="0" alignment_y="3"/>
+				<element id="label_editor_event_message" font="hud_medium" color="red" offset_y="-20" size_x="620" alignment_x="0" alignment_y="3"/>
 			</element>
 		</element>
-		<element id="element_editor_lights" style="style_editor_bg" size_x="500" size_y="400" clickable="true">
+		<element id="element_editor_lights" style="style_editor_bg" size_x="650" size_y="500" clickable="true">
 			<element id="element_editor_light_types"/>
 			<element id="element_editor_light_r" style="style_menu_textbox" offset_x="150" offset_y="130" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
 				<element id="button_editor_light_r" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
@@ -537,6 +537,11 @@
 				<element id="button_editor_light_a" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
 				<element id="label_editor_light_a_value" font="hud_medium" text="1.00" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
 				<element id="label_editor_light_a" font="hud_medium" text="A" offset_x="-220" offset_y="30" alignment_x="2" alignment_y="3"/>
+			</element>
+			<element id="element_editor_light_data" style="style_menu_textbox" offset_x="104" offset_y="-30" size_x="500" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
+				<element id="textbox_editor_light_data" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="50"/>
+				<element id="label_editor_light_data" font="hud_medium" text="Data" offset_y="30" size_x="520" alignment_x="2" alignment_y="3"/>
+				<element id="label_editor_light_message" font="hud_medium" color="red" offset_y="-20" size_x="520" alignment_x="0" alignment_y="3"/>
 			</element>
 		</element>
 		<element id="element_editor_props" style="style_editor_bg" size_x="1028" size_y="692" clickable="true">

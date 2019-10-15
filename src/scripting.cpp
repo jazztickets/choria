@@ -30,6 +30,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
+#include <objects/components/light.h>
 #include <objects/map.h>
 #include <server.h>
 #include <stats.h>
@@ -39,6 +40,7 @@
 // Libraries
 luaL_Reg _Scripting::RandomFunctions[] = {
 	{"GetInt", &_Scripting::RandomGetInt},
+	{"GetReal", &_Scripting::RandomGetReal},
 	{nullptr, nullptr}
 };
 
@@ -460,6 +462,23 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "Pointer");
 }
 
+// Push light onto stack
+void _Scripting::PushLight(_Light *Light) {
+	lua_newtable(LuaState);
+
+	lua_pushnumber(LuaState, Light->Color.r);
+	lua_setfield(LuaState, -2, "r");
+
+	lua_pushnumber(LuaState, Light->Color.g);
+	lua_setfield(LuaState, -2, "g");
+
+	lua_pushnumber(LuaState, Light->Color.b);
+	lua_setfield(LuaState, -2, "b");
+
+	lua_pushnumber(LuaState, Light->Color.a);
+	lua_setfield(LuaState, -2, "a");
+}
+
 // Push item onto stack
 void _Scripting::PushItem(lua_State *LuaState, const _BaseItem *Item, int Upgrades) {
 	if(!Item) {
@@ -718,7 +737,39 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 	lua_getfield(LuaState, -1, "MaxDamage");
 	Summon.MaxDamage = (int)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
+}
 
+// Get light object
+void _Scripting::GetLight(int Index, _Light *Light) {
+	if(!Light)
+		return;
+
+	if(Index != -1)
+		Index += CurrentTableIndex;
+
+	// Check return value
+	if(!lua_istable(LuaState, Index))
+		throw std::runtime_error("GetLight: Value is not a table!");
+
+	// Get r
+	lua_getfield(LuaState, -1, "r");
+	Light->FinalColor.r = (float)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get g
+	lua_getfield(LuaState, -1, "g");
+	Light->FinalColor.g = (float)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get b
+	lua_getfield(LuaState, -1, "b");
+	Light->FinalColor.b = (float)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get a
+	lua_getfield(LuaState, -1, "a");
+	Light->FinalColor.a = (float)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
 }
 
 // Start a call to a lua class method, return table index
@@ -772,6 +823,16 @@ int _Scripting::RandomGetInt(lua_State *LuaState) {
 	int Max = (int)lua_tointeger(LuaState, 2);
 
 	lua_pushinteger(LuaState, ae::GetRandomInt(Min, Max));
+
+	return 1;
+}
+
+// Random.GetReal(min, max)
+int _Scripting::RandomGetReal(lua_State *LuaState) {
+	double Min = lua_tonumber(LuaState, 1);
+	double Max = lua_tonumber(LuaState, 2);
+
+	lua_pushnumber(LuaState, ae::GetRandomReal(Min, Max));
 
 	return 1;
 }
