@@ -1048,7 +1048,7 @@ bool _Map::Save(const std::string &Path) {
 
 	// Header
 	Output << "V " << MAP_VERSION << '\n';
-	Output << "S " << Size.x << " " << Size.y << '\n';
+	Output << "S " << Size.x << ' ' << Size.y << '\n';
 
 	// Write tile map
 	for(int j = 0; j < Size.y; j++) {
