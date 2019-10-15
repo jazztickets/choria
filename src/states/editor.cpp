@@ -309,13 +309,6 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_F3:
 				SwitchMode(EditorModeType::PROPS);
 			break;
-			case SDL_SCANCODE_Z:
-				if(Map) {
-					Map->CurrentZoneColors++;
-					if(Map->CurrentZoneColors > Map->MaxZoneColors)
-						Map->CurrentZoneColors = 1;
-				}
-			break;
 			default:
 			break;
 		}
@@ -1314,7 +1307,7 @@ void _EditorState::InitZones() {
 	glm::vec2 Start = glm::vec2(20, 20);
 	glm::vec2 Spacing = glm::vec2(20, 20);
 	glm::vec2 Offset(Start);
-	int ZoneIndex = 0;
+	uint16_t ZoneIndex = 1;
 	for(const auto &Zone : Stats->Zones) {
 
 		// Add button

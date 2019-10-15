@@ -41,7 +41,7 @@ const int MAP_TILE_WIDTH = 64;
 const int MAP_TILE_HEIGHT = 64;
 const int MAP_TILE_PADDED_WIDTH = 66;
 const int MAP_TILE_PADDED_HEIGHT = 66;
-const int MAP_ZONE_COLORS = 6;
+const uint16_t MAP_ZONE_COLORS = 6;
 const double MAP_DAY_LENGTH = 24.0*60.0;
 const double MAP_CLOCK_SPEED = 1.0;
 const glm::vec4 MAP_AMBIENT_LIGHT = glm::vec4(0.3, 0.3, 0.3, 1);
@@ -196,10 +196,6 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 		// Network
 		_Server *Server;
-
-		// Editor
-		uint32_t MaxZoneColors;
-		uint32_t CurrentZoneColors;
 
 		// Path finding
 		micropather::MicroPather *Pather;

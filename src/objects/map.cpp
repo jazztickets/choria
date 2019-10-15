@@ -54,16 +54,6 @@
 #include <stdexcept>
 #include <iomanip>
 
-// Color overlays for zones
-const glm::vec4 ZoneColors[] = {
-	{ 1.0f, 0.0f, 0.0f, 0.4f },
-	{ 0.0f, 1.0f, 0.0f, 0.4f },
-	{ 0.0f, 0.0f, 1.0f, 0.4f },
-	{ 1.0f, 1.0f, 0.0f, 0.4f },
-	{ 0.0f, 1.0f, 1.0f, 0.4f },
-	{ 1.0f, 0.0f, 1.0f, 0.4f },
-};
-
 // Colors of each time cycle
 const std::vector<glm::vec4> DayCycles = {
 	{ 0.05f, 0.05f, 0.3f,  1 },
@@ -98,8 +88,6 @@ _Map::_Map() :
 	ObjectUpdateTime(0),
 	Stats(nullptr),
 	Server(nullptr),
-	MaxZoneColors(sizeof(ZoneColors) / sizeof(glm::vec4)),
-	CurrentZoneColors(MaxZoneColors),
 	Pather(nullptr),
 	MapVertexBufferID(0),
 	MapTextureID(0) {
@@ -736,8 +724,9 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 				// Draw zone color
 				if(!Tile->Wall && !Tile->ZoneID.empty()) {
-					//TODO fix
-					ae::Graphics.SetColor(ZoneColors[Stats->Zones.at(Tile->ZoneID).NetworkID % CurrentZoneColors]);
+					uint16_t ZoneIndex = Stats->Zones.at(Tile->ZoneID).NetworkID % MAP_ZONE_COLORS;
+					ae::_Style *Style = ae::Assets.Styles["style_editor_zone" + std::to_string(ZoneIndex)];
+					ae::Graphics.SetColor(Style->BackgroundColor);
 					ae::Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i+1, j+1), true);
 				}
 			}
