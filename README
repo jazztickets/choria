@@ -135,6 +135,8 @@ Use Shift Middle-click to add objects to the selection
 Use Middle-click on selected objects to move them
 Use Ctrl Middle-click to copy an existing object into the brush
 Use Shift Middle-click drag to resize a selected object
+Hit C to copy selected objects relative to where the mouse is
+Hit V to paste
 
 -- Misc --
 Hit N to start a new map

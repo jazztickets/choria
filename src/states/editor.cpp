@@ -129,12 +129,14 @@ void _EditorState::Init() {
 	else
 		ToggleNewMap();
 
-	Copied = false;
+	CopiedTiles = false;
 	DrawCopyBounds = false;
 	DrawingObject = false;
 	DrawingSelect = false;
 	MovingObjects = false;
 	ResizingObject = false;
+	CopiedObjects = false;
+	CopyPosition = glm::vec2(0.0f, 0.0f);
 	ObjectStart = glm::vec2(0.0f, 0.0f);
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
@@ -263,8 +265,14 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				Framework.IgnoreNextInputEvent = true;
 				Go();
 			break;
+			case SDL_SCANCODE_C:
+				CopyObjects();
+			break;
 			case SDL_SCANCODE_V:
-				PasteTiles();
+				if(Mode == EditorModeType::TILES)
+					PasteTiles();
+				else
+					PasteObjects();
 			break;
 			case SDL_SCANCODE_D:
 				DeleteSelectedObjects();
@@ -531,8 +539,10 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 			// Append to selection
 			bool ToggleMode = ae::Input.ModKeyDown(KMOD_SHIFT);
-			if(!ToggleMode)
+			if(!ToggleMode) {
 				SelectedObjects.clear();
+				CopiedObjects = false;
+			}
 
 			// Get bounds of drawn box
 			ae::_Bounds Bounds;
@@ -566,7 +576,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 			// Update object positions
 			glm::vec2 Offset;
-			GetMovingOffset(Offset);
+			GetCursorOffset(Offset, ObjectStart);
 			for(const auto &Iterator : SelectedObjects)
 				Iterator.first->Position += Offset;
 		}
@@ -708,7 +718,7 @@ void _EditorState::Render(double BlendFactor) {
 		// Handle moving objects
 		glm::vec2 Offset(0.0f, 0.0f);
 		if(MovingObjects)
-			GetMovingOffset(Offset);
+			GetCursorOffset(Offset, ObjectStart);
 
 		// Render selected objects
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
@@ -867,7 +877,7 @@ void _EditorState::AllocateCopy() {
 	for(int i = 0; i < Map->Size.x; i++)
 		CopyBuffer[i] = new _Tile[Map->Size.y];
 
-	Copied = false;
+	CopiedTiles = false;
 }
 
 // Free memory used by copy and paste buffer
@@ -1030,7 +1040,7 @@ void _EditorState::CopyTiles() {
 
 	// Set state
 	DrawCopyBounds = false;
-	Copied = true;
+	CopiedTiles = true;
 
 	// Get copy bounds
 	GetTileDrawBounds(CopyStart, CopyEnd);
@@ -1048,7 +1058,7 @@ void _EditorState::CopyTiles() {
 
 // Paste tiles
 void _EditorState::PasteTiles() {
-	if(Mode != EditorModeType::TILES || !Copied)
+	if(Mode != EditorModeType::TILES || !CopiedTiles)
 		return;
 
 	// Get offsets
@@ -1475,6 +1485,7 @@ void _EditorState::SwitchMode(EditorModeType Value) {
 	DrawingSelect = false;
 	MovingObjects = false;
 	ResizingObject = false;
+	CopiedObjects = false;
 	SelectedObjects.clear();
 }
 
@@ -1499,8 +1510,8 @@ bool _EditorState::TouchingSelectedObjects(const glm::vec2 &Position) {
 }
 
 // Get offset while moving objects
-void _EditorState::GetMovingOffset(glm::vec2 &Offset) {
-	Offset = glm::ivec2((WorldCursor - ObjectStart) * 2.0f);
+void _EditorState::GetCursorOffset(glm::vec2 &Offset, const glm::vec2 &Start) {
+	Offset = glm::ivec2((WorldCursor - Start) * 2.0f);
 	Offset *= 0.5f;
 }
 
@@ -1524,6 +1535,7 @@ void _EditorState::DeleteSelectedObjects() {
 	}
 
 	SelectedObjects.clear();
+	CopiedObjects = false;
 }
 
 // Set object size while drawing or resizing
@@ -1537,6 +1549,42 @@ void _EditorState::SetObjectSize(_Object *Object, bool AsRectangle) {
 	else {
 		Object->Shape.HalfSize.x = GetObjectRadius();
 		Object->Position = ObjectStart;
+	}
+}
+
+// Copy objects
+void _EditorState::CopyObjects() {
+	if(!SelectedObjects.size())
+		return;
+
+	CopyPosition = WorldCursor;
+	CopiedObjects = true;
+}
+
+// Paste selected objects
+void _EditorState::PasteObjects() {
+	if(!CopiedObjects)
+		return;
+
+	glm::vec2 Offset;
+	GetCursorOffset(Offset, CopyPosition);
+	for(const auto &Iterator : SelectedObjects) {
+		_Object *SourceObject = Iterator.first;
+
+		// Create new object
+		_Object *Object = new _Object();
+		if(SourceObject->Prop) {
+			Object->Prop = new _Prop(Object);
+			Object->Prop->Texture = SourceObject->Prop->Texture;
+			Object->Prop->Color = SourceObject->Prop->Color;
+		}
+		if(SourceObject->Light->Texture) {
+			Object->Light->Texture = SourceObject->Light->Texture;
+			Object->Light->Color = SourceObject->Light->Color;
+		}
+		Object->Shape = SourceObject->Shape;
+		Object->Position = SourceObject->Position + Offset;
+		Map->StaticObjects.push_back(Object);
 	}
 }
 

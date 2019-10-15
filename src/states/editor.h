@@ -113,9 +113,11 @@ class _EditorState : public ae::_State {
 		// Objects
 		void StartDrawingObject();
 		bool TouchingSelectedObjects(const glm::vec2 &Position);
-		void GetMovingOffset(glm::vec2 &Offset);
+		void GetCursorOffset(glm::vec2 &Offset, const glm::vec2 &Start);
 		void DeleteSelectedObjects();
 		void SetObjectSize(_Object *Object, bool AsRectangle);
+		void CopyObjects();
+		void PasteObjects();
 		_Object *GetSingleSelectedObject();
 
 		// Brushes
@@ -144,7 +146,7 @@ class _EditorState : public ae::_State {
 		bool UseClockAmbientLight;
 
 		// Copy paste
-		bool Copied;
+		bool CopiedTiles;
 		bool DrawCopyBounds;
 		glm::ivec2 CopyStart;
 		glm::ivec2 CopyEnd;
@@ -161,6 +163,8 @@ class _EditorState : public ae::_State {
 		bool DrawingSelect;
 		bool MovingObjects;
 		bool ResizingObject;
+		bool CopiedObjects;
+		glm::vec2 CopyPosition;
 		glm::vec2 ObjectStart;
 		_Light *LightBrush;
 		_Prop *PropBrush;
