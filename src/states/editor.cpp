@@ -1023,16 +1023,6 @@ void _EditorState::DrawBrushInfo() {
 	}
 }
 
-// Update generic value
-void _EditorState::AdjustValue(uint32_t &Value, int Direction) {
-	int IntVal = (int)Value;
-	IntVal += Direction;
-	if(IntVal < 0)
-		IntVal = 0;
-
-	Value = (uint32_t)IntVal;
-}
-
 // Copy tiles
 void _EditorState::CopyTiles() {
 	if(Mode != EditorModeType::TILES)

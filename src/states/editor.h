@@ -77,8 +77,6 @@ class _EditorState : public ae::_State {
 		void SaveMap();
 		void LoadMap();
 		void Go();
-		void SetLightSliders(const glm::vec4 &Color);
-		void UpdateSliders();
 
 		void ToggleTextures();
 		void ToggleLights();
@@ -103,6 +101,12 @@ class _EditorState : public ae::_State {
 		void ClearEvents();
 		bool CloseWindows();
 
+		// UI
+		void SetLightSliders(const glm::vec4 &Color);
+		void UpdateSliders();
+		void GetDrawBounds(ae::_Bounds &Bounds, bool Round);
+		void GetTileDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
+
 		// Modes
 		void SwitchMode(EditorModeType Value);
 
@@ -117,15 +121,12 @@ class _EditorState : public ae::_State {
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
 		void DrawBrushInfo();
-		void AdjustValue(uint32_t &Value, int Direction);
 		void SwitchBrushModes(int Key);
 		float GetObjectRadius();
 
-		// Copy/Paste
+		// Tiles
 		void CopyTiles();
 		void PasteTiles();
-		void GetDrawBounds(ae::_Bounds &Bounds, bool Round);
-		void GetTileDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
 
 		// General
 		const _Stats *Stats;
