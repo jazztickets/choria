@@ -79,6 +79,7 @@ class _EditorState : public ae::_State {
 		void Go();
 
 		void ToggleTextures();
+		void ToggleZones();
 		void ToggleLights();
 		void ToggleProps();
 		void ToggleEvents();
@@ -88,6 +89,7 @@ class _EditorState : public ae::_State {
 		void ToggleLoadMap(const std::string &TempPath = "");
 
 		void InitTextures();
+		void InitZones();
 		void InitLights();
 		void InitProps();
 		void InitEvents();
@@ -96,6 +98,7 @@ class _EditorState : public ae::_State {
 		void InitSaveMap();
 		void InitLoadMap(const std::string &TempPath = "");
 		void ClearTextures();
+		void ClearZones();
 		void ClearLights();
 		void ClearProps();
 		void ClearEvents();
@@ -177,6 +180,7 @@ class _EditorState : public ae::_State {
 		ae::_Element *ButtonBarElement;
 		ae::_Element *ClockElement;
 		ae::_Element *TexturesElement;
+		ae::_Element *ZonesElement;
 		ae::_Element *LightsElement;
 		ae::_Element *LightTypesElement;
 		ae::_Element *PropsElement;

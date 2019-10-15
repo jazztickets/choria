@@ -61,6 +61,7 @@ void _EditorState::Init() {
 	ButtonBarElement = ae::Assets.Elements["element_editor_buttonbar"];
 	ClockElement = ae::Assets.Elements["element_editor_clock"];
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
+	ZonesElement = ae::Assets.Elements["element_editor_zones"];
 	LightsElement = ae::Assets.Elements["element_editor_lights"];
 	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
 	PropsElement = ae::Assets.Elements["element_editor_props"];
@@ -84,6 +85,7 @@ void _EditorState::Init() {
 	LoadMapTextBox = ae::Assets.Elements["textbox_editor_loadmap"];
 	EditorElement->SetActive(true);
 	TexturesElement->SetActive(false);
+	ZonesElement->SetActive(false);
 	LightsElement->SetActive(false);
 	PropsElement->SetActive(false);
 	EventsElement->SetActive(false);
@@ -242,9 +244,6 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_W:
 				TileBrush->Wall = !TileBrush->Wall;
 			break;
-			case SDL_SCANCODE_P:
-				TileBrush->PVP = !TileBrush->PVP;
-			break;
 			case SDL_SCANCODE_N:
 				Framework.IgnoreNextInputEvent = true;
 				ToggleNewMap();
@@ -284,7 +283,14 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_SPACE:
 				switch(Mode) {
 					case EditorModeType::TILES:
-						ToggleTextures();
+						if(Filter & MAP_RENDER_TEXTURE)
+							ToggleTextures();
+						else if(Filter & MAP_RENDER_ZONE)
+							ToggleZones();
+						else if(Filter & MAP_RENDER_PVP)
+							TileBrush->PVP = !TileBrush->PVP;
+						else if(Filter & MAP_RENDER_EVENTTYPE)
+							ToggleEvents();
 					break;
 					case EditorModeType::LIGHTS:
 						ToggleLights();
@@ -414,6 +420,14 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
 				ae::_Element *Button = TexturesElement->GetClickedElement();
 				TileBrush->BaseTextureIndex = Button->TextureIndex;
+				CloseWindows();
+			}
+		}
+		// Zone select
+		else if(ZonesElement->GetClickedElement()) {
+			if(ZonesElement->GetClickedElement() != ZonesElement) {
+				ae::_Element *Button = ZonesElement->GetClickedElement();
+				//TileBrush->BaseTextureIndex = Button->TextureIndex;
 				CloseWindows();
 			}
 		}
@@ -1146,6 +1160,17 @@ void _EditorState::ToggleTextures() {
 	}
 }
 
+// Show the zone select screen
+void _EditorState::ToggleZones() {
+	if(!ZonesElement->Active) {
+		CloseWindows();
+		InitZones();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Show the light select screen
 void _EditorState::ToggleLights() {
 	if(!LightsElement->Active) {
@@ -1212,6 +1237,14 @@ void _EditorState::ClearTextures() {
 	TexturesElement->Children.clear();
 }
 
+// Delete memory used by zones screen
+void _EditorState::ClearZones() {
+	for(auto &Child : ZonesElement->Children)
+		delete Child;
+
+	ZonesElement->Children.clear();
+}
+
 // Delete memory used by lights screen
 void _EditorState::ClearLights() {
 	for(auto &Child : LightTypesElement->Children)
@@ -1269,6 +1302,36 @@ void _EditorState::InitTextures() {
 
 	TexturesElement->CalculateBounds();
 	TexturesElement->SetActive(true);
+}
+
+// Init zones screen
+void _EditorState::InitZones() {
+	ClearZones();
+
+	glm::vec2 Start = glm::vec2(20, 20);
+	glm::vec2 Spacing = glm::vec2(20, 20);
+	glm::vec2 Offset(Start);
+	for(size_t i = 0; i < Stats->Zones.size(); i++) {
+
+		// Add button
+		ae::_Element *Button = new ae::_Element();
+		Button->Parent = ZonesElement;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = glm::vec2(64, 64);
+		Button->Alignment = ae::LEFT_TOP;
+		Button->Clickable = true;
+		ZonesElement->Children.push_back(Button);
+
+		// Update position
+		Offset.x += Button->BaseSize.x + Spacing.x;
+		if(Offset.x > ZonesElement->BaseSize.x - Button->BaseSize.x) {
+			Offset.y += Button->BaseSize.x + Spacing.y;
+			Offset.x = Start.x;
+		}
+	}
+
+	ZonesElement->CalculateBounds();
+	ZonesElement->SetActive(true);
 }
 
 // Init lights screen
@@ -1442,6 +1505,7 @@ void _EditorState::InitLoadMap(const std::string &TempPath) {
 bool _EditorState::CloseWindows() {
 	bool WasOpen =
 		TexturesElement->Active |
+		ZonesElement->Active |
 		EventsElement->Active |
 		NewMapElement->Active |
 		ResizeMapElement->Active |
@@ -1451,6 +1515,7 @@ bool _EditorState::CloseWindows() {
 		PropsElement->Active;
 
 	TexturesElement->SetActive(false);
+	ZonesElement->SetActive(false);
 	LightsElement->SetActive(false);
 	PropsElement->SetActive(false);
 	EventsElement->SetActive(false);

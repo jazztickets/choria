@@ -507,6 +507,7 @@
 			</element>
 		</element>
 		<element id="element_editor_textures" style="style_editor_bg" size_x="1028" size_y="692" clickable="true"/>
+		<element id="element_editor_zones" style="style_editor_bg" size_x="1028" size_y="692" clickable="true"/>
 		<element id="element_editor_events" style="style_editor_bg" clickable="true">
 			<element id="element_editor_event_types"/>
 			<element id="element_editor_event_data" style="style_menu_textbox" offset_x="104" offset_y="-30" size_x="600" size_y="42" alignment_x="0" alignment_y="2" clickable="true">

@@ -100,12 +100,11 @@ Hit 3 to draw PVP/safe areas
 Hit 4 to draw events
 Hit Tab to change from transition/block mode
 Hit W to change from Wall/Walkable
-Hit P to change from PVP/Safe zone
 Hit E to open the event menu
 Hit G on an map event to switch maps
 Hit V to paste a copied area of tiles
 Hit Z to rotate through different zone colors
-Hit Spacebar to show the tile palette
+Hit Spacebar to show the palette based on mode
 
 Hit F2 to select "lights" mode
 Hit Spacebar to show the lights menu
