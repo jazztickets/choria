@@ -39,3 +39,4 @@ zone_blue	0	0	1	0.4
 zone_cyan	0	1	1	0.4
 zone_purple	1	0	1	0.4
 zone_yellow	1	1	0	0.4
+editor_edge	1	0	1	0.1

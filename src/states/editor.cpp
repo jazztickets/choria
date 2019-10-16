@@ -769,7 +769,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Render map
 	if(Map) {
-		int RenderFilter = Filter | MAP_RENDER_BOUNDARY;
+		int RenderFilter = Filter | MAP_RENDER_BOUNDARY | MAP_RENDER_EDGE_BOUNDARY;
 		if(!UseClockAmbientLight)
 			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
 

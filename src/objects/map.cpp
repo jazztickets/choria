@@ -724,6 +724,13 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		ae::Graphics.DrawRectangle3D(glm::vec2(0), glm::vec2(Size), false);
 	}
 
+	// Draw boundary where map edge is almost visible
+	if((RenderFlags & MAP_RENDER_EDGE_BOUNDARY) && Size.x > 32 && Size.y > 20) {
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetColor(ae::Assets.Colors["editor_edge"]);
+		ae::Graphics.DrawRectangle3D(glm::vec2(16, 10), glm::vec2(Size.x - 16, Size.y - 10), false);
+	}
+
 	// Draw zone overlays
 	if(RenderFlags & MAP_RENDER_ZONE) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);

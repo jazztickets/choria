@@ -146,4 +146,5 @@ enum MapRenderType {
 	MAP_RENDER_EVENT_TYPE        = (1 << 6),
 	MAP_RENDER_EVENT_DATA        = (1 << 7),
 	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
+	MAP_RENDER_EDGE_BOUNDARY     = (1 << 9),
 };
