@@ -174,6 +174,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		// Graphics
 		bool Headless;
 		glm::vec4 AmbientLight;
+		glm::vec4 FinalAmbientLight;
 		int IsOutside;
 		double Clock;
 		int LightCount;

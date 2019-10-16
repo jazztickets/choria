@@ -79,6 +79,7 @@ _Map::_Map() :
 	Size(0, 0),
 	Headless(false),
 	AmbientLight(MAP_AMBIENT_LIGHT),
+	FinalAmbientLight(MAP_AMBIENT_LIGHT),
 	IsOutside(true),
 	Clock(0),
 	LightCount(0),
@@ -397,8 +398,10 @@ void _Map::GetClockAsString(std::stringstream &Buffer) const {
 
 // Set ambient light for map
 void _Map::SetAmbientLightByClock() {
-	if(!IsOutside)
+	if(!IsOutside) {
+		FinalAmbientLight = AmbientLight;
 		return;
+	}
 
 	// Find index by time
 	size_t NextCycle = DayCyclesTime.size();
@@ -430,7 +433,7 @@ void _Map::SetAmbientLightByClock() {
 	float Percent = (float)(Diff / Length);
 
 	// Set color
-	AmbientLight = glm::mix(DayCycles[CurrentCycle], DayCycles[NextCycle], Percent);
+	FinalAmbientLight = glm::mix(DayCycles[CurrentCycle], DayCycles[NextCycle], Percent);
 }
 
 // Start event for an object and send packet
@@ -620,10 +623,10 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT) {
 		Framebuffer->Use();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glm::vec4 AmbientLightEditor(1.0f);
-		ae::Assets.Programs["map"]->AmbientLight = AmbientLightEditor;
-		ae::Assets.Programs["map_object"]->AmbientLight = AmbientLightEditor;
-		ae::Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
+		FinalAmbientLight = glm::vec4(1.0f);
+		ae::Assets.Programs["map"]->AmbientLight = FinalAmbientLight;
+		ae::Assets.Programs["map_object"]->AmbientLight = FinalAmbientLight;
+		ae::Assets.Programs["pos_uv_static"]->AmbientLight = FinalAmbientLight;
 	}
 	else {
 
@@ -631,8 +634,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		SetAmbientLightByClock();
 
 		// Setup lights
-		ae::Assets.Programs["map"]->AmbientLight = AmbientLight;
-		ae::Assets.Programs["map_object"]->AmbientLight = AmbientLight;
+		ae::Assets.Programs["map"]->AmbientLight = FinalAmbientLight;
+		ae::Assets.Programs["map_object"]->AmbientLight = FinalAmbientLight;
 
 		// Add lights
 		LightCount = 0;
@@ -909,6 +912,11 @@ void _Map::Load(const std::string &Path, bool Static) {
 				File >> Size.x >> Size.y;
 				AllocateMap();
 			} break;
+			// Lighting
+			case 'A': {
+				File >> IsOutside >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
+				AllocateMap();
+			} break;
 			// Music
 			case 'M': {
 				File >> Music;
@@ -1050,6 +1058,7 @@ bool _Map::Save(const std::string &Path) {
 	// Header
 	Output << "V " << MAP_VERSION << '\n';
 	Output << "S " << Size.x << ' ' << Size.y << '\n';
+	Output << "A " << IsOutside << ' ' << AmbientLight.r << ' ' << AmbientLight.g << ' ' <<  AmbientLight.b << '\n';
 	if(Music.length())
 		Output << "M " << Music << '\n';
 

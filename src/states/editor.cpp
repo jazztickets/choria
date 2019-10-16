@@ -127,7 +127,7 @@ void _EditorState::Init() {
 
 	// Default map
 	Clock = 60.0 * 12.0;
-	UseClockAmbientLight = false;
+	UseClockAmbientLight = true;
 	Map = nullptr;
 	CopyBuffer = nullptr;
 	if(FilePath != "") {
@@ -1771,6 +1771,7 @@ void _EditorState::CreateMap() {
 	Map->Size = Size;
 	Map->InitVertices();
 	Map->AllocateMap();
+	Map->BuildLayers(glm::ivec4(0, 0, Map->Size.x, Map->Size.y), ShowTransitions);
 	AllocateCopy();
 	FilePath = NewMapFilenameTextBox->Text;
 	SetInfoUI();
@@ -1882,12 +1883,6 @@ void _EditorState::LoadMap() {
 			//	Map->FindEvent(_Event(EventType::MAPENTRANCE, OldMapID), Position);
 		}
 		Camera->ForcePosition(glm::vec3(Position, CAMERA_DISTANCE));
-
-		// Set editor state
-		UseClockAmbientLight = false;
-		if(Map->IsOutside)
-			UseClockAmbientLight = true;
-
 		SetInfoUI();
 	}
 
