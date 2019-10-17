@@ -21,7 +21,6 @@ highlight	1	1	1	0.15
 dark	0	0	0	0.8
 inventory_slot_trans	1	1	1	0.7
 item_tooltip_bg	0	0	0	0.9
-editor_select	1	1	1	0.2
 equipment_bg	0.029	0.029	0.045	1
 equipment_bg_dark	0.015	0.015	0.022	1
 menu_button	0.1	0.1	0.15	1
@@ -40,3 +39,5 @@ zone_cyan	0	1	1	0.4
 zone_purple	1	0	1	0.4
 zone_yellow	1	1	0	0.4
 editor_edge	1	0	1	0.1
+editor_select	1	1	1	0.2
+editor_bg	0.02	0.02	0.02	1
