@@ -1024,29 +1024,32 @@ void _Map::Load(const std::string &Path, bool Static) {
 					} break;
 				}
 			} break;
-			// light
+			// Lights
 			case 'L': {
 				if(Object) {
 					char SubChunkType;
 					File >> SubChunkType;
 					switch(SubChunkType) {
+						// Texture
 						case 't': {
 							std::string TextureName;
 							File >> TextureName;
 							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 							Object->Light->Texture = ae::Assets.Textures[TextureName];
 						} break;
+						// Script
 						case 's':
 							File >> Object->Light->Script;
 							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 						break;
+						// Color
 						case 'c':
 							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b >> Object->Light->Color.a;
 						break;
 					}
 				}
 			} break;
-			// Prop
+			// Props
 			case 'P': {
 				if(Object) {
 					if(!Object->Prop)
@@ -1055,15 +1058,18 @@ void _Map::Load(const std::string &Path, bool Static) {
 					char SubChunkType;
 					File >> SubChunkType;
 					switch(SubChunkType) {
+						// Textures
 						case 't': {
 							std::string TextureName;
 							File >> TextureName;
 							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 							Object->Prop->Texture = ae::Assets.Textures[TextureName];
 						} break;
+						// Repeat
 						case 'r':
 							File >> Object->Prop->Repeat;
 						break;
+						// Color
 						case 'c':
 							File >> Object->Prop->Color.r >> Object->Prop->Color.g >> Object->Prop->Color.b >> Object->Prop->Color.a;
 						break;
