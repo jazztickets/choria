@@ -915,91 +915,112 @@ void _Map::Load(const std::string &Path, bool Static) {
 
 		// Handle chunks
 		switch(ChunkType) {
-			// Map version
-			case 'V': {
-				int FileVersion;
-				File >> FileVersion;
-				if(FileVersion != MAP_VERSION)
-					throw std::runtime_error("Level version mismatch: " + std::to_string(FileVersion));
+			// Handle header
+			case 'H': {
+				char SubChunkType;
+				File >> SubChunkType;
+				switch(SubChunkType) {
+					// Version
+					case 'v': {
+						int FileVersion;
+						File >> FileVersion;
+						if(FileVersion != MAP_VERSION)
+							throw std::runtime_error("Level version mismatch: " + std::to_string(FileVersion));
+					} break;
+					// Size
+					case 's': {
+						File >> Size.x >> Size.y;
+						AllocateMap();
+					} break;
+					// Lighting
+					case 'a': {
+						File >> IsOutside >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
+						AllocateMap();
+					} break;
+					// Music
+					case 'm': {
+						File >> Music;
+						File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					} break;
+				}
 			} break;
-			// Map size
-			case 'S': {
-				File >> Size.x >> Size.y;
-				AllocateMap();
-			} break;
-			// Lighting
-			case 'A': {
-				File >> IsOutside >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
-				AllocateMap();
-			} break;
-			// Music
-			case 'M': {
-				File >> Music;
-				File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			} break;
-			// Begin new tile
+			// Handle tiles
 			case 'T': {
-				glm::ivec2 Coordinate;
-				Coordinate.x = TileIndex % Size.x;
-				Coordinate.y = TileIndex / Size.x;
-				Tile = &Tiles[Coordinate.x][Coordinate.y];
-				TileIndex++;
-			} break;
-			// Texture index
-			case 'b': {
-				if(Tile) {
-					char Buffer[1024];
-					File.ignore(1);
-					File.getline(Buffer, 1024, '\n');
-					if(!Server) {
-						const ae::_TileMap::_TileData &TileData = ae::Assets.TileMaps["default"]->Data.at(Buffer);
-						Tile->BaseTextureIndex = TileData.Index;
-						Tile->Hierarchy = TileData.Hierarchy;
-					}
-				}
-			} break;
-			// Zone
-			case 'z': {
-				if(Tile) {
-					File >> Tile->ZoneID;
-					File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				}
-			} break;
-			// Event
-			case 'e': {
-				if(Tile) {
-					int Type;
-					File >> Type;
+				char SubChunkType;
+				File >> SubChunkType;
+				switch(SubChunkType) {
+					// Begin new Tile
+					case 'n': {
+						glm::ivec2 Coordinate;
+						Coordinate.x = TileIndex % Size.x;
+						Coordinate.y = TileIndex / Size.x;
+						Tile = &Tiles[Coordinate.x][Coordinate.y];
+						TileIndex++;
+					} break;
+					// Texture index
+					case 'b': {
+						if(Tile) {
+							char Buffer[1024];
+							File.ignore(1);
+							File.getline(Buffer, 1024, '\n');
+							if(!Server) {
+								const ae::_TileMap::_TileData &TileData = ae::Assets.TileMaps["default"]->Data.at(Buffer);
+								Tile->BaseTextureIndex = TileData.Index;
+								Tile->Hierarchy = TileData.Hierarchy;
+							}
+						}
+					} break;
+					// Zone
+					case 'z': {
+						if(Tile) {
+							File >> Tile->ZoneID;
+							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+						}
+					} break;
+					// Event
+					case 'e': {
+						if(Tile) {
+							int Type;
+							File >> Type;
 
-					char Buffer[1024];
-					File.ignore(1);
-					File.getline(Buffer, 1024, '\n');
-					Tile->Event.Type = (EventType)Type;
-					Tile->Event.Data = Buffer;
+							char Buffer[1024];
+							File.ignore(1);
+							File.getline(Buffer, 1024, '\n');
+							Tile->Event.Type = (EventType)Type;
+							Tile->Event.Data = Buffer;
+						}
+					} break;
+					// Wall
+					case 'w': {
+						if(Tile)
+							File >> Tile->Wall;
+					} break;
+					// PVP
+					case 'p': {
+						if(Tile)
+							File >> Tile->PVP;
+					} break;
 				}
 			} break;
-			// Wall
-			case 'w': {
-				if(Tile)
-					File >> Tile->Wall;
-			} break;
-			// PVP
-			case 'p': {
-				if(Tile)
-					File >> Tile->PVP;
-			} break;
-			// Object
+			// Handle objects
 			case 'O': {
-				glm::vec2 Position;
-				File >> Position.x >> Position.y;
-				Object = new _Object();
-				Object->Scripting = Scripting;
-				Object->Position = Position;
-				StaticObjects.push_back(Object);
-			} break;
-			// Object shape
-			case 's': {
-				File >> Object->Shape.HalfSize.x >> Object->Shape.HalfSize.y;
+				char SubChunkType;
+				File >> SubChunkType;
+				switch(SubChunkType) {
+					// Position
+					case 'p': {
+						glm::vec2 Position;
+						File >> Position.x >> Position.y;
+						Object = new _Object();
+						Object->Scripting = Scripting;
+						Object->Position = Position;
+						StaticObjects.push_back(Object);
+					} break;
+					// Shape
+					case 's': {
+						File >> Object->Shape.HalfSize.x >> Object->Shape.HalfSize.y;
+					} break;
+				}
 			} break;
 			// light
 			case 'L': {
@@ -1080,34 +1101,35 @@ bool _Map::Save(const std::string &Path) {
 		throw std::runtime_error("Cannot create file: " + Path);
 
 	// Header
-	Output << "V " << MAP_VERSION << '\n';
-	Output << "S " << Size.x << ' ' << Size.y << '\n';
-	Output << "A " << IsOutside << ' ' << AmbientLight.r << ' ' << AmbientLight.g << ' ' <<  AmbientLight.b << '\n';
+	Output << "Hv " << MAP_VERSION << '\n';
+	Output << "Hs " << Size.x << ' ' << Size.y << '\n';
+	Output << "Ha " << IsOutside << ' ' << AmbientLight.r << ' ' << AmbientLight.g << ' ' <<  AmbientLight.b << '\n';
 	if(Music.length())
-		Output << "M " << Music << '\n';
+		Output << "Hm " << Music << '\n';
 
 	// Write tile map
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			const _Tile &Tile = Tiles[i][j];
-			Output << "T" << '\n';
+			Output << "Tn\n";
 			if(Tile.BaseTextureIndex)
-				Output << "b " << ae::Assets.TileMaps["default"]->Index.at(Tile.BaseTextureIndex)->ID << '\n';
+				Output << "Tb " << ae::Assets.TileMaps["default"]->Index.at(Tile.BaseTextureIndex)->ID << '\n';
 			if(!Tile.ZoneID.empty())
-				Output << "z " << Tile.ZoneID << '\n';
+				Output << "Tz " << Tile.ZoneID << '\n';
 			if(Tile.Event.Type != EventType::NONE)
-				Output << "e " << (int)Tile.Event.Type << ' ' << Tiles[i][j].Event.Data << '\n';
+				Output << "Te " << (int)Tile.Event.Type << ' ' << Tiles[i][j].Event.Data << '\n';
 			if(Tile.Wall)
-				Output << "w " << Tile.Wall << '\n';
+				Output << "Tw " << Tile.Wall << '\n';
 			if(Tile.PVP)
-				Output << "p " << Tile.PVP << '\n';
+				Output << "Tp " << Tile.PVP << '\n';
 		}
 	}
 
 	// Write static objects
 	for(auto &Object : StaticObjects) {
-		Output << "O " << Object->Position.x << ' ' << Object->Position.y << '\n';
-		Output << "s " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
+		Output << "On\n";
+		Output << "Op " << Object->Position.x << ' ' << Object->Position.y << '\n';
+		Output << "Os " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
 
 		if(Object->Light && Object->Light->Texture) {
 			Output << "Lt " << Object->Light->Texture->Name << '\n';
