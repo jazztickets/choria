@@ -434,7 +434,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/builds/");
 	ae::Assets.LoadTextureDirectory("textures/editor/");
 	ae::Assets.LoadTextureDirectory("textures/hud/");
-	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", false, true);
+	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", false, true, true);
 	ae::Assets.LoadTextureDirectory("textures/interface/");
 	ae::Assets.LoadTextureDirectory("textures/items/");
 	ae::Assets.LoadTextureDirectory("textures/lights/");
@@ -445,6 +445,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/monsters/");
 	ae::Assets.LoadTextureDirectory("textures/portraits/");
 	ae::Assets.LoadTextureDirectory("textures/props/");
+	ae::Assets.LoadTextureDirectory("textures/props_repeat/", false, true, true);
 	ae::Assets.LoadTextureDirectory("textures/skills/");
 	ae::Assets.LoadTextureDirectory("textures/status/");
 

@@ -573,6 +573,13 @@
 		</element>
 		<element id="element_editor_props" style="style_editor_bg" size_x="1028" size_y="692" clickable="true">
 			<element id="element_editor_prop_types"/>
+			<element id="element_editor_prop_repeat" offset_x="0" offset_y="-30" size_x="140" size_y="44" alignment_x="0" alignment_y="2">
+				<element id="label_editor_prop_repeat" font="hud_medium" text="Repeat" offset_x="-20" offset_y="32" alignment_x="2" alignment_y="3">
+					<element id="button_editor_prop_repeat" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_x="20" offset_y="-10" size_x="44" size_y="44" alignment_x="0" clickable="true">
+						<element id="label_editor_prop_repeat_check" font="hud_medium"/>
+					</element>
+				</element>
+			</element>
 		</element>
 	</element>
 	<element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>

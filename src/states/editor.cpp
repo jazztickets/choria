@@ -484,6 +484,11 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				PropBrush->Texture = ClickedElement->Texture;
 				CloseWindows();
 			}
+			else if(ClickedElement->Name == "button_editor_prop_repeat") {
+				ae::_Element *Check = ae::Assets.Elements["label_editor_prop_repeat_check"];
+				Check->Text = Check->Text.empty() ? "X" : "";
+				PropBrush->Repeat = !Check->Text.empty();
+			}
 		}
 		// Event select
 		else if(EventsElement->GetClickedElement()) {
@@ -576,6 +581,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Prop = new _Prop(Object);
 					Object->Prop->Texture = PropBrush->Texture;
 					Object->Prop->Color = PropBrush->Color;
+					Object->Prop->Repeat = PropBrush->Repeat;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
 				} break;
@@ -1465,11 +1471,15 @@ void _EditorState::InitProps() {
 	glm::vec2 Spacing = glm::vec2(20, 20);
 	glm::vec2 Offset(Start);
 
-	std::string PropsPath = "textures/props/";
-	ae::_Files Files(PropsPath);
+	// Load list of textures
+	ae::_Files Files;
+	Files.Load("textures/props/", true);
+	Files.Load("textures/props_repeat/", true);
+
+	// Load texture buttons
 	PropTypesElement->BaseSize = PropsElement->BaseSize;
 	for(const auto &File : Files.Nodes) {
-		const ae::_Texture *Texture = ae::Assets.Textures[PropsPath + File];
+		const ae::_Texture *Texture = ae::Assets.Textures[File];
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
@@ -1732,6 +1742,7 @@ void _EditorState::PasteObjects() {
 			Object->Prop = new _Prop(Object);
 			Object->Prop->Texture = SourceObject->Prop->Texture;
 			Object->Prop->Color = SourceObject->Prop->Color;
+			Object->Prop->Repeat = SourceObject->Prop->Repeat;
 		}
 		if(SourceObject->Light->Texture) {
 			Object->Light->Texture = SourceObject->Light->Texture;

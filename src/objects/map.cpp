@@ -822,6 +822,14 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
 		else
 			Scale = glm::vec2(Object->Shape.HalfSize.x * 2.0f);
 
+		// Texture transform
+		glm::mat4 TextureTransform(1.0f);
+		if(Object->Prop->Repeat) {
+			TextureTransform[0][0] = Scale.x;
+			TextureTransform[1][1] = Scale.y;
+		}
+		glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(TextureTransform));
+
 		// Draw object
 		ae::Graphics.SetColor(Object->Prop->Color);
 		ae::Graphics.DrawSprite(glm::vec3(Object->Position, 0), Object->Prop->Texture, 0.0f, Scale);
