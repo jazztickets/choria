@@ -836,6 +836,8 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
 
 		PropCount++;
 	}
+
+	glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 }
 
 // Add lights from objects
@@ -1126,7 +1128,11 @@ bool _Map::Save(const std::string &Path) {
 	}
 
 	// Write static objects
+	ae::_Bounds MapBounds(ae::_Bounds(glm::vec4(0.0f, 0.0f, Size.x, Size.y)));
 	for(auto &Object : StaticObjects) {
+		if(!Object->CheckAABB(MapBounds))
+			continue;
+
 		Output << "On\n";
 		Output << "Op " << Object->Position.x << ' ' << Object->Position.y << '\n';
 		Output << "Os " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
