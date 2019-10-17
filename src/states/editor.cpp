@@ -1099,6 +1099,15 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 		DrawPosition.y += TextSpacingY;
+
+		// Draw repeat mode
+		if(PropBrush->Repeat)
+			Buffer << "Repeat";
+		else
+			Buffer << "No repeat";
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
+		Buffer.str("");
+		DrawPosition.y += TextSpacingY;
 	}
 }
 
