@@ -935,6 +935,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 			// Music
 			case 'M': {
 				File >> Music;
+				File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			} break;
 			// Begin new tile
 			case 'T': {
@@ -959,8 +960,10 @@ void _Map::Load(const std::string &Path, bool Static) {
 			} break;
 			// Zone
 			case 'z': {
-				if(Tile)
+				if(Tile) {
 					File >> Tile->ZoneID;
+					File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				}
 			} break;
 			// Event
 			case 'e': {
@@ -1007,10 +1010,12 @@ void _Map::Load(const std::string &Path, bool Static) {
 						case 't': {
 							std::string TextureName;
 							File >> TextureName;
+							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 							Object->Light->Texture = ae::Assets.Textures[TextureName];
 						} break;
 						case 's':
 							File >> Object->Light->Script;
+							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 						break;
 						case 'c':
 							File >> Object->Light->Color.r >> Object->Light->Color.g >> Object->Light->Color.b >> Object->Light->Color.a;
@@ -1030,8 +1035,12 @@ void _Map::Load(const std::string &Path, bool Static) {
 						case 't': {
 							std::string TextureName;
 							File >> TextureName;
+							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 							Object->Prop->Texture = ae::Assets.Textures[TextureName];
 						} break;
+						case 'r':
+							File >> Object->Prop->Repeat;
+						break;
 						case 'c':
 							File >> Object->Prop->Color.r >> Object->Prop->Color.g >> Object->Prop->Color.b >> Object->Prop->Color.a;
 						break;
@@ -1104,11 +1113,15 @@ bool _Map::Save(const std::string &Path) {
 			Output << "Lt " << Object->Light->Texture->Name << '\n';
 			if(Object->Light->Script.length())
 				Output << "Ls " << Object->Light->Script << '\n';
-			Output << "Lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << ' ' << Object->Light->Color.a << '\n';
+			if(Object->Light->Color != glm::vec4(1.0f))
+				Output << "Lc " << Object->Light->Color.r << ' ' << Object->Light->Color.g << ' ' << Object->Light->Color.b << ' ' << Object->Light->Color.a << '\n';
 		}
 		if(Object->Prop && Object->Prop->Texture) {
 			Output << "Pt " << Object->Prop->Texture->Name << '\n';
-			Output << "Pc " << Object->Prop->Color.r << ' ' << Object->Prop->Color.g << ' ' << Object->Prop->Color.b << ' ' << Object->Prop->Color.a << '\n';
+			if(Object->Prop->Repeat)
+				Output << "Pr " << Object->Prop->Repeat << '\n';
+			if(Object->Prop->Color != glm::vec4(1.0f))
+				Output << "Pc " << Object->Prop->Color.r << ' ' << Object->Prop->Color.g << ' ' << Object->Prop->Color.b << ' ' << Object->Prop->Color.a << '\n';
 		}
 	}
 
