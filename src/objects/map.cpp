@@ -514,6 +514,7 @@ void _Map::BuildLayers(const glm::ivec4 &Bounds, bool ShowTransitions) {
 			Tile.TextureIndex[(int)MapLayerType::SECOND_LAYER] = 0;
 			Tile.TextureIndex[(int)MapLayerType::THIRD_TRANS] = 0;
 			Tile.TextureIndex[(int)MapLayerType::THIRD_LAYER] = 0;
+			Tile.TextureIndex[(int)MapLayerType::FORE] = Tile.ForeTextureIndex;
 			if(ShowTransitions && Tile.Hierarchy != -1) {
 				std::map<uint32_t, std::pair<int, uint32_t> > Pairs;
 
@@ -541,7 +542,7 @@ void _Map::BuildLayers(const glm::ivec4 &Bounds, bool ShowTransitions) {
 				for(const auto &Pair : SortedPairs) {
 
 					// Too many transitions
-					if(TextureIndex >= (int)MapLayerType::COUNT)
+					if(TextureIndex >= (int)MapLayerType::FORE)
 						break;
 
 					// Set transition for the layer
@@ -566,7 +567,8 @@ void _Map::BuildLayers(const glm::ivec4 &Bounds, bool ShowTransitions) {
 			Pixel =
 				(Tile.TextureIndex[(int)MapLayerType::SECOND_LAYER] << 0) |
 				(Tile.TextureIndex[(int)MapLayerType::THIRD_TRANS] << 8) |
-				(Tile.TextureIndex[(int)MapLayerType::THIRD_LAYER] << 16);
+				(Tile.TextureIndex[(int)MapLayerType::THIRD_LAYER] << 16) |
+				(Tile.TextureIndex[(int)MapLayerType::FORE] << 24);
 
 			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, i, j, 1, 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &Pixel);
 		}
@@ -786,7 +788,7 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 	// Set shader parameters
 	ae::Graphics.SetProgram(Program);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
-	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
+	ae::Graphics.SetTextureID(ae::Assets.TextureArrays[Tilemap]->ID, GL_TEXTURE_2D_ARRAY);
 	Program->SetUniformVec2("tile_count", glm::vec2((int)Bounds[2] - (int)Bounds[0] + 1, (int)Bounds[3] - (int)Bounds[1] + 1));
 	Program->SetUniformVec2("tile_offset", glm::vec2((int)Bounds[0], (int)Bounds[1]));
 	Program->SetUniformFloat("texture_scale", MAP_TILE_WIDTH / (float)MAP_TILE_PADDED_WIDTH);
@@ -905,6 +907,9 @@ void _Map::Load(const std::string &Path, bool Static) {
 		}
 	}*/
 
+	// Set tilemaps
+	Tilemap = "default";
+
 	// Load tiles
 	_Tile *Tile = nullptr;
 	_Object *Object = nullptr;
@@ -959,16 +964,28 @@ void _Map::Load(const std::string &Path, bool Static) {
 						Tile = &Tiles[Coordinate.x][Coordinate.y];
 						TileIndex++;
 					} break;
-					// Texture index
+					// Base texture index
 					case 'b': {
 						if(Tile) {
 							char Buffer[1024];
 							File.ignore(1);
 							File.getline(Buffer, 1024, '\n');
 							if(!Server) {
-								const ae::_TileMap::_TileData &TileData = ae::Assets.TileMaps["default"]->Data.at(Buffer);
+								const ae::_TileMap::_TileData &TileData = ae::Assets.TileMaps[Tilemap]->Data.at(Buffer);
 								Tile->BaseTextureIndex = TileData.Index;
 								Tile->Hierarchy = TileData.Hierarchy;
+							}
+						}
+					} break;
+					// Foreground texture index
+					case 'f': {
+						if(Tile) {
+							char Buffer[1024];
+							File.ignore(1);
+							File.getline(Buffer, 1024, '\n');
+							if(!Server) {
+								const ae::_TileMap::_TileData &TileData = ae::Assets.TileMaps[Tilemap]->Data.at(Buffer);
+								Tile->ForeTextureIndex = TileData.Index;
 							}
 						}
 					} break;
@@ -1082,6 +1099,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 		}
 	}
 
+	// Close file
 	File.close();
 
 	// Index events
@@ -1121,7 +1139,9 @@ bool _Map::Save(const std::string &Path) {
 			const _Tile &Tile = Tiles[i][j];
 			Output << "Tn\n";
 			if(Tile.BaseTextureIndex)
-				Output << "Tb " << ae::Assets.TileMaps["default"]->Index.at(Tile.BaseTextureIndex)->ID << '\n';
+				Output << "Tb " << ae::Assets.TileMaps[Tilemap]->Index.at(Tile.BaseTextureIndex)->ID << '\n';
+			if(Tile.ForeTextureIndex)
+				Output << "Tf " << ae::Assets.TileMaps[Tilemap]->Index.at(Tile.ForeTextureIndex)->ID << '\n';
 			if(!Tile.ZoneID.empty())
 				Output << "Tz " << Tile.ZoneID << '\n';
 			if(Tile.Event.Type != EventType::NONE)

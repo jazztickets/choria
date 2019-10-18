@@ -71,6 +71,7 @@ enum class MapLayerType : int {
 	SECOND_LAYER,
 	THIRD_TRANS,
 	THIRD_LAYER,
+	FORE,
 	COUNT,
 };
 
@@ -87,9 +88,10 @@ struct _Event {
 };
 
 struct _Tile {
-	_Tile() : BaseTextureIndex(0), Hierarchy(0), Wall(false), PVP(false) { }
+	_Tile() : BaseTextureIndex(0), ForeTextureIndex(0), Hierarchy(0), Wall(false), PVP(false) { }
 	uint32_t TextureIndex[(int)MapLayerType::COUNT];
 	uint32_t BaseTextureIndex;
+	uint32_t ForeTextureIndex;
 	int Hierarchy;
 	_Event Event;
 	std::string ZoneID;
@@ -167,6 +169,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		// Map data
 		bool Loaded;
 		std::string Name;
+		std::string Tilemap;
 		_Tile **Tiles;
 		glm::ivec2 Size;
 		std::map<_Event, std::vector<glm::vec2>> IndexedEvents;

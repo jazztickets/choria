@@ -137,6 +137,7 @@ void _EditorState::Init() {
 	else
 		ToggleNewMap();
 
+	DrawForeground = false;
 	CopiedTiles = false;
 	DrawCopyBounds = false;
 	DrawingObject = false;
@@ -264,6 +265,11 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_3:
 			case SDL_SCANCODE_4:
 				SwitchBrushModes((int)(KeyEvent.Scancode - SDL_SCANCODE_1 + 1));
+			break;
+			case SDL_SCANCODE_F:
+				DrawForeground = !DrawForeground;
+				if(TexturesElement->Active)
+					InitTextures();
 			break;
 			case SDL_SCANCODE_T:
 				if(ae::Input.ModKeyDown(KMOD_CTRL))
@@ -458,7 +464,10 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
 				ae::_Element *Button = TexturesElement->GetClickedElement();
-				TileBrush->BaseTextureIndex = Button->TextureIndex;
+				if(DrawForeground)
+					TileBrush->ForeTextureIndex = Button->TextureIndex;
+				else
+					TileBrush->BaseTextureIndex = Button->TextureIndex;
 				CloseWindows();
 			}
 		}
@@ -964,14 +973,14 @@ void _EditorState::DrawBrushInfo() {
 		return;
 
 	std::stringstream Buffer;
-	glm::vec2 DrawPosition = ae::Graphics.Element->Bounds.End - glm::vec2(84, 210) * ae::_Element::GetUIScale();
+	glm::vec2 DrawPosition = ae::Graphics.Element->Bounds.End - glm::vec2(84, 216) * ae::_Element::GetUIScale();
 	glm::vec4 Color(glm::vec4(1.0f));
 	float TextSpacingY = 20 * ae::_Element::GetUIScale();
 
 	// Draw backdrop
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
-	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(64, 64) * ae::_Element::GetUIScale(), DrawPosition + glm::vec2(64, 194) * ae::_Element::GetUIScale(), true);
+	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(64, 64) * ae::_Element::GetUIScale(), DrawPosition + glm::vec2(64, 200) * ae::_Element::GetUIScale(), true);
 	if(Mode == EditorModeType::TILES) {
 
 		// Draw texture
@@ -980,15 +989,27 @@ void _EditorState::DrawBrushInfo() {
 		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv_array"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays["default"], TileBrush->BaseTextureIndex);
+
+		uint32_t TextureIndex = DrawForeground ? TileBrush->ForeTextureIndex : TileBrush->BaseTextureIndex;
+		ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays[Map->Tilemap], TextureIndex);
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
-		// Draw layer
+		// Draw transition mode
 		if(ShowTransitions)
 			Buffer << "Transitions";
 		else
 			Buffer << "Base";
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
+		Buffer.str("");
+
+		DrawPosition.y += TextSpacingY;
+
+		// Draw layer type
+		if(DrawForeground)
+			Buffer << "Foreground";
+		else
+			Buffer << "Background";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
@@ -1359,13 +1380,16 @@ void _EditorState::InitInfo() {
 
 // Init texture select
 void _EditorState::InitTextures() {
+	if(!Map)
+		return;
+
 	ClearTextures();
 
 	glm::vec2 Start = glm::vec2(20, 20);
 	glm::vec2 Spacing = glm::vec2(20, 20);
 	glm::vec2 Offset(Start);
 
-	const ae::_TextureArray *TextureArray = ae::Assets.TextureArrays["default"];
+	const ae::_TextureArray *TextureArray = ae::Assets.TextureArrays[Map->Tilemap];
 	uint32_t TextureCount = (uint32_t)TextureArray->Count;
 	for(uint32_t i = 0; i < TextureCount; i++) {
 
@@ -2062,8 +2086,13 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 			// Apply filters
 			if(Filter & MAP_RENDER_TEXTURE) {
-				Tile.BaseTextureIndex = TileBrush->BaseTextureIndex;
-				Tile.Hierarchy = ae::Assets.TileMaps["default"]->Index.at(Tile.BaseTextureIndex)->Hierarchy;
+				if(DrawForeground) {
+					Tile.ForeTextureIndex = TileBrush->ForeTextureIndex;
+				}
+				else {
+					Tile.BaseTextureIndex = TileBrush->BaseTextureIndex;
+					Tile.Hierarchy = ae::Assets.TileMaps[Map->Tilemap]->Index.at(Tile.BaseTextureIndex)->Hierarchy;
+				}
 			}
 			if(Filter & MAP_RENDER_WALL)
 				Tile.Wall = TileBrush->Wall;

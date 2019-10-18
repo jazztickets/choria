@@ -58,12 +58,19 @@ void main() {
 	int second_layer_index = int(texelFetch(sampler2, map_coord1, 0).r * 255);
 	int third_trans_index = int(texelFetch(sampler2, map_coord1, 0).g * 255);
 	int third_layer_index = int(texelFetch(sampler2, map_coord1, 0).b * 255);
+	int foreground_index = int(texelFetch(sampler2, map_coord1, 0).a * 255);
 
 	// Mix textures
 	vec4 texture_color = texture(sampler0, vec3(tile_texture_coord, base_index));
 	texture_color = mix_layers(tile_texture_coord, padded_tile_texture_coord, texture_color, first_trans_index, first_layer_index);
 	texture_color = mix_layers(tile_texture_coord, padded_tile_texture_coord, texture_color, second_trans_index, second_layer_index);
 	texture_color = mix_layers(tile_texture_coord, padded_tile_texture_coord, texture_color, third_trans_index, third_layer_index);
+
+	// Add foreground layer
+	if(foreground_index != 0) {
+		vec4 foreground_color = texture(sampler0, vec3(tile_texture_coord, foreground_index));
+		texture_color = mix(texture_color, foreground_color, foreground_color.a);
+	}
 
 	// Add lights
 	vec4 light_color = ambient_light + texelFetch(sampler1, ivec2(gl_FragCoord.xy), 0);

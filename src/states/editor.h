@@ -164,6 +164,7 @@ class _EditorState : public ae::_State {
 
 		// Brush
 		EditorModeType Mode;
+		bool DrawForeground;
 		bool ShowTransitions;
 		float BrushRadius;
 		_Tile *TileBrush;

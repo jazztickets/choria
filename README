@@ -99,6 +99,7 @@ Hit 2 to draw zones
 Hit 3 to draw PVP/safe areas
 Hit 4 to draw events
 Hit Tab to toggle transition/block mode
+Hit F to toggle background/foreground tiles
 Hit W to change from wall/walkable
 Hit E to open the event menu
 Hit G on an map event to switch maps
