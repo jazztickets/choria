@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/components/light.h>
 #include <objects/object.h>
+#include <ae/random.h>
 #include <scripting.h>
 
 // Constructor
@@ -26,8 +27,10 @@ _Light::_Light(_Object *Object) :
 	Texture(nullptr),
 	Color(1.0f),
 	FinalColor(1.0f),
+	Seed(0),
 	Time(0.0) {
 
+	Seed = ae::GetRandomInt((uint32_t)0, std::numeric_limits<uint32_t>::max());
 }
 
 // Update light

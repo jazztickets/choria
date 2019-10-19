@@ -47,6 +47,7 @@ class _Light {
 		const ae::_Texture *Texture;
 		glm::vec4 Color;
 		glm::vec4 FinalColor;
+		uint32_t Seed;
 		double Time;
 
 	private:

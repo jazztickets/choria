@@ -2,6 +2,7 @@ choria 0.6.0 -
 - Reworked battle system to use stamina, cooldowns, and attack animations
 - Added tile transitions to map
 - Changed data backend to xml
+- Updated editor to support lights and props
 
 choria 0.5.0 - 2019-09-27
 - Replaced irrlicht with a custom SDL2/OpenGL based engine

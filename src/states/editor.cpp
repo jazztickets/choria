@@ -2116,6 +2116,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 // Deletes the map
 void _EditorState::CloseMap() {
+	SelectedObjects.clear();
 	CloseCopy();
 
 	delete Map;

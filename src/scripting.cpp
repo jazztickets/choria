@@ -477,6 +477,9 @@ void _Scripting::PushLight(_Light *Light) {
 
 	lua_pushnumber(LuaState, Light->Color.a);
 	lua_setfield(LuaState, -2, "a");
+
+	lua_pushinteger(LuaState, Light->Seed);
+	lua_setfield(LuaState, -2, "Seed");
 }
 
 // Push item onto stack
