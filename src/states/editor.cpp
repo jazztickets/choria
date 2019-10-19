@@ -1013,6 +1013,7 @@ void _EditorState::DrawBrushInfo() {
 			Buffer << "Transitions";
 		else
 			Buffer << "Base";
+		Filter & MAP_RENDER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
@@ -1023,6 +1024,7 @@ void _EditorState::DrawBrushInfo() {
 			Buffer << "Foreground";
 		else
 			Buffer << "Background";
+		Filter & MAP_RENDER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
