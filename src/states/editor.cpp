@@ -983,15 +983,15 @@ void _EditorState::DrawBrushInfo() {
 	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(64, 64) * ae::_Element::GetUIScale(), DrawPosition + glm::vec2(64, 200) * ae::_Element::GetUIScale(), true);
 	if(Mode == EditorModeType::TILES) {
 
-		// Draw texture
+		// Draw textures
 		ae::_Bounds TextureBounds;
 		TextureBounds.Start = DrawPosition - glm::vec2(64) / 2.0f;
 		TextureBounds.End = DrawPosition + glm::vec2(64) / 2.0f;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv_array"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-
-		uint32_t TextureIndex = DrawForeground ? TileBrush->ForeTextureIndex : TileBrush->BaseTextureIndex;
-		ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays[Map->Tilemap], TextureIndex);
+		ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays[Map->Tilemap], TileBrush->BaseTextureIndex);
+		if(TileBrush->ForeTextureIndex)
+			ae::Graphics.DrawTextureArray(TextureBounds, ae::Assets.TextureArrays[Map->Tilemap], TileBrush->ForeTextureIndex);
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
