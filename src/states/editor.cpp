@@ -810,8 +810,10 @@ void _EditorState::Render(double BlendFactor) {
 			glm::vec2 Position = Offset + Object->Position;
 			if(Object->Shape.IsAABB())
 				ae::Graphics.DrawRectangle3D(Position - Object->Shape.HalfSize, Position + Object->Shape.HalfSize, false);
-			else
+			else {
+				ae::Graphics.DrawCircle(glm::vec3(Position, 0), 0.01f);
 				ae::Graphics.DrawCircle(glm::vec3(Position, 0), Object->Shape.HalfSize.x);
+			}
 		}
 	}
 
