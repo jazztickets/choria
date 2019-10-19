@@ -130,6 +130,7 @@ Use Middle-click drag to highlight an area to copy, then V to paste
 
 -- Object Mode --
 Hold Shift while drawing to make the shape rectangular
+Hold Shift while selecting to select all types
 Use Middle-click drag to select objects
 Use Shift Middle-click to add objects to the selection
 Use Middle-click on selected objects to move them

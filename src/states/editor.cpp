@@ -619,6 +619,13 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			ae::_Bounds Bounds;
 			GetDrawBounds(Bounds, false);
 			for(const auto &Object : Map->StaticObjects) {
+				if(!ToggleMode) {
+					if(Mode == EditorModeType::LIGHTS && !(Object->Light && Object->Light->Texture))
+						continue;
+					if(Mode == EditorModeType::PROPS && !Object->Prop)
+						continue;
+				}
+
 				if(Object->CheckAABB(Bounds)) {
 
 					// Add or remove from selection
