@@ -1810,6 +1810,7 @@ void _EditorState::CreateMap() {
 
 	// Create map
 	Map = new _Map();
+	Map->Tilemap = "default";
 	Map->Stats = Stats;
 	Map->Scripting = Scripting;
 	Map->Size = Size;
