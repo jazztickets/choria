@@ -826,9 +826,13 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
 
 		// Texture transform
 		glm::mat4 TextureTransform(1.0f);
+		if(Object->TextureRotation != 0.0f) {
+			TextureTransform = glm::translate(TextureTransform, glm::vec3(0.5, 0.5, 0));
+			TextureTransform = glm::rotate(TextureTransform, glm::radians(Object->TextureRotation), glm::vec3(0, 0, 1));
+			TextureTransform = glm::translate(TextureTransform, glm::vec3(-0.5, -0.5, 0));
+		}
 		if(Object->Prop->Repeat) {
-			TextureTransform[0][0] = Scale.x;
-			TextureTransform[1][1] = Scale.y;
+			TextureTransform = glm::scale(TextureTransform, glm::vec3(Scale, 0));
 		}
 		glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(TextureTransform));
 
