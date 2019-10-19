@@ -78,7 +78,8 @@ _Object::_Object() :
 	ServerPosition(0.0f, 0.0f),
 
 	Model(nullptr),
-	BuildTexture(nullptr) {
+	BuildTexture(nullptr),
+	TextureRotation(0.0f) {
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);

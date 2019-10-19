@@ -845,7 +845,6 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
 // Add lights from objects
 void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
 	ae::Graphics.SetProgram(Program);
-	glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	// Iterate over objects
 	for(const auto &Object : *ObjectList) {
@@ -869,6 +868,15 @@ void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program 
 			Scale = Object->Shape.HalfSize * 2.0f;
 		else
 			Scale = glm::vec2(Object->Shape.HalfSize.x * 2.0f);
+
+		// Texture transform
+		glm::mat4 TextureTransform(1.0f);
+		if(Object->TextureRotation != 0.0f) {
+			TextureTransform = glm::translate(TextureTransform, glm::vec3(0.5, 0.5, 0));
+			TextureTransform = glm::rotate(TextureTransform, glm::radians(Object->TextureRotation), glm::vec3(0, 0, 1));
+			TextureTransform = glm::translate(TextureTransform, glm::vec3(-0.5, -0.5, 0));
+		}
+		glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(TextureTransform));
 
 		// Draw light
 		ae::Graphics.SetColor(Light->FinalColor);
@@ -1039,6 +1047,10 @@ void _Map::Load(const std::string &Path, bool Static) {
 					case 's': {
 						File >> Object->Shape.HalfSize.x >> Object->Shape.HalfSize.y;
 					} break;
+					// Rotation
+					case 'r': {
+						File >> Object->TextureRotation;
+					} break;
 				}
 			} break;
 			// Lights
@@ -1162,6 +1174,8 @@ bool _Map::Save(const std::string &Path) {
 		Output << "On\n";
 		Output << "Op " << Object->Position.x << ' ' << Object->Position.y << '\n';
 		Output << "Os " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
+		if(Object->TextureRotation != 0.0f)
+			Output << "Or " << Object->TextureRotation << '\n';
 
 		if(Object->Light && Object->Light->Texture) {
 			Output << "Lt " << Object->Light->Texture->Name << '\n';

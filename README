@@ -136,6 +136,7 @@ Use Shift Middle-click to add objects to the selection
 Use Middle-click on selected objects to move them
 Use Ctrl Middle-click to copy an existing object into the brush
 Use Shift Middle-click drag to resize a selected object
+Hit R to rotate a selected object's texture
 Hit C to copy selected objects relative to where the mouse is
 Hit V to paste
 
@@ -143,7 +144,6 @@ Hit V to paste
 Hit N to start a new map
 Hit L to load a map
 Hit S to save
-Hit R to resize the map
 Hit A to set map info
 
 ----- DESIGN TOOL -----

@@ -289,10 +289,14 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				Framework.IgnoreNextInputEvent = true;
 				ToggleNewMap();
 			break;
-			case SDL_SCANCODE_R:
-				Framework.IgnoreNextInputEvent = true;
-				ToggleResize();
-			break;
+			case SDL_SCANCODE_R: {
+				for(auto &Iterator : SelectedObjects) {
+					_Object *Object = Iterator.first;
+					Object->TextureRotation += 90.0f;
+					if(Object->TextureRotation >= 360.0f)
+						Object->TextureRotation -= 360.0f;
+				}
+			} break;
 			case SDL_SCANCODE_S:
 				Framework.IgnoreNextInputEvent = true;
 				ToggleSaveMap();
@@ -1792,6 +1796,7 @@ void _EditorState::PasteObjects() {
 			Object->Light->Script = SourceObject->Light->Script;
 		}
 		Object->Shape = SourceObject->Shape;
+		Object->TextureRotation = SourceObject->TextureRotation;
 		Object->Position = SourceObject->Position + Offset;
 		Map->StaticObjects.push_back(Object);
 	}
