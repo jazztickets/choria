@@ -44,6 +44,7 @@ class _BaseItem : public _Usable {
 		bool IsUnlockable() const override { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const override { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
 		bool IsStackable() const { return !IsEquippable(); }
+		bool IsDestroyable() const override { return Destroyable; }
 
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const override;
 		int GetUpgradePrice(int Upgrades) const;
@@ -84,6 +85,7 @@ class _BaseItem : public _Usable {
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;
+		bool Destroyable;
 
 	private:
 

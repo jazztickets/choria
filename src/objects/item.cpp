@@ -61,7 +61,8 @@ _BaseItem::_BaseItem() :
 	DropRate(0),
 	ResistanceTypeID(0),
 	Resistance(0),
-	Tradable(true) {
+	Tradable(true),
+	Destroyable(true) {
 }
 
 // Draw item tooltip

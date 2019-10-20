@@ -72,6 +72,7 @@ class _Usable {
 		virtual bool IsKey() const { return false; }
 		virtual bool IsUnlockable() const { return false; }
 		virtual bool IsEquippable() const { return false; }
+		virtual bool IsDestroyable() const { return false; }
 
 		// HUD
 		void DrawTooltipBase(const glm::vec2 &Position, const _Object *Player, const std::string &TypeText, glm::vec2 &DrawPosition, glm::vec2 &Size) const;

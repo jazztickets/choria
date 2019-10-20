@@ -384,7 +384,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						break;
 						// Delete item
 						case -1: {
-							if(!ae::Graphics.Element->HitElement) {
+							if(!ae::Graphics.Element->HitElement && Cursor.Usable->IsDestroyable()) {
 								InitConfirm("Delete this item?");
 								DeleteSlot = Cursor.Slot;
 							}

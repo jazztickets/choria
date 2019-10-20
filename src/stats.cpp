@@ -413,6 +413,7 @@ void _Stats::LoadData(const std::string &Path) {
 		Item.MaxLevel = Node->IntAttribute("max_level", 1);
 		Item.WeaponType = GetWeaponType(Node, "weapon_type");
 		Item.Texture = GetTexture(Node, "texture");
+		Item.Destroyable = Node->BoolAttribute("destroyable", true);
 
 		// Get prices
 		tinyxml2::XMLElement *PriceNode = Node->FirstChildElement("price");
