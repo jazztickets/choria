@@ -212,6 +212,7 @@ class _Stats {
 
 		// Indexes
 		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
+		std::unordered_map<std::string, EventType> EventsIndex;
 		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
 		std::unordered_map<uint16_t, const _BaseSkill *> SkillsIndex;
 		std::unordered_map<uint16_t, const _Buff *> BuffsIndex;

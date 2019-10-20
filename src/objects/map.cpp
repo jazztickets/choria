@@ -1011,13 +1011,15 @@ void _Map::Load(const std::string &Path, bool Static) {
 					// Event
 					case 'e': {
 						if(Tile) {
-							int Type;
-							File >> Type;
-
-							char Buffer[1024];
 							File.ignore(1);
+
+							// Get type
+							char Buffer[1024];
+							File.getline(Buffer, 1024, ' ');
+							Tile->Event.Type = Stats->EventsIndex.at(Buffer);
+
+							// Data
 							File.getline(Buffer, 1024, '\n');
-							Tile->Event.Type = (EventType)Type;
 							Tile->Event.Data = Buffer;
 						}
 					} break;
@@ -1161,7 +1163,7 @@ bool _Map::Save(const std::string &Path) {
 			if(!Tile.ZoneID.empty())
 				Output << "Tz " << Tile.ZoneID << '\n';
 			if(Tile.Event.Type != EventType::NONE)
-				Output << "Te " << (int)Tile.Event.Type << ' ' << Tiles[i][j].Event.Data << '\n';
+				Output << "Te " << Stats->EventTypes.at(Tile.Event.Type).first << ' ' << Tiles[i][j].Event.Data << '\n';
 			if(Tile.Wall)
 				Output << "Tw " << Tile.Wall << '\n';
 			if(Tile.PVP)

@@ -146,18 +146,18 @@ const _WeaponType *_Stats::GetWeaponType(tinyxml2::XMLElement *Node, const char 
 void _Stats::LoadTypes() {
 
 	EventTypes = {
-		{ EventType::NONE,        { "",   "None"         } },
-		{ EventType::SCRIPT,      { "SC", "Script"       } },
-		{ EventType::SPAWN,       { "S",  "Spawn"        } },
-		{ EventType::MAPENTRANCE, { "ME", "Map Entrance" } },
-		{ EventType::MAPCHANGE,   { "M",  "Map Change"   } },
-		{ EventType::PORTAL,      { "P",  "Portal"       } },
-		{ EventType::JUMP,        { "J",  "Jump"         } },
-		{ EventType::KEY,         { "K",  "Key"          } },
-		{ EventType::VENDOR,      { "V",  "Vendor"       } },
-		{ EventType::TRADER,      { "T",  "Trader"       } },
-		{ EventType::BLACKSMITH,  { "B",  "Black Smith"  } },
-		{ EventType::MINIGAME,    { "G",  "Minigame"     } },
+		{ EventType::NONE,        { "",            "None"         } },
+		{ EventType::SCRIPT,      { "script",      "Script"       } },
+		{ EventType::SPAWN,       { "spawn",       "Spawn"        } },
+		{ EventType::MAPENTRANCE, { "mapentrance", "Map Entrance" } },
+		{ EventType::MAPCHANGE,   { "mapchange",   "Map Change"   } },
+		{ EventType::PORTAL,      { "portal",      "Portal"       } },
+		{ EventType::JUMP,        { "jump",        "Jump"         } },
+		{ EventType::KEY,         { "key",         "Key"          } },
+		{ EventType::VENDOR,      { "vendor",      "Vendor"       } },
+		{ EventType::TRADER,      { "trader",      "Trader"       } },
+		{ EventType::BLACKSMITH,  { "blacksmith",  "Black Smith"  } },
+		{ EventType::MINIGAME,    { "minigame",    "Minigame"     } },
 	};
 
 	ScopeTypes = {
@@ -203,6 +203,10 @@ void _Stats::LoadTypes() {
 		{ DamageType::POISON,    { "poison",    "Poison"    } },
 		{ DamageType::BLEED,     { "bleed",     "Bleed"     } },
 	};
+
+	// Build event type index
+	for(const auto &Type : EventTypes)
+		EventsIndex[Type.second.first] = Type.first;
 }
 
 // Load map directory and build map array
