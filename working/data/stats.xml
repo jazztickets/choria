@@ -69,6 +69,10 @@
 			<price buy="5" tradable="false"/>
 			<use scope="world"/>
 		</item>
+		<item id="cell_key" name="Cell Key" type="key" texture="textures/items/key.png">
+			<price tradable="false"/>
+			<use scope="world"/>
+		</item>
 		<item id="game_token" name="Game Token" type="tradable" texture="textures/items/token.png">
 			<price buy="10"/>
 		</item>
@@ -77,12 +81,14 @@
 		<build name="Warrior" model="warrior" texture="textures/builds/warrior.png">
 			<items>
 				<item id="short_sword"/>
-				<item id="healing_salve" count="3" slot="1"/>
+				<item id="cell_key"/>
+				<item id="healing_salve" count="3"/>
 			</items>
 		</build>
 		<build name="Mage" model="mage" texture="textures/builds/mage.png">
 			<items>
 				<item id="short_sword"/>
+				<item id="cell_key"/>
 			</items>
 		</build>
 	</builds>

@@ -108,9 +108,12 @@ bool _Inventory::FindItem(const _BaseItem *Item, size_t &Slot, size_t StartSlot)
 	return false;
 }
 
-// Return true if a certain item id is in the inventory
-bool _Inventory::HasItem(const std::string &ID) {
+// Return true if a certain item id is in the inventory or keychain
+bool _Inventory::HasKey(const std::string &ID) {
 	for(auto &Bag : Bags) {
+		if(Bag.Type == BagType::STASH || Bag.Type ==  BagType::TRADE)
+			continue;
+
 		if(Bag.HasItem(ID))
 			return true;
 	}
@@ -350,10 +353,11 @@ void _Inventory::MoveTradeToInventory() {
 
 // Splits an item stack
 bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
-	if(Slot.Index == NOSLOT || Slot.Type != BagType::INVENTORY)
+	if(Slot.Index == NOSLOT)
 		return false;
 
-	_Bag &Bag = GetBag(BagType::INVENTORY);
+	if(Slot.Type != BagType::INVENTORY && Slot.Type != BagType::STASH)
+		return false;
 
 	// Make sure stack is large enough
 	_InventorySlot &SplitItem = GetSlot(Slot);
@@ -364,6 +368,7 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 
 		// Find an empty slot or existing item starting from bag
 		bool Found = false;
+		_Bag &Bag = GetBag(Slot.Type);
 		for(size_t i = 0; i < Bag.Slots.size(); i++) {
 			EmptySlot.Index++;
 			if(EmptySlot.Index >= Bag.Slots.size())

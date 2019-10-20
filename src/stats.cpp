@@ -467,13 +467,16 @@ void _Stats::LoadData(const std::string &Path) {
 		// Load build items
 		tinyxml2::XMLElement *ItemsNode = Node->FirstChildElement("items");
 		if(ItemsNode) {
+			size_t SlotIndex = 0;
 			for(tinyxml2::XMLElement *ItemNode = ItemsNode->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
 				const _BaseItem *Item = GetItem(ItemNode, "id");
 				int Count = ItemNode->IntAttribute("count", 1);
 				size_t Slot = (size_t)ItemNode->IntAttribute("slot", -1);
 				if(Slot < Object->Character->ActionBar.size())
 					Object->Character->ActionBar[Slot].Usable = Item;
-				Object->Inventory->AddItem(Item, 0, Count);
+				Object->Inventory->AddItem(Item, 0, Count, _Slot(BagType::STASH, SlotIndex));
+
+				SlotIndex++;
 			}
 		}
 

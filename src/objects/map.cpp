@@ -1275,7 +1275,7 @@ bool _Map::CanMoveTo(const glm::vec2 &Position, _Object *Object) {
 
 	const _Tile *Tile = &Tiles[(int)Position.x][(int)Position.y];
 	if(Tile->Event.Type == EventType::KEY) {
-		if(Object->Inventory->HasItem(Tile->Event.Data))
+		if(Object->Inventory->HasKey(Tile->Event.Data))
 			return true;
 
 		// Set message for client
