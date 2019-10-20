@@ -207,6 +207,7 @@ class _Stats {
 		std::unordered_map<std::string, _Zone> Zones;
 		std::unordered_map<std::string, const _Object *> Builds;
 		std::unordered_map<uint32_t, _LightType> Lights;
+		std::unordered_map<std::string, std::string> Strings;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 		std::vector<_Level> Levels;
 
@@ -228,6 +229,7 @@ class _Stats {
 		void LoadModelsDirectory(const std::string &Path);
 		void LoadLevels(const std::string &Path);
 		void LoadLights(const std::string &Path);
+		void LoadStrings(const std::string &Path);
 		void LoadData(const std::string &Path);
 
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);

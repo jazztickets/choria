@@ -55,6 +55,7 @@ _Stats::_Stats(bool Headless) :
 	LoadPortraitsDirectory("textures/monsters/");
 	LoadLevels("data/levels.tsv");
 	LoadLights("data/lights.tsv");
+	LoadStrings("data/strings.tsv");
 	LoadData("data/stats.xml");
 }
 
@@ -147,12 +148,14 @@ void _Stats::LoadTypes() {
 
 	EventTypes = {
 		{ EventType::NONE,        { "",            "None"         } },
+		{ EventType::TEXT,        { "text",        "Text"         } },
 		{ EventType::SCRIPT,      { "script",      "Script"       } },
 		{ EventType::SPAWN,       { "spawn",       "Spawn"        } },
 		{ EventType::MAPENTRANCE, { "mapentrance", "Map Entrance" } },
 		{ EventType::MAPCHANGE,   { "mapchange",   "Map Change"   } },
 		{ EventType::PORTAL,      { "portal",      "Portal"       } },
 		{ EventType::JUMP,        { "jump",        "Jump"         } },
+		{ EventType::STASH,       { "stash",       "Stash"        } },
 		{ EventType::KEY,         { "key",         "Key"          } },
 		{ EventType::VENDOR,      { "vendor",      "Vendor"       } },
 		{ EventType::TRADER,      { "trader",      "Trader"       } },
@@ -695,6 +698,29 @@ void _Stats::LoadLights(const std::string &Path) {
 		Lights[ID] = LightType;
 
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
+
+	File.close();
+}
+
+// Load strings table
+void _Stats::LoadStrings(const std::string &Path) {
+
+	// Load file
+	std::ifstream File(Path.c_str(), std::ios::in);
+	if(!File)
+		throw std::runtime_error("Error loading: " + Path);
+
+	// Skip header
+	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read the file
+	while(!File.eof() && File.peek() != EOF) {
+		char Buffer[1024];
+		File.getline(Buffer, 1024, '\t');
+		std::string ID = Buffer;
+		File.getline(Buffer, 1024, '\n');
+		Strings[ID] = Buffer;
 	}
 
 	File.close();

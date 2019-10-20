@@ -1562,7 +1562,7 @@ void _EditorState::InitEvents() {
 
 	size_t Count = Stats->EventTypes.size();
 	EventsElement->BaseSize.x = Start.x + (Spacing.x + Size.x) * 4;
-	EventsElement->BaseSize.y = Start.y + (Spacing.y + Size.y) * (Count / 4) + 130;
+	EventsElement->BaseSize.y = Start.y + (Spacing.y + Size.y) * std::ceil(Count / 4.0f) + 130;
 	EventTypesElement->BaseSize = EventsElement->BaseSize;
 	for(size_t i = 0; i < Count; i++) {
 

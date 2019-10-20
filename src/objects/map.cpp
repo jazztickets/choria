@@ -38,6 +38,7 @@
 #include <ae/peer.h>
 #include <ae/graphics.h>
 #include <ae/random.h>
+#include <ae/util.h>
 #include <server.h>
 #include <constants.h>
 #include <stats.h>
@@ -53,6 +54,9 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iomanip>
+
+const double MESSAGE_FADETIME = 1.0;
+const double MESSAGE_LENGTH = 5.0;
 
 // Colors of each time cycle
 const std::vector<glm::vec4> DayCycles = {
@@ -281,6 +285,10 @@ void _Map::Update(double FrameTime) {
 	if(Clock >= MAP_DAY_LENGTH)
 		Clock -= MAP_DAY_LENGTH;
 
+	// Update message
+	if(Message.Time > 0.0)
+		Message.Time -= FrameTime;
+
 	// Update static objects
 	for(const auto &Object : StaticObjects) {
 		Object->UpdateStatic(FrameTime);
@@ -316,7 +324,7 @@ void _Map::CheckEvents(_Object *Object) {
 				Server->SpawnPlayer(Object, (ae::NetworkIDType)Tile->Event.Data, EventType::MAPENTRANCE);
 			else
 				Object->Controller->WaitForServer = true;
-				*/
+			*/
 		break;
 		case EventType::VENDOR:
 		case EventType::TRADER:
@@ -350,6 +358,30 @@ void _Map::CheckEvents(_Object *Object) {
 			}
 			else
 				Object->Controller->WaitForServer = true;
+		} break;
+		case EventType::TEXT: {
+			if(!Server) {
+
+				// Get text label element
+				ae::_Element *TextElement = MessageElement->Children.front();
+				if(!TextElement)
+					break;
+
+				// Get parameters
+				std::vector<std::string> Parameters;
+				ae::TokenizeString(Tile->Event.Data, Parameters);
+				if(!Parameters.size())
+					break;
+
+				// Get string
+				TextElement->Text = Stats->Strings.at(Parameters[0]);
+
+				// Set message
+				Message.Position = Object->Position;
+				Message.Time = Parameters.size() > 1 ? std::stod(Parameters[1]) : MESSAGE_LENGTH;
+				TextElement->SetWrap(MessageElement->Size.x - TextElement->Index * ae::_Element::GetUIScale());
+				MessageElement->SetActive(true);
+			}
 		} break;
 		default:
 			if(Server) {
@@ -846,6 +878,31 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
 	glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 }
 
+// Render ui elements
+void _Map::Render2D(ae::_Camera *Camera) {
+
+	// Render message
+	if(Message.Time > 0.0) {
+
+		// Get screen space position
+		glm::vec2 Point;
+		Camera->ConvertWorldToScreen(Message.Position, Point);
+
+		// Get alpha
+		float Fade = 1.0f;
+		if(Message.Time < MESSAGE_FADETIME)
+			Fade = (float)(Message.Time / MESSAGE_FADETIME);
+
+		// Draw message
+		MessageElement->Offset = Point + glm::vec2(-MessageElement->Size.x / 2, -250);
+		MessageElement->CalculateBounds(false);
+		MessageElement->SetFade(Fade);
+		MessageElement->Render();
+	}
+	else
+		MessageElement->SetActive(false);
+}
+
 // Add lights from objects
 void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
 	ae::Graphics.SetProgram(Program);
@@ -1127,6 +1184,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 	if(!Headless) {
 		InitVertices(Static);
 		BuildLayers(glm::ivec4(0, 0, Size.x, Size.y));
+		MessageElement = ae::Assets.Elements["element_message"];
 	}
 
 	// Initialize path finding

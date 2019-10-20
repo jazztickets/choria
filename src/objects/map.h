@@ -55,6 +55,7 @@ class _Battle;
 class _Scripting;
 
 namespace ae {
+	class _Element;
 	class _Buffer;
 	class _Camera;
 	class _Program;
@@ -102,6 +103,13 @@ struct _Tile {
 // Classes
 class _Map : public ae::_BaseObject, public micropather::Graph {
 
+	// Event messages
+	struct _Message {
+		_Message() : Position(0.0f), Time(0) { }
+		glm::vec2 Position;
+		double Time;
+	};
+
 	public:
 
 		_Map();
@@ -126,6 +134,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
 		void RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static=false);
 		void RenderProps(const ae::_Program *Program, glm::vec4 &Bounds);
+		void Render2D(ae::_Camera *Camera);
 		void AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB);
 
 		// Collision
@@ -175,6 +184,8 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		std::map<_Event, std::vector<glm::vec2>> IndexedEvents;
 
 		// Graphics
+		ae::_Element *MessageElement;
+		_Message Message;
 		bool Headless;
 		glm::vec4 AmbientLight;
 		glm::vec4 FinalAmbientLight;

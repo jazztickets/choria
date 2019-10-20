@@ -696,6 +696,7 @@ void _PlayState::Render(double BlendFactor) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
 		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 
+		Map->Render2D(Camera);
 		HUD->DrawRecentItems();
 
 		// Draw states

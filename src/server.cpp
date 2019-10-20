@@ -102,7 +102,9 @@ _Server::_Server(uint16_t NetworkPort) :
 	for(const auto &MapNetworkID : Stats->MapsIndex) {
 		if(MapNetworkID.second) {
 			_Map *Map = MapManager->CreateWithID(MapNetworkID.second);
+			Map->Stats = Stats;
 			Map->Headless = true;
+			Map->Server = this;
 			Map->Name = MapNetworkID.first;
 		}
 	}
@@ -736,7 +738,6 @@ void _Server::SpawnPlayer(_Object *Player, _Map *LoadMap, EventType Event) {
 	// Load map
 	if(!Map->Loaded) {
 		Map->Clock = Save->Clock;
-		Map->Server = this;
 		Map->Load(MAPS_PATH + Map->Name + ".map.gz");
 	}
 
