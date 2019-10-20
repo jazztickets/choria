@@ -400,11 +400,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Fighter->BattleElement->Fade = GlobalColor.a;
 
 	// Get slot center
-	glm::vec2 SlotPosition = Fighter->BattleElement->Bounds.Start;
+	glm::vec2 SlotPosition = glm::ivec2(Fighter->BattleElement->Bounds.Start);
 
 	// Save positions
-	Fighter->ResultPosition = Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f;
-	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Texture->Size.x/2 + (10 + BATTLE_HEALTHBAR_WIDTH/2) * ae::_Element::GetUIScale(), -Character->Portrait->Texture->Size.y/2);
+	Fighter->ResultPosition = glm::ivec2(Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f);
+	Fighter->StatPosition = glm::ivec2(Fighter->ResultPosition + glm::vec2(Character->Portrait->Texture->Size.x/2 + (10 + BATTLE_HEALTHBAR_WIDTH/2) * ae::_Element::GetUIScale(), -Character->Portrait->Texture->Size.y/2));
 
 	// Name
 	ae::Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);

@@ -117,7 +117,6 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 		return;
 
 	// Draw offered items
-	int BagIndex = 0;
 	_Bag &Bag = Player->Inventory->GetBag(BagType::TRADE);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
@@ -127,7 +126,7 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 
 			// Get bag button
 			std::stringstream Buffer;
-			Buffer << ElementPrefix << BagIndex;
+			Buffer << ElementPrefix << i;
 			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 
 			// Get position of slot
@@ -141,8 +140,6 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 			if(Item->Count > 1)
 				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(28, 28) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
 		}
-
-		BagIndex++;
 	}
 }
 

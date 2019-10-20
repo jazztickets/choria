@@ -18,6 +18,7 @@
 #include <hud/hud.h>
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
+#include <hud/stash_screen.h>
 #include <hud/vendor_screen.h>
 #include <hud/trade_screen.h>
 #include <hud/trader_screen.h>
@@ -117,6 +118,7 @@ _HUD::_HUD() {
 
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
 	InventoryScreen = new _InventoryScreen(this, ae::Assets.Elements["element_inventory_tabs"]);
+	StashScreen = new _StashScreen(this, ae::Assets.Elements["element_stash"]);
 	VendorScreen = new _VendorScreen(this, ae::Assets.Elements["element_vendor"]);
 	TradeScreen = new _TradeScreen(this, ae::Assets.Elements["element_trade"]);
 	TraderScreen = new _TraderScreen(this, ae::Assets.Elements["element_trader"]);
@@ -130,6 +132,7 @@ _HUD::~_HUD() {
 
 	delete CharacterScreen;
 	delete InventoryScreen;
+	delete StashScreen;
 	delete VendorScreen;
 	delete TradeScreen;
 	delete TraderScreen;
@@ -197,6 +200,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				case WINDOW_TRADEYOURS:
 				case WINDOW_EQUIPMENT:
 				case WINDOW_INVENTORY:
+				case WINDOW_STASH:
 
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
@@ -338,6 +342,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				case WINDOW_TRADEYOURS:
 				case WINDOW_EQUIPMENT:
 				case WINDOW_INVENTORY:
+				case WINDOW_STASH:
 
 					// Check destination window
 					switch(Tooltip.Window) {
@@ -346,6 +351,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						case WINDOW_EQUIPMENT:
 						case WINDOW_INVENTORY:
 						case WINDOW_TRADEYOURS:
+						case WINDOW_STASH:
 							if(Player->Inventory->IsValidSlot(Tooltip.Slot) && Player->Inventory->IsValidSlot(Cursor.Slot) && Cursor.Slot != Tooltip.Slot) {
 								ae::_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
@@ -397,6 +403,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					switch(Tooltip.Window) {
 						case WINDOW_EQUIPMENT:
 						case WINDOW_INVENTORY:
+						case WINDOW_STASH:
 
 							// Swap actionbar with inventory
 							if(Tooltip.Usable && !Tooltip.Usable->IsSkill())
@@ -480,7 +487,8 @@ void _HUD::Update(double FrameTime) {
 		switch(Tooltip.Window) {
 			case WINDOW_EQUIPMENT:
 			case WINDOW_INVENTORY:
-			case WINDOW_TRADEYOURS: {
+			case WINDOW_TRADEYOURS:
+			case WINDOW_STASH:{
 				if(Player->Inventory->IsValidSlot(Tooltip.Slot)) {
 					Tooltip.SetInventorySlot(Player->Inventory->GetSlot(Tooltip.Slot));
 					if(Tooltip.Usable && Player->Character->Vendor)
@@ -707,6 +715,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		BlacksmithScreen->Render(BlendFactor);
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
+		StashScreen->Render(BlendFactor);
 		ae::Assets.Elements["label_hud_pvp"]->Render();
 		DrawParty();
 		DrawTeleport();
@@ -977,6 +986,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= InventoryScreen->Close();
 	WasOpen |= BlacksmithScreen->Close();
 	WasOpen |= SkillScreen->Close();
+	WasOpen |= StashScreen->Close();
 	WasOpen |= VendorScreen->Close();
 	WasOpen |= TraderScreen->Close();
 	WasOpen |= TradeScreen->Close(SendNotify);
@@ -1326,6 +1336,9 @@ BagType _HUD::GetBagFromWindow(int Window) {
 		case WINDOW_TRADEYOURS:
 		case WINDOW_TRADETHEIRS:
 			return BagType::TRADE;
+		break;
+		case WINDOW_STASH:
+			return BagType::STASH;
 		break;
 	}
 

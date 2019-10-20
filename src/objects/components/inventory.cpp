@@ -30,6 +30,7 @@ _Inventory::_Inventory() {
 	GetBag(BagType::INVENTORY).Slots.resize(INVENTORY_SIZE);
 	GetBag(BagType::TRADE).Slots.resize(INVENTORY_MAX_TRADE_ITEMS);
 	GetBag(BagType::KEYS).StaticSize = false;
+	GetBag(BagType::STASH).Slots.resize(INVENTORY_STASH_SIZE);
 	for(auto &Slot : GetBag(BagType::EQUIPMENT).Slots)
 		Slot.MaxCount = 1;
 
@@ -38,6 +39,7 @@ _Inventory::_Inventory() {
 	GetBag(BagType::INVENTORY).ID = "inventory";
 	GetBag(BagType::TRADE).ID = "trade";
 	GetBag(BagType::KEYS).ID = "keys";
+	GetBag(BagType::STASH).ID = "stash";
 
 	// Set type
 	GetBag(BagType::NONE).Type = BagType::NONE;
@@ -45,6 +47,7 @@ _Inventory::_Inventory() {
 	GetBag(BagType::INVENTORY).Type = BagType::INVENTORY;
 	GetBag(BagType::TRADE).Type = BagType::TRADE;
 	GetBag(BagType::KEYS).Type = BagType::KEYS;
+	GetBag(BagType::STASH).Type = BagType::STASH;
 }
 
 // Serialize

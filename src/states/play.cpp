@@ -35,6 +35,7 @@
 #include <hud/trader_screen.h>
 #include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
+#include <hud/stash_screen.h>
 #include <ae/manager.h>
 #include <ae/clientnetwork.h>
 #include <ae/database.h>
@@ -1063,6 +1064,9 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 				case _Character::STATUS_INVENTORY:
 					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/bag.png"];
 				break;
+				case _Character::STATUS_STASH:
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/bag.png"];
+				break;
 				case _Character::STATUS_VENDOR:
 					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
 				break;
@@ -1131,6 +1135,11 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 
 	// Handle event
 	switch(Event) {
+		case EventType::STASH:
+			Player->Character->ViewingStash = true;
+			Player->Controller->WaitForServer = false;
+			HUD->StashScreen->Init();
+		break;
 		case EventType::VENDOR:
 			Player->Character->Vendor = &Stats->Vendors.at(EventData);
 			Player->Controller->WaitForServer = false;

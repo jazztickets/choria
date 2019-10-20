@@ -55,6 +55,7 @@ enum class BagType : size_t {
 	INVENTORY,
 	TRADE,
 	KEYS,
+	STASH,
 	COUNT,
 };
 

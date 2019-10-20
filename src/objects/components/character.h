@@ -56,6 +56,7 @@ class _Character {
 			STATUS_NONE,
 			STATUS_MENU,
 			STATUS_INVENTORY,
+			STATUS_STASH,
 			STATUS_VENDOR,
 			STATUS_SKILLS,
 			STATUS_TRADE,
@@ -216,6 +217,7 @@ class _Character {
 		const _Trader *Trader;
 		const _Blacksmith *Blacksmith;
 		const _MinigameStat *Minigame;
+		bool ViewingStash;
 		uint32_t Seed;
 
 		// Trading

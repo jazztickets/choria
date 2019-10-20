@@ -31,6 +31,7 @@
 class _CharacterScreen;
 class _InventoryScreen;
 class _VendorScreen;
+class _StashScreen;
 class _TradeScreen;
 class _TraderScreen;
 class _BlacksmithScreen;
@@ -104,6 +105,7 @@ class _HUD {
 	friend class _TraderScreen;
 	friend class _BlacksmithScreen;
 	friend class _SkillScreen;
+	friend class _StashScreen;
 
 	public:
 
@@ -123,6 +125,7 @@ class _HUD {
 			WINDOW_MINIGAME,
 			WINDOW_INVENTORY_TABS,
 			WINDOW_KEYS,
+			WINDOW_STASH,
 		};
 
 		_HUD();
@@ -195,6 +198,7 @@ class _HUD {
 		_TraderScreen *TraderScreen;
 		_BlacksmithScreen *BlacksmithScreen;
 		_SkillScreen *SkillScreen;
+		_StashScreen *StashScreen;
 
 		// Minigames
 		_Minigame *Minigame;

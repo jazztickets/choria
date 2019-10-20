@@ -110,6 +110,7 @@ _Character::_Character(_Object *Object) :
 	Trader(nullptr),
 	Blacksmith(nullptr),
 	Minigame(nullptr),
+	ViewingStash(false),
 	Seed(0),
 
 	TradePlayer(nullptr),
@@ -266,6 +267,8 @@ void _Character::UpdateStatus() {
 		Status = STATUS_MINIGAME;
 	else if(InventoryOpen)
 		Status = STATUS_INVENTORY;
+	else if(ViewingStash)
+		Status = STATUS_STASH;
 	else if(SkillsOpen)
 		Status = STATUS_SKILLS;
 	else if(MenuOpen)
@@ -587,6 +590,7 @@ void _Character::ResetUIState() {
 	Trader = nullptr;
 	Blacksmith = nullptr;
 	Minigame = nullptr;
+	ViewingStash = false;
 	TeleportTime = -1.0;
 }
 

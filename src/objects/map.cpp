@@ -329,7 +329,8 @@ void _Map::CheckEvents(_Object *Object) {
 		case EventType::VENDOR:
 		case EventType::TRADER:
 		case EventType::BLACKSMITH:
-		case EventType::MINIGAME: {
+		case EventType::MINIGAME:
+		case EventType::STASH: {
 			if(Server)
 				StartEvent(Object, Tile->Event);
 			else
@@ -491,11 +492,14 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 				if(!Object->Character->Blacksmith)
 					return;
 			break;
-			case EventType::MINIGAME: {
+			case EventType::MINIGAME:
 				Object->Character->Minigame = &Server->Stats->Minigames.at(Event.Data);
 				if(!Object->Character->Minigame)
 					return;
-			} break;
+			break;
+			case EventType::STASH:
+				Object->Character->ViewingStash = true;
+			break;
 			default:
 				return;
 			break;

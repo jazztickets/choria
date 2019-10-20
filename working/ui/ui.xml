@@ -288,7 +288,7 @@
 		<element id="button_inventory_bag_22" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="22"/>
 		<element id="button_inventory_bag_23" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="23"/>
 	</element>
-	<element id="element_vendor" offset_x="222" size_x="336" size_y="384" index="6">
+	<element id="element_vendor" offset_x="222" size_x="320" size_y="384" index="6">
 		<element id="button_vendor_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
 		<element id="button_vendor_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
 		<element id="button_vendor_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
@@ -401,6 +401,40 @@
 		</element>
 	</element>
 	<element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
+	<element debug="0" id="element_stash" style="style_equipment_bg" offset_x="222" size_x="352" size_y="416" index="15">
+		<element id="button_stash_items" size_x="320" size_y="384" index="15">
+			<element id="button_stash_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
+			<element id="button_stash_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
+			<element id="button_stash_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
+			<element id="button_stash_bag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="3"/>
+			<element id="button_stash_bag_4" style="style_hud_slot" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
+			<element id="button_stash_bag_5" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
+			<element id="button_stash_bag_6" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
+			<element id="button_stash_bag_7" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
+			<element id="button_stash_bag_8" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="8"/>
+			<element id="button_stash_bag_9" style="style_hud_slot" offset_x="256" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="9"/>
+			<element id="button_stash_bag_10" style="style_hud_slot" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="10"/>
+			<element id="button_stash_bag_11" style="style_hud_slot" offset_x="64" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="11"/>
+			<element id="button_stash_bag_12" style="style_hud_slot" offset_x="128" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="12"/>
+			<element id="button_stash_bag_13" style="style_hud_slot" offset_x="192" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="13"/>
+			<element id="button_stash_bag_14" style="style_hud_slot" offset_x="256" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="14"/>
+			<element id="button_stash_bag_15" style="style_hud_slot" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="15"/>
+			<element id="button_stash_bag_16" style="style_hud_slot" offset_x="64" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="16"/>
+			<element id="button_stash_bag_17" style="style_hud_slot" offset_x="128" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="17"/>
+			<element id="button_stash_bag_18" style="style_hud_slot" offset_x="192" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="18"/>
+			<element id="button_stash_bag_19" style="style_hud_slot" offset_x="256" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="19"/>
+			<element id="button_stash_bag_20" style="style_hud_slot" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="20"/>
+			<element id="button_stash_bag_21" style="style_hud_slot" offset_x="64" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="21"/>
+			<element id="button_stash_bag_22" style="style_hud_slot" offset_x="128" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="22"/>
+			<element id="button_stash_bag_23" style="style_hud_slot" offset_x="192" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="23"/>
+			<element id="button_stash_bag_24" style="style_hud_slot" offset_x="256" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="24"/>
+			<element id="button_stash_bag_25" style="style_hud_slot" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="25"/>
+			<element id="button_stash_bag_26" style="style_hud_slot" offset_x="64" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="26"/>
+			<element id="button_stash_bag_27" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="27"/>
+			<element id="button_stash_bag_28" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="28"/>
+			<element id="button_stash_bag_29" style="style_hud_slot" offset_x="256" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="29"/>
+		</element>
+	</element>
 	<element id="element_dark_overlay" style="style_hud_bg" size_x="100%" size_y="100%"/>
 	<element id="element_skills" style="style_hud_bg" size_x="666" size_y="632" index="11"/>
 	<element id="element_died" style="style_hud_died_bg" size_x="100%" size_y="100%" alignment_x="0" alignment_y="0">
@@ -429,8 +463,8 @@
 		</element>
 		<element id="label_party_title" font="menu_buttons" text="Enter Party Name" offset_y="56" alignment_y="3"/>
 	</element>
-	<element id="element_chat" style="style_menu_textbox" offset_x="28" offset_y="-140" size_x="492" size_y="28" alignment_x="0" alignment_y="2" clickable="true">
-		<element id="textbox_chat" font="hud_small" offset_x="6" offset_y="20" alignment_x="0" alignment_y="3" maxlength="100"/>
+	<element id="element_chat" style="style_menu_textbox" offset_x="28" offset_y="-140" size_x="492" size_y="30" alignment_x="0" alignment_y="2" clickable="true">
+		<element id="textbox_chat" font="hud_small" offset_x="6" offset_y="22" alignment_x="0" alignment_y="3" maxlength="100"/>
 	</element>
 	<element id="element_editor" size_x="100%" size_y="100%">
 		<element id="element_editor_clock" offset_x="-26" offset_y="58" alignment_x="2" alignment_y="0" font="hud_tiny"/>
