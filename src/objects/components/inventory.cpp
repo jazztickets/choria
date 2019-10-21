@@ -402,6 +402,8 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 
 	// Get source
 	_InventorySlot &SourceItem = GetSlot(SourceSlot);
+	if(!SourceItem.Item)
+		return 0;
 
 	// Check for restrictions
 	if(!SourceItem.Item->Tradable && TargetBagType == BagType::TRADE)
