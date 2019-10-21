@@ -109,6 +109,7 @@ class _Character {
 		bool HasLearned(const _BaseSkill *Skill) const;
 
 		// UI
+		bool IsTrading() { return WaitingForTrade || TradePlayer; }
 		void ResetUIState();
 		bool AddStatusEffect(_StatusEffect *StatusEffect);
 		void DeleteStatusEffects();

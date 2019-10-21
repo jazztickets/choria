@@ -112,7 +112,7 @@ bool _Inventory::FindItem(const _BaseItem *Item, _Slot &Slot, const _Slot &Start
 // Return true if a certain item id is in the inventory or keychain
 bool _Inventory::HasKey(const std::string &ID) {
 	for(auto &Bag : Bags) {
-		if(Bag.Type == BagType::STASH || Bag.Type ==  BagType::TRADE)
+		if(Bag.Type == BagType::STASH || Bag.Type == BagType::TRADE)
 			continue;
 
 		if(Bag.HasItem(ID))
@@ -346,18 +346,16 @@ bool _Inventory::AddItem(const _BaseItem *Item, int Upgrades, int Count, _Slot T
 void _Inventory::MoveTradeToInventory() {
 
 	_Bag &Bag = GetBag(BagType::TRADE);
+	std::list<_Slot> SlotsUpdated;
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
-		if(Bag.Slots[i].Item && AddItem(Bag.Slots[i].Item, Bag.Slots[i].Upgrades, Bag.Slots[i].Count))
-			Bag.Slots[i].Reset();
+		_Slot SourceSlot(BagType::TRADE, i);
+		Transfer(SourceSlot, BagType::INVENTORY, SlotsUpdated);
 	}
 }
 
 // Splits an item stack
 bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 	if(Slot.Index == NOSLOT)
-		return false;
-
-	if(Slot.Type != BagType::INVENTORY && Slot.Type != BagType::STASH)
 		return false;
 
 	// Make sure stack is large enough
@@ -376,7 +374,7 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 				EmptySlot.Index = 0;
 
 			_InventorySlot &Item = GetSlot(EmptySlot);
-			if(Item.Item == nullptr || (Item.Item == SplitItem.Item && Item.Upgrades == SplitItem.Upgrades && Item.Count <= GetSlot(EmptySlot).MaxCount - Count)) {
+			if(Item.Item == nullptr || (Item.Item == SplitItem.Item && Item.Count <= GetSlot(EmptySlot).MaxCount - Count)) {
 				Found = true;
 				break;
 			}
@@ -397,6 +395,68 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 	}
 
 	return false;
+}
+
+// Transfer a stack of items between bags. Return amount moved.
+int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::list<_Slot> &SlotsUpdated) {
+
+	// Get source
+	_InventorySlot &SourceItem = GetSlot(SourceSlot);
+
+	// Check for restrictions
+	if(!SourceItem.Item->Tradable && TargetBagType == BagType::TRADE)
+		return 0;
+
+	// Search bag for suitable slots
+	_Bag TargetBag = GetBag(TargetBagType);
+	_Slot CheckSlot(TargetBagType, 0);
+	int AmountMoved = 0;
+	int AmountLeft = SourceItem.Count;
+	for(size_t i = 0; i < TargetBag.Slots.size(); i++) {
+
+		// Check each slot for space
+		CheckSlot.Index = i;
+		_InventorySlot &InventorySlot = GetSlot(CheckSlot);
+
+		// Empty slot found
+		if(InventorySlot.Item == nullptr) {
+			InventorySlot.Item = SourceItem.Item;
+			InventorySlot.Upgrades = SourceItem.Upgrades;
+			InventorySlot.Count = SourceItem.Count - AmountMoved;
+			AmountMoved += InventorySlot.Count;
+			AmountLeft -= InventorySlot.Count;
+			SlotsUpdated.push_back(CheckSlot);
+			break;
+		}
+
+		// Merge with existing stack
+		int SpaceAvailable = InventorySlot.MaxCount - InventorySlot.Count;
+		if(InventorySlot.Item->IsStackable() && InventorySlot.Item == SourceItem.Item && SpaceAvailable > 0) {
+			int AmountCanMove = std::min(SpaceAvailable, AmountLeft);
+			InventorySlot.Count += AmountCanMove;
+			AmountMoved += AmountCanMove;
+			AmountLeft -= AmountCanMove;
+			SlotsUpdated.push_back(CheckSlot);
+		}
+
+		// Exit when no more left to move
+		if(AmountLeft <= 0)
+			break;
+	}
+
+	// Nothing moved
+	if(!AmountMoved)
+		return 0;
+
+	// Remove source item
+	SourceItem.Count -= AmountMoved;
+	if(SourceItem.Count <= 0)
+		SourceItem.Reset();
+
+	// Update source slot
+	SlotsUpdated.push_back(SourceSlot);
+
+	return AmountMoved;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items

@@ -228,6 +228,7 @@ class _HUD {
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
 
 		void SplitStack(const _Slot &Slot, uint8_t Count);
+		void Transfer(const _Slot &Slot);
 		BagType GetBagFromWindow(int Window);
 
 		// UI

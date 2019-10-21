@@ -3,6 +3,7 @@ choria 0.6.0 -
 - Added tile transitions to map
 - Changed data backend to xml
 - Updated editor to support lights and props
+- Added shift-click to transfer items between bags
 - Added text events
 
 choria 0.5.0 - 2019-09-27

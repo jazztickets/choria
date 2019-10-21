@@ -48,7 +48,6 @@ _Usable::_Usable() :
 
 // Destructor
 _Usable::~_Usable() {
-
 }
 
 // Draw tooltip window and header
@@ -97,8 +96,8 @@ void _Usable::DrawTooltipBase(const glm::vec2 &Position, const _Object *Player, 
 		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
 	// Set element bounds
-	TooltipElement->Offset = WindowOffset;
-	TooltipElement->Size = Size;
+	TooltipElement->Offset = glm::ivec2(WindowOffset);
+	TooltipElement->Size = glm::ivec2(Size);
 	TooltipElement->CalculateBounds(false);
 
 	// Render

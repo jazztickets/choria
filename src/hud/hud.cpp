@@ -202,10 +202,12 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				case WINDOW_INVENTORY:
 				case WINDOW_STASH:
 
-					// Pickup item
+					// Pickup or transfer item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 						if(ae::Input.ModKeyDown(KMOD_CTRL))
 							SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
+						else if(ae::Input.ModKeyDown(KMOD_SHIFT))
+							Transfer(Tooltip.Slot);
 						else
 							Cursor = Tooltip;
 					}
@@ -444,7 +446,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			Player->Character->Battle->ClientSetAction((uint8_t)Player->Fighter->PotentialAction.ActionBarSlot);
 		}
 
-		if(Player->Character->WaitingForTrade) {
+		if(Player->Character->IsTrading()) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 				if(!Cursor.Usable) {
 
@@ -547,7 +549,7 @@ void _HUD::Update(double FrameTime) {
 	}
 
 	// Get trade items
-	if(Player->Character->WaitingForTrade) {
+	if(Player->Character->IsTrading()) {
 		ae::Assets.Elements["element_trade_theirs"]->SetActive(false);
 		if(Player->Character->TradePlayer) {
 			ae::Assets.Elements["element_trade_theirs"]->SetActive(true);
@@ -1252,7 +1254,7 @@ void _HUD::DrawItemPrice(const _BaseItem *Item, int Count, const glm::vec2 &Draw
 	else
 		Color = ae::Assets.Colors["light_gold"];
 
-	ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(28, -15) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
+	ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), glm::ivec2(DrawPosition + glm::vec2(28, -15) * ae::_Element::GetUIScale()), ae::RIGHT_BASELINE, Color);
 }
 
 // Sets the player's action bar
@@ -1310,16 +1312,42 @@ void _HUD::SendPartyInfo() {
 // Split a stack of items
 void _HUD::SplitStack(const _Slot &Slot, uint8_t Count) {
 
-	// Don't split trade items
-	if(Slot.Type == BagType::TRADE)
-		return;
-
 	// Build packet
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_SPLIT);
 	Slot.Serialize(Packet);
 	Packet.Write<uint8_t>(Count);
 
+	PlayState.Network->SendPacket(Packet);
+}
+
+// Move a stack of items between bags
+void _HUD::Transfer(const _Slot &SourceSlot) {
+
+	// Get target bag
+	BagType TargetBagType = BagType::NONE;
+	switch(SourceSlot.Type) {
+		case BagType::INVENTORY:
+		case BagType::EQUIPMENT:
+			if(TradeScreen->Element->Active)
+				TargetBagType = BagType::TRADE;
+			else if(Player->Character->ViewingStash)
+				TargetBagType = BagType::STASH;
+		break;
+		case BagType::TRADE:
+		case BagType::STASH:
+			TargetBagType = BagType::INVENTORY;
+		break;
+	}
+
+	if(TargetBagType == BagType::NONE)
+		return;
+
+	// Write packet
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY_TRANSFER);
+	SourceSlot.Serialize(Packet);
+	Packet.Write<uint8_t>((uint8_t)TargetBagType);
 	PlayState.Network->SendPacket(Packet);
 }
 

@@ -154,7 +154,7 @@ class _PlayState : public ae::_State {
 		void HandleChatMessage(ae::_Buffer &Data);
 		void HandleTradeRequest(ae::_Buffer &Data);
 		void HandleTradeCancel(ae::_Buffer &Data);
-		void HandleTradeItem(ae::_Buffer &Data);
+		void HandleTradeInventory(ae::_Buffer &Data);
 		void HandleTradeGold(ae::_Buffer &Data);
 		void HandleTradeAccept(ae::_Buffer &Data);
 		void HandleTradeExchange(ae::_Buffer &Data);

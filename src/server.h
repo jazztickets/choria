@@ -87,6 +87,7 @@ class _Server {
 		void HandleUseCommand(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleInventoryMove(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleInventoryTransfer(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleInventorySplit(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleInventoryDelete(ae::_Buffer &Data, ae::_Peer *Peer);
@@ -157,6 +158,7 @@ class _Server {
 		void SendPlayerInfo(ae::_Peer *Peer);
 		void SendCharacterList(ae::_Peer *Peer);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
+		void SendTradePlayerInventory(_Object *Player);
 
 		// Threading
 		std::thread *Thread;

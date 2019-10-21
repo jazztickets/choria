@@ -41,7 +41,7 @@ _TradeScreen::_TradeScreen(_HUD *MainHUD, ae::_Element *MainElement) :
 
 // Initialize
 void _TradeScreen::Init() {
-	if(HUD->Player->Character->WaitingForTrade)
+	if(HUD->Player->Character->IsTrading())
 		return;
 
 	HUD->Player->Character->WaitingForTrade = true;

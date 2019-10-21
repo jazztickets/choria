@@ -35,7 +35,6 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include <iostream>
 
 // Constants
 const int TOOLTIP_HELP_SPACING = 28;
@@ -70,22 +69,23 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	if(!Player)
 		return;
 
+	// Set up spacing
+	std::list<std::string> HelpTextList;
 	glm::vec2 Spacing = glm::vec2(TOOLTIP_ATTRIBUTE_SPACING, 0) * ae::_Element::GetUIScale();
 	float SpacingY = TOOLTIP_SPACING * ae::_Element::GetUIScale();
 	float ControlSpacingY = TOOLTIP_HELP_SPACING * ae::_Element::GetUIScale();
+	glm::vec2 Size(INVENTORY_TOOLTIP_WIDTH, INVENTORY_TOOLTIP_HEIGHT);
+	float SidePadding = TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
+	if(ResistanceTypeID)
+		Size.x += TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
 
 	// Get item type
 	std::string TypeText;
 	if(Type != ItemType::NONE)
 		TypeText = Player->Stats->ItemTypes.at(Type).second;
 
-	// Draw tooltip window
+	// Draw base
 	glm::vec2 DrawPosition;
-	glm::vec2 Size(INVENTORY_TOOLTIP_WIDTH, INVENTORY_TOOLTIP_HEIGHT);
-	float SidePadding = TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
-	if(ResistanceTypeID)
-		Size.x += TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
-
 	DrawTooltipBase(Position, Player, TypeText, DrawPosition, Size);
 
 	// Get level of item
@@ -300,7 +300,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	}
 
 	if(StatDrawn)
-		DrawPosition.y += SpacingY;
+		DrawPosition.y += ControlSpacingY;
 
 	// Vendors
 	if(Player->Character->Vendor) {
@@ -309,16 +309,20 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 			Buffer << "Buy " << Tooltip.ItemCount << "x for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
-			ae::Assets.Fonts["hud_small"]->DrawText("Right-click to buy", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
+			HelpTextList.push_back("Right-click to buy");
 		}
 		else if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY) {
 			Buffer << "Sell for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
-			ae::Assets.Fonts["hud_small"]->DrawText("Shift+Right-click to sell", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
+			HelpTextList.push_back("Shift+Right-click to sell");
 		}
+	}
+
+	// Tradable
+	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_STASH || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
+		ae::Assets.Fonts["hud_small"]->DrawText("Untradable", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+		DrawPosition.y += ControlSpacingY;
 	}
 
 	// Draw help text
@@ -332,46 +336,52 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 		case ItemType::BOOTS:
 		case ItemType::SHIELD:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_STASH)
-				InfoText = "Right-click to equip";
+				HelpTextList.push_back("Right-click to equip");
 		break;
 		case ItemType::CONSUMABLE:
 			if((Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_STASH) && CheckScope(ScopeType::WORLD))
-				InfoText = "Right-click to use";
+				HelpTextList.push_back("Right-click to use");
 			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
-				InfoText = "Left-click to use";
+				HelpTextList.push_back("Left-click to use");
 		break;
 		case ItemType::UNLOCKABLE: {
 			if(!Player->Character->HasUnlocked(this))
-				InfoText = "Right-click to unlock";
+				HelpTextList.push_back("Right-click to unlock");
 			else {
 				InfoText = "Already unlocked";
 				InfoColor = ae::Assets.Colors["red"];
 			}
 		} break;
 		case ItemType::KEY: {
-			if(!Player->Inventory->GetBag(BagType::KEYS).HasItem(ID))
-				InfoText = "Right-click to add to keychain";
-			else {
+			if(Player->Inventory->GetBag(BagType::KEYS).HasItem(ID)) {
 				InfoText = "Already in keychain";
 				InfoColor = ae::Assets.Colors["red"];
+			}
+			else if(Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_STASH) {
+				HelpTextList.push_back("Right-click to add to keychain");
 			}
 		} break;
 		default:
 		break;
 	}
 
+	// Draw help text
 	if(InfoText.length()) {
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, InfoColor);
 		DrawPosition.y += ControlSpacingY;
 	}
 
-	if((Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_STASH) && Tooltip.ItemCount > 1) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, InfoColor);
-		DrawPosition.y += SpacingY;
-	}
+	// Move hint
+	if(Player->Character->ViewingStash || Player->Character->IsTrading())
+		HelpTextList.push_back("Shift+click to move");
 
-	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_STASH || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Untradable", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+	// Split hint
+	if((Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_STASH) && Tooltip.ItemCount > 1)
+		HelpTextList.push_back("Ctrl+click to split");
+
+	// Draw ui hints
+	for(const auto &Text : HelpTextList) {
+		ae::Assets.Fonts["hud_small"]->DrawText(Text, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 		DrawPosition.y += ControlSpacingY;
 	}
 }

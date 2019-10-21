@@ -255,7 +255,7 @@ void _Character::UpdateStatus() {
 		Status = STATUS_DEAD;
 	else if(Battle)
 		Status = STATUS_BATTLE;
-	else if(WaitingForTrade)
+	else if(IsTrading())
 		Status = STATUS_TRADE;
 	else if(Vendor)
 		Status = STATUS_VENDOR;
@@ -511,6 +511,9 @@ bool _Character::AcceptingMoveInput() {
 		return false;
 
 	if(Trader)
+		return false;
+
+	if(ViewingStash)
 		return false;
 
 	if(Blacksmith)
