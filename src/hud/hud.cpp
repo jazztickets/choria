@@ -214,7 +214,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
 							VendorScreen->SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_CTRL));
 						}
-						else {
+						else if(Tooltip.Window != WINDOW_TRADEYOURS) {
 							ae::_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 							Tooltip.Slot.Serialize(Packet);
