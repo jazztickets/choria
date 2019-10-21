@@ -107,14 +107,14 @@ void _Usable::DrawTooltipBase(const glm::vec2 &Position, const _Object *Player, 
 	TooltipElement->SetActive(false);
 
 	// Set draw position to center of window
-	DrawPosition = glm::vec2((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
+	DrawPosition = glm::vec2(TooltipElement->Size.x / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
 	DrawPosition.y += LargeSpacingY;
 
 	// Draw target text
 	if(Target != TargetType::NONE) {
 		DrawPosition.y += TOOLTIP_TARGET_OFFSET * ae::_Element::GetUIScale();
 		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(Target).second;
-		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
+		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += LargeSpacingY;
 	}
 }
@@ -124,7 +124,7 @@ void _Usable::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, in
 
 	// Draw level text
 	if(ShowLevel) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 		DrawPosition.y += SpacingY;
 	}
 
@@ -147,7 +147,7 @@ void _Usable::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, in
 			std::list<std::string> Strings;
 			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
 			for(const auto &LineToken : Strings) {
-				ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
+				ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, glm::ivec2(DrawPosition), ae::CENTER_BASELINE);
 				DrawPosition.y += TextSpacingY;
 			}
 		}
