@@ -76,7 +76,8 @@ struct _InventorySlot {
 
 // Bags contain multiple slots
 struct _Bag {
-	_Bag() : Type(BagType::NONE), StaticSize(true) { }
+	_Bag() : _Bag(BagType::NONE) { }
+	_Bag(BagType Type) : Type(Type), StaticSize(true) { }
 
 	void Serialize(ae::_Buffer &Data);
 	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
@@ -120,7 +121,7 @@ class _Inventory {
 		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 		void UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats);
 
-		bool FindItem(const _BaseItem *Item, size_t &Slot, size_t StartSlot);
+		bool FindItem(const _BaseItem *Item, _Slot &Slot, const _Slot &StartSlot);
 		bool HasKey(const std::string &ID);
 		int CountItem(const _BaseItem *Item);
 		bool IsValidSlot(const _Slot &Slot) { return Slot.Type > BagType::NONE && Slot.Type < BagType::COUNT && Slot.Index < GetBag(Slot.Type).Slots.size(); }

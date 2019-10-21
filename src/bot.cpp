@@ -459,8 +459,9 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			// Create result
 			_ActionResult ActionResult;
 			ActionResultFlag ActionFlags = Data.Read<ActionResultFlag>();
+			_Slot Slot;
+			Slot.Unserialize(Data);
 			uint16_t ItemID = Data.Read<uint16_t>();
-			int InventorySlot = Data.Read<uint8_t>();
 			if(ActionFlags & ActionResultFlag::SKILL)
 				ActionResult.ActionUsed.Usable = Stats->SkillsIndex.at(ItemID);
 			else
@@ -483,9 +484,9 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 					if(ActionResult.ActionUsed.Usable) {
 
 						if(ActionFlags & ActionResultFlag::DECREMENT) {
-							size_t Index;
-							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Usable->AsItem(), Index, (size_t)InventorySlot)) {
-								Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
+							_Slot FoundSlot;
+							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Usable->AsItem(), FoundSlot, Slot)) {
+								Player->Inventory->UpdateItemCount(FoundSlot, -1);
 								Player->Character->RefreshActionBarCount();
 							}
 						}

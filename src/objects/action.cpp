@@ -119,8 +119,8 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	Packet.Write<ActionResultFlag>(ActionFlags);
 
 	// Write action used
+	Source->Character->Action.Slot.Serialize(Packet);
 	Packet.Write<uint16_t>(Usable->NetworkID);
-	Packet.Write<uint8_t>(Source->Character->Action.InventorySlot);
 	Packet.Write<float>(AttackDelay);
 	Packet.Write<float>(AttackTime);
 

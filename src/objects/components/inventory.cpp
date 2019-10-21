@@ -89,20 +89,21 @@ void _Inventory::UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats) {
 	GetSlot(Slot).Unserialize(Data, Stats);
 }
 
-// Search for an item in the inventory
-bool _Inventory::FindItem(const _BaseItem *Item, size_t &Slot, size_t StartSlot) {
+// Search for an item in a bag
+bool _Inventory::FindItem(const _BaseItem *Item, _Slot &Slot, const _Slot &StartSlot) {
 
-	_Bag &Bag = GetBag(BagType::INVENTORY);
+	// Search bags
+	_Bag &Bag = GetBag(StartSlot.Type);
+	Slot.Type = Bag.Type;
+	Slot.Index = StartSlot.Index;
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
-		if(StartSlot >= Bag.Slots.size())
-			StartSlot = 0;
+		if(Slot.Index >= Bag.Slots.size())
+			Slot.Index = 0;
 
-		if(Bag.Slots[StartSlot].Item == Item) {
-			Slot = StartSlot;
+		if(Bag.Slots[Slot.Index].Item == Item)
 			return true;
-		}
 
-		StartSlot++;
+		Slot.Index++;
 	}
 
 	return false;

@@ -994,7 +994,7 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 			Player->Character->Action.State = ActionStateType::START;
 			Player->Character->Action.Level = Item->Level;
 			Player->Character->Action.Duration = Item->Duration;
-			Player->Character->Action.InventorySlot = (int)Slot.Index;
+			Player->Character->Action.Slot = Slot;
 		}
 	}
 }

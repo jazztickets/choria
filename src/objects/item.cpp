@@ -448,12 +448,14 @@ int _BaseItem::GetUpgradePrice(int Upgrades) const {
 
 // Apply cost and return non zero flags to continue with action result
 bool _BaseItem::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const {
-	size_t Index;
-	if(!ActionResult.Source.Object->Inventory->FindItem(this, Index, (size_t)ActionResult.Source.Object->Character->Action.InventorySlot))
+
+	// Get slot where item is
+	_Slot FoundSlot;
+	if(!ActionResult.Source.Object->Inventory->FindItem(this, FoundSlot, ActionResult.Source.Object->Character->Action.Slot))
 		return false;
 
 	// Spend item
-	ActionResult.Source.Object->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
+	ActionResult.Source.Object->Inventory->UpdateItemCount(FoundSlot, -1);
 	ResultFlags |= ActionResultFlag::DECREMENT;
 
 	// Unlock item
@@ -546,8 +548,8 @@ bool _BaseItem::CheckRequirements(_Scripting *Scripting, _ActionResult &ActionRe
 		return !ActionResult.Source.Object->Character->HasUnlocked(this);
 
 	// Check for item count
-	size_t Index;
-	if(!ActionResult.Source.Object->Inventory->FindItem(this, Index, (size_t)ActionResult.ActionUsed.InventorySlot))
+	_Slot FoundSlot;
+	if(!ActionResult.Source.Object->Inventory->FindItem(this, FoundSlot, ActionResult.ActionUsed.Slot))
 		return false;
 
 	return true;

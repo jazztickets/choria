@@ -561,6 +561,12 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 		else
 			ReturnAction.Level = ReturnAction.Usable->Level;
 
+		// If using item from action bar, search inventory
+		if(ReturnAction.Usable->IsConsumable()) {
+			ReturnAction.Slot.Index = 0;
+			ReturnAction.Slot.Type = BagType::INVENTORY;
+		}
+
 		// Set duration for certain items
 		ReturnAction.Duration = ReturnAction.Usable->Duration;
 

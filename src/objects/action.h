@@ -19,6 +19,7 @@
 
 // Libraries
 #include <objects/statchange.h>
+#include <objects/components/inventory.h>
 #include <enums.h>
 #include <glm/vec2.hpp>
 #include <cstdint>
@@ -66,7 +67,7 @@ class _Action {
 
 	public:
 
-		_Action() : Usable(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
+		_Action() : Usable(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Duration(0.0), Level(0), Count(0), ActionBarSlot(-1) { }
 		_Action(const _Usable *Usable) : _Action() { this->Usable = Usable; }
 
 		bool operator==(const _Action &Action) const { return Action.Usable == Usable; }
@@ -80,18 +81,18 @@ class _Action {
 		void HandleSummons(_ActionResult &ActionResult);
 
 		bool IsSet() const { return State != ActionStateType::NONE; }
-		void Unset() { Usable = nullptr; State = ActionStateType::NONE; Count = 0; ApplyTime = 0.0; Time = 0.0; Duration = 0.0; Level = 0; InventorySlot = -1; ActionBarSlot = -1; }
+		void Unset() { Usable = nullptr; State = ActionStateType::NONE; Count = 0; ApplyTime = 0.0; Time = 0.0; Duration = 0.0; Level = 0; Slot.Reset(); ActionBarSlot = -1; }
 
 		TargetType GetTargetType();
 
 		const _Usable *Usable;
+		_Slot Slot;
 		ActionStateType State;
 		double ApplyTime;
 		double Time;
 		double Duration;
 		int Level;
 		int Count;
-		int InventorySlot;
 		int ActionBarSlot;
 };
 
