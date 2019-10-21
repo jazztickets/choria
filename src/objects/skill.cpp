@@ -87,7 +87,7 @@ void _BaseSkill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, c
 	}
 
 	if(InfoText.length())
-		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, InfoColor);
+		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, InfoColor);
 }
 
 // Apply cost and return non zero flags to continue with action result
