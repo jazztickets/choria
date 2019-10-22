@@ -467,10 +467,6 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			else
 				ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
 
-			// Set texture
-			if(ActionResult.ActionUsed.Usable)
-				ActionResult.Texture = ActionResult.ActionUsed.Usable->Texture;
-
 			// Get source change
 			HandleStatChange(Data, ActionResult.Source);
 

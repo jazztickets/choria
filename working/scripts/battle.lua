@@ -29,7 +29,7 @@ Base_Attack = {
 			return Weapon.DamageType
 		end
 
-		return self.Item.DamageType
+		return "none"
 	end,
 
 	GetAttackTimes = function(self, Object)
@@ -38,7 +38,7 @@ Base_Attack = {
 			return Weapon.AttackDelay, Weapon.AttackTime, Weapon.Cooldown
 		end
 
-		return self.Item.AttackDelay, self.Item.AttackTime, self.Item.Cooldown
+		return 0, 0, 0
 	end,
 
 	GenerateDamage = function(self, Level, Source)

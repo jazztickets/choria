@@ -33,7 +33,6 @@ class _BaseItem;
 struct _ActionResult;
 
 namespace ae {
-	class _Texture;
 	class _Buffer;
 }
 
@@ -50,16 +49,16 @@ struct _Summon {
 
 // Action used in battle
 struct _BattleAction {
-	_BattleAction() : Source(nullptr), Target(nullptr), AttackDelay(0.0), AttackTime(0.0), Time(0.0), LastPosition({0.0f, 0.0f}), Position({0.0f, 0.0f}), Texture(nullptr) { }
+	_BattleAction() : Source(nullptr), Target(nullptr), Usable(nullptr), AttackDelay(0.0), AttackTime(0.0), Time(0.0), LastPosition({0.0f, 0.0f}), Position({0.0f, 0.0f}) { }
 
 	_Object *Source;
 	_Object *Target;
+	const _Usable *Usable;
 	double AttackDelay;
 	double AttackTime;
 	double Time;
 	glm::vec2 LastPosition;
 	glm::vec2 Position;
-	const ae::_Texture *Texture;
 };
 
 // Action
@@ -98,17 +97,11 @@ class _Action {
 
 // Result of an action use
 struct _ActionResult {
-	_ActionResult();
+	_ActionResult() : Scope(ScopeType::ALL) { }
 
 	_StatChange Source;
 	_StatChange Target;
 	_Summon Summon;
-	glm::vec2 LastPosition;
-	glm::vec2 Position;
 	_Action ActionUsed;
-	const ae::_Texture *Texture;
-	double Time;
-	double Timeout;
-	double Speed;
 	ScopeType Scope;
 };

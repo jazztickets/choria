@@ -16,6 +16,10 @@
 		<buff id="light" name="Light" script="Buff_Light" texture="textures/buffs/light.png"/>
 	</buffs>
 	<skills>
+		<skill id="punch" name="Punch" max_level="20" texture="textures/skills/punch.png">
+			<target type="enemy"/>
+			<use scope="battle" script="Skill_Punch"/>
+		</skill>
 		<skill id="attack" name="Attack" max_level="20" texture="textures/skills/attack.png">
 			<target type="enemy"/>
 			<use scope="battle" script="Skill_Attack"/>
@@ -31,7 +35,7 @@
 	</skills>
 	<weapon_types>
 		<weapon_type id="unarmed" name="Unarmed">
-			<skill id="attack"/>
+			<skill id="punch"/>
 		</weapon_type>
 		<weapon_type id="sword" name="Sword">
 			<skill id="attack"/>

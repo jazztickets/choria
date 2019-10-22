@@ -121,7 +121,7 @@ void _Battle::Update(double FrameTime) {
 			if(BattleElement && BattleAction.Source && BattleAction.Target) {
 
 				// Find start position
-				glm::vec2 StartPosition = BattleAction.Source->Fighter->ResultPosition - glm::vec2(BattleAction.Source->Character->Portrait->Texture->Size.x/2 + BattleAction.Texture->Size.x/2 + 10, 0) * ae::_Element::GetUIScale();
+				glm::vec2 StartPosition = BattleAction.Source->Fighter->ResultPosition - glm::vec2(BattleAction.Source->Character->Portrait->Texture->Size.x/2 + BattleAction.Usable->Texture->Size.x/2 + 10, 0) * ae::_Element::GetUIScale();
 				BattleAction.LastPosition = BattleAction.Position;
 
 				// Interpolate between start and end position of action used
@@ -140,6 +140,11 @@ void _Battle::Update(double FrameTime) {
 			// Update timer
 			BattleAction.Time += FrameTime;
 			if(BattleAction.Time >= BattleAction.AttackDelay + BattleAction.AttackTime) {
+
+				// Play audio
+				BattleAction.Usable->CallPlaySound(Scripting);
+
+				// Delete object
 				Iterator = BattleActions.erase(Iterator);
 			}
 			else
@@ -176,7 +181,7 @@ void _Battle::RenderBattleAction(_BattleAction &BattleAction, double BlendFactor
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 	//if(BattleAction.ActionUsed.Item && !BattleAction.ActionUsed.Item->IsSkill())
 	ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
-	ae::Graphics.DrawScaledImage(DrawPosition, BattleAction.Texture, WhiteAlpha);
+	ae::Graphics.DrawScaledImage(DrawPosition, BattleAction.Usable->Texture, WhiteAlpha);
 
 	/*
 	// Draw damage dealt

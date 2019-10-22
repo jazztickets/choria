@@ -1476,9 +1476,6 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	// Create battle action
-	_BattleAction BattleAction;
-
 	// Create result
 	_ActionResult ActionResult;
 	ActionResultFlag ActionFlags = Data.Read<ActionResultFlag>();
@@ -1490,20 +1487,19 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	float ReactTime = Data.Read<float>();
 	float FlyTime = Data.Read<float>();
 
+	// Get usable
 	if(ActionFlags & ActionResultFlag::SKILL)
 		ActionResult.ActionUsed.Usable = Stats->SkillsIndex.at(ItemID);
 	else
 		ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
 
-	// Set texture
-	if(ActionResult.ActionUsed.Usable)
-		ActionResult.Texture = ActionResult.ActionUsed.Usable->Texture;
-
 	// Get source change
 	HandleStatChange(Data, ActionResult.Source);
+
+	// Create battle action
+	_BattleAction BattleAction;
+	BattleAction.Usable = ActionResult.ActionUsed.Usable;
 	BattleAction.Source = ActionResult.Source.Object;
-	if(ActionResult.ActionUsed.Usable)
-		BattleAction.Texture = ActionResult.ActionUsed.Usable->Texture;
 	BattleAction.AttackDelay = ReactTime;
 	BattleAction.AttackTime = FlyTime;
 
@@ -1544,10 +1540,6 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 			Battle->BattleActions.push_back(BattleAction);
 		}
 	}
-
-	// Play audio
-	if(ActionResult.ActionUsed.Usable)
-		ActionResult.ActionUsed.Usable->CallPlaySound(Scripting);
 }
 
 // Handle action apply

@@ -40,6 +40,10 @@ struct _Trader;
 struct _MinigameStat;
 struct _Blacksmith;
 
+namespace ae {
+	class _Texture;
+}
+
 // Structures
 struct _Unlock {
 	_Unlock() : Level(0) { }

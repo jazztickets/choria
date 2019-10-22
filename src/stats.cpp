@@ -464,6 +464,7 @@ void _Stats::LoadData(const std::string &Path) {
 		Object->Model = &Models.at(GetString(Node, "model"));
 		Object->BuildTexture = GetTexture(Node, "texture");
 		Object->Character->ActionBar.resize(DEFAULT_ACTIONBAR_SIZE);
+		Object->Character->Skills["punch"] = 0;
 
 		// Load build items
 		tinyxml2::XMLElement *ItemsNode = Node->FirstChildElement("items");

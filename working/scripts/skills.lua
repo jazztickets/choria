@@ -191,6 +191,28 @@ end
 
 -- PLAYER SKILLS --
 
+-- Punch --
+
+Skill_Punch = Base_Attack:New()
+Skill_Punch.Stamina = 10
+Skill_Punch.AttackDelay = 0.2
+Skill_Punch.AttackTime = 0.3
+Skill_Punch.Cooldown = 0.5
+
+function Skill_Punch.GetInfo(self, Item)
+
+	return "Punch an enemy with your fists"
+end
+
+function Skill_Punch.PlaySound(self, Level)
+	Audio.Play("thud0.ogg")
+end
+
+function Skill_Punch.GetAttackTimes(self, Object)
+
+	return self.AttackDelay, self.AttackTime, self.Cooldown
+end
+
 -- Attack --
 
 Skill_Attack = Base_Attack:New()
