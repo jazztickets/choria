@@ -218,6 +218,20 @@ void _Usable::CallPlaySound(_Scripting *Scripting) const {
 	}
 }
 
+// Check if a skill can be equipped to the action bar
+bool _Usable::CallCanEquip(_Scripting *Scripting, _Object *Object) const {
+	if(Scripting->StartMethodCall(Script, "CanEquip")) {
+		Scripting->PushObject(Object);
+		Scripting->MethodCall(1, 1);
+		int Value = Scripting->GetBoolean(1);
+		Scripting->FinishMethodCall();
+
+		return Value;
+	}
+
+	return true;
+}
+
 // Check if the item can be used in the given scope
 bool _Usable::CheckScope(ScopeType CheckScope) const {
 	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != CheckScope))

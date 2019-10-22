@@ -17,6 +17,10 @@ Base_Attack = {
 		return Object.Stamina > self.Stamina
 	end,
 
+	CanEquip = function(self, Object)
+		return true
+	end,
+
 	ApplyCost = function(self, Level, Result)
 		Result.Source.Stamina = -self.Stamina
 

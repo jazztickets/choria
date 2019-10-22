@@ -204,6 +204,12 @@ function Skill_Punch.GetInfo(self, Item)
 	return "Punch an enemy with your fists"
 end
 
+function Skill_Punch.CanEquip(self, Object)
+	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+
+	return Weapon == nil
+end
+
 function Skill_Punch.PlaySound(self, Level)
 	Audio.Play("thud0.ogg")
 end

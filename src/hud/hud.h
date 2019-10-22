@@ -225,7 +225,7 @@ class _HUD {
 		void DrawItemPrice(const _BaseItem *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level=0);
 		void DrawCursorItem();
 
-		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
+		void SetActionBar(const _Action &Action, size_t Slot, size_t OldSlot=(size_t)-1);
 
 		void SplitStack(const _Slot &Slot, uint8_t Count);
 		void Transfer(const _Slot &Slot);

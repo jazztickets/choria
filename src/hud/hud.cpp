@@ -380,9 +380,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						// Move item to actionbar
 						case WINDOW_ACTIONBAR:
 							if((Cursor.Window == WINDOW_EQUIPMENT || Cursor.Window == WINDOW_INVENTORY) && !Cursor.Usable->IsSkill())
-								SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.Usable);
-							else if(Cursor.Window == WINDOW_ACTIONBAR)
-								SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.Usable);
+								SetActionBar(Cursor.Usable, Tooltip.Slot.Index);
 						break;
 						// Delete item
 						case -1: {
@@ -409,27 +407,25 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 							// Swap actionbar with inventory
 							if(Tooltip.Usable && !Tooltip.Usable->IsSkill())
-								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), Tooltip.Usable);
-							else
-								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), nullptr);
+								SetActionBar(Tooltip.Usable, Cursor.Slot.Index);
+							else {
+								SetActionBar(_Action(), Cursor.Slot.Index);
+							}
 						break;
 						case WINDOW_ACTIONBAR:
-							SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.Usable);
+							SetActionBar(Cursor.Usable, Tooltip.Slot.Index, Cursor.Slot.Index);
 						break;
 						default:
 
 							// Remove action
-							if(Tooltip.Slot.Index >= Player->Character->ActionBar.size() || Tooltip.Window == -1) {
-								_Action Action;
-								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), Action);
-							}
+							if(Tooltip.Slot.Index >= Player->Character->ActionBar.size() || Tooltip.Window == -1)
+								SetActionBar(_Action(), Cursor.Slot.Index);
 						break;
 					}
 				break;
 				case WINDOW_SKILLS:
-					if(Tooltip.Window == WINDOW_ACTIONBAR) {
-						SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.Usable);
-					}
+					if(Tooltip.Window == WINDOW_ACTIONBAR)
+						SetActionBar(Cursor.Usable, Tooltip.Slot.Index);
 				break;
 			}
 		}
@@ -1258,38 +1254,46 @@ void _HUD::DrawItemPrice(const _BaseItem *Item, int Count, const glm::vec2 &Draw
 }
 
 // Sets the player's action bar
-void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
-	if(Player->Character->ActionBar[Slot] == Action)
+void _HUD::SetActionBar(const _Action &Action, size_t Slot, size_t OldSlot) {
+	_Character *Character = Player->Character;
+
+	// Check for trying to set the same action
+	if(Character->ActionBar[Slot] == Action)
 		return;
 
-	// Check for bringing new skill/item onto bar
-	if(OldSlot >= Player->Character->ActionBar.size()) {
+	// Check requirements
+	if(Action.Usable) {
 
 		// Check for valid item types
-		if(Action.Usable && !(Action.Usable->IsSkill() || Action.Usable->IsConsumable()))
+		if(!(Action.Usable->IsSkill() || Action.Usable->IsConsumable()))
 			return;
 
-		// Remove duplicate skills
-		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
-			if(Player->Character->ActionBar[i] == Action)
-				Player->Character->ActionBar[i].Unset();
-		}
+		// Check if skill can be equipped
+		if(!Action.Usable->CallCanEquip(Scripting, Player))
+			return;
 	}
-	// Rearrange action bar
-	else {
-		Player->Character->ActionBar[OldSlot] = Player->Character->ActionBar[Slot];
+
+	// Swap actions
+	if(OldSlot < Character->ActionBar.size())
+		Character->ActionBar[OldSlot] = Character->ActionBar[Slot];
+
+	// Set new action
+	Character->ActionBar[Slot] = Action;
+
+	// Remove duplicate action
+	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+		if(i != Slot && Character->ActionBar[i] == Action)
+			Character->ActionBar[i].Unset();
 	}
 
 	// Update player
-	Player->Character->ActionBar[Slot] = Action;
-	Player->Character->CalculateStats();
+	Character->CalculateStats();
 
 	// Notify server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
-	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
-		Player->Character->ActionBar[i].Serialize(Packet);
-	}
+	for(size_t i = 0; i < Character->ActionBar.size(); i++)
+		Character->ActionBar[i].Serialize(Packet);
 
 	PlayState.Network->SendPacket(Packet);
 }

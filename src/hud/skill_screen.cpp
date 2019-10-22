@@ -170,7 +170,7 @@ void _SkillScreen::EquipSkill(const _BaseSkill *Skill) {
 	// Find an empty slot
 	for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
 		if(!HUD->Player->Character->ActionBar[i].Usable) {
-			HUD->SetActionBar(i, HUD->Player->Character->ActionBar.size(), Skill);
+			HUD->SetActionBar(Skill, i);
 			return;
 		}
 	}
