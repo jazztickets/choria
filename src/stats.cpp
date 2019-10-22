@@ -511,6 +511,7 @@ void _Stats::LoadData(const std::string &Path) {
 		if(Traders.find(Trader.ID) != Traders	.end())
 			throw std::runtime_error("Duplicate trader id '" + Trader.ID + "' in " + Path);
 
+		Trader.Upgrades = 0;
 		Trader.RewardItem = GetItem(Node, "reward_item");
 		Trader.RewardCount = Node->IntAttribute("reward_count", 1);
 
@@ -635,7 +636,7 @@ void _Stats::LoadData(const std::string &Path) {
 		for(tinyxml2::XMLElement *MonsterNode = Node->FirstChildElement("monster"); MonsterNode != nullptr; MonsterNode = MonsterNode->NextSiblingElement()) {
 			_ZoneMonster ZoneMonster;
 			ZoneMonster.Monster = GetMonster(MonsterNode, "id");
-			ZoneMonster.Odds = MonsterNode->IntAttribute("odds");
+			ZoneMonster.Odds = MonsterNode->IntAttribute("odds", 1);
 			ZoneMonster.Max = MonsterNode->IntAttribute("max");
 			Zone.Monsters.push_back(ZoneMonster);
 		}

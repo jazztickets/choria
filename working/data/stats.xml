@@ -65,6 +65,7 @@
 		<item id="torch" name="Torch" type="consumable" texture="textures/items/torch.png">
 			<use scope="world" level="3" duration="60" script="Item_Torch"/>
 		</item>
+		<item id="rat_tail" name="Rat Tail" type="tradable" texture="textures/items/rat_tail.png" />
 		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
 			<price buy="5" tradable="false"/>
 			<use scope="world"/>
@@ -99,9 +100,8 @@
 		</vendor>
 	</vendors>
 	<traders>
-		<trader id="rat_man" reward_item="rat_key" reward_count="2">
-			<item id="healing_salve" count="2"/>
-			<item id="short_sword"/>
+		<trader id="rat_man" reward_item="rat_key">
+			<item id="rat_tail" count="5"/>
 		</trader>
 	</traders>
 	<blacksmiths>
@@ -119,6 +119,17 @@
 		</minigame>
 	</minigames>
 	<monsters>
+		<monster id="rat" name="Rat" portrait="rat">
+			<stats ai="dumb" health="5"/>
+			<damage min="0" max="0"/>
+			<actions>
+				<action skill_id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
+			</actions>
+			<drops>
+				<drop id="none" odds="50"/>
+				<drop id="rat_tail" odds="50"/>
+			</drops>
+		</monster>
 		<monster id="crow" name="Crow" portrait="crow">
 			<stats ai="dumb" health="40" experience="1" gold="1"/>
 			<damage min="5" max="10"/>
@@ -135,8 +146,8 @@
 		</monster>
 	</monsters>
 	<zones>
-		<zone id="crow" min="1" max="3">
-			<monster id="crow" odds="1"/>
+		<zone id="rat" min="2" max="4">
+			<monster id="rat"/>
 		</zone>
 	</zones>
 </data>
