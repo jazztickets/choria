@@ -1277,14 +1277,14 @@ void _HUD::SetActionBar(const _Action &Action, size_t Slot, size_t OldSlot) {
 	if(OldSlot < Character->ActionBar.size())
 		Character->ActionBar[OldSlot] = Character->ActionBar[Slot];
 
-	// Set new action
-	Character->ActionBar[Slot] = Action;
-
 	// Remove duplicate action
 	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
-		if(i != Slot && Character->ActionBar[i] == Action)
+		if(Character->ActionBar[i] == Action)
 			Character->ActionBar[i].Unset();
 	}
+
+	// Set new action
+	Character->ActionBar[Slot] = Action;
 
 	// Update player
 	Character->CalculateStats();
