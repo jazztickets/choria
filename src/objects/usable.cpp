@@ -178,6 +178,41 @@ void _Usable::CallStats(_Scripting *Scripting, _ActionResult &ActionResult) cons
 	}
 }
 
+// Return true if the item can be used
+bool _Usable::CallCanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
+	_Object *Object = ActionResult.Source.Object;
+	if(!Object)
+		return false;
+
+	// See if the action can be used
+	if(!CheckRequirements(Scripting, ActionResult))
+		return false;
+
+	// Check scope
+	if(!CheckScope(ActionResult.Scope))
+		return false;
+
+	// Check if target is alive
+	if(Object->Character->Targets.size() == 1) {
+		_Object *Target = *Object->Character->Targets.begin();
+		if(!CanTarget(Object, Target))
+			return false;
+	}
+
+	// Check script's function
+	if(Scripting->StartMethodCall(Script, "CanUse")) {
+		Scripting->PushInt(ActionResult.ActionUsed.Level);
+		Scripting->PushObject(ActionResult.Source.Object);
+		Scripting->MethodCall(2, 1);
+		int Value = Scripting->GetBoolean(1);
+		Scripting->FinishMethodCall();
+
+		return Value;
+	}
+
+	return true;
+}
+
 // Return attack times from skill script. Return false if function doesn't exist.
 bool _Usable::CallGetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
 
@@ -219,7 +254,7 @@ void _Usable::CallPlaySound(_Scripting *Scripting) const {
 }
 
 // Check if a skill can be equipped to the action bar
-bool _Usable::CallCanEquip(_Scripting *Scripting, _Object *Object) const {
+bool _Usable::CanEquip(_Scripting *Scripting, _Object *Object) const {
 	if(Scripting->StartMethodCall(Script, "CanEquip")) {
 		Scripting->PushObject(Object);
 		Scripting->MethodCall(1, 1);
@@ -236,41 +271,6 @@ bool _Usable::CallCanEquip(_Scripting *Scripting, _Object *Object) const {
 bool _Usable::CheckScope(ScopeType CheckScope) const {
 	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != CheckScope))
 		return false;
-
-	return true;
-}
-
-// Return true if the item can be used
-bool _Usable::CallCanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	_Object *Object = ActionResult.Source.Object;
-	if(!Object)
-		return false;
-
-	// See if the action can be used
-	if(!CheckRequirements(Scripting, ActionResult))
-		return false;
-
-	// Check scope
-	if(!CheckScope(ActionResult.Scope))
-		return false;
-
-	// Check if target is alive
-	if(Object->Character->Targets.size() == 1) {
-		_Object *Target = *Object->Character->Targets.begin();
-		if(!CanTarget(Object, Target))
-			return false;
-	}
-
-	// Check script's function
-	if(Scripting->StartMethodCall(Script, "CanUse")) {
-		Scripting->PushInt(ActionResult.ActionUsed.Level);
-		Scripting->PushObject(ActionResult.Source.Object);
-		Scripting->MethodCall(2, 1);
-		int Value = Scripting->GetBoolean(1);
-		Scripting->FinishMethodCall();
-
-		return Value;
-	}
 
 	return true;
 }

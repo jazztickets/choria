@@ -28,7 +28,8 @@
 #include <glm/vec4.hpp>
 
 // Constructor
-_BaseSkill::_BaseSkill() {
+_BaseSkill::_BaseSkill() :
+	WeaponTypeRequired(nullptr) {
 }
 
 // Draw skill tooltip
@@ -95,4 +96,12 @@ bool _BaseSkill::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &Result
 	CallApplyCost(ActionResult.Source.Object->Scripting, ActionResult);
 
 	return true;
+}
+
+// Determine if a skill can be equipped to the action bar
+bool _BaseSkill::CanEquip(_Scripting *Scripting, _Object *Object) const {
+	if(WeaponTypeRequired != Object->Character->GetWeaponType())
+		return false;
+
+	return _Usable::CanEquip(Scripting, Object);
 }

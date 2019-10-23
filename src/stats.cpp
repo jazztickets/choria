@@ -392,7 +392,10 @@ void _Stats::LoadData(const std::string &Path) {
 			WeaponType.Skills.push_back(Skill);
 		}
 
+		// Set weapon type required for the skills
 		WeaponTypes[WeaponType.ID] = WeaponType;
+		for(auto &Skill : WeaponType.Skills)
+			Skills[Skill->ID].WeaponTypeRequired = &WeaponTypes[WeaponType.ID];
 	}
 
 	// Load items

@@ -204,12 +204,6 @@ function Skill_Punch.GetInfo(self, Item)
 	return "Punch an enemy with your fists"
 end
 
-function Skill_Punch.CanEquip(self, Object)
-	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-
-	return Weapon == nil
-end
-
 function Skill_Punch.PlaySound(self, Level)
 	Audio.Play("thud0.ogg")
 end
@@ -226,11 +220,6 @@ Skill_Attack.BaseChance = 4
 Skill_Attack.ChancePerLevel = 2
 Skill_Attack.Stamina = 20
 
-function Skill_Attack.GetChance(self, Level)
-
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
-end
-
 function Skill_Attack.GetInfo(self, Item)
 
 	return "Attack with your weapon\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
@@ -238,6 +227,11 @@ end
 
 function Skill_Attack.PlaySound(self, Level)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+function Skill_Attack.GetChance(self, Level)
+
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 
 function Skill_Attack.GenerateDamage(self, Level, Source)

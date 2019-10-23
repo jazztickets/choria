@@ -20,6 +20,8 @@
 // Libraries
 #include <objects/usable.h>
 
+struct _WeaponType;
+
 // Classes
 class _BaseSkill : public _Usable {
 
@@ -30,6 +32,9 @@ class _BaseSkill : public _Usable {
 		bool IsSkill() const override { return true; }
 		void DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
 		bool ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const override;
+		bool CanEquip(_Scripting *Scripting, _Object *Object) const override;
+
+		const _WeaponType *WeaponTypeRequired;
 
 	private:
 

@@ -499,6 +499,15 @@ float _Character::GetNextLevelPercent() const {
 	return Percent;
 }
 
+// Get equipped weapon type
+const _WeaponType *_Character::GetWeaponType() const {
+	_Bag &Bag = Object->Inventory->GetBag(BagType::EQUIPMENT);
+	if(!Bag.Slots[EquipmentType::HAND1].Item)
+		return &Object->Stats->WeaponTypes.at("unarmed");
+
+	return Bag.Slots[EquipmentType::HAND1].Item->WeaponType;
+}
+
 // Determines if the player can accept movement keys held down
 bool _Character::AcceptingMoveInput() {
 	if(Battle)

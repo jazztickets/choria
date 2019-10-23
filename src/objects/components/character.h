@@ -39,6 +39,7 @@ struct _Vendor;
 struct _Trader;
 struct _MinigameStat;
 struct _Blacksmith;
+struct _WeaponType;
 
 namespace ae {
 	class _Texture;
@@ -90,6 +91,7 @@ class _Character {
 		bool IsAlive() const { return Health > 0; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
+		const _WeaponType *GetWeaponType() const;
 
 		// Input
 		bool AcceptingMoveInput();

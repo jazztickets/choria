@@ -1269,7 +1269,7 @@ void _HUD::SetActionBar(const _Action &Action, size_t Slot, size_t OldSlot) {
 			return;
 
 		// Check if skill can be equipped
-		if(!Action.Usable->CallCanEquip(Scripting, Player))
+		if(!Action.Usable->CanEquip(Scripting, Player))
 			return;
 	}
 

@@ -87,10 +87,10 @@ class _Usable {
 		void CallApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void CallUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void CallPlaySound(_Scripting *Scripting) const;
-		bool CallCanEquip(_Scripting *Scripting, _Object *Object) const;
 
 		// Requirements
 		virtual bool ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const { return true; }
+		virtual bool CanEquip(_Scripting *Scripting, _Object *Object) const;
 		bool CheckScope(ScopeType CheckScope) const;
 
 		// Targetting
