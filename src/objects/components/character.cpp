@@ -365,6 +365,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get skill bonus
+	size_t SkillRemoved = (size_t)-1;
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = Object;
@@ -375,12 +376,24 @@ void _Character::CalculateStats() {
 				// Check if skill can be equipped
 				if(!Usable->CanEquip(Object->Scripting, Object)) {
 					ActionBar[i].Unset();
+					SkillRemoved = i;
 				}
 				// Get passive stat changes
 				else if(Usable->Target == TargetType::NONE) {
 					Usable->CallStats(Object->Scripting, ActionResult);
 					CalculateStatBonuses(ActionResult.Source);
 				}
+			}
+		}
+	}
+
+	// Try to add a suitable skill if one was removed
+	if(SkillRemoved < ActionBar.size()) {
+		for(const auto &SkillID : Skills) {
+			const _BaseSkill *Skill = &Object->Stats->Skills.at(SkillID.first);
+			if(Skill->CanEquip(Object->Scripting, Object)) {
+				ActionBar[SkillRemoved].Usable = Skill;
+				break;
 			}
 		}
 	}
