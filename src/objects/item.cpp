@@ -80,7 +80,9 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 
 	// Get item type
 	std::string TypeText;
-	if(Type != ItemType::NONE)
+	if(WeaponType)
+		TypeText = WeaponType->Name;
+	else if(Type != ItemType::NONE)
 		TypeText = Player->Stats->ItemTypes.at(Type).second;
 
 	// Draw base
