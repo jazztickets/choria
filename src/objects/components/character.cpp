@@ -293,6 +293,7 @@ void _Character::CalculateStats() {
 		BaseDamageBlock = 0;
 	}
 
+	// Set stats from base
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
 	MaxStamina = BaseMaxStamina;
@@ -317,7 +318,7 @@ void _Character::CalculateStats() {
 	Invisible = 0;
 	Stunned = 0;
 
-	// Get item stats
+	// Get equipment stats
 	int ItemMinDamage = 0;
 	int ItemMaxDamage = 0;
 	int ItemArmor = 0;
@@ -369,11 +370,17 @@ void _Character::CalculateStats() {
 		ActionResult.Source.Object = Object;
 		if(GetActionFromActionBar(ActionResult.ActionUsed, i)) {
 			const _Usable *Usable = ActionResult.ActionUsed.Usable;
-			if(Usable->IsSkill() && Usable->Target == TargetType::NONE) {
+			if(Usable->IsSkill()) {
 
+				// Check if skill can be equipped
+				if(!Usable->CanEquip(Object->Scripting, Object)) {
+					ActionBar[i].Unset();
+				}
 				// Get passive stat changes
-				Usable->CallStats(Object->Scripting, ActionResult);
-				CalculateStatBonuses(ActionResult.Source);
+				else if(Usable->Target == TargetType::NONE) {
+					Usable->CallStats(Object->Scripting, ActionResult);
+					CalculateStatBonuses(ActionResult.Source);
+				}
 			}
 		}
 	}
