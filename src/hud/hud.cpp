@@ -248,8 +248,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				break;
 				case WINDOW_SKILLS:
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						//TODO check if skill can be used
-						//if(Player->Character->Skills[Tooltip.Usable->ID] > 0)
+						const _BaseSkill *Skill = Tooltip.Usable->AsSkill();
+						if(Skill && Skill->CanEquip(Scripting, Player))
 							Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {

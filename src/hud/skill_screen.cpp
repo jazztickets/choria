@@ -77,6 +77,8 @@ void _SkillScreen::Init() {
 		Button->BaseSize = Skill->Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
+		if(!Skill->CanEquip(HUD->Player->Scripting, HUD->Player))
+			Button->Color = glm::vec4(1.0f, 0.0f, 0.0f, 0.5f);
 		Button->UserData = (void *)Skill;
 		Button->Index = Skill->NetworkID;
 		Button->Clickable = true;
