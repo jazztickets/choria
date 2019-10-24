@@ -37,7 +37,6 @@
 #include <algorithm>
 
 // Constants
-const int TOOLTIP_HELP_SPACING = 28;
 const int TOOLTIP_ATTRIBUTE_SPACING = 10;
 
 // Constructor

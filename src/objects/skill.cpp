@@ -38,12 +38,21 @@ void _BaseSkill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, c
 		return;
 
 	float SpacingY = TOOLTIP_SPACING * ae::_Element::GetUIScale();
+	float SidePadding = TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
+
+	// Get type of skill
+	std::string TypeText;
+	if(WeaponTypeRequired)
+		TypeText = WeaponTypeRequired->Name + " Skill";
+	else if(Scope == ScopeType::BATTLE)
+		TypeText = "Battle Skill";
+	else
+		TypeText = "Skill";
 
 	// Draw tooltip window
 	glm::vec2 DrawPosition;
 	glm::vec2 Size(INVENTORY_TOOLTIP_WIDTH, INVENTORY_TOOLTIP_HEIGHT);
-	float SidePadding = TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
-	DrawTooltipBase(Position, Player, "Skill", DrawPosition, Size);
+	DrawTooltipBase(Position, Player, TypeText, DrawPosition, Size);
 
 	// Get level skill
 	int DrawLevel = Level;
@@ -51,6 +60,7 @@ void _BaseSkill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, c
 	bool ShowLevel = false;
 
 	// Get skill level
+	//TODO get level of skill from experience
 	auto SkillIterator = Player->Character->Skills.find(ID);
 	if(SkillIterator != Player->Character->Skills.end())
 		DrawLevel = SkillIterator->second;
@@ -68,8 +78,8 @@ void _BaseSkill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, c
 	DrawDescription(Player->Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
-	if(Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel)
-		DrawDescription(Player->Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
+	//if(Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel)
+	//	DrawDescription(Player->Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw help text
 	std::string InfoText;

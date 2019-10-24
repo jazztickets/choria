@@ -25,6 +25,7 @@
 
 // Constants
 const int TOOLTIP_SIDE_PADDING = 36;
+const int TOOLTIP_HELP_SPACING = 28;
 const int TOOLTIP_SPACING = 36;
 
 // Forward Declarations
