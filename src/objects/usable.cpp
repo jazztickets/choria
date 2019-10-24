@@ -295,18 +295,16 @@ bool _Usable::CanTarget(_Object *SourceObject, _Object *TargetObject) const {
 	return true;
 }
 
-// Get target count based on target type
-int _Usable::GetTargetCount() const {
+// Get target count
+int _Usable::GetTargetCount(_Scripting *Scripting, _Object *Object) const {
+	if(Scripting->StartMethodCall(Script, "GetTargetCount")) {
+		Scripting->PushInt(1);
+		Scripting->MethodCall(1, 1);
+		int Value = Scripting->GetInt(1);
+		Scripting->FinishMethodCall();
 
-	//TODO get count from script
-	int TargetCount = 0;
-	switch(Target) {
-		case TargetType::NONE:
-		break;
-		default:
-			TargetCount = 1;
-		break;
+		return Value;
 	}
 
-	return TargetCount;
+	return 1;
 }

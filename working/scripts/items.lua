@@ -109,7 +109,7 @@ function Item_BattlePotion.GetInfo(self, Item)
 end
 
 function Item_BattlePotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Battle = Level
+	Result.Target.Battle = "rat"
 
 	return Result
 end

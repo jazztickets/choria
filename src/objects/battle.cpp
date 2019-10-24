@@ -331,7 +331,7 @@ void _Battle::ClientSetTarget(const _Usable *Usable, int Side, _Object *InitialT
 	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 	// Set up targets
-	int TargetCount = Usable->GetTargetCount();
+	int TargetCount = Usable->GetTargetCount(Scripting, ClientPlayer);
 	for(size_t i = 0; i < ObjectList.size(); i++) {
 
 		// Check for valid target
@@ -356,7 +356,16 @@ void _Battle::ClientSetTarget(const _Usable *Usable, int Side, _Object *InitialT
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
-	if(!ClientNetwork || !ClientPlayer->Fighter->PotentialAction.IsSet() || !ClientPlayer->Character->IsAlive() || !ClientPlayer->Character->Targets.size())
+	if(!ClientNetwork)
+		return;
+
+	if(!ClientPlayer->Fighter->PotentialAction.Usable)
+		return;
+
+	if(!ClientPlayer->Character->IsAlive())
+		return;
+
+	if(!ClientPlayer->Character->Targets.size())
 		return;
 
 	// Can't change self targetting actions

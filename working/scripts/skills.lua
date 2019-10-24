@@ -246,6 +246,32 @@ function Skill_Attack.GenerateDamage(self, Level, Source)
 	return Damage, Crit
 end
 
+-- Cleave --
+
+Skill_Cleave = Base_Attack:New()
+Skill_Cleave.DamageBase = 32
+Skill_Cleave.DamagePerLevel = 2
+
+function Skill_Cleave.GetDamage(self, Level)
+	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))
+end
+
+function Skill_Cleave.GenerateDamage(self, Level, Source)
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+end
+
+function Skill_Cleave.GetTargetCount(self, Level)
+	return 2
+end
+
+function Skill_Cleave.GetInfo(self, Item)
+	return "Swing your weapon and hit multiple foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage"
+end
+
+function Skill_Cleave.PlaySound(self, Level)
+	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Fury --
 
 Skill_Fury = Base_Attack:New()
@@ -929,28 +955,6 @@ end
 
 function Skill_Enfeeble.PlaySound(self, Level)
 	Audio.Play("enfeeble0.ogg")
-end
-
--- Cleave --
-
-Skill_Cleave = Base_Attack:New()
-Skill_Cleave.DamageBase = 32
-Skill_Cleave.DamagePerLevel = 2
-
-function Skill_Cleave.GetDamage(self, Level)
-	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))
-end
-
-function Skill_Cleave.GenerateDamage(self, Level, Source)
-	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
-end
-
-function Skill_Cleave.GetInfo(self, Item)
-	return "Swing your weapon and hit multiple foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage"
-end
-
-function Skill_Cleave.PlaySound(self, Level)
-	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Hunt --

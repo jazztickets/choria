@@ -27,6 +27,10 @@ Base_Attack = {
 		return Result
 	end,
 
+	GetTargetCount = function(self, Level)
+		return 1
+	end,
+
 	GetDamageType = function(self, Object)
 		Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 		if Weapon ~= nil then

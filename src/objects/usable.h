@@ -99,7 +99,7 @@ class _Usable {
 		bool CanTarget(_Object *SourceObject, _Object *TargetObject) const;
 		bool CanTargetEnemy() const {  return Target == TargetType::ENEMY || Target == TargetType::ANY; }
 		bool CanTargetAlly() const {  return Target == TargetType::SELF || Target == TargetType::ALLY || Target == TargetType::ANY; }
-		int GetTargetCount() const;
+		int GetTargetCount(_Scripting *Scripting, _Object *Object) const;
 
 		std::string ID;
 		std::string Name;
