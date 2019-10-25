@@ -475,9 +475,10 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadFonts("ui/fonts.tsv", false);
 
 	// Load UI
-	ae::Assets.LoadUI("ui/ui.xml");
+	ae::Assets.LoadUI("ui/ui.xml", false);
 	//ae::Assets.SaveUI("ui/ui_new.xml");
 
 	// Load font files
 	ae::Assets.LoadFonts("ui/fonts.tsv");
+	ae::Graphics.Element->CalculateBounds(false);
 }

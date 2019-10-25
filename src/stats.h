@@ -120,6 +120,7 @@ struct _TraderItem {
 struct _Trader {
 	std::string ID;
 	std::string Name;
+	std::string Text;
 	const _BaseItem *RewardItem;
 	int Upgrades;
 	int RewardCount;

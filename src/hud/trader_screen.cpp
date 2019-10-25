@@ -33,16 +33,27 @@ _TraderScreen::_TraderScreen(_HUD *MainHUD, ae::_Element *MainElement) :
 
 // Initialize
 void _TraderScreen::Init() {
+	const _Trader *Trader = HUD->Player->Character->Trader;
 
 	// Check for required items
-	RequiredItemSlots.resize(HUD->Player->Character->Trader->Items.size());
-	RewardItemSlot = HUD->Player->Inventory->GetRequiredItemSlots(HUD->Player->Character->Trader, RequiredItemSlots);
+	RequiredItemSlots.resize(Trader->Items.size());
+	RewardItemSlot = HUD->Player->Inventory->GetRequiredItemSlots(Trader, RequiredItemSlots);
 
 	// Disable accept button if requirements not met
 	if(!HUD->Player->Inventory->IsValidSlot(RewardItemSlot))
 		ae::Assets.Elements["button_trader_accept"]->SetEnabled(false);
 	else
 		ae::Assets.Elements["button_trader_accept"]->SetEnabled(true);
+
+	// Set trader text
+	ae::_Element *TextElement = ae::Assets.Elements["label_trader_text"];
+	if(Trader->Text.length()) {
+		TextElement->Text = Trader->Text;
+		TextElement->SetWrap(TextElement->Size.x);
+		TextElement->Parent->Enabled = true;
+	}
+	else
+		TextElement->Parent->Enabled = false;
 
 	Element->SetActive(true);
 }

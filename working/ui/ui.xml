@@ -338,6 +338,9 @@
 		</element>
 		<element id="label_trader_lookingfor" font="hud_medium" text="You give me" offset_y="48" alignment_y="3"/>
 		<element id="label_trader_reward" font="hud_medium" text="I give you" offset_y="256" alignment_y="3"/>
+		<element id="element_trader_text" style="style_hud_bg" size_x="300" size_y="450" offset_x="350">
+			<element id="label_trader_text" font="hud_small" format="true" size_x="250" offset_x="125" offset_y="20" alignment_x="1" alignment_y="0"/>
+		</element>
 	</element>
 	<element id="element_blacksmith" style="style_hud_bg" offset_x="222" size_x="336" size_y="350" index="8" clickable="true">
 		<element id="button_blacksmith_bag" style="style_hud_slot" offset_x="140" offset_y="22" size_x="64" size_y="64" alignment_x="0" clickable="true" index="0"/>

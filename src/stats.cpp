@@ -512,10 +512,11 @@ void _Stats::LoadData(const std::string &Path) {
 	for(tinyxml2::XMLElement *Node = Nodes["traders"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Trader Trader;
 		Trader.ID = GetString(Node, "id");
-		if(Traders.find(Trader.ID) != Traders	.end())
+		if(Traders.find(Trader.ID) != Traders.end())
 			throw std::runtime_error("Duplicate trader id '" + Trader.ID + "' in " + Path);
 
 		Trader.Upgrades = 0;
+		Trader.Text = GetString(Node, "text");
 		Trader.RewardItem = GetItem(Node, "reward_item");
 		Trader.RewardCount = Node->IntAttribute("reward_count", 1);
 
