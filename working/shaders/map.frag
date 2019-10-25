@@ -76,7 +76,7 @@ void main() {
 	vec4 light_color = ambient_light + texelFetch(sampler1, ivec2(gl_FragCoord.xy), 0);
 
 	// Add emissive component from alpha channel of texture
-	light_color += (1 - texture_color.a) * texture_color;
+	light_color += (1.0f - texture_color.a) * vec4(1.0f);
 
 	// Get final color
 	out_color = color * texture_color * light_color;
