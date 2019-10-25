@@ -514,9 +514,11 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate trader id '" + Trader.ID + "' in " + Path);
 
 		Trader.Upgrades = 0;
-		Trader.Text = GetString(Node, "text");
 		Trader.RewardItem = GetItem(Node, "reward_item");
 		Trader.RewardCount = Node->IntAttribute("reward_count", 1);
+		std::string StringID = GetString(Node, "text");
+		if(StringID.length())
+			Trader.Text = Strings.at(StringID);
 
 		// Load required items
 		for(tinyxml2::XMLElement *ItemNode = Node->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {

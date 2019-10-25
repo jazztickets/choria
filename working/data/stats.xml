@@ -104,7 +104,7 @@
 		</vendor>
 	</vendors>
 	<traders>
-		<trader id="rat_man" reward_item="rat_key" text="Hey uh.. I need you to uh heh heh get some of those heh [c gold]rats[c white].. heh yea get some of those [c gold]rat tails[c white] for me hehuh.\n\nYou wanna get out of here right hehhe? I got your [c gold]key[c white] right hehhe here!\n\nYou better heh get in that [c gold]sewer[c white] then heehuh!">
+		<trader id="rat_man" reward_item="rat_key" text="rat_man">
 			<item id="rat_tail" count="5"/>
 		</trader>
 	</traders>
