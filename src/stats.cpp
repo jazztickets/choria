@@ -468,6 +468,7 @@ void _Stats::LoadData(const std::string &Path) {
 		Object->BuildTexture = GetTexture(Node, "texture");
 		Object->Character->ActionBar.resize(DEFAULT_ACTIONBAR_SIZE);
 		Object->Character->Skills["punch"] = 0;
+		Object->Character->ActionBar[0].Usable = &Skills["punch"];
 
 		// Load build items
 		tinyxml2::XMLElement *ItemsNode = Node->FirstChildElement("items");
@@ -476,9 +477,6 @@ void _Stats::LoadData(const std::string &Path) {
 			for(tinyxml2::XMLElement *ItemNode = ItemsNode->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
 				const _BaseItem *Item = GetItem(ItemNode, "id");
 				int Count = ItemNode->IntAttribute("count", 1);
-				size_t Slot = (size_t)ItemNode->IntAttribute("slot", -1);
-				if(Slot < Object->Character->ActionBar.size())
-					Object->Character->ActionBar[Slot].Usable = Item;
 				Object->Inventory->AddItem(Item, 0, Count, _Slot(BagType::STASH, SlotIndex));
 
 				SlotIndex++;
