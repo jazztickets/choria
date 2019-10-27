@@ -1927,6 +1927,13 @@ void _EditorState::LoadMap() {
 
 	// Set new map
 	if(NewMap) {
+
+		// Save old map name
+		std::string OldMapName;
+		if(Map)
+			OldMapName = Map->Name;
+
+		// Close current map
 		CloseMap();
 
 		// Set map
@@ -1938,11 +1945,13 @@ void _EditorState::LoadMap() {
 
 		// Set camera position
 		glm::vec2 Position(Map->Size.x/2, Map->Size.y/2);
-		if(!Map->FindEvent(_Event(EventType::SPAWN, ""), Position)) {
-			//TODO fix
-			//if(!Map->FindEvent(_Event(EventType::MAPCHANGE, OldMapID), Position))
-			//	Map->FindEvent(_Event(EventType::MAPENTRANCE, OldMapID), Position);
+		if(OldMapName.length()) {
+			if(!Map->FindEvent(_Event(EventType::MAPCHANGE, OldMapName), Position))
+				Map->FindEvent(_Event(EventType::MAPENTRANCE, OldMapName), Position);
 		}
+		else
+			Map->FindEvent(_Event(EventType::SPAWN, ""), Position);
+
 		Camera->ForcePosition(glm::vec3(Position, CAMERA_DISTANCE));
 		SetInfoUI();
 	}
@@ -1993,8 +2002,7 @@ void _EditorState::Go() {
 		switch(Tile->Event.Type) {
 			case EventType::MAPENTRANCE:
 			case EventType::MAPCHANGE: {
-				//TODO fix
-				//ToggleLoadMap(GetCleanMapName(Stats->OldMaps.at(Tile->Event.OldData).File));
+				ToggleLoadMap(GetCleanMapName(Tile->Event.Data));
 			} break;
 			default:
 			break;

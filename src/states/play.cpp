@@ -481,12 +481,12 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 		else if(Console->Command == "map") {
 			if(Parameters.size() == 1) {
 				if(Network && Network->IsConnected()) {
-					Packet.Write<ae::NetworkIDType>(ae::ToNumber<ae::NetworkIDType>(Parameters[0]));
+					Packet.WriteString(Parameters[0].c_str());
 					Network->SendPacket(Packet);
 				}
 			}
 			else
-				Console->AddMessage("usage: map [map_id]");
+				Console->AddMessage("usage: map [name]");
 		}
 		else if(Console->Command == "move") {
 			if(Parameters.size() == 2) {

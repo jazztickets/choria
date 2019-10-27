@@ -26,6 +26,7 @@
 #include <objects/battle.h>
 #include <hud/hud.h>
 #include <ae/buffer.h>
+#include <ae/manager.h>
 #include <ae/texture.h>
 #include <ae/assets.h>
 #include <ae/texture_array.h>
@@ -319,12 +320,10 @@ void _Map::CheckEvents(_Object *Object) {
 		break;
 		case EventType::MAPENTRANCE:
 		case EventType::MAPCHANGE:
-			/*
 			if(Server)
-				Server->SpawnPlayer(Object, (ae::NetworkIDType)Tile->Event.Data, EventType::MAPENTRANCE);
+				Server->SpawnPlayer(Object, Server->MapManager->GetObject(Stats->MapsIndex.at(Tile->Event.Data)), EventType::MAPENTRANCE);
 			else
 				Object->Controller->WaitForServer = true;
-			*/
 		break;
 		case EventType::VENDOR:
 		case EventType::TRADER:

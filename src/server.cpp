@@ -1661,9 +1661,9 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		SendHUD(Peer);
 	}
 	else if(Command == "map") {
-		//TODO fix
-		//ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
-		//SpawnPlayer(Player, MapID, EventType::MAPENTRANCE);
+		std::string Name = Data.ReadString();
+		if(Stats->MapsIndex.find(Name) != Stats->MapsIndex.end())
+			SpawnPlayer(Player, MapManager->GetObject(Stats->MapsIndex.at(Name)), EventType::MAPENTRANCE);
 	}
 	else if(Command == "move") {
 		uint8_t X = Data.Read<uint8_t>();
