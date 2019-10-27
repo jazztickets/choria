@@ -49,6 +49,7 @@
 
 // Constants
 const double EDITOR_CLOCK_SPEED = 200.0;
+const float DEFAULT_BRUSH_SIZE = 0.5f;
 
 _EditorState EditorState;
 
@@ -110,7 +111,7 @@ void _EditorState::Init() {
 	LightBrush = new _Light();
 	LightBrush->Color = glm::vec4(1.0f);
 	PropBrush = new _Prop();
-	BrushRadius = 0.5f;
+	BrushRadius = DEFAULT_BRUSH_SIZE;
 
 	// Create camera
 	Camera = new ae::_Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
@@ -410,8 +411,13 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				switch(Mode) {
 					// Copy tiles
 					case EditorModeType::TILES:
-						DrawCopyBounds = true;
-						CopyStart = Map->GetValidCoord(WorldCursor);
+						if(ae::Input.ModKeyDown(KMOD_CTRL)) {
+							BrushRadius = DEFAULT_BRUSH_SIZE;
+						}
+						else {
+							DrawCopyBounds = true;
+							CopyStart = Map->GetValidCoord(WorldCursor);
+						}
 					break;
 					// Select or move objects
 					case EditorModeType::LIGHTS:
