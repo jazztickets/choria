@@ -379,7 +379,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 			if(Character->Bounty > 0)
 				NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
 
-			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f / Model->Texture->Size.x);
+			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f, 1.0f / Model->Texture->Size.x);
 		}
 	}
 }
