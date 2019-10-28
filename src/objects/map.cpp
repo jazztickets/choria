@@ -318,7 +318,6 @@ void _Map::CheckEvents(_Object *Object) {
 			Object->Character->SpawnMap = this;
 			Object->Character->SpawnPoint = Tile->Event.Data;
 		break;
-		case EventType::MAPENTRANCE:
 		case EventType::MAPCHANGE:
 			if(Server)
 				Server->SpawnPlayer(Object, Server->MapManager->GetObject(Stats->MapsIndex.at(Tile->Event.Data)), EventType::MAPENTRANCE);
