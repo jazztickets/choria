@@ -41,6 +41,7 @@ class _Prop {
 		// Attributes
 		const ae::_Texture *Texture;
 		glm::vec4 Color;
+		int Z;
 		bool Repeat;
 
 	private:

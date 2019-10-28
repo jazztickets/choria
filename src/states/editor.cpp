@@ -503,6 +503,11 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				PropBrush->Texture = ClickedElement->Texture;
 				CloseWindows();
 			}
+			else if(ClickedElement->Name == "button_editor_prop_foreground") {
+				ae::_Element *Check = ae::Assets.Elements["label_editor_prop_foreground_check"];
+				Check->Text = Check->Text.empty() ? "X" : "";
+				PropBrush->Z = !Check->Text.empty();
+			}
 			else if(ClickedElement->Name == "button_editor_prop_repeat") {
 				ae::_Element *Check = ae::Assets.Elements["label_editor_prop_repeat_check"];
 				Check->Text = Check->Text.empty() ? "X" : "";
@@ -600,6 +605,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Prop = new _Prop(Object);
 					Object->Prop->Texture = PropBrush->Texture;
 					Object->Prop->Color = PropBrush->Color;
+					Object->Prop->Z = PropBrush->Z;
 					Object->Prop->Repeat = PropBrush->Repeat;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
@@ -1796,6 +1802,7 @@ void _EditorState::PasteObjects() {
 			Object->Prop = new _Prop(Object);
 			Object->Prop->Texture = SourceObject->Prop->Texture;
 			Object->Prop->Color = SourceObject->Prop->Color;
+			Object->Prop->Z = SourceObject->Prop->Z;
 			Object->Prop->Repeat = SourceObject->Prop->Repeat;
 		}
 		if(SourceObject->Light->Texture) {

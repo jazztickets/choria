@@ -122,11 +122,19 @@ void _PlayState::Init() {
 
 	// Load menu map
 	try {
+
+		// Get list of possible maps
+		std::vector<std::string> MenuMaps = {
+			"maps/start.map.gz",
+			"maps/start_camp.map.gz",
+		};
+
+		// Load map
 		MenuMap = new _Map();
 		MenuMap->Stats = Stats;
 		MenuMap->Scripting = Scripting;
 		MenuMap->Clock = ae::GetRandomInt(0, MAP_DAY_LENGTH);
-		MenuMap->Load("maps/start.map.gz");
+		MenuMap->Load(MenuMaps[ae::GetRandomInt((size_t)0, MenuMaps.size()-1)]);
 	}
 	catch(std::exception &Error) {
 		delete MenuMap;

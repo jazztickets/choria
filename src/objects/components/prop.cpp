@@ -22,6 +22,7 @@ _Prop::_Prop(_Object *Object) :
 	Object(Object),
 	Texture(nullptr),
 	Color(1.0f),
+	Z(0.0f),
 	Repeat(false) {
 
 }

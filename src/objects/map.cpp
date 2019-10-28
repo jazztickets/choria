@@ -743,11 +743,14 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 	// Render floor props
 	PropCount = 0;
-	RenderProps(ae::Assets.Programs["map_object"], Bounds);
+	RenderProps(ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.0f);
 
 	// Render objects
 	for(const auto &Object : Objects)
 		Object->Render(ClientPlayer);
+
+	// Render foreground props
+	RenderProps(ae::Assets.Programs["map_object"], Bounds, 1.0f, 1000.0f);
 
 	// Check for flags
 	if(!RenderFlags)
@@ -839,12 +842,16 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 }
 
 // Render map props
-void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
+void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds, float ZStart, float ZStop) {
 	ae::Graphics.SetProgram(Program);
 
 	// Iterate over objects
 	for(const auto &Object : StaticObjects) {
 		if(!Object->Prop)
+			continue;
+
+		// Check z
+		if(!(Object->Prop->Z >= ZStart && Object->Prop->Z <= ZStop))
 			continue;
 
 		// Check to see if object is in frustum
@@ -872,7 +879,7 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds) {
 
 		// Draw object
 		ae::Graphics.SetColor(Object->Prop->Color);
-		ae::Graphics.DrawSprite(glm::vec3(Object->Position, 0), Object->Prop->Texture, 0.0f, Scale);
+		ae::Graphics.DrawSprite(glm::vec3(Object->Position, Object->Prop->Z), Object->Prop->Texture, 0.0f, Scale);
 
 		PropCount++;
 	}
@@ -1159,6 +1166,10 @@ void _Map::Load(const std::string &Path, bool Static) {
 							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 							Object->Prop->Texture = ae::Assets.Textures[TextureName];
 						} break;
+						// Z offset
+						case 'z':
+							File >> Object->Prop->Z;
+						break;
 						// Repeat
 						case 'r':
 							File >> Object->Prop->Repeat;
@@ -1252,6 +1263,8 @@ bool _Map::Save(const std::string &Path) {
 		}
 		if(Object->Prop && Object->Prop->Texture) {
 			Output << "Pt " << Object->Prop->Texture->Name << '\n';
+			if(Object->Prop->Z != 0.0f)
+				Output << "Pz " << Object->Prop->Z << '\n';
 			if(Object->Prop->Repeat)
 				Output << "Pr " << Object->Prop->Repeat << '\n';
 			if(Object->Prop->Color != glm::vec4(1.0f))
