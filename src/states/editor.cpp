@@ -592,6 +592,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Light->Script = LightScriptElement->Text;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
+					Map->SortStaticObjects();
 				} break;
 				case EditorModeType::PROPS: {
 					if(!DrawingObject)
@@ -609,6 +610,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Prop->Repeat = PropBrush->Repeat;
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
+					Map->SortStaticObjects();
 				} break;
 			}
 		}
@@ -705,6 +707,8 @@ void _EditorState::HandleMouseWheel(int Direction) {
 					Object->Prop->Z += Direction * 0.1f;
 					if(Object->Prop->Z < 0.0f)
 						Object->Prop->Z = 0.0f;
+
+					Map->SortStaticObjects();
 				}
 			} break;
 		}
@@ -1838,6 +1842,8 @@ void _EditorState::PasteObjects() {
 		Object->Position = SourceObject->Position + Offset;
 		Map->StaticObjects.push_back(Object);
 	}
+
+	Map->SortStaticObjects();
 }
 
 // Return the only selected object, null otherwise
