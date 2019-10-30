@@ -77,6 +77,14 @@ const std::vector<double> DayCyclesTime = {
 	18.0 * 60.0,
 };
 
+// Compare props by Z value
+static bool CompareProps(const _Object *Left, const _Object *Right) {
+   if(Left->Prop && Right->Prop)
+	   return Left->Prop->Z < Right->Prop->Z;
+
+   return false;
+}
+
 // Constructor
 _Map::_Map() :
 	Loaded(false),
@@ -739,14 +747,14 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 	// Render floor props
 	PropCount = 0;
-	RenderProps(ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.0f);
+	RenderProps(ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.1f);
 
 	// Render objects
 	for(const auto &Object : Objects)
 		Object->Render(ClientPlayer);
 
 	// Render foreground props
-	RenderProps(ae::Assets.Programs["map_object"], Bounds, 1.0f, 1000.0f);
+	RenderProps(ae::Assets.Programs["map_object"], Bounds, 0.1f, 1000.0f);
 
 	// Check for flags
 	if(!RenderFlags)
@@ -949,6 +957,11 @@ void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program 
 
 		LightCount++;
 	}
+}
+
+// Sort static objects by Z
+void _Map::SortStaticObjects() {
+	StaticObjects.sort(CompareProps);
 }
 
 // Load map
@@ -1190,6 +1203,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 
 	// Initialize 2d tile rendering
 	if(!Headless) {
+		SortStaticObjects();
 		InitVertices(Static);
 		BuildLayers(glm::ivec4(0, 0, Size.x, Size.y));
 		MessageElement = ae::Assets.Elements["element_message"];

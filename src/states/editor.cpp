@@ -699,8 +699,14 @@ void _EditorState::HandleMouseWheel(int Direction) {
 				if(BrushRadius > 128.5f)
 					BrushRadius = 128.5f;
 			break;
-			case EditorModeType::LIGHTS:
-			break;
+			case EditorModeType::PROPS: {
+				_Object *Object = GetSingleSelectedObject();
+				if(Object && Object->Prop) {
+					Object->Prop->Z += Direction * 0.1f;
+					if(Object->Prop->Z < 0.0f)
+						Object->Prop->Z = 0.0f;
+				}
+			} break;
 		}
 	}
 	else {
@@ -819,17 +825,34 @@ void _EditorState::Render(double BlendFactor) {
 			GetCursorOffset(Offset, ObjectStart);
 
 		// Render selected objects
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
+		float OffsetY = 0;
 		for(const auto &Iterator : SelectedObjects) {
 			const _Object *Object = Iterator.first;
 			glm::vec2 Position = Offset + Object->Position;
-			if(Object->Shape.IsAABB())
+			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+			ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.5f));
+
+			// Draw shape
+			std::stringstream Buffer;
+			Buffer << std::setprecision(3) << "s=";
+			if(Object->Shape.IsAABB()) {
+				Buffer << Object->Shape.HalfSize.x * 2 << "x" << Object->Shape.HalfSize.y * 2;
 				ae::Graphics.DrawRectangle3D(Position - Object->Shape.HalfSize, Position + Object->Shape.HalfSize, false);
+			}
 			else {
+				Buffer << Object->Shape.HalfSize.x * 2;
 				ae::Graphics.DrawCircle(glm::vec3(Position, 0), 0.01f);
 				ae::Graphics.DrawCircle(glm::vec3(Position, 0), Object->Shape.HalfSize.x);
 			}
+
+			if(Object->Prop)
+				Buffer << " z=" << Object->Prop->Z;
+
+			// Draw object size info
+			if(Buffer.str().length())
+				ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), Position + Object->Shape.HalfSize + glm::vec2(0.0f, OffsetY), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
+
+			OffsetY += 0.35f;
 		}
 	}
 

@@ -57,7 +57,6 @@
 // Constants
 const std::string DEFAULT_MAP = "start";
 
-// Constructor
 _Object::_Object() :
 	Name(""),
 	Character(nullptr),

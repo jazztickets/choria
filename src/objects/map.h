@@ -136,6 +136,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void RenderProps(const ae::_Program *Program, glm::vec4 &Bounds, float ZStart, float ZStop);
 		void Render2D(ae::_Camera *Camera);
 		void AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB);
+		void SortStaticObjects();
 
 		// Collision
 		bool CanMoveTo(const glm::vec2 &Position, _Object *Object);
