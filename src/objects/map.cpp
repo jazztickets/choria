@@ -184,10 +184,6 @@ void _Map::InitVertices(bool Static) {
 		1, 1,
 		0, 0,
 		1, 0,
-		0, 1,
-		1, 1,
-		0, 0,
-		1, 0,
 	};
 
 	// Generate vertex buffer and bind
@@ -834,7 +830,6 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 	// Draw map quad
 	glBindBuffer(GL_ARRAY_BUFFER, MapVertexBufferID);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	// Reset internal state
