@@ -79,10 +79,16 @@ const std::vector<double> DayCyclesTime = {
 
 // Compare props by Z value
 static bool CompareProps(const _Object *Left, const _Object *Right) {
-   if(Left->Prop && Right->Prop)
-	   return Left->Prop->Z < Right->Prop->Z;
+	if(Left->Prop) {
+		if(Right->Prop)
+			return Left->Prop->Z < Right->Prop->Z;
+		else
+			return Left->Prop->Z < 0;
+	}
+	else if(Right->Prop)
+		return 0 < Right->Prop->Z;
 
-   return true;
+	return true;
 }
 
 // Constructor
