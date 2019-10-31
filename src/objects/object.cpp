@@ -1172,6 +1172,29 @@ bool _Object::CheckAABB(const ae::_Bounds &Bounds) const {
 	return true;
 }
 
+// Check object collision with a point
+bool _Object::CheckPoint(const glm::vec2 &Point) const {
+
+	// Shape is AABB
+	if(Shape.IsAABB()) {
+		if(Position.x - Shape.HalfSize.x >= Point.x)
+			return false;
+
+		if(Position.y - Shape.HalfSize.y >= Point.y)
+			return false;
+
+		if(Position.x + Shape.HalfSize.x <= Point.x)
+			return false;
+
+		if(Position.y + Shape.HalfSize.y <= Point.y)
+			return false;
+	}
+	else
+		return glm::distance2(Point, Position) < Shape.HalfSize.x * Shape.HalfSize.x;
+
+	return true;
+}
+
 // Call update function for buff
 void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function) {
 	if(!Server)

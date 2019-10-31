@@ -110,6 +110,7 @@ class _Object : public ae::_BaseObject {
 
 		// Collision
 		bool CheckAABB(const ae::_Bounds &Bounds) const;
+		bool CheckPoint(const glm::vec2 &Point) const;
 
 		// Status effects
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);

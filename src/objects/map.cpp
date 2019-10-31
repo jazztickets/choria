@@ -82,7 +82,7 @@ static bool CompareProps(const _Object *Left, const _Object *Right) {
    if(Left->Prop && Right->Prop)
 	   return Left->Prop->Z < Right->Prop->Z;
 
-   return false;
+   return true;
 }
 
 // Constructor
@@ -681,8 +681,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		LightCount = 0;
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
-		AddLights(&StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(ClientPlayer, &Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(ClientPlayer, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -853,13 +853,17 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds, float ZSt
 		if(!Object->Prop)
 			continue;
 
-		// Check z
-		if(!(Object->Prop->Z >= ZStart && Object->Prop->Z <= ZStop))
-			continue;
-
 		// Check to see if object is in frustum
 		if(!Object->CheckAABB(Bounds))
 			continue;
+
+		// Check z
+		if(Object->Prop->Z < ZStart)
+			continue;
+
+		// Early exit since objects are sorted by z
+		if(Object->Prop->Z > ZStop)
+			break;
 
 		// Get size
 		glm::vec2 Scale;
@@ -916,7 +920,7 @@ void _Map::Render2D(ae::_Camera *Camera) {
 }
 
 // Add lights from objects
-void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
+void _Map::AddLights(_Object *ClientPlayer, const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
 	ae::Graphics.SetProgram(Program);
 
 	// Iterate over objects
@@ -934,6 +938,10 @@ void _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program 
 		// Check to see if light is in frustum
 		if(!Object->CheckAABB(AABB))
 			continue;
+
+		// Check for special toggle lights
+		//if(Object->CheckPoint(ClientPlayer->Position))
+		//	continue;
 
 		// Get size
 		glm::vec2 Scale;
@@ -1114,12 +1122,14 @@ void _Map::Load(const std::string &Path, bool Static) {
 				char SubChunkType;
 				File >> SubChunkType;
 				switch(SubChunkType) {
+					case 'n': {
+						Object = new _Object();
+						Object->Scripting = Scripting;
+					} break;
 					// Position
 					case 'p': {
 						glm::vec2 Position;
 						File >> Position.x >> Position.y;
-						Object = new _Object();
-						Object->Scripting = Scripting;
 						Object->Position = Position;
 						StaticObjects.push_back(Object);
 					} break;
