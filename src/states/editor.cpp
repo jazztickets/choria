@@ -423,8 +423,12 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					case EditorModeType::LIGHTS:
 					case EditorModeType::PROPS:
 						if(TouchingSelectedObjects(WorldCursor)) {
-							if(ae::Input.ModKeyDown(KMOD_SHIFT) && SelectedObjects.size() == 1)
-								ResizingObject = true;
+							if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
+								if(SelectedObjects.size() == 1)
+									ResizingObject = true;
+								else
+									DrawingSelect = true;
+							}
 							else
 								MovingObjects = true;
 						}
@@ -636,7 +640,16 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			// Get bounds of drawn box
 			ae::_Bounds Bounds;
 			GetDrawBounds(Bounds, false);
+
+			// Select only one object
+			bool SingleOnly = false;
+			if(Bounds.Start == Bounds.End)
+				SingleOnly = true;
+
+			// Select objects
 			for(const auto &Object : Map->StaticObjects) {
+
+				// Skip certain objects if not in toggle mode
 				if(!ToggleMode) {
 					if(Mode == EditorModeType::LIGHTS && !(Object->Light && Object->Light->Texture))
 						continue;
@@ -644,6 +657,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						continue;
 				}
 
+				// Handle hit object
 				if(Object->CheckAABB(Bounds)) {
 
 					// Add or remove from selection
@@ -652,6 +666,10 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						SelectedObjects.erase(Iterator);
 					else
 						SelectedObjects[Object] = 1;
+
+					// Grab first object found
+					if(SingleOnly)
+						break;
 				}
 			}
 
