@@ -864,7 +864,7 @@ void _EditorState::Render(double BlendFactor) {
 	bool DrawSelectionSize = false;
 	switch(Mode) {
 		case EditorModeType::TILES:
-
+			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 			if(DrawCopyBounds) {
 				ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
 
@@ -880,7 +880,6 @@ void _EditorState::Render(double BlendFactor) {
 			else {
 
 				// Draw tile brush size
-				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 				ae::Graphics.SetColor(glm::vec4(1.0f));
 				ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 			}

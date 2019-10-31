@@ -6,8 +6,6 @@ uniform sampler2DArray sampler2;
 uniform sampler2DArray sampler3;
 uniform vec4 ambient_light;
 uniform vec4 color;
-uniform vec2 tile_count;
-uniform vec2 tile_offset;
 uniform float texture_scale;
 uniform float texture_offset;
 
