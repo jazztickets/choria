@@ -98,7 +98,6 @@ Hit 1 to draw textures
 Hit 2 to draw zones
 Hit 3 to draw PVP/safe areas
 Hit 4 to draw events
-Hit Tab to toggle transition/block mode
 Hit F to toggle background/foreground tiles
 Hit W to change from wall/walkable
 Hit E to open the event menu
@@ -127,6 +126,7 @@ Use Shift+Ctrl+Mousewheel to change brush size by 10
 -- Tiles Mode --
 Hit Ctrl+Left-mouse button to copy an existing tile into the brush
 Use Middle-click drag to highlight an area to copy, then V to paste
+Hit Tab to toggle transition/block mode
 
 -- Object Mode --
 Hold Shift while drawing to make the shape rectangular
@@ -140,6 +140,7 @@ Use Ctrl+Mousewheel to update a prop's Z value
 Hit R to rotate a selected object's texture
 Hit C to copy selected objects relative to where the mouse is
 Hit V to paste
+Hit Tab to open object properties
 
 -- Misc --
 Hit N to start a new map

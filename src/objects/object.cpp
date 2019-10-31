@@ -78,7 +78,8 @@ _Object::_Object() :
 
 	Model(nullptr),
 	BuildTexture(nullptr),
-	TextureRotation(0.0f) {
+	TextureRotation(0.0f),
+	CollideRenderAction(0) {
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);
@@ -1193,6 +1194,23 @@ bool _Object::CheckPoint(const glm::vec2 &Point) const {
 		return glm::distance2(Point, Position) < Shape.HalfSize.x * Shape.HalfSize.x;
 
 	return true;
+}
+
+// Determine if rendering should be skipped based on collide action
+bool _Object::SkipRendering(const glm::vec2 &Point) const {
+	if(!CollideRenderAction)
+		return false;
+
+	if(CheckPoint(Point)) {
+		if(CollideRenderAction == (int)CollideActionType::HIDE)
+			return true;
+	}
+	else {
+		if(CollideRenderAction == (int)CollideActionType::SHOW)
+			return true;
+	}
+
+	return false;
 }
 
 // Call update function for buff

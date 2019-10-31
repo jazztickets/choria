@@ -51,6 +51,13 @@
 const double EDITOR_CLOCK_SPEED = 200.0;
 const float DEFAULT_BRUSH_SIZE = 0.5f;
 
+// Arrays
+static std::string CollideTypeNames[(int)CollideActionType::COUNT] = {
+	"None",
+	"Show",
+	"Hide",
+};
+
 _EditorState EditorState;
 
 // Initializes the state
@@ -67,6 +74,7 @@ void _EditorState::Init() {
 	InfoElement = ae::Assets.Elements["element_editor_info"];
 	InfoMusicElement = ae::Assets.Elements["textbox_editor_info_music"];
 	ZonesElement = ae::Assets.Elements["element_editor_zones"];
+	ObjectsElement = ae::Assets.Elements["element_editor_objects"];
 	LightsElement = ae::Assets.Elements["element_editor_lights"];
 	LightTypesElement = ae::Assets.Elements["element_editor_light_types"];
 	LightScriptElement = ae::Assets.Elements["textbox_editor_light_script"];
@@ -93,6 +101,7 @@ void _EditorState::Init() {
 	InfoElement->SetActive(false);
 	TexturesElement->SetActive(false);
 	ZonesElement->SetActive(false);
+	ObjectsElement->SetActive(false);
 	LightsElement->SetActive(false);
 	PropsElement->SetActive(false);
 	EventsElement->SetActive(false);
@@ -323,8 +332,17 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				DeleteSelectedObjects();
 			break;
 			case SDL_SCANCODE_TAB:
-				ShowTransitions = !ShowTransitions;
-				Map->BuildLayers(glm::ivec4(0, 0, Map->Size.x, Map->Size.y), ShowTransitions);
+				switch(Mode) {
+					case EditorModeType::TILES:
+						ShowTransitions = !ShowTransitions;
+						Map->BuildLayers(glm::ivec4(0, 0, Map->Size.x, Map->Size.y), ShowTransitions);
+					break;
+					case EditorModeType::LIGHTS:
+					case EditorModeType::PROPS:
+						if(SelectedObjects.size())
+							ToggleObjects();
+					break;
+				}
 			break;
 			case SDL_SCANCODE_SPACE:
 				switch(Mode) {
@@ -491,6 +509,21 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				ae::_Element *Button = ZonesElement->GetClickedElement();
 				TileBrush->ZoneID = Button->Children.front()->Text;
 				CloseWindows();
+			}
+		}
+		// Light select
+		else if(ObjectsElement->GetClickedElement()) {
+			ae::_Element *ClickedElement = ObjectsElement->GetClickedElement();
+			if(ClickedElement->Name == "button_editor_objects_collide") {
+				_Object *SelectedObject = GetSingleSelectedObject();
+				if(SelectedObject) {
+					SelectedObject->CollideRenderAction++;
+					if(SelectedObject->CollideRenderAction >= (int)CollideActionType::COUNT)
+						SelectedObject->CollideRenderAction = 0;
+
+					ae::_Element *ValueElement = ae::Assets.Elements["label_editor_objects_collide_value"];
+					ValueElement->Text = CollideTypeNames[SelectedObject->CollideRenderAction];
+				}
 			}
 		}
 		// Light select
@@ -839,7 +872,9 @@ void _EditorState::Render(double BlendFactor) {
 		if(!UseClockAmbientLight)
 			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
 
-		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
+		_Object ClientPlayer;
+		ClientPlayer.Position = WorldCursor;
+		Map->Render(Camera, Framebuffer, &ClientPlayer, BlendFactor, RenderFilter);
 
 		// Handle moving objects
 		glm::vec2 Offset(0.0f, 0.0f);
@@ -1341,6 +1376,17 @@ void _EditorState::ToggleZones() {
 	}
 }
 
+// Show the object property screen
+void _EditorState::ToggleObjects() {
+	if(!ObjectsElement->Active) {
+		CloseWindows();
+		InitObjects();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Show the light select screen
 void _EditorState::ToggleLights() {
 	if(!LightsElement->Active) {
@@ -1531,6 +1577,11 @@ void _EditorState::InitZones() {
 	ZonesElement->SetActive(true);
 }
 
+// Init object property screen
+void _EditorState::InitObjects() {
+	ObjectsElement->SetActive(true);
+}
+
 // Init lights screen
 void _EditorState::InitLights() {
 	ClearLights();
@@ -1713,12 +1764,14 @@ bool _EditorState::CloseWindows() {
 		ResizeMapElement->Active |
 		SaveMapElement->Active |
 		LoadMapElement->Active |
+		ObjectsElement->Active |
 		LightsElement->Active |
 		PropsElement->Active;
 
 	InfoElement->SetActive(false);
 	TexturesElement->SetActive(false);
 	ZonesElement->SetActive(false);
+	ObjectsElement->SetActive(false);
 	LightsElement->SetActive(false);
 	PropsElement->SetActive(false);
 	EventsElement->SetActive(false);

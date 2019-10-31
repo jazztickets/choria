@@ -582,6 +582,14 @@
 				<element id="label_editor_event_message" font="hud_medium" color="red" offset_y="-20" size_x="620" alignment_x="0" alignment_y="3"/>
 			</element>
 		</element>
+		<element id="element_editor_objects" style="style_editor_bg" size_x="500" size_y="400" clickable="true">
+			<element id="element_editor_objects_collide" offset_x="20" offset_y="30" size_x="140" size_y="44" alignment_x="0" alignment_y="0">
+				<element id="button_editor_objects_collide" style="style_menu_button" hover_style="style_menu_button_hover" size_x="150" size_y="42" offset_x="180" alignment_x="0" alignment_y="0" clickable="true">
+					<element id="label_editor_objects_collide_value" font="hud_small" text="None" offset_x="0" offset_y="29" alignment_x="1" alignment_y="3" />
+				</element>
+				<element id="label_editor_objects_collide" font="hud_medium" text="Collide Action" offset_x="0" offset_y="32" alignment_x="0" alignment_y="3"/>
+			</element>
+		</element>
 		<element id="element_editor_lights" style="style_editor_bg" size_x="650" size_y="500" clickable="true">
 			<element id="element_editor_light_types"/>
 			<element id="element_editor_light_r" style="style_menu_textbox" offset_x="150" offset_y="130" size_x="200" size_y="42" alignment_x="0" alignment_y="0" clickable="true">

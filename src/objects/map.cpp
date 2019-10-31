@@ -687,8 +687,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		LightCount = 0;
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		AddLights(ClientPlayer, &Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
-		AddLights(ClientPlayer, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(ClientPlayer->Position, &Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(ClientPlayer->Position, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -753,14 +753,14 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 	// Render floor props
 	PropCount = 0;
-	RenderProps(ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.1f);
+	RenderProps(ClientPlayer->Position, ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.1f);
 
 	// Render objects
 	for(const auto &Object : Objects)
 		Object->Render(ClientPlayer);
 
 	// Render foreground props
-	RenderProps(ae::Assets.Programs["map_object"], Bounds, 0.1f, 1000.0f);
+	RenderProps(ClientPlayer->Position, ae::Assets.Programs["map_object"], Bounds, 0.1f, 1000.0f);
 
 	// Check for flags
 	if(!RenderFlags)
@@ -851,7 +851,7 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 }
 
 // Render map props
-void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds, float ZStart, float ZStop) {
+void _Map::RenderProps(const glm::vec2 &CollisionPoint, const ae::_Program *Program, glm::vec4 &Bounds, float ZStart, float ZStop) {
 	ae::Graphics.SetProgram(Program);
 
 	// Iterate over objects
@@ -861,6 +861,10 @@ void _Map::RenderProps(const ae::_Program *Program, glm::vec4 &Bounds, float ZSt
 
 		// Check to see if object is in frustum
 		if(!Object->CheckAABB(Bounds))
+			continue;
+
+		// Check for collide toggling
+		if(Object->SkipRendering(CollisionPoint))
 			continue;
 
 		// Check z
@@ -926,7 +930,7 @@ void _Map::Render2D(ae::_Camera *Camera) {
 }
 
 // Add lights from objects
-void _Map::AddLights(_Object *ClientPlayer, const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
+void _Map::AddLights(const glm::vec2 &CollisionPoint, const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
 	ae::Graphics.SetProgram(Program);
 
 	// Iterate over objects
@@ -945,9 +949,9 @@ void _Map::AddLights(_Object *ClientPlayer, const std::list<_Object *> *ObjectLi
 		if(!Object->CheckAABB(AABB))
 			continue;
 
-		// Check for special toggle lights
-		//if(Object->CheckPoint(ClientPlayer->Position))
-		//	continue;
+		// Check for collide toggling
+		if(Object->SkipRendering(CollisionPoint))
+			continue;
 
 		// Get size
 		glm::vec2 Scale;
@@ -1128,16 +1132,17 @@ void _Map::Load(const std::string &Path, bool Static) {
 				char SubChunkType;
 				File >> SubChunkType;
 				switch(SubChunkType) {
+					// New object
 					case 'n': {
 						Object = new _Object();
 						Object->Scripting = Scripting;
+						StaticObjects.push_back(Object);
 					} break;
 					// Position
 					case 'p': {
 						glm::vec2 Position;
 						File >> Position.x >> Position.y;
 						Object->Position = Position;
-						StaticObjects.push_back(Object);
 					} break;
 					// Shape
 					case 's': {
@@ -1146,6 +1151,10 @@ void _Map::Load(const std::string &Path, bool Static) {
 					// Rotation
 					case 'r': {
 						File >> Object->TextureRotation;
+					} break;
+					// Collide render action
+					case 'c': {
+						File >> Object->CollideRenderAction;
 					} break;
 				}
 			} break;
@@ -1278,6 +1287,8 @@ bool _Map::Save(const std::string &Path) {
 		Output << "Os " << Object->Shape.HalfSize.x << ' ' << Object->Shape.HalfSize.y << '\n';
 		if(Object->TextureRotation != 0.0f)
 			Output << "Or " << Object->TextureRotation << '\n';
+		if(Object->CollideRenderAction)
+			Output << "Oc " << Object->CollideRenderAction << '\n';
 
 		if(Object->Light && Object->Light->Texture) {
 			Output << "Lt " << Object->Light->Texture->Name << '\n';

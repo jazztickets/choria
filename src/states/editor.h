@@ -82,6 +82,7 @@ class _EditorState : public ae::_State {
 		void ToggleInfo();
 		void ToggleTextures();
 		void ToggleZones();
+		void ToggleObjects();
 		void ToggleLights();
 		void ToggleProps();
 		void ToggleEvents();
@@ -93,6 +94,7 @@ class _EditorState : public ae::_State {
 		void InitInfo();
 		void InitTextures();
 		void InitZones();
+		void InitObjects();
 		void InitLights();
 		void InitProps();
 		void InitEvents();
@@ -197,6 +199,7 @@ class _EditorState : public ae::_State {
 		ae::_Element *LightScriptElement;
 		ae::_Element *PropsElement;
 		ae::_Element *PropTypesElement;
+		ae::_Element *ObjectsElement;
 		ae::_Element *EventsElement;
 		ae::_Element *EventTypesElement;
 		ae::_Element *EventDataElement;

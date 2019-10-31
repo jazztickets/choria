@@ -150,3 +150,11 @@ enum MapRenderType {
 	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
 	MAP_RENDER_EDGE_BOUNDARY     = (1 << 9),
 };
+
+// Object collide action types
+enum class CollideActionType : int {
+	NONE,
+	SHOW,
+	HIDE,
+	COUNT,
+};
