@@ -665,6 +665,11 @@ void _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, std::map<
 // Renders the map and all objects
 void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
+	// Position of player
+	glm::vec2 ClientPosition(-1, -1);
+	if(ClientPlayer)
+		ClientPosition = ClientPlayer->Position;
+
 	// Set lights for editor
 	if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT) {
 		Framebuffer->Use();
@@ -687,8 +692,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		LightCount = 0;
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		AddLights(ClientPlayer->Position, &Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
-		AddLights(ClientPlayer->Position, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(ClientPosition, &Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		AddLights(ClientPosition, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -753,14 +758,14 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 	// Render floor props
 	PropCount = 0;
-	RenderProps(ClientPlayer->Position, ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.1f);
+	RenderProps(ClientPosition, ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.1f);
 
 	// Render objects
 	for(const auto &Object : Objects)
 		Object->Render(ClientPlayer);
 
 	// Render foreground props
-	RenderProps(ClientPlayer->Position, ae::Assets.Programs["map_object"], Bounds, 0.1f, 1000.0f);
+	RenderProps(ClientPosition, ae::Assets.Programs["map_object"], Bounds, 0.1f, 1000.0f);
 
 	// Check for flags
 	if(!RenderFlags)
