@@ -145,6 +145,7 @@ class _EditorState : public ae::_State {
 		std::vector<std::pair<std::string, float *> > MapInfoData;
 		const _Stats *Stats;
 		_Scripting *Scripting;
+		bool CursorMoved;
 
 		// Graphics
 		ae::_Camera *Camera;
@@ -176,6 +177,7 @@ class _EditorState : public ae::_State {
 		bool DrawingObject;
 		bool DrawingSelect;
 		bool MovingObjects;
+		bool StartResizingObject;
 		bool ResizingObject;
 		bool CopiedObjects;
 		glm::vec2 CopyPosition;

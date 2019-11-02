@@ -154,6 +154,7 @@ void _EditorState::Init() {
 	DrawingSelect = false;
 	MovingObjects = false;
 	ResizingObject = false;
+	StartResizingObject = false;
 	CopiedObjects = false;
 	CopyPosition = glm::vec2(0.0f, 0.0f);
 	ObjectStart = glm::vec2(0.0f, 0.0f);
@@ -443,7 +444,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						if(TouchingSelectedObjects(WorldCursor)) {
 							if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
 								if(SelectedObjects.size() == 1)
-									ResizingObject = true;
+									StartResizingObject = true;
 								else
 									DrawingSelect = true;
 							}
@@ -453,7 +454,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						else
 							DrawingSelect = true;
 
-						if(ResizingObject) {
+						if(StartResizingObject) {
 							_Object *SelectedObject = GetSingleSelectedObject();
 							if(SelectedObject->Shape.IsAABB())
 								ObjectStart = SelectedObject->Position - SelectedObject->Shape.HalfSize;
@@ -729,6 +730,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		}
 
 		// Resizing an object
+		StartResizingObject = false;
 		if(ResizingObject) {
 			ResizingObject = false;
 			_Object *Object = GetSingleSelectedObject();
@@ -794,8 +796,19 @@ void _EditorState::HandleQuit() {
 // Updates the current state
 void _EditorState::Update(double FrameTime) {
 	ae::Graphics.Element->Update(FrameTime, ae::Input.GetMouse());
-	//if(ae::Graphics.Element->HitElement)
-	//	std::cout << ae::Graphics.Element->HitElement->Name << std::endl;
+	if((0) && ae::Graphics.Element->HitElement)
+		std::cout << ae::Graphics.Element->HitElement->Name << std::endl;
+
+	// Set cursor moved flag
+	static glm::ivec2 LastMouse = ae::Input.GetMouse();
+	CursorMoved = LastMouse != ae::Input.GetMouse() ? true : false;
+	LastMouse = ae::Input.GetMouse();
+
+	// Resize object after cursor has moved
+	if(StartResizingObject && CursorMoved) {
+		StartResizingObject = false;
+		ResizingObject = true;
+	}
 
 	// Don't update unless there's a map
 	if(!Map)
@@ -940,7 +953,7 @@ void _EditorState::Render(double BlendFactor) {
 		case EditorModeType::LIGHTS:
 		case EditorModeType::PROPS:
 
-			// Draw potential light
+			// Draw potential object
 			if(DrawingObject || ResizingObject) {
 				ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 
@@ -1805,6 +1818,7 @@ void _EditorState::SwitchMode(EditorModeType Value) {
 	DrawingObject = false;
 	DrawingSelect = false;
 	MovingObjects = false;
+	StartResizingObject = false;
 	ResizingObject = false;
 	CopiedObjects = false;
 	SelectedObjects.clear();
