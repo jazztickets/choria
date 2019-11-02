@@ -827,8 +827,10 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 			// Draw event info
 			if(Tile->Event.Type > EventType::NONE) {
-				ae::Assets.Fonts["hud_medium"]->DrawText(Stats->EventTypes.at(Tile->Event.Type).second, glm::vec2(DrawPosition) + glm::vec2(0, -0.1), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 128.0f);
-				ae::Assets.Fonts["hud_medium"]->DrawText(Tile->Event.Data, glm::vec2(DrawPosition) + glm::vec2(0, 0.1), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 128.0f);
+				if(RenderFlags & MAP_RENDER_EVENT_TYPE)
+					ae::Assets.Fonts["hud_medium"]->DrawText(Stats->EventTypes.at(Tile->Event.Type).second, glm::vec2(DrawPosition) + glm::vec2(0, -0.1), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 128.0f);
+				if(RenderFlags & MAP_RENDER_EVENT_DATA)
+					ae::Assets.Fonts["hud_medium"]->DrawText(Tile->Event.Data, glm::vec2(DrawPosition) + glm::vec2(0, 0.1), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 128.0f);
 			}
 		}
 	}
