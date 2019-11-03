@@ -77,18 +77,24 @@ const std::vector<double> DayCyclesTime = {
 	18.0 * 60.0,
 };
 
-// Compare props by Z value
+// Compare props by Z value, then texture
 static bool CompareProps(const _Object *Left, const _Object *Right) {
 	if(Left->Prop) {
-		if(Right->Prop)
-			return Left->Prop->Z < Right->Prop->Z;
+		if(Right->Prop) {
+			if(Left->Prop->Z == Right->Prop->Z)
+				return Left->Prop->Texture < Right->Prop->Texture;
+			else
+				return Left->Prop->Z < Right->Prop->Z;
+		}
 		else
 			return Left->Prop->Z < 0;
 	}
-	else if(Right->Prop)
+	else if(Right->Prop) {
 		return 0 < Right->Prop->Z;
-
-	return true;
+	}
+	else {
+		return Left->Light->Texture < Right->Light->Texture;
+	}
 }
 
 // Constructor
