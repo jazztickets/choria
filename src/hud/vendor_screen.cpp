@@ -37,8 +37,26 @@ _VendorScreen::_VendorScreen(_HUD *MainHUD, ae::_Element *MainElement) :
 
 // Initialize
 void _VendorScreen::Init() {
+	const _Vendor *Vendor = HUD->Player->Character->Vendor;
+
+	// Init state
 	HUD->Cursor.Reset();
 	HUD->InventoryScreen->InitInventoryTab(0);
+
+	// Set vendor name
+	ae::_Element *NameElement = ae::Assets.Elements["label_vendor"];
+	NameElement->Text = Vendor->Name;
+
+	// Set vendor text
+	ae::_Element *TextElement = ae::Assets.Elements["label_vendor_text"];
+	if(Vendor->Text.length()) {
+		TextElement->Text = Vendor->Text;
+		TextElement->SetWrap(TextElement->Size.x);
+		TextElement->Parent->Enabled = true;
+	}
+	else
+		TextElement->Parent->Enabled = false;
+
 	Element->SetActive(true);
 }
 

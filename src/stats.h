@@ -106,6 +106,8 @@ struct _Vendor {
 	size_t GetSlotFromID(const std::string &ItemID) const;
 
 	std::string ID;
+	std::string Name;
+	std::string Text;
 	float BuyPercent;
 	float SellPercent;
 	std::vector<const _BaseItem *> Items;

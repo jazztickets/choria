@@ -98,7 +98,7 @@
 		</build>
 	</builds>
 	<vendors>
-		<vendor id="start">
+		<vendor id="start_camp" name="Jebs" text="start_camp">
 			<item id="rat_key"/>
 			<item id="game_token"/>
 		</vendor>

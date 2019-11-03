@@ -495,6 +495,12 @@ void _Stats::LoadData(const std::string &Path) {
 		if(Vendors.find(Vendor.ID) != Vendors.end())
 			throw std::runtime_error("Duplicate vendor id '" + Vendor.ID + "' in " + Path);
 
+		// Load text
+		Vendor.Name = GetString(Node, "name", false);
+		std::string StringID = GetString(Node, "text");
+		if(StringID.length())
+			Vendor.Text = Strings.at(StringID);
+
 		// Load items
 		for(tinyxml2::XMLElement *ItemNode = Node->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
 			const _BaseItem *Item = GetItem(ItemNode, "id");
