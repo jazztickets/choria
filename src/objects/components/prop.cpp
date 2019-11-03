@@ -23,6 +23,16 @@ _Prop::_Prop(_Object *Object) :
 	Texture(nullptr),
 	Color(1.0f),
 	Z(0.0f),
+	Floor(true),
 	Repeat(false) {
 
+}
+
+// Copy attributes from another prop
+void _Prop::CopyAttributes(_Prop *Prop) {
+	Texture = Prop->Texture;
+	Color = Prop->Color;
+	Z = Prop->Z;
+	Floor = Prop->Floor;
+	Repeat = Prop->Repeat;
 }

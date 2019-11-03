@@ -81,13 +81,18 @@ const std::vector<double> DayCyclesTime = {
 static bool CompareProps(const _Object *Left, const _Object *Right) {
 	if(Left->Prop) {
 		if(Right->Prop) {
-			if(Left->Prop->Z == Right->Prop->Z)
-				return Left->Prop->Texture < Right->Prop->Texture;
+			if(Left->Prop->Floor == Right->Prop->Floor) {
+				if(Left->Prop->Z == Right->Prop->Z)
+					return Left->Prop->Texture < Right->Prop->Texture;
+				else
+					return Left->Prop->Z < Right->Prop->Z;
+			}
 			else
-				return Left->Prop->Z < Right->Prop->Z;
+				return Left->Prop->Floor > Right->Prop->Floor;
 		}
-		else
+		else {
 			return Left->Prop->Z < 0;
+		}
 	}
 	else if(Right->Prop) {
 		return 0 < Right->Prop->Z;
@@ -764,14 +769,15 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 	// Render floor props
 	PropCount = 0;
-	RenderProps(ClientPosition, ae::Assets.Programs["map_object"], Bounds, 0.0f, 0.1f);
+	std::list<_Object *>::iterator Iterator = StaticObjects.begin();
+	RenderProps(Iterator, ClientPosition, ae::Assets.Programs["map_object"], Bounds, true);
 
 	// Render objects
 	for(const auto &Object : Objects)
 		Object->Render(ClientPlayer);
 
 	// Render foreground props
-	RenderProps(ClientPosition, ae::Assets.Programs["map_object"], Bounds, 0.1f, 1000.0f);
+	RenderProps(Iterator, ClientPosition, ae::Assets.Programs["map_object"], Bounds, false);
 
 	// Check for flags
 	if(!RenderFlags)
@@ -864,11 +870,12 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 }
 
 // Render map props
-void _Map::RenderProps(const glm::vec2 &CollisionPoint, const ae::_Program *Program, glm::vec4 &Bounds, float ZStart, float ZStop) {
+void _Map::RenderProps(std::list<_Object *>::iterator &Iterator, const glm::vec2 &CollisionPoint, const ae::_Program *Program, glm::vec4 &Bounds, bool Floor) {
 	ae::Graphics.SetProgram(Program);
 
 	// Iterate over objects
-	for(const auto &Object : StaticObjects) {
+	for(; Iterator != StaticObjects.end(); ++Iterator) {
+		_Object *Object = *Iterator;
 		if(!Object->Prop)
 			continue;
 
@@ -880,12 +887,8 @@ void _Map::RenderProps(const glm::vec2 &CollisionPoint, const ae::_Program *Prog
 		if(Object->SkipRendering(CollisionPoint))
 			continue;
 
-		// Check z
-		if(Object->Prop->Z < ZStart)
-			continue;
-
-		// Early exit since objects are sorted by z
-		if(Object->Prop->Z > ZStop)
+		// Check floor type
+		if(Object->Prop->Floor != Floor)
 			break;
 
 		// Get size
@@ -1215,9 +1218,15 @@ void _Map::Load(const std::string &Path, bool Static) {
 							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 							Object->Prop->Texture = ae::Assets.Textures[TextureName];
 						} break;
+						// Floor
+						case 'f':
+							File >> Object->Prop->Floor;
+						break;
 						// Z offset
 						case 'z':
 							File >> Object->Prop->Z;
+							if(Object->Prop->Z > 0.0f)
+								Object->Prop->Floor = false;
 						break;
 						// Repeat
 						case 'r':
@@ -1315,6 +1324,8 @@ bool _Map::Save(const std::string &Path) {
 		}
 		if(Object->Prop && Object->Prop->Texture) {
 			Output << "Pt " << Object->Prop->Texture->Name << '\n';
+			if(!Object->Prop->Floor && Object->Prop->Z == 0.0f)
+				Output << "Pf " << Object->Prop->Floor << '\n';
 			if(Object->Prop->Z != 0.0f)
 				Output << "Pz " << Object->Prop->Z << '\n';
 			if(Object->Prop->Repeat)

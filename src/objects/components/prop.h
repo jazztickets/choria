@@ -35,6 +35,8 @@ class _Prop {
 		_Prop() : _Prop(nullptr) { }
 		_Prop(_Object *Object);
 
+		void CopyAttributes(_Prop *Prop);
+
 		// Base
 		_Object *Object;
 
@@ -42,6 +44,7 @@ class _Prop {
 		const ae::_Texture *Texture;
 		glm::vec4 Color;
 		float Z;
+		bool Floor;
 		bool Repeat;
 
 	private:

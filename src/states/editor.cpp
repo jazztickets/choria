@@ -544,12 +544,26 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			else if(ClickedElement->Name == "button_editor_prop_foreground") {
 				ae::_Element *Check = ae::Assets.Elements["label_editor_prop_foreground_check"];
 				Check->Text = Check->Text.empty() ? "X" : "";
-				PropBrush->Z = !Check->Text.empty();
+				PropBrush->Floor = Check->Text.empty();
+
+				// Update objects
+				for(auto &Object : SelectedObjects) {
+					if(Object.first->Prop)
+						Object.first->Prop->Floor = PropBrush->Floor;
+				}
+
+				// Sort objects
+				if(SelectedObjects.size())
+					Map->SortStaticObjects();
 			}
 			else if(ClickedElement->Name == "button_editor_prop_repeat") {
 				ae::_Element *Check = ae::Assets.Elements["label_editor_prop_repeat_check"];
 				Check->Text = Check->Text.empty() ? "X" : "";
 				PropBrush->Repeat = !Check->Text.empty();
+				for(auto &Object : SelectedObjects) {
+					if(Object.first->Prop)
+						Object.first->Prop->Repeat = PropBrush->Repeat;
+				}
 			}
 		}
 		// Event select
@@ -642,10 +656,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					_Object *Object = new _Object();
 					Object->Scripting = Scripting;
 					Object->Prop = new _Prop(Object);
-					Object->Prop->Texture = PropBrush->Texture;
-					Object->Prop->Color = PropBrush->Color;
-					Object->Prop->Z = PropBrush->Z;
-					Object->Prop->Repeat = PropBrush->Repeat;
+					Object->Prop->CopyAttributes(PropBrush);
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
 					Map->SortStaticObjects();
@@ -1911,10 +1922,7 @@ void _EditorState::PasteObjects() {
 		Object->Scripting = Scripting;
 		if(SourceObject->Prop) {
 			Object->Prop = new _Prop(Object);
-			Object->Prop->Texture = SourceObject->Prop->Texture;
-			Object->Prop->Color = SourceObject->Prop->Color;
-			Object->Prop->Z = SourceObject->Prop->Z;
-			Object->Prop->Repeat = SourceObject->Prop->Repeat;
+			Object->Prop->CopyAttributes(SourceObject->Prop);
 		}
 		if(SourceObject->Light->Texture) {
 			Object->Light->Texture = SourceObject->Light->Texture;
