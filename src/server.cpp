@@ -1633,9 +1633,12 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "event") {
 		_Event Event;
-		Event.Type = Data.Read<EventType>();
+		std::string Type = Data.ReadString();
 		Event.Data = Data.ReadString();
+		if(Stats->EventsIndex.find(Type) == Stats->EventsIndex.end())
+			return;
 
+		Event.Type = Stats->EventsIndex.at(Type);
 		Player->Map->StartEvent(Player, Event);
 	}
 	else if(Command == "experience") {
