@@ -231,7 +231,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				else if(LightsElement->Active) {
 					if(LightScriptElement == ae::FocusedElement) {
 						for(auto &Iterator : SelectedObjects) {
-							Iterator.first->Light->Script = ae::TrimString(LightScriptElement->Text);
+							Iterator.first->Light->SetScript(ae::TrimString(LightScriptElement->Text));
 						}
 						ae::FocusedElement = nullptr;
 					}
@@ -627,7 +627,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Object->Scripting = Scripting;
 					Object->Light->Texture = LightBrush->Texture;
 					Object->Light->Color = LightBrush->Color;
-					Object->Light->Script = LightScriptElement->Text;
+					Object->Light->SetScript(LightScriptElement->Text);
 					SetObjectSize(Object, ae::Input.ModKeyDown(KMOD_SHIFT));
 					Map->StaticObjects.push_back(Object);
 					Map->SortStaticObjects();
@@ -1919,7 +1919,7 @@ void _EditorState::PasteObjects() {
 		if(SourceObject->Light->Texture) {
 			Object->Light->Texture = SourceObject->Light->Texture;
 			Object->Light->Color = SourceObject->Light->Color;
-			Object->Light->Script = SourceObject->Light->Script;
+			Object->Light->SetScript(SourceObject->Light->Script);
 		}
 		Object->Shape = SourceObject->Shape;
 		Object->TextureRotation = SourceObject->TextureRotation;

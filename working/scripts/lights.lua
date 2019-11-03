@@ -18,3 +18,18 @@ function Light_flicker.Update(self, Light, Time)
 
 	return Light
 end
+
+-- Pulse --
+
+Light_pulse = {}
+
+function Light_pulse.Update(self, Light, Time, Speed)
+	if Speed ~= nil then
+		Time = Time * Speed
+	end
+
+	Intensity = (math.cos(Time) + 1.0) / 2.0
+	Light.a = Light.a * Intensity
+
+	return Light
+end

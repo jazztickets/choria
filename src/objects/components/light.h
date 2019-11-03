@@ -19,6 +19,7 @@
 
 // Libraries
 #include <glm/vec4.hpp>
+#include <vector>
 #include <string>
 #include <cstdint>
 
@@ -37,6 +38,7 @@ class _Light {
 		_Light(_Object *Object);
 
 		void Update(double FrameTime);
+		void SetScript(const std::string &Line);
 
 		// Base
 		_Object *Object;
@@ -49,6 +51,10 @@ class _Light {
 		glm::vec4 FinalColor;
 		uint32_t Seed;
 		double Time;
+
+		// Scripts
+		std::string Function;
+		std::vector<double> Parameters;
 
 	private:
 

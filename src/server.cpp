@@ -1755,10 +1755,10 @@ void _Server::RunEventScript(const std::string &Script, _Object *Object) {
 		StatChange.Object = Object;
 
 		// Handle parameters
-		for(size_t i = 1; i < Parameters.size(); i++)
-			Scripting->PushString(Parameters[i]);
 		Scripting->PushObject(StatChange.Object);
 		Scripting->PushStatChange(&StatChange);
+		for(size_t i = 1; i < Parameters.size(); i++)
+			Scripting->PushString(Parameters[i]);
 		Scripting->MethodCall((int)(Parameters.size()) - 1 + 2, 1);
 		Scripting->GetStatChange(1, StatChange);
 		Scripting->FinishMethodCall();

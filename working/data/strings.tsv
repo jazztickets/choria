@@ -3,3 +3,4 @@ start_gear	Find a way out of the prison cell.
 rat_man	Hey uh.. I need you to uh heh heh get some of those heh [c gold]rats[c white].. heh yea get some of those [c gold]rat tails[c white] for me hehuh.\n\nYou wanna get out of here right hehhe? I got your [c gold]key[c white] right hehhe here!\n\nYou better heh get in that [c gold]sewer[c white] then heehuh!
 start_spawn	Stepping on this orb will set your spawn point. If you [c red]die[c white], you will revive here.\n\nYou will lose some of your [c gold]gold[c white] when dying.
 start_camp	Welcome to the camp!\n\nYou'll need some of my wares if you want to survive the wilderness.
+start_heal	Walking in the glowing water will restore your [c green]health[c white].

@@ -18,6 +18,7 @@
 #include <objects/components/light.h>
 #include <objects/object.h>
 #include <ae/random.h>
+#include <ae/util.h>
 #include <scripting.h>
 
 // Constructor
@@ -44,11 +45,32 @@ void _Light::Update(double FrameTime) {
 
 	// Call update
 	_Scripting *Scripting = Object->Scripting;
-	if(Scripting && Scripting->StartMethodCall("Light_" + Script, "Update")) {
+	if(Scripting && Scripting->StartMethodCall("Light_" + Function, "Update")) {
 		Scripting->PushLight(this);
 		Scripting->PushReal(Time);
-		Object->Scripting->MethodCall(2, 1);
+		for(size_t i = 0; i < Parameters.size(); i++)
+			Scripting->PushReal(Parameters[i]);
+		Object->Scripting->MethodCall(2 + (int)Parameters.size(), 1);
 		Object->Scripting->GetLight(1, this);
 		Object->Scripting->FinishMethodCall();
 	}
+}
+
+// Set script function and parameters
+void _Light::SetScript(const std::string &Line) {
+	Script = Line;
+
+	// Convert to string tokens
+	std::vector<std::string> StringParameters;
+	ae::TokenizeString(Line, StringParameters);
+	if(StringParameters.empty())
+	   return;
+
+	// Set function
+	Function = StringParameters[0];
+
+	// Set number parameters
+	Parameters.clear();
+	for(size_t i = 1; i < StringParameters.size(); i++)
+		Parameters.push_back(std::stod(StringParameters[i]));
 }

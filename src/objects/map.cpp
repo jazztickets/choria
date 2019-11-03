@@ -1180,8 +1180,11 @@ void _Map::Load(const std::string &Path, bool Static) {
 						} break;
 						// Script
 						case 's':
-							File >> Object->Light->Script;
-							File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+							File.ignore(1);
+
+							char Buffer[1024];
+							File.getline(Buffer, 1024, '\n');
+							Object->Light->SetScript(Buffer);
 						break;
 						// Color
 						case 'c':
