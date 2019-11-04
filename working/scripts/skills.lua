@@ -251,6 +251,7 @@ end
 Skill_Cleave = Base_Attack:New()
 Skill_Cleave.DamageBase = 32
 Skill_Cleave.DamagePerLevel = 2
+Skill_Cleave.Stamina = 55
 
 function Skill_Cleave.GetDamage(self, Level)
 	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))

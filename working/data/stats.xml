@@ -53,7 +53,7 @@
 		<item id="axe" name="Axe" type="two_hand" weapon_type="two_handed_axe" texture="textures/items/axe.png">
 			<price buy="50"/>
 			<damage min="50" max="120" type="physical" />
-			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
+			<use attack_delay="0.7" attack_time="0.3" stamina="55" cooldown="0.3" />
 		</item>
 		<item id="action_slot1" name="Action Slot I" type="unlockable" texture="textures/items/actionslot1.png">
 			<use scope="world" script="Item_ActionSlot"/>
