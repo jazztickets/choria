@@ -675,13 +675,6 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		if(DrawingSelect) {
 			DrawingSelect = false;
 
-			// Append to selection
-			bool ToggleMode = ae::Input.ModKeyDown(KMOD_SHIFT);
-			if(!ToggleMode) {
-				SelectedObjects.clear();
-				CopiedObjects = false;
-			}
-
 			// Get bounds of drawn box
 			ae::_Bounds Bounds;
 			GetDrawBounds(Bounds, false);
@@ -690,6 +683,13 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			bool SingleOnly = false;
 			if(Bounds.Start == Bounds.End)
 				SingleOnly = true;
+
+			// Append to selection
+			bool ToggleMode = ae::Input.ModKeyDown(KMOD_SHIFT);
+			if(!ToggleMode) {
+				SelectedObjects.clear();
+				CopiedObjects = false;
+			}
 
 			// Select objects
 			for(const auto &Object : Map->StaticObjects) {
@@ -707,7 +707,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					// Add or remove from selection
 					const auto &Iterator = SelectedObjects.find(Object);
-					if(ToggleMode && Iterator != SelectedObjects.end())
+					if(ToggleMode && SingleOnly && Iterator != SelectedObjects.end())
 						SelectedObjects.erase(Iterator);
 					else
 						SelectedObjects[Object] = 1;
@@ -766,14 +766,17 @@ void _EditorState::HandleMouseWheel(int Direction) {
 					BrushRadius = 128.5f;
 			break;
 			case EditorModeType::PROPS: {
-				_Object *Object = GetSingleSelectedObject();
-				if(Object && Object->Prop) {
+				for(auto &Iterator : SelectedObjects) {
+					_Object *Object = Iterator.first;
+					if(!Object->Prop)
+						continue;
+
 					Object->Prop->Z += Direction * 0.1f;
 					if(Object->Prop->Z < 0.0f)
 						Object->Prop->Z = 0.0f;
-
-					Map->SortStaticObjects();
 				}
+
+				Map->SortStaticObjects();
 			} break;
 		}
 	}

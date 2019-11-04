@@ -36,6 +36,9 @@ _Light::_Light(_Object *Object) :
 
 // Update light
 void _Light::Update(double FrameTime) {
+	if(!Texture)
+		return;
+
 	FinalColor = Color;
 	Time += FrameTime;
 

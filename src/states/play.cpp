@@ -1054,12 +1054,17 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			Object->Light->LightTypeID = LightTypeID;
 
 			// Check for valid light
-			const auto &Iterator = Stats->Lights.find(LightTypeID);
-			if(Iterator != Stats->Lights.end()) {
-				Object->Light->Texture = Iterator->second.Texture;
-				Object->Shape.HalfSize = Iterator->second.HalfSize;
-				Object->Light->Color = Iterator->second.Color;
-				Object->Light->SetScript(Iterator->second.Script);
+			if(LightTypeID) {
+				const auto &Iterator = Stats->Lights.find(LightTypeID);
+				if(Iterator != Stats->Lights.end()) {
+					Object->Shape.HalfSize = Iterator->second.HalfSize;
+					Object->Light->Texture = Iterator->second.Texture;
+					Object->Light->Color = Iterator->second.Color;
+					Object->Light->SetScript(Iterator->second.Script);
+				}
+			}
+			else {
+				Object->Light->Texture = nullptr;
 			}
 
 			// Set status texture
