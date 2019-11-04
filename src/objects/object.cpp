@@ -244,11 +244,14 @@ void _Object::Update(double FrameTime) {
 	// Update status
 	if(Character)
 		Character->UpdateStatus();
+
+	// Update lights
+	UpdateStatic(FrameTime);
 }
 
 // Update static components
 void _Object::UpdateStatic(double FrameTime) {
-	if(Light)
+	if(Light && !Server)
 		Light->Update(FrameTime);
 }
 

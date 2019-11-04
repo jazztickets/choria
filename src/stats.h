@@ -160,6 +160,7 @@ struct _WeaponType {
 struct _LightType {
 	_LightType() : Texture(nullptr) { }
 	const ae::_Texture *Texture;
+	std::string Script;
 	glm::vec4 Color;
 	glm::vec2 HalfSize;
 };

@@ -699,10 +699,19 @@ void _Stats::LoadLights(const std::string &Path) {
 
 	// Read the file
 	while(!File.eof() && File.peek() != EOF) {
+		char Buffer[1024];
 		_LightType LightType;
-		std::string Texture;
-		uint32_t ID;
-		File >> ID >> LightType.HalfSize.x >> LightType.Color.r >> LightType.Color.g >> LightType.Color.b >> LightType.Color.a >> Texture;
+
+		// Read strings
+		File.getline(Buffer, 1024, '\t');
+		uint32_t ID = (uint32_t)std::stoi(Buffer);
+		File.getline(Buffer, 1024, '\t');
+		std::string Texture = Buffer;
+		File.getline(Buffer, 1024, '\t');
+		LightType.Script = Buffer;
+
+		// Read data
+		File >> LightType.HalfSize.x >> LightType.Color.r >> LightType.Color.g >> LightType.Color.b >> LightType.Color.a;
 		const auto &Iterator = ae::Assets.Textures.find(Texture);
 		if(!Headless) {
 			if(Iterator == ae::Assets.Textures.end())
@@ -712,7 +721,6 @@ void _Stats::LoadLights(const std::string &Path) {
 		}
 
 		Lights[ID] = LightType;
-
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
 

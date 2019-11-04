@@ -1059,6 +1059,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 				Object->Light->Texture = Iterator->second.Texture;
 				Object->Shape.HalfSize = Iterator->second.HalfSize;
 				Object->Light->Color = Iterator->second.Color;
+				Object->Light->SetScript(Iterator->second.Script);
 			}
 
 			// Set status texture
