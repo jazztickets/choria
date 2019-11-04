@@ -198,6 +198,10 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 
 	// Update index
 	IndexEvents();
+
+	// Update static objects
+	for(auto &Object : StaticObjects)
+		Object->Position -= Offset;
 }
 
 // Initialize vbo and vertex data
