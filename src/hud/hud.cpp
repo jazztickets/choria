@@ -863,7 +863,8 @@ void _HUD::UpdateButtonBarLabels() {
 // Set clickable state of action/button bar
 void _HUD::SetBarState(bool State) {
 	ButtonBarElement->SetClickable(State, 2);
-	ActionBarElement->SetClickable(State, 2);
+	ActionBarElement->SetClickable(State);
+	ActionBarElement->Clickable = false;
 }
 
 // Initialize the confirm screen
@@ -1425,21 +1426,10 @@ void _HUD::SetPlayer(_Object *Player) {
 	Cursor.Reset();
 }
 
-// Resize action bar
+// Set state for buttons on action bar
 void _HUD::SetActionBarSize(size_t Size) {
-
-	// Set all off
 	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
-		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(false);
-
-	// Turn on
-	for(size_t i = 0; i < Size; i++)
-		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(true);
-
-	// Center actionbar
-	ae::_Element *Button = ae::Assets.Elements["button_actionbar_0"];
-	ActionBarElement->Size.x = Button->Size.x * Size;
-	ActionBarElement->CalculateBounds();
+		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetEnabled(i < Size);
 }
 
 // Remove stat changes owned by an object

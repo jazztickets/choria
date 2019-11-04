@@ -67,6 +67,7 @@
 			<use scope="world" script="Item_BattlePotion"/>
 		</item>
 		<item id="torch" name="Torch" type="consumable" texture="textures/items/torch.png">
+			<price buy="15"/>
 			<use scope="world" level="3" duration="60" script="Item_Torch"/>
 		</item>
 		<item id="rat_tail" name="Rat Tail" type="tradable" texture="textures/items/rat_tail.png" />
@@ -99,8 +100,8 @@
 	</builds>
 	<vendors>
 		<vendor id="start_camp" name="Jebs" text="start_camp">
-			<item id="rat_key"/>
-			<item id="game_token"/>
+			<item id="healing_salve"/>
+			<item id="torch"/>
 		</vendor>
 	</vendors>
 	<traders>
