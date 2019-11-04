@@ -285,7 +285,7 @@ void _TestState::Render2DTest() {
 
 void _TestState::RenderMapTest() {
 	ae::Graphics.SetTextureID(ae::Assets.TextureArrays["default"]->ID, GL_TEXTURE_2D_ARRAY);
-	ae::Graphics.DirtyState();
+	ae::Graphics.ResetState();
 	ae::_Program *Program = ae::Assets.Programs["test"];
 	ae::Graphics.SetProgram(Program);
 	ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -298,5 +298,5 @@ void _TestState::RenderMapTest() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	ae::Graphics.DirtyState();
+	ae::Graphics.ResetState();
 }

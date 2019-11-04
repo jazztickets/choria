@@ -756,7 +756,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
 	}
 	glActiveTexture(GL_TEXTURE0);
-	ae::Graphics.DirtyState();
+	ae::Graphics.ResetState();
 
 	// Draw layers
 	RenderTiles(ae::Assets.Programs["map"], Bounds, glm::vec3(0.0f), false);
@@ -866,7 +866,7 @@ void _Map::RenderTiles(ae::_Program *Program, glm::vec4 &Bounds, const glm::vec3
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	// Reset internal state
-	ae::Graphics.DirtyState();
+	ae::Graphics.ResetState();
 }
 
 // Render map props
