@@ -219,10 +219,18 @@ bool _Inventory::MoveInventory(ae::_Buffer &Data, const _Slot &OldSlot, const _S
 void _Inventory::SwapItem(const _Slot &Slot, const _Slot &OldSlot) {
 	_InventorySlot TempItem;
 
+	// Keep track of old max counts
+	int MaxCount = GetSlot(Slot).MaxCount;
+	int OldMaxCount = GetSlot(OldSlot).MaxCount;
+
 	// Swap items
 	TempItem = GetSlot(Slot);
 	GetSlot(Slot) = GetSlot(OldSlot);
 	GetSlot(OldSlot) = TempItem;
+
+	// Reset max count
+	GetSlot(Slot).MaxCount = MaxCount;
+	GetSlot(OldSlot).MaxCount = OldMaxCount;
 }
 
 // Determine if an item can be swapped
