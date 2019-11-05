@@ -2083,8 +2083,8 @@ void _EditorState::LoadMap() {
 		// Set camera position
 		glm::vec2 Position(Map->Size.x/2, Map->Size.y/2);
 		if(OldMapName.length()) {
-			if(!Map->FindEvent(_Event(EventType::MAPCHANGE, OldMapName), Position))
-				Map->FindEvent(_Event(EventType::MAPENTRANCE, OldMapName), Position);
+			if(!Map->FindEvent(_Event(EventType::MAPENTRANCE, OldMapName), Position))
+				Map->FindEvent(_Event(EventType::MAPCHANGE, OldMapName), Position);
 		}
 		else
 			Map->FindEvent(_Event(EventType::SPAWN, ""), Position);
