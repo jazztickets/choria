@@ -1,6 +1,9 @@
 -- Base Attack Skill --
 Base_Attack = {
 	Stamina = 0,
+	AttackDelay = 0,
+	AttackTime = 0,
+	Cooldown = 0,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -43,10 +46,10 @@ Base_Attack = {
 	GetAttackTimes = function(self, Object)
 		Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 		if Weapon ~= nil then
-			return Weapon.AttackDelay, Weapon.AttackTime, Weapon.Cooldown
+			return self.AttackDelay + Weapon.AttackDelay, self.AttackTime + Weapon.AttackTime, self.Cooldown + Weapon.Cooldown
 		end
 
-		return 0, 0, 0
+		return self.AttackDelay, self.AttackTime, self.Cooldown
 	end,
 
 	GenerateDamage = function(self, Level, Source)

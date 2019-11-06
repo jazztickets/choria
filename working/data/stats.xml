@@ -48,22 +48,18 @@
 		<item id="rusty_short_sword" name="Rusty Short Sword" type="one_hand" max_level="20" weapon_type="sword" texture="textures/items/rusty_short_sword.png">
 			<price buy="25"/>
 			<damage min="10" max="20" type="physical" />
-			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
 		</item>
 		<item id="short_sword" name="Short Sword" type="one_hand" max_level="20" weapon_type="sword" texture="textures/items/short_sword.png">
 			<price buy="75"/>
 			<damage min="20" max="40" type="physical" />
-			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
 		</item>
 		<item id="rusty_axe" name="Rusty Axe" type="two_hand" weapon_type="two_handed_axe" texture="textures/items/rusty_axe.png">
 			<price buy="50"/>
 			<damage min="25" max="75" type="physical" />
-			<use attack_delay="0.7" attack_time="0.3" stamina="55" cooldown="0.3" />
 		</item>
 		<item id="axe" name="Axe" type="two_hand" weapon_type="two_handed_axe" texture="textures/items/axe.png">
 			<price buy="150"/>
 			<damage min="50" max="150" type="physical" />
-			<use attack_delay="0.7" attack_time="0.3" stamina="55" cooldown="0.3" />
 		</item>
 		<item id="action_slot1" name="Action Slot I" type="unlockable" texture="textures/items/actionslot1.png">
 			<use scope="world" script="Item_ActionSlot"/>

@@ -197,7 +197,7 @@ Skill_Punch = Base_Attack:New()
 Skill_Punch.Stamina = 10
 Skill_Punch.AttackDelay = 0.2
 Skill_Punch.AttackTime = 0.3
-Skill_Punch.Cooldown = 0.5
+Skill_Punch.Cooldown = 0.1
 
 function Skill_Punch.GetInfo(self, Item)
 
@@ -219,6 +219,9 @@ Skill_Attack = Base_Attack:New()
 Skill_Attack.BaseChance = 4
 Skill_Attack.ChancePerLevel = 2
 Skill_Attack.Stamina = 20
+Skill_Attack.AttackDelay = 0.5
+Skill_Attack.AttackTime = 0.35
+Skill_Attack.Cooldown = 0.2
 
 function Skill_Attack.GetInfo(self, Item)
 
@@ -249,9 +252,12 @@ end
 -- Cleave --
 
 Skill_Cleave = Base_Attack:New()
-Skill_Cleave.DamageBase = 32
+Skill_Cleave.DamageBase = 70
 Skill_Cleave.DamagePerLevel = 2
 Skill_Cleave.Stamina = 55
+Skill_Cleave.AttackDelay = 0.7
+Skill_Cleave.AttackTime = 0.4
+Skill_Cleave.Cooldown = 0.3
 
 function Skill_Cleave.GetDamage(self, Level)
 	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))
@@ -266,7 +272,7 @@ function Skill_Cleave.GetTargetCount(self, Level)
 end
 
 function Skill_Cleave.GetInfo(self, Item)
-	return "Swing your weapon and hit multiple foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage"
+	return "Swing your weapon and hit [c green]" .. self.GetTargetCount(Item.Level) .. " [c white]enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage"
 end
 
 function Skill_Cleave.PlaySound(self, Level)
