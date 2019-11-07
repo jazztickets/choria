@@ -110,6 +110,9 @@ bool _BaseSkill::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &Result
 
 // Determine if a skill can be equipped to the action bar
 bool _BaseSkill::CanEquip(_Scripting *Scripting, _Object *Object) const {
+	if(Object->IsMonster())
+		return true;
+
 	if(WeaponTypeRequired != Object->Character->GetWeaponType())
 		return false;
 

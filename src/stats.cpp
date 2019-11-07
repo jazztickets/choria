@@ -606,14 +606,11 @@ void _Stats::LoadData(const std::string &Path) {
 
 		// Load actions
 		tinyxml2::XMLElement *ActionsNode = Node->FirstChildElement("actions");
-		if(!ActionsNode)
-			throw std::runtime_error("No skills node for monster id '" + Monster.ID + "' in " + Path);
-
-		for(tinyxml2::XMLElement *ActionNode = ActionsNode->FirstChildElement("action"); ActionNode != nullptr; ActionNode = ActionNode->NextSiblingElement()) {
-			//const _Skill *Skill = GetSkill(ActionNode, "skill_id");
-
-			//TODO add monster action struct
-			//Monster.Actions.push_back(Skill);
+		if(ActionsNode) {
+			for(tinyxml2::XMLElement *ActionNode = ActionsNode->FirstChildElement("action"); ActionNode != nullptr; ActionNode = ActionNode->NextSiblingElement()) {
+				const _BaseSkill *Skill = GetSkill(ActionNode, "skill_id");
+				Monster.Actions.push_back(Skill);
+			}
 		}
 
 		// Load drops
@@ -792,16 +789,23 @@ void _Stats::GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, d
 
 	// Get data
 	Object->Name = MonsterStat->Name;
-	Object->Character->Portrait = MonsterStat->Portrait;
-	Object->Character->BaseMaxHealth = (int)(MonsterStat->Health * Difficulty);
-	Object->Character->BaseMaxMana = MonsterStat->Mana;
-	Object->Character->BaseMinDamage = MonsterStat->MinDamage;
-	Object->Character->BaseMaxDamage = MonsterStat->MaxDamage;
-	Object->Character->BaseArmor = 0;
-	Object->Character->BaseDamageBlock = 0;
-	Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
-	Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
-	Object->Character->Gold = MonsterStat->Gold;
+	_Character *Character = Object->Character;
+	Character->Portrait = MonsterStat->Portrait;
+	Character->BaseMaxHealth = (int)(MonsterStat->Health * Difficulty);
+	Character->BaseMaxMana = MonsterStat->Mana;
+	Character->BaseMinDamage = MonsterStat->MinDamage;
+	Character->BaseMaxDamage = MonsterStat->MaxDamage;
+	Character->BaseArmor = 0;
+	Character->BaseDamageBlock = 0;
+	Character->ActionBar.resize(MonsterStat->Actions.size());
+	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+		Character->ActionBar[i].Usable = MonsterStat->Actions[i];
+	}
+
+	//Object->Character->Skills = MonsterStat->Actions;
+	Character->Health = Character->MaxHealth = Character->BaseMaxHealth;
+	Character->Mana = Character->MaxMana = Character->BaseMaxMana;
+	Character->Gold = MonsterStat->Gold;
 }
 
 // Randomly generates a list of monsters from a zone

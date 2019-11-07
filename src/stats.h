@@ -75,7 +75,7 @@ struct _MonsterStat {
 	std::string AI;
 	const _Portrait *Portrait;
 	const ae::_Texture *Texture;
-	//std::vector<const _Usable *> Actions;
+	std::vector<const _Usable *> Actions;
 	std::vector<_Drop> Drops;
 	int Health;
 	int Mana;

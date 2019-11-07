@@ -295,7 +295,7 @@
 	</minigames>
 	<monsters>
 		<monster id="rat" name="Rat" portrait="rat">
-			<stats ai="dumb" health="5"/>
+			<stats ai="AI_Dumb" health="5"/>
 			<damage min="0" max="0"/>
 			<actions>
 				<action skill_id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
@@ -306,7 +306,7 @@
 			</drops>
 		</monster>
 		<monster id="crow" name="Crow" portrait="crow">
-			<stats ai="dumb" health="40" experience="1" gold="1"/>
+			<stats ai="AI_Dumb" health="40" experience="1" gold="1"/>
 			<damage min="5" max="10"/>
 			<actions>
 				<action skill_id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
@@ -321,6 +321,9 @@
 		</monster>
 	</monsters>
 	<zones>
+		<zone id="test" min="1" max="1">
+			<monster id="rat"/>
+		</zone>
 		<zone id="rat" min="2" max="4">
 			<monster id="rat"/>
 		</zone>
