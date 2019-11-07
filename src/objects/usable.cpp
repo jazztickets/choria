@@ -110,7 +110,7 @@ void _Usable::DrawTooltipBase(const glm::vec2 &Position, const _Object *Player, 
 	DrawPosition.y += LargeSpacingY;
 
 	// Draw target text
-	if(Target != TargetType::NONE) {
+	if(RequiresTarget() && Target != TargetType::NONE) {
 		DrawPosition.y += TOOLTIP_TARGET_OFFSET * ae::_Element::GetUIScale();
 		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(Target).second;
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, glm::vec4(1.0f));
@@ -277,6 +277,15 @@ bool _Usable::CheckScope(ScopeType CheckScope) const {
 
 // Check if an item can target an object
 bool _Usable::CanTarget(_Object *SourceObject, _Object *TargetObject) const {
+	if(!RequiresTarget())
+		return true;
+
+	if(Target == TargetType::NONE)
+		return false;
+
+	if(Target == TargetType::SELF && SourceObject != TargetObject)
+		return false;
+
 	if(TargetAlive && !TargetObject->Character->IsAlive())
 		return false;
 

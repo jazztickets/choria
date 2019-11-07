@@ -497,7 +497,7 @@ void _Stats::LoadData(const std::string &Path) {
 
 		// Load text
 		Vendor.Name = GetString(Node, "name", false);
-		std::string StringID = GetString(Node, "text");
+		std::string StringID = GetString(Node, "text", false);
 		if(StringID.length())
 			Vendor.Text = Strings.at(StringID);
 

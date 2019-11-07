@@ -1004,6 +1004,9 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		// Check for existing action
 		if(!Player->Character->Action.IsSet()) {
+			if(!Item->CanTarget(Player, Player))
+				return;
+
 			Player->Character->Targets.clear();
 			Player->Character->Targets.push_back(Player);
 			Player->Character->Action.Usable = Item;

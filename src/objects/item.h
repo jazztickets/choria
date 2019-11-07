@@ -39,6 +39,7 @@ class _BaseItem : public _Usable {
 
 		void DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
 
+		bool RequiresTarget() const override { return IsConsumable(); }
 		bool IsConsumable() const override { return Type == ItemType::CONSUMABLE; }
 		bool IsKey() const override { return Type == ItemType::KEY; }
 		bool IsUnlockable() const override { return Type == ItemType::UNLOCKABLE; }

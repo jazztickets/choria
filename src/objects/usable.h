@@ -68,6 +68,7 @@ class _Usable {
 		const _BaseSkill *AsSkill() const { return (const _BaseSkill *)this; }
 
 		// Types
+		virtual bool RequiresTarget() const { return true; }
 		virtual bool IsSkill() const { return false; }
 		virtual bool IsConsumable() const { return false; }
 		virtual bool IsKey() const { return false; }

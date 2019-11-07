@@ -47,36 +47,155 @@
 	<items>
 		<item id="rusty_short_sword" name="Rusty Short Sword" type="one_hand" max_level="20" weapon_type="sword" texture="textures/items/rusty_short_sword.png">
 			<price buy="25"/>
-			<damage min="10" max="20" type="physical" />
+			<damage min="10" max="20" type="physical"/>
 		</item>
 		<item id="short_sword" name="Short Sword" type="one_hand" max_level="20" weapon_type="sword" texture="textures/items/short_sword.png">
 			<price buy="75"/>
-			<damage min="20" max="40" type="physical" />
+			<damage min="20" max="40" type="physical"/>
 		</item>
 		<item id="rusty_axe" name="Rusty Axe" type="two_hand" weapon_type="two_handed_axe" texture="textures/items/rusty_axe.png">
 			<price buy="50"/>
-			<damage min="25" max="75" type="physical" />
+			<damage min="25" max="75" type="physical"/>
 		</item>
 		<item id="axe" name="Axe" type="two_hand" weapon_type="two_handed_axe" texture="textures/items/axe.png">
 			<price buy="150"/>
-			<damage min="50" max="150" type="physical" />
+			<damage min="50" max="150" type="physical"/>
 		</item>
 		<item id="action_slot1" name="Action Slot I" type="unlockable" texture="textures/items/actionslot1.png">
 			<use scope="world" script="Item_ActionSlot"/>
 		</item>
+		<item id="action_slot2" name="Action Slot II" type="unlockable" texture="textures/items/actionslot2.png">
+			<use scope="world" script="Item_ActionSlot"/>
+		</item>
+		<item id="action_slot3" name="Action Slot III" type="unlockable" texture="textures/items/actionslot3.png">
+			<use scope="world" script="Item_ActionSlot"/>
+		</item>
+		<item id="action_slot4" name="Action Slot IV" type="unlockable" texture="textures/items/actionslot4.png">
+			<use scope="world" script="Item_ActionSlot"/>
+		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
 			<price buy="5"/>
-			<target type="self" />
+			<target type="self"/>
 			<use scope="all" level="30" duration="5" script="Item_HealingSalve"/>
 		</item>
+		<item id="mana_cider" name="Mana Cider" type="consumable" texture="textures/items/mana_cider.png">
+			<price buy="10"/>
+			<target type="self"/>
+			<use scope="all" level="10" duration="5" script="Item_ManaCider"/>
+		</item>
+		<item id="soothing_salve" name="Soothing Salve" type="consumable" texture="textures/items/soothing_salve.png">
+			<price buy="50"/>
+			<target type="self"/>
+			<use scope="all" level="150" duration="5" script="Item_HealingSalve"/>
+		</item>
+		<item id="arcane_cider" name="Arcane Cider" type="consumable" texture="textures/items/arcane_cider.png">
+			<price buy="75"/>
+			<target type="self"/>
+			<use scope="all" level="50" duration="10" script="Item_ManaCider"/>
+		</item>
+		<item id="poison" name="Poison" type="consumable" texture="textures/items/poison.png">
+			<price buy="25"/>
+			<target type="any"/>
+			<use scope="all" level="10" duration="10" script="Item_PoisonPotion"/>
+		</item>
+		<item id="invisibility_potion" name="Invisibility Potion" type="consumable" texture="textures/items/invis_potion.png">
+			<price buy="40"/>
+			<target type="self"/>
+			<use scope="world" level="15" duration="15" script="Item_InvisPotion"/>
+		</item>
+		<item id="ghostly_potion" name="Ghostly Potion" type="consumable" texture="textures/items/invis_potion.png">
+			<price buy="150"/>
+			<target type="self"/>
+			<use scope="world" level="30" duration="30" script="Item_InvisPotion"/>
+		</item>
+		<item id="haste_potion" name="Potion of Haste" type="consumable" texture="textures/items/haste_potion.png">
+			<price buy="75"/>
+			<target type="self"/>
+			<use scope="battle" level="30" duration="10" script="Item_HastePotion"/>
+		</item>
 		<item id="battle_potion" name="Battle Potion" type="consumable" texture="textures/items/death_potion.png">
+			<target type="self"/>
 			<use scope="world" script="Item_BattlePotion"/>
+		</item>
+		<item id="death_potion" name="Death Potion" type="consumable" texture="textures/items/death_potion.png">
+			<price buy="300"/>
+			<target type="self"/>
+			<use scope="all" level="100" duration="10" script="Item_DeathPotion"/>
+		</item>
+		<item id="bright_potion" name="Bright Potion" type="consumable" texture="textures/items/bright_potion.png">
+			<price buy="200"/>
+			<target type="self"/>
+			<use scope="world" level="720" script="Item_BrightPotion"/>
+		</item>
+		<item id="dark_potion" name="Dark Potion" type="consumable" texture="textures/items/dark_potion.png">
+			<price buy="400"/>
+			<target type="self"/>
+			<use scope="world" script="Item_DarkPotion"/>
 		</item>
 		<item id="torch" name="Torch" type="consumable" texture="textures/items/torch.png">
 			<price buy="15"/>
+			<target type="self"/>
 			<use scope="world" level="3" duration="60" script="Item_Torch"/>
 		</item>
-		<item id="rat_tail" name="Rat Tail" type="tradable" texture="textures/items/rat_tail.png" />
+		<item id="medium_torch" name="Medium Torch" type="consumable" texture="textures/items/torch.png">
+			<price buy="35"/>
+			<target type="self"/>
+			<use scope="world" level="5" duration="120" script="Item_Torch"/>
+		</item>
+		<item id="large_torch" name="Large Torch" type="consumable" texture="textures/items/torch.png">
+			<price buy="75"/>
+			<target type="self"/>
+			<use scope="world" level="8" duration="180" script="Item_Torch"/>
+		</item>
+		<item id="teleport_scroll" name="Teleport Scroll" type="consumable" texture="textures/items/scroll.png">
+			<price buy="20"/>
+			<target type="self"/>
+			<use scope="world" duration="3" script="Item_TeleportScroll"/>
+		</item>
+		<item id="crow_feather" name="Crow Feather" type="consumable" texture="textures/items/crow_feather.png">
+			<price buy="8"/>
+			<target type="self"/>
+			<use scope="world" level="20" duration="30" script="Item_CrowFeather"/>
+		</item>
+		<item id="spider_leg" name="Spider Leg" type="consumable" texture="textures/items/spider_leg.png">
+			<price buy="15"/>
+			<target type="self"/>
+			<use scope="battle" level="10" duration="30" script="Item_SpiderLeg"/>
+		</item>
+		<item id="fang" name="Fang" type="consumable" texture="textures/items/fang.png">
+			<price buy="20"/>
+			<target type="self"/>
+			<use scope="battle" level="30" duration="30" script="Item_Fang"/>
+		</item>
+		<item id="slimy_glob" name="Slimy Glob" type="consumable" texture="textures/items/glob.png">
+			<price buy="10"/>
+			<target type="self"/>
+			<use scope="all" level="25" duration="30" script="Item_SlimyGlob"/>
+		</item>
+		<item id="crab_legs" name="Crab Legs" type="consumable" texture="textures/items/crab_legs.png">
+			<price buy="10"/>
+			<target type="self"/>
+			<use scope="battle" level="10" duration="30" script="Item_CrabLegs"/>
+		</item>
+		<item id="spectral_dust" name="Spectral Dust" type="consumable" texture="textures/items/spectral_dust.png">
+			<price buy="25"/>
+			<target type="self"/>
+			<use scope="battle" level="10" duration="30" script="Item_SpectralDust"/>
+		</item>
+		<item id="swamp_glob" name="Swamp Glob" type="consumable" texture="textures/items/swamp_glob.png">
+			<price buy="35"/>
+			<target type="enemy"/>
+			<use scope="battle" level="30" duration="10" script="Item_SwampGlob"/>
+		</item>
+		<item id="fire_dust" name="Fire Dust" type="consumable" texture="textures/items/fire_dust.png">
+			<price buy="20"/>
+			<target type="enemy"/>
+			<use scope="battle" level="20" duration="10" script="Item_FireDust"/>
+		</item>
+		<item id="rat_tail" name="Rat Tail" type="tradable" texture="textures/items/rat_tail.png"/>
+		<item id="game_token" name="Game Token" type="tradable" texture="textures/items/token.png">
+			<price buy="10"/>
+		</item>
 		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
 			<price buy="5" tradable="false"/>
 			<use scope="world"/>
@@ -84,9 +203,6 @@
 		<item id="cell_key" name="Cell Key" type="key" texture="textures/items/key.png" destroyable="false">
 			<price tradable="false"/>
 			<use scope="world"/>
-		</item>
-		<item id="game_token" name="Game Token" type="tradable" texture="textures/items/token.png">
-			<price buy="10"/>
 		</item>
 	</items>
 	<builds>
@@ -105,6 +221,38 @@
 		</build>
 	</builds>
 	<vendors>
+		<vendor id="debug">
+			<item id="action_slot1"/>
+			<item id="action_slot2"/>
+			<item id="action_slot3"/>
+			<item id="action_slot4"/>
+			<item id="healing_salve"/>
+			<item id="mana_cider"/>
+			<item id="soothing_salve"/>
+			<item id="arcane_cider"/>
+			<item id="poison"/>
+			<item id="invisibility_potion"/>
+			<item id="ghostly_potion"/>
+			<item id="haste_potion"/>
+			<item id="battle_potion"/>
+			<item id="death_potion"/>
+			<item id="bright_potion"/>
+			<item id="dark_potion"/>
+			<item id="torch"/>
+			<item id="medium_torch"/>
+			<item id="large_torch"/>
+			<item id="teleport_scroll"/>
+			<item id="crow_feather"/>
+			<item id="spider_leg"/>
+			<item id="fang"/>
+			<item id="slimy_glob"/>
+			<item id="crab_legs"/>
+			<item id="spectral_dust"/>
+			<item id="swamp_glob"/>
+			<item id="fire_dust"/>
+			<item id="rat_tail"/>
+			<item id="game_token"/>
+		</vendor>
 		<vendor id="start_camp" name="Jebs" text="start_camp">
 			<item id="healing_salve"/>
 			<item id="torch"/>

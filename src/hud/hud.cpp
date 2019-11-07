@@ -408,9 +408,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							// Swap actionbar with inventory
 							if(Tooltip.Usable && !Tooltip.Usable->IsSkill())
 								SetActionBar(Tooltip.Usable, Cursor.Slot.Index);
-							else {
+							else
 								SetActionBar(_Action(), Cursor.Slot.Index);
-							}
 						break;
 						case WINDOW_ACTIONBAR:
 							SetActionBar(Cursor.Usable, Tooltip.Slot.Index, Cursor.Slot.Index);
