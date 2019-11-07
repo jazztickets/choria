@@ -225,7 +225,7 @@ Skill_Slash.Cooldown = 0.2
 
 function Skill_Slash.GetInfo(self, Item)
 
-	return "Slash your enemies for [c green]100% [c white] weapon damage"
+	return "Swing your sword for [c green]100%[c white] weapon damage"
 end
 
 function Skill_Slash.PlaySound(self, Level)

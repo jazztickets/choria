@@ -14,6 +14,22 @@
 	<buffs>
 		<buff id="healing" name="Healing" script="Buff_Healing" texture="textures/buffs/healing.png"/>
 		<buff id="light" name="Light" script="Buff_Light" texture="textures/buffs/light.png"/>
+		<buff id="mana" name="Mana" script="Buff_Mana" texture="textures/buffs/mana.png"/>
+		<buff id="invisible" name="Invisible" script="Buff_Invis" texture="textures/buffs/invis.png"/>
+		<buff id="bleeding" name="Bleeding" script="Buff_Bleeding" texture="textures/buffs/bleeding.png"/>
+		<buff id="slowed" name="Slowed" script="Buff_Slowed" texture="textures/buffs/slowed.png"/>
+		<buff id="stunned" name="Stunned" script="Buff_Stunned" texture="textures/buffs/stunned.png"/>
+		<buff id="hasted" name="Hasted" script="Buff_Hasted" texture="textures/buffs/hasted.png"/>
+		<buff id="blinded" name="Blinded" script="Buff_Blinded" texture="textures/buffs/blinded.png"/>
+		<buff id="hardened" name="Hardened" script="Buff_Hardened" texture="textures/buffs/hardened.png"/>
+		<buff id="parry" name="Parry" script="Buff_Parry" texture="textures/buffs/parry.png"/>
+		<buff id="poisoned" name="Poisoned" script="Buff_Poisoned" texture="textures/buffs/poisoned.png"/>
+		<buff id="burning" name="Burning" script="Buff_Burning" texture="textures/buffs/burning.png"/>
+		<buff id="bleed_resist" name="Bleed Resist" script="Buff_BleedResist" texture="textures/buffs/bleed_resist.png"/>
+		<buff id="fast" name="Fast" script="Buff_Fast" texture="textures/buffs/fast.png"/>
+		<buff id="mighty" name="Mighty" script="Buff_Mighty" texture="textures/buffs/mighty.png"/>
+		<buff id="evasion" name="Evasion" script="Buff_Evasion" texture="textures/buffs/evasion.png"/>
+		<buff id="weak" name="Weak" script="Buff_Weak" texture="textures/buffs/weak.png"/>
 	</buffs>
 	<skills>
 		<skill id="punch" name="Punch" max_level="20" texture="textures/skills/punch.png">
