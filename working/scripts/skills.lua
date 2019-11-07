@@ -213,38 +213,40 @@ function Skill_Punch.GetAttackTimes(self, Object)
 	return self.AttackDelay, self.AttackTime, self.Cooldown
 end
 
--- Attack --
+-- Slash --
 
-Skill_Attack = Base_Attack:New()
-Skill_Attack.BaseChance = 4
-Skill_Attack.ChancePerLevel = 2
-Skill_Attack.Stamina = 20
-Skill_Attack.AttackDelay = 0.5
-Skill_Attack.AttackTime = 0.35
-Skill_Attack.Cooldown = 0.2
+Skill_Slash = Base_Attack:New()
+Skill_Slash.BaseChance = 4
+Skill_Slash.ChancePerLevel = 2
+Skill_Slash.Stamina = 20
+Skill_Slash.AttackDelay = 0.5
+Skill_Slash.AttackTime = 0.35
+Skill_Slash.Cooldown = 0.2
 
-function Skill_Attack.GetInfo(self, Item)
+function Skill_Slash.GetInfo(self, Item)
 
-	return "Attack with your weapon\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
+	return "Slash your enemies for [c green]100% [c white] weapon damage"
 end
 
-function Skill_Attack.PlaySound(self, Level)
+function Skill_Slash.PlaySound(self, Level)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
-function Skill_Attack.GetChance(self, Level)
+function Skill_Slash.GetChance(self, Level)
 
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 
-function Skill_Attack.GenerateDamage(self, Level, Source)
+function Skill_Slash.GenerateDamage(self, Level, Source)
 	Damage = Source.GenerateDamage()
 
 	Crit = false
+	--[[
 	if Random.GetInt(1, 100) <= self:GetChance(Level) then
 		Damage = Damage * 3
 		Crit = true
 	end
+	--]]
 
 	return Damage, Crit
 end

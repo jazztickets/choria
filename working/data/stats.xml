@@ -20,9 +20,9 @@
 			<target type="enemy"/>
 			<use scope="battle" script="Skill_Punch"/>
 		</skill>
-		<skill id="attack" name="Attack" max_level="20" texture="textures/skills/attack.png">
+		<skill id="slash" name="Slash" max_level="20" texture="textures/skills/slash.png">
 			<target type="enemy"/>
-			<use scope="battle" script="Skill_Attack"/>
+			<use scope="battle" script="Skill_Slash"/>
 		</skill>
 		<skill id="cleave" name="Cleave" max_level="20" texture="textures/skills/cleave.png">
 			<target type="enemy"/>
@@ -38,7 +38,7 @@
 			<skill id="punch"/>
 		</weapon_type>
 		<weapon_type id="sword" name="Sword">
-			<skill id="attack"/>
+			<skill id="slash"/>
 		</weapon_type>
 		<weapon_type id="two_handed_axe" name="Two-handed Axe">
 			<skill id="cleave"/>
@@ -61,16 +61,16 @@
 			<price buy="150"/>
 			<damage min="50" max="150" type="physical"/>
 		</item>
-		<item id="action_slot1" name="Action Slot I" type="unlockable" texture="textures/items/actionslot1.png">
+		<item id="actionslot1" name="Action Slot I" type="unlockable" texture="textures/items/actionslot1.png">
 			<use scope="world" script="Item_ActionSlot"/>
 		</item>
-		<item id="action_slot2" name="Action Slot II" type="unlockable" texture="textures/items/actionslot2.png">
+		<item id="actionslot2" name="Action Slot II" type="unlockable" texture="textures/items/actionslot2.png">
 			<use scope="world" script="Item_ActionSlot"/>
 		</item>
-		<item id="action_slot3" name="Action Slot III" type="unlockable" texture="textures/items/actionslot3.png">
+		<item id="actionslot3" name="Action Slot III" type="unlockable" texture="textures/items/actionslot3.png">
 			<use scope="world" script="Item_ActionSlot"/>
 		</item>
-		<item id="action_slot4" name="Action Slot IV" type="unlockable" texture="textures/items/actionslot4.png">
+		<item id="actionslot4" name="Action Slot IV" type="unlockable" texture="textures/items/actionslot4.png">
 			<use scope="world" script="Item_ActionSlot"/>
 		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
@@ -98,7 +98,7 @@
 			<target type="any"/>
 			<use scope="all" level="10" duration="10" script="Item_PoisonPotion"/>
 		</item>
-		<item id="invisibility_potion" name="Invisibility Potion" type="consumable" texture="textures/items/invis_potion.png">
+		<item id="invis_potion" name="Invisibility Potion" type="consumable" texture="textures/items/invis_potion.png">
 			<price buy="40"/>
 			<target type="self"/>
 			<use scope="world" level="15" duration="15" script="Item_InvisPotion"/>
@@ -132,7 +132,7 @@
 			<target type="self"/>
 			<use scope="world" script="Item_DarkPotion"/>
 		</item>
-		<item id="torch" name="Torch" type="consumable" texture="textures/items/torch.png">
+		<item id="small_torch" name="Small Torch" type="consumable" texture="textures/items/torch.png">
 			<price buy="15"/>
 			<target type="self"/>
 			<use scope="world" level="3" duration="60" script="Item_Torch"/>
@@ -222,23 +222,23 @@
 	</builds>
 	<vendors>
 		<vendor id="debug">
-			<item id="action_slot1"/>
-			<item id="action_slot2"/>
-			<item id="action_slot3"/>
-			<item id="action_slot4"/>
+			<item id="actionslot1"/>
+			<item id="actionslot2"/>
+			<item id="actionslot3"/>
+			<item id="actionslot4"/>
 			<item id="healing_salve"/>
 			<item id="mana_cider"/>
 			<item id="soothing_salve"/>
 			<item id="arcane_cider"/>
 			<item id="poison"/>
-			<item id="invisibility_potion"/>
+			<item id="invis_potion"/>
 			<item id="ghostly_potion"/>
 			<item id="haste_potion"/>
 			<item id="battle_potion"/>
 			<item id="death_potion"/>
 			<item id="bright_potion"/>
 			<item id="dark_potion"/>
-			<item id="torch"/>
+			<item id="small_torch"/>
 			<item id="medium_torch"/>
 			<item id="large_torch"/>
 			<item id="teleport_scroll"/>
@@ -255,7 +255,7 @@
 		</vendor>
 		<vendor id="start_camp" name="Jebs" text="start_camp">
 			<item id="healing_salve"/>
-			<item id="torch"/>
+			<item id="small_torch"/>
 		</vendor>
 	</vendors>
 	<traders>

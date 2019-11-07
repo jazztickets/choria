@@ -688,8 +688,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set items
 	for(Json::ValueIterator BagNode = Data["items"].begin(); BagNode != Data["items"].end(); BagNode++) {
 		for(const Json::Value &ItemNode : *BagNode) {
+			std::string ItemID = ItemNode["id"].asString();
+			if(Stats->Items.find(ItemID) == Stats->Items.end())
+				continue;
+
 			_InventorySlot InventorySlot;
-			InventorySlot.Item = &Stats->Items.at(ItemNode["id"].asString());
+			InventorySlot.Item = &Stats->Items.at(ItemID);
 			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
 			InventorySlot.Count = ItemNode["count"].asInt();
 			_Bag *Bag = Inventory->GetBagByID(BagNode.name());
@@ -706,7 +710,8 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set skills
 	for(const Json::Value &SkillNode : Data["skills"]) {
 		std::string SkillID = SkillNode["id"].asString();
-		Character->Skills[SkillID] = SkillNode["experience"].asInt();
+		if(Stats->Skills.find(SkillID) != Stats->Skills.end())
+			Character->Skills[SkillID] = SkillNode["experience"].asInt();
 	}
 
 	// Set actionbar
@@ -715,10 +720,15 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		if(Slot >= Character->ActionBar.size())
 			continue;
 
-		if(ActionNode["type"].asString() == "skill")
-			Character->ActionBar[Slot].Usable = &Stats->Skills.at(ActionNode["id"].asString());
-		else
-			Character->ActionBar[Slot].Usable = &Stats->Items.at(ActionNode["id"].asString());
+		std::string UsableID = ActionNode["id"].asString();
+		if(ActionNode["type"].asString() == "skill") {
+			if(Stats->Skills.find(UsableID) != Stats->Skills.end())
+				Character->ActionBar[Slot].Usable = &Stats->Skills.at(UsableID);
+		}
+		else {
+			if(Stats->Items.find(UsableID) != Stats->Items.end())
+				Character->ActionBar[Slot].Usable = &Stats->Items.at(UsableID);
+		}
 	}
 
 	// Set status effects
@@ -733,8 +743,11 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	}
 
 	// Set unlocks
-	for(const Json::Value &UnlockNode : Data["unlocks"])
-		Character->Unlocks[UnlockNode["id"].asString()].Level = UnlockNode["level"].asInt();
+	for(const Json::Value &UnlockNode : Data["unlocks"]) {
+		std::string ItemID = UnlockNode["id"].asString();
+		if(Stats->Items.find(ItemID) != Stats->Items.end())
+			Character->Unlocks[ItemID].Level = UnlockNode["level"].asInt();
+	}
 }
 
 // Serialize for ObjectUpdate
