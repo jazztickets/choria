@@ -3,6 +3,10 @@
 -- Monster attack --
 
 Skill_MonsterAttack = Base_Attack:New()
+Skill_MonsterAttack.Stamina = 50
+Skill_MonsterAttack.AttackDelay = 0.3
+Skill_MonsterAttack.AttackTime = 0.3
+Skill_MonsterAttack.Cooldown = 0.2
 
 -- Crow attack --
 
