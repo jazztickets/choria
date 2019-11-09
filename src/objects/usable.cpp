@@ -41,6 +41,7 @@ _Usable::_Usable() :
 	AttackDelay(0.0),
 	AttackTime(0.0),
 	Cooldown(0.0),
+	Stamina(0.0f),
 	Target(TargetType::NONE),
 	Scope(ScopeType::NONE),
 	TargetAlive(true) {
@@ -213,16 +214,16 @@ bool _Usable::CallCanUse(_Scripting *Scripting, _ActionResult &ActionResult) con
 	return true;
 }
 
-// Return attack times from skill script. Return false if function doesn't exist.
-bool _Usable::CallGetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
+// Return attack time adjustments from skill script. Return false if function doesn't exist.
+bool _Usable::CallGetAttackTimesAdjust(_Scripting *Scripting, _Object *Object, double &AttackDelayAdjust, double &AttackTimeAdjust, double &CooldownAdjust) const {
 
 	// Check script's function
-	if(Scripting->StartMethodCall(Script, "GetAttackTimes")) {
+	if(Scripting->StartMethodCall(Script, "GetAttackTimesAdjust")) {
 		Scripting->PushObject(Object);
 		Scripting->MethodCall(1, 3);
-		AttackDelay = Scripting->GetReal(1);
-		AttackTime = Scripting->GetReal(2);
-		Cooldown = Scripting->GetReal(3);
+		AttackDelayAdjust = Scripting->GetReal(1);
+		AttackTimeAdjust = Scripting->GetReal(2);
+		CooldownAdjust = Scripting->GetReal(3);
 		Scripting->FinishMethodCall();
 
 		return true;

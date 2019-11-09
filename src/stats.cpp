@@ -369,6 +369,10 @@ void _Stats::LoadData(const std::string &Path) {
 		tinyxml2::XMLElement *UseNode = Node->FirstChildElement("use");
 		if(UseNode) {
 			Skill.Scope = ScopeTypesIndex[GetString(UseNode, "scope")];
+			Skill.AttackDelay = UseNode->DoubleAttribute("attack_delay");
+			Skill.AttackTime = UseNode->DoubleAttribute("attack_time");
+			Skill.Cooldown = UseNode->DoubleAttribute("cooldown");
+			Skill.Stamina = UseNode->FloatAttribute("stamina");
 			Skill.Script = GetString(UseNode, "script");
 		}
 

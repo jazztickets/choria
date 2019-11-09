@@ -152,7 +152,7 @@ Item_ThrowingKnives = Base_Attack:New()
 
 function Item_ThrowingKnives.GenerateDamage(self, Level, Source)
 
-	return self.Item.GenerateDamage()
+	return self.Data.GenerateDamage()
 end
 
 function Item_ThrowingKnives.GetInfo(self, Item)
@@ -181,7 +181,7 @@ end
 
 function Item_PoisonKnives.GenerateDamage(self, Level, Source)
 
-	return self.Item.GenerateDamage()
+	return self.Data.GenerateDamage()
 end
 
 function Item_PoisonKnives.PlaySound(self, Level)

@@ -84,20 +84,25 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	ActionResult.Scope = Scope;
 	ActionResult.ActionUsed = Source->Character->Action;
 
-	double AttackDelay = 0.0;
-	double AttackTime = 0.0;
-	double Cooldown = 0.0;
-
 	// Check use
 	if(!Usable->CallCanUse(Source->Scripting, ActionResult))
 		return false;
 
 	// Get attack times
-	AttackDelay = Usable->AttackDelay;
-	AttackTime = Usable->AttackTime;
+	double AttackDelay = Usable->AttackDelay;
+	double AttackTime = Usable->AttackTime;
+	double Cooldown = Usable->Cooldown;
 
-	// Get attack times from skill
-	Usable->CallGetAttackTimes(Source->Scripting, Source, AttackDelay, AttackTime, Cooldown);
+	// Get attack time adjustments from script
+	double AttackDelayAdjust = 0.0;
+	double AttackTimeAdjust = 0.0;
+	double CooldownAdjust = 0.0;
+	Usable->CallGetAttackTimesAdjust(Source->Scripting, Source, AttackDelayAdjust, AttackTimeAdjust, CooldownAdjust);
+
+	// Apply timing
+	AttackDelay += AttackDelayAdjust;
+	AttackTime += AttackTimeAdjust;
+	Cooldown += CooldownAdjust;
 	if(Source->Character->Battle)
 		ApplyTime = AttackDelay + AttackTime;
 

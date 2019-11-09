@@ -30,6 +30,7 @@ class _Object;
 class _Light;
 class _Battle;
 class _BaseItem;
+class _BaseSkill;
 class _Stats;
 class _StatChange;
 class _StatusEffect;
@@ -48,7 +49,8 @@ class _Scripting {
 
 		void LoadScript(const std::string &Path);
 		void InjectStats(const _Stats *Stats);
-		void InjectItemPointers(const _Stats *Stats);
+		void InjectItemData(const _Stats *Stats);
+		void InjectSkillData(const _Stats *Stats);
 		void InjectItems(const _Stats *Stats);
 		void InjectMonsters(const _Stats *Stats);
 		void InjectBuffs(const _Stats *Stats);
@@ -91,6 +93,7 @@ class _Scripting {
 	private:
 
 		static void PushItem(lua_State *LuaState, const _BaseItem *Item, int Upgrades);
+		static void PushSkill(lua_State *LuaState, const _BaseSkill *Skill);
 
 		static int RandomGetInt(lua_State *LuaState);
 		static int RandomGetReal(lua_State *LuaState);

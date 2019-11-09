@@ -87,7 +87,8 @@ void _Scripting::Setup(const _Stats *Stats, const std::string &BaseScript) {
 	InjectMonsters(Stats);
 	InjectItems(Stats);
 	LoadScript(BaseScript);
-	InjectItemPointers(Stats);
+	InjectItemData(Stats);
+	InjectSkillData(Stats);
 	InjectBuffs(Stats);
 }
 
@@ -122,6 +123,10 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "BAG_INVENTORY");
 	lua_pushinteger(LuaState, (int)BagType::TRADE);
 	lua_setglobal(LuaState, "BAG_TRADE");
+	lua_pushinteger(LuaState, (int)BagType::KEYS);
+	lua_setglobal(LuaState, "BAG_KEYS");
+	lua_pushinteger(LuaState, (int)BagType::STASH);
+	lua_setglobal(LuaState, "BAG_STASH");
 
 	// Push inventory slot types
 	lua_pushinteger(LuaState, (int)EquipmentType::HEAD);
@@ -166,10 +171,9 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "ITEM_UNLOCKABLE");
 }
 
-// Inject items pointers into existing lua tables
-void _Scripting::InjectItemPointers(const _Stats *Stats) {
+// Inject item data into existing lua tables
+void _Scripting::InjectItemData(const _Stats *Stats) {
 
-	// Add item pointers to lua tables
 	for(const auto &Iterator : Stats->Items) {
 		const _BaseItem *Item = &Iterator.second;
 		if(!Item)
@@ -182,9 +186,32 @@ void _Scripting::InjectItemPointers(const _Stats *Stats) {
 			continue;
 		}
 
-		// Add item pointer
+		// Set item data
 		PushItem(LuaState, Item, 0);
-		lua_setfield(LuaState, -2, "Item");
+		lua_setfield(LuaState, -2, "Data");
+
+		lua_pop(LuaState, 1);
+	}
+}
+
+// Inject skill data into existing lua tables
+void _Scripting::InjectSkillData(const _Stats *Stats) {
+
+	for(const auto &Iterator : Stats->Skills) {
+		const _BaseSkill *Skill = &Iterator.second;
+		if(!Skill)
+			continue;
+
+		// Find table
+		lua_getglobal(LuaState, Skill->Script.c_str());
+		if(!lua_istable(LuaState, -1)) {
+			lua_pop(LuaState, 1);
+			continue;
+		}
+
+		// Set skill data
+		PushSkill(LuaState, Skill);
+		lua_setfield(LuaState, -2, "Data");
 
 		lua_pop(LuaState, 1);
 	}
@@ -523,6 +550,34 @@ void _Scripting::PushItem(lua_State *LuaState, const _BaseItem *Item, int Upgrad
 	lua_setfield(LuaState, -2, "Cooldown");
 
 	lua_pushlightuserdata(LuaState, (void *)Item);
+	lua_setfield(LuaState, -2, "Pointer");
+}
+
+// Push skill onto stack
+void _Scripting::PushSkill(lua_State *LuaState, const _BaseSkill *Skill) {
+	if(!Skill) {
+		lua_pushnil(LuaState);
+		return;
+	}
+
+	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, (int)Skill->NetworkID);
+	lua_setfield(LuaState, -2, "ID");
+
+	lua_pushnumber(LuaState, Skill->AttackDelay);
+	lua_setfield(LuaState, -2, "AttackDelay");
+
+	lua_pushnumber(LuaState, Skill->AttackTime);
+	lua_setfield(LuaState, -2, "AttackTime");
+
+	lua_pushnumber(LuaState, Skill->Cooldown);
+	lua_setfield(LuaState, -2, "Cooldown");
+
+	lua_pushnumber(LuaState, Skill->Stamina);
+	lua_setfield(LuaState, -2, "Stamina");
+
+	lua_pushlightuserdata(LuaState, (void *)Skill);
 	lua_setfield(LuaState, -2, "Pointer");
 }
 

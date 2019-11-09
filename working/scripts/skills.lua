@@ -1,207 +1,8 @@
--- MONSTER SKILLS --
-
--- Monster attack --
-
-Skill_MonsterAttack = Base_Attack:New()
-Skill_MonsterAttack.Stamina = 50
-Skill_MonsterAttack.AttackDelay = 0.3
-Skill_MonsterAttack.AttackTime = 0.3
-Skill_MonsterAttack.Cooldown = 0.2
-
--- Crow attack --
-
-Skill_CrowAttack = Base_Attack:New()
-Skill_CrowAttack.Stamina = 50
-
-function Skill_CrowAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 15 then
-		Result.Target.Buff = Buff_Blinded.Pointer
-		Result.Target.BuffLevel = Level
-		Result.Target.BuffDuration = 5
-	end
-end
-
-function Skill_CrowAttack.PlaySound(self, Level)
-	Audio.Play("swoop" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
--- Slime attack --
-
-Skill_SlimeAttack = Base_Attack:New()
-
-function Skill_SlimeAttack.PlaySound(self, Level)
-	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
--- Ant attack --
-
-Skill_AntAttack = Base_Attack:New()
-
-function Skill_AntAttack.PlaySound(self, Level)
-	Audio.Play("crunch" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
--- Crab attack --
-
-Skill_CrabAttack = Base_Attack:New()
-
-function Skill_CrabAttack.PlaySound(self, Level)
-	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
--- Spider bite --
-
-Skill_SpiderBite = Base_Attack:New()
-
-function Skill_SpiderBite.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 15 then
-		Result.Target.Buff = Buff_Slowed.Pointer
-		Result.Target.BuffLevel = Level
-		Result.Target.BuffDuration = 5
-	end
-end
-
-function Skill_SpiderBite.PlaySound(self, Level)
-	Audio.Play("spider0.ogg")
-end
-
--- Fang bite --
-
-Skill_FangBite = Base_Attack:New()
-
-function Skill_FangBite.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 15 then
-		Result.Target.Buff = Buff_Bleeding.Pointer
-		Result.Target.BuffLevel = Level
-		Result.Target.BuffDuration = 5
-	end
-end
-
-function Skill_FangBite.PlaySound(self, Level)
-	Audio.Play("bat0.ogg")
-end
-
--- Venom bite --
-
-Skill_VenomBite = Base_Attack:New()
-
-function Skill_VenomBite.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 15 then
-		Result.Target.Buff = Buff_Poisoned.Pointer
-		Result.Target.BuffLevel = Level
-		Result.Target.BuffDuration = 10
-	end
-end
-
-function Skill_VenomBite.PlaySound(self, Level)
-	Audio.Play("bat0.ogg")
-end
-
--- Ghost attack --
-
-Skill_GhostAttack = Base_Attack:New()
-
-function Skill_GhostAttack.Use(self, Level, Duration, Source, Target, Result)
-
-	-- Ignore target's defense
-	Target.DamageBlock = 0
-
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
-
-	return Result
-end
-
-function Skill_GhostAttack.PlaySound(self, Level)
-	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
--- Swoop attack --
-
-Skill_Swoop = Base_Attack:New()
-
-function Skill_Swoop.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 75 then
-		Result.Target.Buff = Buff_Stunned.Pointer
-		Result.Target.BuffLevel = 1
-		Result.Target.BuffDuration = 3
-	end
-end
-
-function Skill_Swoop.PlaySound(self, Level)
-	Audio.Play("multiswoop0.ogg")
-end
-
--- Pincer attack --
-
-Skill_PincerAttack = Base_Attack:New()
-
-function Skill_PincerAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 50 then
-		Result.Target.Buff = Buff_Bleeding.Pointer
-		Result.Target.BuffLevel = Level
-		Result.Target.BuffDuration = 5
-	end
-end
-
-function Skill_PincerAttack.PlaySound(self, Level)
-	Audio.Play("multislash0.ogg")
-end
-
--- Chew attack --
-
-Skill_ChewAttack = Base_Attack:New()
-
-function Skill_ChewAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 75 then
-		Result.Source.Health = -Result.Target.Health
-	end
-end
-
-function Skill_ChewAttack.PlaySound(self, Level)
-	Audio.Play("grunt" .. Random.GetInt(0, 2) .. ".ogg")
-end
-
--- Swamp attack --
-
-Skill_SwampAttack = Base_Attack:New()
-
-function Skill_SwampAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= 30 then
-		Result.Target.Buff = Buff_Slowed.Pointer
-		Result.Target.BuffLevel = Level
-		Result.Target.BuffDuration = 5
-	end
-end
-
-function Skill_SwampAttack.PlaySound(self, Level)
-	Audio.Play("sludge0.ogg")
-end
-
--- Skeleton attack --
-
-Skill_SkeletonAttack = Base_Attack:New()
-
-function Skill_SkeletonAttack.PlaySound(self, Level)
-	Audio.Play("bones" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
--- Demon attack --
-
-Skill_DemonAttack = Base_Attack:New()
-
-function Skill_DemonAttack.PlaySound(self, Level)
-	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
 -- PLAYER SKILLS --
 
 -- Punch --
 
 Skill_Punch = Base_Attack:New()
-Skill_Punch.Stamina = 10
-Skill_Punch.AttackDelay = 0.2
-Skill_Punch.AttackTime = 0.3
-Skill_Punch.Cooldown = 0.1
 
 function Skill_Punch.GetInfo(self, Item)
 
@@ -212,20 +13,11 @@ function Skill_Punch.PlaySound(self, Level)
 	Audio.Play("thud0.ogg")
 end
 
-function Skill_Punch.GetAttackTimes(self, Object)
-
-	return self.AttackDelay, self.AttackTime, self.Cooldown
-end
-
 -- Slash --
 
 Skill_Slash = Base_Attack:New()
 Skill_Slash.BaseChance = 4
 Skill_Slash.ChancePerLevel = 2
-Skill_Slash.Stamina = 20
-Skill_Slash.AttackDelay = 0.5
-Skill_Slash.AttackTime = 0.35
-Skill_Slash.Cooldown = 0.2
 
 function Skill_Slash.GetInfo(self, Item)
 
@@ -260,10 +52,6 @@ end
 Skill_Cleave = Base_Attack:New()
 Skill_Cleave.DamageBase = 70
 Skill_Cleave.DamagePerLevel = 2
-Skill_Cleave.Stamina = 55
-Skill_Cleave.AttackDelay = 0.7
-Skill_Cleave.AttackTime = 0.4
-Skill_Cleave.Cooldown = 0.3
 
 function Skill_Cleave.GetDamage(self, Level)
 	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))
@@ -1002,4 +790,194 @@ function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.BountyHunt = 1.0
 
 	return Result
+end
+
+-- MONSTER SKILLS --
+
+-- Generic monster attack --
+
+Skill_MonsterAttack = Base_Attack:New()
+
+-- Crow attack --
+
+Skill_CrowAttack = Base_Attack:New()
+
+function Skill_CrowAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buff_Blinded.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
+function Skill_CrowAttack.PlaySound(self, Level)
+	Audio.Play("swoop" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Slime attack --
+
+Skill_SlimeAttack = Base_Attack:New()
+
+function Skill_SlimeAttack.PlaySound(self, Level)
+	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Ant attack --
+
+Skill_AntAttack = Base_Attack:New()
+
+function Skill_AntAttack.PlaySound(self, Level)
+	Audio.Play("crunch" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Crab attack --
+
+Skill_CrabAttack = Base_Attack:New()
+
+function Skill_CrabAttack.PlaySound(self, Level)
+	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Spider bite --
+
+Skill_SpiderBite = Base_Attack:New()
+
+function Skill_SpiderBite.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buff_Slowed.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
+function Skill_SpiderBite.PlaySound(self, Level)
+	Audio.Play("spider0.ogg")
+end
+
+-- Fang bite --
+
+Skill_FangBite = Base_Attack:New()
+
+function Skill_FangBite.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buff_Bleeding.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
+function Skill_FangBite.PlaySound(self, Level)
+	Audio.Play("bat0.ogg")
+end
+
+-- Venom bite --
+
+Skill_VenomBite = Base_Attack:New()
+
+function Skill_VenomBite.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buff_Poisoned.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 10
+	end
+end
+
+function Skill_VenomBite.PlaySound(self, Level)
+	Audio.Play("bat0.ogg")
+end
+
+-- Ghost attack --
+
+Skill_GhostAttack = Base_Attack:New()
+
+function Skill_GhostAttack.Use(self, Level, Duration, Source, Target, Result)
+
+	-- Ignore target's defense
+	Target.DamageBlock = 0
+
+	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+	return Result
+end
+
+function Skill_GhostAttack.PlaySound(self, Level)
+	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Swoop attack --
+
+Skill_Swoop = Base_Attack:New()
+
+function Skill_Swoop.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 75 then
+		Result.Target.Buff = Buff_Stunned.Pointer
+		Result.Target.BuffLevel = 1
+		Result.Target.BuffDuration = 3
+	end
+end
+
+function Skill_Swoop.PlaySound(self, Level)
+	Audio.Play("multiswoop0.ogg")
+end
+
+-- Pincer attack --
+
+Skill_PincerAttack = Base_Attack:New()
+
+function Skill_PincerAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 50 then
+		Result.Target.Buff = Buff_Bleeding.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
+function Skill_PincerAttack.PlaySound(self, Level)
+	Audio.Play("multislash0.ogg")
+end
+
+-- Chew attack --
+
+Skill_ChewAttack = Base_Attack:New()
+
+function Skill_ChewAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 75 then
+		Result.Source.Health = -Result.Target.Health
+	end
+end
+
+function Skill_ChewAttack.PlaySound(self, Level)
+	Audio.Play("grunt" .. Random.GetInt(0, 2) .. ".ogg")
+end
+
+-- Swamp attack --
+
+Skill_SwampAttack = Base_Attack:New()
+
+function Skill_SwampAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 30 then
+		Result.Target.Buff = Buff_Slowed.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
+function Skill_SwampAttack.PlaySound(self, Level)
+	Audio.Play("sludge0.ogg")
+end
+
+-- Skeleton attack --
+
+Skill_SkeletonAttack = Base_Attack:New()
+
+function Skill_SkeletonAttack.PlaySound(self, Level)
+	Audio.Play("bones" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Demon attack --
+
+Skill_DemonAttack = Base_Attack:New()
+
+function Skill_DemonAttack.PlaySound(self, Level)
+	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
 end

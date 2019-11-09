@@ -84,7 +84,7 @@ class _Usable {
 
 		// Scripts
 		bool CallCanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		bool CallGetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const;
+		bool CallGetAttackTimesAdjust(_Scripting *Scripting, _Object *Object, double &AttackDelayAdjust, double &AttackTimeAdjust, double &CooldownAdjust) const;
 		void CallStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void CallApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void CallUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
@@ -113,6 +113,7 @@ class _Usable {
 		double AttackDelay;
 		double AttackTime;
 		double Cooldown;
+		float Stamina;
 		TargetType Target;
 		ScopeType Scope;
 		bool TargetAlive;

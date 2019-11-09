@@ -1,9 +1,5 @@
 -- Base Attack Skill --
 Base_Attack = {
-	Stamina = 0,
-	AttackDelay = 0,
-	AttackTime = 0,
-	Cooldown = 0,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -17,7 +13,7 @@ Base_Attack = {
 	end,
 
 	CanUse = function(self, Level, Object)
-		return Object.Stamina > self.Stamina
+		return Object.Stamina > self.Data.Stamina
 	end,
 
 	CanEquip = function(self, Object)
@@ -25,7 +21,7 @@ Base_Attack = {
 	end,
 
 	ApplyCost = function(self, Level, Result)
-		Result.Source.Stamina = -self.Stamina
+		Result.Source.Stamina = -self.Data.Stamina
 
 		return Result
 	end,
@@ -43,13 +39,13 @@ Base_Attack = {
 		return "none"
 	end,
 
-	GetAttackTimes = function(self, Object)
+	GetAttackTimesAdjust = function(self, Object)
 		Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 		if Weapon ~= nil then
-			return self.AttackDelay + Weapon.AttackDelay, self.AttackTime + Weapon.AttackTime, self.Cooldown + Weapon.Cooldown
+			return Weapon.AttackDelay, Weapon.AttackTime, Weapon.Cooldown
 		end
 
-		return self.AttackDelay, self.AttackTime, self.Cooldown
+		return 0, 0, 0
 	end,
 
 	GenerateDamage = function(self, Level, Source)
