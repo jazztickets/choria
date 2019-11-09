@@ -46,7 +46,7 @@
 		</skill>
 		<skill id="monster_attack" name="Monster Attack" texture="textures/skills/monster_attack.png">
 			<target type="enemy"/>
-			<use scope="battle" script="Skill_MonsterAttack"/>
+			<use scope="battle" attack_delay="0.5" attack_time="0.3" cooldown="0.5" stamina="30" script="Skill_MonsterAttack"/>
 		</skill>
 	</skills>
 	<weapon_types>
@@ -298,7 +298,7 @@
 			<stats ai="AI_Dumb" health="5"/>
 			<damage min="0" max="0"/>
 			<actions>
-				<action skill_id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
+				<action skill_id="monster_attack"/>
 			</actions>
 			<drops>
 				<drop id="none" odds="50"/>
@@ -309,7 +309,7 @@
 			<stats ai="AI_Dumb" health="40" experience="1" gold="1"/>
 			<damage min="5" max="10"/>
 			<actions>
-				<action skill_id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
+				<action skill_id="monster_attack"/>
 			</actions>
 			<resists>
 				<resist id="fire" value="-0.25"/>
