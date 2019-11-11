@@ -45,11 +45,23 @@ namespace ae {
 	class _Texture;
 }
 
-// Structures
+// Struct for unlocks
 struct _Unlock {
 	_Unlock() : Level(0) { }
 
 	int Level;
+};
+
+// Struct for slot in action bar
+struct _ActionSlot {
+	_ActionSlot() : Usable(nullptr), Count(0) { }
+	void Unset() { Usable = nullptr; Count = 0; }
+
+	void Serialize(ae::_Buffer &Data);
+	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
+
+	const _Usable *Usable;
+	int Count;
 };
 
 // Classes
@@ -217,7 +229,7 @@ class _Character {
 		std::unordered_map<std::string, int> Skills;
 
 		// Action bar
-		std::vector<_Action> ActionBar;
+		std::vector<_ActionSlot> ActionBar;
 
 		// Events
 		const _Vendor *Vendor;

@@ -206,7 +206,14 @@ void _Object::Update(double FrameTime) {
 					Action.Apply(Packet, this, Scope);
 					SendPacket(Packet);
 
-					Action.State = ActionStateType::NONE;
+					Action.StartCooldown();
+				} break;
+				case ActionStateType::COOLDOWN: {
+					Action.Time += FrameTime;
+					if(Action.Time >= Action.Cooldown) {
+						Action.Time = Action.Cooldown;
+						Action.State = ActionStateType::NONE;
+					}
 				} break;
 				default:
 				break;

@@ -55,7 +55,7 @@ inline bool operator&(const ActionResultFlag &Left, const ActionResultFlag &Righ
 inline ActionResultFlag operator|(const ActionResultFlag &Left, const ActionResultFlag &Right) { return (ActionResultFlag)((uint8_t)Left | (uint8_t)Right); }
 inline ActionResultFlag &operator|=(ActionResultFlag &Left, ActionResultFlag Right) { return Left = Left | Right; }
 
-// An object that goes into an action bar slot
+// An object that goes into an action bar slot. Either skill or item.
 class _Usable {
 
 	public:

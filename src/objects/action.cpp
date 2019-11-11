@@ -33,35 +33,7 @@
 #include <stats.h>
 #include <iostream>
 
-// Serialize action
-void _Action::Serialize(ae::_Buffer &Data) {
-	uint16_t NetworkID = 0;
-	if(Usable) {
-		NetworkID = Usable->NetworkID;
-		Data.Write<uint16_t>(NetworkID);
-		Data.WriteBit(Usable->IsSkill());
-	}
-	else {
-		Data.Write<uint16_t>(NetworkID);
-	}
-}
-
-// Unserialize action
-void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
-	uint16_t ItemID = Data.Read<uint16_t>();
-	bool IsSkill = false;
-	if(ItemID) {
-		IsSkill = Data.ReadBit();
-		if(IsSkill)
-			Usable = Stats->SkillsIndex.at(ItemID);
-		else
-			Usable = Stats->ItemsIndex.at(ItemID);
-	}
-	else
-		Usable = nullptr;
-}
-
-// Resolve action
+// Start action sequence
 bool _Action::Start(_Object *Source, ScopeType Scope) {
 	const _Usable *Usable = Source->Character->Action.Usable;
 	if(!Usable)
@@ -91,7 +63,7 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	// Get attack times
 	double AttackDelay = Usable->AttackDelay;
 	double AttackTime = Usable->AttackTime;
-	double Cooldown = Usable->Cooldown;
+	Cooldown = Usable->Cooldown;
 
 	// Get attack time adjustments from script
 	double AttackDelayAdjust = 0.0;
@@ -180,6 +152,12 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Source->Character->Targets.clear();
 
 	return true;
+}
+
+// Start cooldown for action
+void _Action::StartCooldown() {
+	Time = 0.0;
+	State = ActionStateType::COOLDOWN;
 }
 
 // Handle summon actions

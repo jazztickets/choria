@@ -215,8 +215,9 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	if(ClientPlayer->Character->Action.IsSet())
 		return;
 
-	// Get skillbar action
-	_Action Action = ClientPlayer->Character->ActionBar[ActionBarSlot];
+	// Get action bar action
+	_Action Action;
+	Action.Usable = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
 	ClientPlayer->Character->GetActionFromActionBar(Action, ActionBarSlot);
 
 	// Check for changing an action

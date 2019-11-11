@@ -675,3 +675,31 @@ bool _Character::HasUnlocked(const _BaseItem *Item) const {
 
 	return false;
 }
+
+// Serialize
+void _ActionSlot::Serialize(ae::_Buffer &Data) {
+	uint16_t NetworkID = 0;
+	if(Usable) {
+		NetworkID = Usable->NetworkID;
+		Data.Write<uint16_t>(NetworkID);
+		Data.WriteBit(Usable->IsSkill());
+	}
+	else {
+		Data.Write<uint16_t>(NetworkID);
+	}
+}
+
+// Unserialize
+void _ActionSlot::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
+	uint16_t ItemID = Data.Read<uint16_t>();
+	bool IsSkill = false;
+	if(ItemID) {
+		IsSkill = Data.ReadBit();
+		if(IsSkill)
+			Usable = Stats->SkillsIndex.at(ItemID);
+		else
+			Usable = Stats->ItemsIndex.at(ItemID);
+	}
+	else
+		Usable = nullptr;
+}
