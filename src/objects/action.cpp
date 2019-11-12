@@ -40,9 +40,10 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 		return false;
 
 	// Check for deleted targets
-	for(auto Iterator = Source->Character->Targets.begin(); Iterator != Source->Character->Targets.end(); ) {
+	auto &Targets = Source->Character->Targets;
+	for(auto Iterator = Targets.begin(); Iterator != Targets.end(); ) {
 		if((*Iterator)->Deleted)
-			Iterator = Source->Character->Targets.erase(Iterator);
+			Iterator = Targets.erase(Iterator);
 		else
 			++Iterator;
 	}
@@ -105,8 +106,8 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	ActionResult.Source.Serialize(Packet);
 
 	// Send list of targets
-	Packet.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
-	for(auto &Target : Source->Character->Targets) {
+	Packet.Write<uint8_t>((uint8_t)Targets.size());
+	for(auto &Target : Targets) {
 		Packet.Write<ae::NetworkIDType>(Target->NetworkID);
 	}
 

@@ -66,7 +66,7 @@ class _Action {
 
 	public:
 
-		_Action() : Usable(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Duration(0.0), Cooldown(0.0), Level(0), ActionBarSlot(-1) { }
+		_Action() : Usable(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Cooldown(0.0), Level(0), ActionBarSlot(-1) { }
 		_Action(const _Usable *Usable) : _Action() { this->Usable = Usable; }
 
 		bool operator==(const _Action &Action) const { return Action.Usable == Usable; }
@@ -78,7 +78,7 @@ class _Action {
 		void HandleSummons(_ActionResult &ActionResult);
 
 		bool IsSet() const { return State != ActionStateType::NONE; }
-		void Unset() { Usable = nullptr; State = ActionStateType::NONE; ApplyTime = 0.0; Time = 0.0; Duration = 0.0; Cooldown = 0.0; Level = 0; Slot.Reset(); ActionBarSlot = -1; }
+		void Unset() { Usable = nullptr; State = ActionStateType::NONE; ApplyTime = 0.0; Time = 0.0; Cooldown = 0.0; Level = 0; Slot.Reset(); ActionBarSlot = -1; }
 
 		TargetType GetTargetType();
 
@@ -87,7 +87,6 @@ class _Action {
 		ActionStateType State;
 		double ApplyTime;
 		double Time;
-		double Duration;
 		double Cooldown;
 		int Level;
 		int ActionBarSlot;

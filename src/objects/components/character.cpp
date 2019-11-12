@@ -599,9 +599,6 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 			ReturnAction.Slot.Type = BagType::INVENTORY;
 		}
 
-		// Set duration for certain items
-		ReturnAction.Duration = ReturnAction.Usable->Duration;
-
 		return true;
 	}
 

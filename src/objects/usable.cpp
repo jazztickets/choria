@@ -236,7 +236,7 @@ bool _Usable::CallGetAttackTimesAdjust(_Scripting *Scripting, _Object *Object, d
 void _Usable::CallUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Use")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
-		Scripting->PushInt(ActionResult.ActionUsed.Duration);
+		Scripting->PushInt(Duration);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushObject(ActionResult.Target.Object);
 		Scripting->PushActionResult(&ActionResult);
