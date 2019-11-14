@@ -457,7 +457,7 @@ int _BaseItem::GetUpgradePrice(int Upgrades) const {
 	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Upgrades * Cost + GAME_BASE_UPGRADE_COST));
 }
 
-// Apply cost and return non zero flags to continue with action result
+// Apply cost of action and return false if unable to
 bool _BaseItem::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const {
 
 	// Get slot where item is

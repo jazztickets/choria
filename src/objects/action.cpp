@@ -61,6 +61,15 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	if(!Usable->CallCanUse(Source->Scripting, ActionResult))
 		return false;
 
+	// Set action flag
+	ActionResultFlag ActionFlags = ActionResultFlag::NONE;
+	if(Usable->IsSkill())
+		ActionFlags |= ActionResultFlag::SKILL;
+
+	// Apply cost of action and get action flags
+	if(!Usable->ApplyCost(ActionResult, ActionFlags))
+		return false;
+
 	// Get attack times
 	double AttackDelay = Usable->AttackDelay;
 	double AttackTime = Usable->AttackTime;
@@ -79,16 +88,7 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	if(Source->Character->Battle)
 		ApplyTime = AttackDelay + AttackTime;
 
-	// Apply cost of action
-	ActionResultFlag ActionFlags = ActionResultFlag::NONE;
-	if(!Usable->ApplyCost(ActionResult, ActionFlags))
-		return false;
-
-	// Set skill flag
-	if(Usable->IsSkill())
-		ActionFlags |= ActionResultFlag::SKILL;
-
-	// Update stats
+	// Update source object
 	Source->UpdateStats(ActionResult.Source);
 
 	// Build packet for results
