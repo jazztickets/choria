@@ -462,6 +462,10 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			_Slot Slot;
 			Slot.Unserialize(Data);
 			uint16_t ItemID = Data.Read<uint16_t>();
+			float ReactTime = Data.Read<float>();
+			float FlyTime = Data.Read<float>();
+			float Cooldown = Data.Read<float>();
+
 			if(ActionFlags & ActionResultFlag::SKILL)
 				ActionResult.ActionUsed.Usable = Stats->SkillsIndex.at(ItemID);
 			else

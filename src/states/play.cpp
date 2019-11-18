@@ -1500,6 +1500,7 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	uint16_t ItemID = Data.Read<uint16_t>();
 	float ReactTime = Data.Read<float>();
 	float FlyTime = Data.Read<float>();
+	float Cooldown = Data.Read<float>();
 
 	// Get usable
 	if(ActionFlags & ActionResultFlag::SKILL)

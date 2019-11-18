@@ -101,6 +101,7 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	Packet.Write<uint16_t>(Usable->NetworkID);
 	Packet.Write<float>(AttackDelay);
 	Packet.Write<float>(AttackTime);
+	Packet.Write<float>(Cooldown);
 
 	// Write source updates
 	ActionResult.Source.Serialize(Packet);
