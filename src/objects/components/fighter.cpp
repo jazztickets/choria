@@ -20,6 +20,7 @@
 #include <hud/hud.h>
 #include <ae/ui.h>
 #include <ae/assets.h>
+#include <stdexcept>
 
 // Constructor
 _Fighter::_Fighter(_Object *Object) :

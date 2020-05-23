@@ -20,6 +20,7 @@
 #include <ae/buffer.h>
 #include <constants.h>
 #include <stats.h>
+#include <stdexcept>
 
 // Constructor
 _Inventory::_Inventory() {
