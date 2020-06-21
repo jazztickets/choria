@@ -146,6 +146,21 @@ function Item_ActionSlot.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+-- Skill Point --
+
+Item_SkillPoint = { }
+
+function Item_SkillPoint.GetInfo(self, Item)
+
+	return "Grants an extra skill point\nCan be used once"
+end
+
+function Item_SkillPoint.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.SkillPoint = 1
+
+	return Result
+end
+
 -- Throwing Knives --
 
 Item_ThrowingKnives = Base_Attack:New()

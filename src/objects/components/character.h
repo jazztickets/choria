@@ -204,6 +204,7 @@ class _Character {
 		// Skills
 		std::unordered_map<uint32_t, int> Skills;
 		int SkillPoints;
+		int SkillPointsUnlocked;
 		int SkillPointsUsed;
 		int SkillPointsOnActionBar;
 

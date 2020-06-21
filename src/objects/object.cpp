@@ -515,6 +515,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["portrait_id"] = Character->PortraitID;
 	StatsNode["model_id"] = ModelID;
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
+	StatsNode["skillpoints_unlocked"] = Character->SkillPointsUnlocked;
 	StatsNode["health"] = Character->Health;
 	StatsNode["mana"] = Character->Mana;
 	StatsNode["experience"] = Character->Experience;
@@ -620,6 +621,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->Hardcore = StatsNode["hardcore"].asBool();
 	Character->PortraitID = StatsNode["portrait_id"].asUInt();
 	ModelID = StatsNode["model_id"].asUInt();
+	Character->SkillPointsUnlocked = StatsNode["skillpoints_unlocked"].asInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
 	Character->Experience = StatsNode["experience"].asInt();
@@ -727,6 +729,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->MaxMana);
 	Data.Write<int>(Character->Experience);
 	Data.Write<int>(Character->Gold);
+	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
 	Data.Write<int>(Character->GoldLost);
@@ -815,6 +818,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
 	Character->Experience = Data.Read<int>();
 	Character->Gold = Data.Read<int>();
+	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
 	Character->GoldLost = Data.Read<int>();
@@ -972,6 +976,12 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 			NewSize = ACTIONBAR_MAX_SIZE;
 
 		Character->ActionBar.resize(NewSize);
+	}
+
+	// Skill point unlocked
+	if(StatChange.HasStat(StatType::SKILLPOINT)) {
+		Character->SkillPointsUnlocked += StatChange.Values[StatType::SKILLPOINT].Integer;
+		Character->CalculateStats();
 	}
 
 	// Flee from battle

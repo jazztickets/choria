@@ -1564,7 +1564,6 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 
 		// Update object
 		_StatusEffect *StatusEffect = StatChange.Object->UpdateStats(StatChange);
-
 		if(StatChange.Object == Player) {
 
 			// Create hud element for status effects

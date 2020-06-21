@@ -102,6 +102,7 @@ _Character::_Character(_Object *Object) :
 	DropRate(0),
 
 	SkillPoints(0),
+	SkillPointsUnlocked(0),
 	SkillPointsUsed(0),
 	SkillPointsOnActionBar(0),
 
@@ -279,6 +280,7 @@ void _Character::CalculateStats() {
 
 	// Get base stats
 	CalculateLevelStats();
+	SkillPoints += SkillPointsUnlocked;
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
