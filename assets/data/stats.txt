@@ -710,10 +710,10 @@ INSERT INTO monster VALUES(11,1,'Ghost','textures/monsters/ghost.png',12,3,150,0
 INSERT INTO monster VALUES(12,1,'Zombie','textures/monsters/zombie.png',15,20,500,0,70,180,10,10,2.8500000000000000888,1,28);
 INSERT INTO monster VALUES(13,1,'Demon Crow','textures/monsters/demon_crow.png',20,15,225,0,140,220,2,5,1.8100000000000000532,1,24);
 INSERT INTO monster VALUES(14,1,'Apparition','textures/monsters/apparition.png',25,7,350,0,200,210,5,5,6.6600000000000001421,1,25);
-INSERT INTO monster VALUES(15,1,'Venomous Bat','textures/monsters/venomous_bat.png',20,20,250,0,100,200,4,5,1.5300000000000000266,2,32);
+INSERT INTO monster VALUES(15,1,'Venomous Bat','textures/monsters/venomous_bat.png',20,20,250,0,100,200,4,5,1.5300000000000000266,1,32);
 INSERT INTO monster VALUES(16,1,'Crimson Slime','textures/monsters/crimson_slime.png',30,30,800,0,120,250,6,5,2.8500000000000000888,1,35);
 INSERT INTO monster VALUES(17,1,'Dead Queen','textures/monsters/dead_queen.png',100,200,4000,1500,200,300,15,20,4.0,4,27);
-INSERT INTO monster VALUES(18,1,'Mud Man','textures/monsters/mud_man.png',20,30,600,0,40,120,8,5,2.8500000000000000888,2,31);
+INSERT INTO monster VALUES(18,1,'Mud Man','textures/monsters/mud_man.png',20,30,600,0,40,120,8,5,2.8500000000000000888,1,31);
 INSERT INTO monster VALUES(19,1,'Slime Prince','textures/monsters/slime_prince.png',100,150,3000,4000,100,350,25,30,2.5,5,33);
 INSERT INTO monster VALUES(20,1,'Skeleton','textures/monsters/skeleton.png',30,25,650,0,100,150,5,10,2.0,1,36);
 INSERT INTO monster VALUES(21,1,'Skeleton Priest','textures/monsters/skeleton_priest.png',35,30,750,600,50,100,3,0,2.6600000000000001421,6,34);
