@@ -846,6 +846,18 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			++Iterator;
 	}
 
+	// Remove object from last target array
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		_Object *Object = *Iterator;
+		if(!Object || !Object->Fighter)
+			continue;
+
+		for(int i = 0; i < 2; i++) {
+			if(Object->Fighter->LastTarget[i] == RemoveObject)
+				Object->Fighter->LastTarget[i] = nullptr;
+		}
+	}
+
 	// Remove objects
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
