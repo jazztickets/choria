@@ -137,7 +137,7 @@ Item_ActionSlot = { }
 
 function Item_ActionSlot.GetInfo(self, Item)
 
-	return "Increase your action bar size"
+	return "Increase your action bar size\n[c yellow]Can only be used once"
 end
 
 function Item_ActionSlot.Use(self, Level, Duration, Source, Target, Result)
@@ -152,11 +152,16 @@ Item_SkillPoint = { }
 
 function Item_SkillPoint.GetInfo(self, Item)
 
-	return "Grants an extra skill point\nCan be used once"
+	Plural = ""
+	if Item.Level ~= 1 then
+		Plural = "s"
+	end
+
+	return "Grants [c_green]" .. Item.Level .. "[c_white] extra skill point" .. Plural .. "\n[c yellow]Can only be used once"
 end
 
 function Item_SkillPoint.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.SkillPoint = 1
+	Result.Target.SkillPoint = Level
 
 	return Result
 end

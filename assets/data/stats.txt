@@ -473,6 +473,10 @@ INSERT INTO vendoritem VALUES(121,5,225);
 INSERT INTO vendoritem VALUES(122,8,8);
 INSERT INTO vendoritem VALUES(123,6,26);
 INSERT INTO vendoritem VALUES(124,1,226);
+INSERT INTO vendoritem VALUES(125,6,227);
+INSERT INTO vendoritem VALUES(126,8,228);
+INSERT INTO vendoritem VALUES(127,11,230);
+INSERT INTO vendoritem VALUES(128,13,229);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1344,7 +1348,11 @@ INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/torch.pn
 INSERT INTO item VALUES(223,10,0,1,1,0,0,'Large Torch','textures/items/torch.png','Item_Torch',75,1,8,0,179.99999999999999999,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(224,10,0,1,1,0,0,'Bright Potion','textures/items/bright_potion.png','Item_BrightPotion',200,1,720,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(225,10,0,1,1,0,0,'Dark Potion','textures/items/dark_potion.png','Item_DarkPotion',400,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(226,12,0,0,1,5,0,'Skill Point I','textures/items/skillpoint.png','Item_SkillPoint',200,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(226,12,0,0,1,5,0,'Skill Point I','textures/items/skillpoint.png','Item_SkillPoint',250,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(227,12,0,0,1,6,0,'Skill Point II','textures/items/skillpoint.png','Item_SkillPoint',500,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(228,12,0,0,1,7,0,'Skill Point III','textures/items/skillpoint.png','Item_SkillPoint',1000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(229,12,0,0,1,8,0,'Skill Point IV','textures/items/skillpoint.png','Item_SkillPoint',2000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(230,12,0,0,1,9,0,'Skill Point V','textures/items/skillpoint.png','Item_SkillPoint',4000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
