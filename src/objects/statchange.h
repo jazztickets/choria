@@ -43,10 +43,10 @@ struct StatTypeHash {
 
 // Types of stats
 enum class StatType : int {
-	ID,
 	BUFF,
 	BUFFLEVEL,
 	BUFFDURATION,
+	BUFFSOUND,
 	HEALTH,
 	MAXHEALTH,
 	MANA,
@@ -99,10 +99,10 @@ struct _StatStorage {
 };
 
 const std::unordered_map<std::string, _StatStorage> StatStringToType = {
-	{ "ID",            { StatType::ID            , StatValueType::INTEGER } },
 	{ "Buff",          { StatType::BUFF          , StatValueType::POINTER } },
 	{ "BuffLevel",     { StatType::BUFFLEVEL     , StatValueType::INTEGER } },
 	{ "BuffDuration",  { StatType::BUFFDURATION  , StatValueType::FLOAT   } },
+	{ "BuffSound",     { StatType::BUFFSOUND     , StatValueType::INTEGER } },
 	{ "Health",        { StatType::HEALTH        , StatValueType::INTEGER } },
 	{ "MaxHealth",     { StatType::MAXHEALTH     , StatValueType::INTEGER } },
 	{ "Mana",          { StatType::MANA          , StatValueType::INTEGER } },

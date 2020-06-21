@@ -197,7 +197,7 @@ function Buff_Parry.GetInfo(self, Level)
 end
 
 function Buff_Parry.OnHit(self, Level, Change)
-	Change.ID = self.ID
+	Change.BuffSound = self.ID
 	Change.Damage = math.floor(Change.Damage * self.DamageReduction)
 	Change.Stamina = self.StaminaGain
 

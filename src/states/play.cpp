@@ -1572,8 +1572,8 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 
 			// Play buff sounds
-			if(StatChange.HasStat(StatType::ID)) {
-				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values[StatType::ID].Integer);
+			if(StatChange.HasStat(StatType::BUFFSOUND)) {
+				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values[StatType::BUFFSOUND].Integer);
 				if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
 					Scripting->MethodCall(0, 0);
 					Scripting->FinishMethodCall();

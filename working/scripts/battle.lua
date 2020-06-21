@@ -136,20 +136,20 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
 		-- Call OnHit methods for buffs
 		StaminaChange = 0
-		BuffID = 0
+		BuffSound = 0
 		for i = 1, #Target.StatusEffects do
 			Effect = Target.StatusEffects[i]
 			if Effect.Buff.OnHit ~= nil then
 				Effect.Buff:OnHit(Effect.Level, Change)
 				StaminaChange = StaminaChange + Change.Stamina
-				BuffID = Change.ID
+				BuffSound = Change.BuffSound
 			end
 		end
 
 		-- Update stamina
 		if StaminaChange ~= 0 then
 			Result.Target.Stamina = StaminaChange
-			Result.Target.ID = BuffID
+			Result.Target.BuffSound = BuffSound
 		end
 
 		-- Apply pierce
