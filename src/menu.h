@@ -163,6 +163,7 @@ class _Menu {
 		std::string DefaultUsername;
 		std::string DefaultPassword;
 		bool FromInGame;
+		bool BadGameVersion;
 		int RebindType;
 		int RebindInput;
 		int RebindAction;

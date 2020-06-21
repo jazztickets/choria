@@ -106,6 +106,7 @@ _Menu::_Menu() {
 	PreviousClickTimer = 0.0;
 	CharacterSlots.resize(ACCOUNT_MAX_CHARACTER_SLOTS);
 	HardcoreServer = false;
+	BadGameVersion = false;
 	RebindType = -1;
 	RebindAction = -1;
 	PingTime = 0;
@@ -1495,24 +1496,6 @@ void _Menu::Render() {
 
 // Connect
 void _Menu::HandleConnect() {
-	switch(State) {
-		case STATE_BROWSE: {
-			ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
-			std::string IP;
-			std::string Port;
-			SplitHost(Host->Text, IP, Port);
-
-			// Save connection information
-			Config.LastHost = IP;
-			Config.LastPort = Port;
-			Config.Save();
-
-			// Load account screen
-			InitAccount();
-		} break;
-		default:
-		break;
-	}
 }
 
 // Disconnect
@@ -1528,7 +1511,10 @@ void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 
 		ae::_Element *Label = ae::Assets.Elements["label_menu_browse_message"];
 		Label->Color = ae::Assets.Colors["red"];
-		Label->Text = "Disconnected from server";
+		if(BadGameVersion)
+			Label->Text = "Wrong game version";
+		else
+			Label->Text = "Disconnected from server";
 	}
 }
 
@@ -1537,8 +1523,25 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 	switch(Type) {
 		case PacketType::VERSION: {
 			std::string Version(Buffer.ReadString());
-			if(Version != GAME_VERSION) {
-				throw std::runtime_error("Wrong game version");
+			if(Version == GAME_VERSION) {
+				BadGameVersion = false;
+
+				ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
+				std::string IP;
+				std::string Port;
+				SplitHost(Host->Text, IP, Port);
+
+				// Save connection information
+				Config.LastHost = IP;
+				Config.LastPort = Port;
+				Config.Save();
+
+				// Load account screen
+				InitAccount();
+			}
+			else {
+				BadGameVersion = true;
+				PlayState.Network->Disconnect();
 			}
 		} break;
 		case PacketType::ACCOUNT_SUCCESS: {
