@@ -13,10 +13,16 @@ type gawk >/dev/null 2>&1 || {
 }
 
 # get path to log file
-log="$HOME/.local/share/choria/log/server.log"
+log="$HOME/.local/share/choria2015/log/server.log"
 
 # make temp directory
-mkdir -p graphs
+mkdir -p gold
+mkdir -p exp
+mkdir -p kills
+
+rm gold/*
+rm exp/*
+rm kills/*
 
 # get list of players
 players=$(grep " \[SAVE\]" "$log" | grep -P "(?<=Saving player ).*(?= \()" -o | sort | uniq)
@@ -25,13 +31,22 @@ players=$(grep " \[SAVE\]" "$log" | grep -P "(?<=Saving player ).*(?= \()" -o | 
 echo "$players" | while read player; do
 
 	# create player file
-	player_file="graphs/$player"
-	#echo "$player" > "$player_file"
+	gold_file="gold/$player"
+	exp_file="exp/$player"
+	kills_file="kills/$player"
 
-	# get playtime and gold
-	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $4}' | tr -d '[A-Za-z=]' > "$player_file"
+	# get gold
+	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $4}' | tr -d '[A-Za-z=]' > "$gold_file"
+
+	# get exp
+	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $3}' | tr -d '[A-Za-z=]' > "$exp_file"
+
+	# get kills
+	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $6}' | tr -d '[A-Za-z=]' > "$kills_file"
 
 done
 
 # graph data
 gnuplot gold.gpi -p
+gnuplot exp.gpi -p
+gnuplot kills.gpi -p

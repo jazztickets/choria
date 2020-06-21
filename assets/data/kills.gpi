@@ -1,6 +1,6 @@
-files = system("ls gold/*")
+files = system("ls kills/*")
 set key outside
 set key right top
 set xlabel 'play_time' noenhanced
-set ylabel 'gold' noenhanced
+set ylabel 'kills' noenhanced
 plot for [data in files] data using 1:2 title data noenhanced with lines
