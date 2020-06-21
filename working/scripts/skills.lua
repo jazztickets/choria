@@ -962,3 +962,32 @@ function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result)
 
 	return Result
 end
+
+-- Light --
+
+Skill_Light = Base_Spell:New()
+Skill_Light.Duration = 15
+Skill_Light.DurationPerLevel = 5
+Skill_Light.CostPerLevel = 5
+Skill_Light.ManaCostBase = 50 - Skill_Light.CostPerLevel
+
+function Skill_Light.GetDuration(self, Level)
+
+	return self.Duration + self.DurationPerLevel * Level
+end
+
+function Skill_Light.GetInfo(self, Item)
+
+	return "Emit magic light for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Light.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Light.Pointer
+	Result.Target.BuffLevel = 20 + Level
+	if Result.Target.BuffLevel > 30 then
+		Result.Target.BuffLevel = 30
+	end
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
