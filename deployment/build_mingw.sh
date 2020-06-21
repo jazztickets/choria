@@ -59,7 +59,7 @@ build() {
 	rm "${archive_base}"/"${project}"{,_debug}
 
 	# copy dlls
-	cp /usr/$arch/bin/{OpenAL32.dll,libbz2-1.dll,libfreetype-6.dll,libgcc_*.dll,libsqlite3-0.dll,libstdc++-6.dll,libwinpthread-1.dll,lua53.dll,libvorbisfile-3.dll,libvorbis-0.dll,libogg-0.dll,SDL2.dll,SDL2_image.dll,libpng16-16.dll,zlib1.dll,libjsoncpp.dll,libtinyxml2.dll} "${archive_base}"/
+	cp /usr/$arch/bin/{OpenAL32.dll,libbz2-1.dll,libfreetype-6.dll,libssp-0.dll,libgcc_*.dll,libsqlite3-0.dll,libstdc++-6.dll,libwinpthread-1.dll,lua53.dll,libvorbisfile-3.dll,libvorbis-0.dll,libogg-0.dll,SDL2.dll,SDL2_image.dll,libpng16-16.dll,zlib1.dll,libjsoncpp.dll,libtinyxml2.dll} "${archive_base}"/
 
 	# strip exe
 	${arch}-strip "${archive_base}"/${project}.exe
