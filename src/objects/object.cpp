@@ -356,41 +356,60 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 }
 
 // Renders the player while walking around the world
-void _Object::Render(const _Object *ClientPlayer) {
-	if(Map && Model->Texture) {
+void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
+	if(!Map)
+		return;
 
-		// Setup shader
-		ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
+	if(!Model->Texture)
+		return;
 
-		// Draw debug server position
-		glm::vec3 DrawPosition;
-		if(Character->HUD && Character->HUD->ShowDebug) {
-			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-			ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
-			ae::Graphics.DrawSprite(DrawPosition, Model->Texture);
-		}
+	// Setup shader
+	ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
 
-		// Set invisible alpha
-		float Alpha = 1.0f;
-		if(Character->Invisible > 0)
-			Alpha = PLAYER_INVIS_ALPHA;
-
-		// Draw model
-		DrawPosition = glm::vec3(Position, 0.0f);
-		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
+	// Draw debug server position
+	glm::vec3 DrawPosition;
+	if(Character->HUD && Character->HUD->ShowDebug) {
+		DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+		ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 		ae::Graphics.DrawSprite(DrawPosition, Model->Texture);
-		if(Character->StatusTexture) {
-			ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
+	}
+
+	// Set invisible alpha
+	float Alpha = 1.0f;
+	if(Character->Invisible > 0)
+		Alpha = PLAYER_INVIS_ALPHA;
+
+	// Draw model
+	DrawPosition = glm::vec3(Position, 0.0f);
+	ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
+	ae::Graphics.DrawSprite(DrawPosition, Model->Texture);
+	if(Character->StatusTexture) {
+		ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
+	}
+
+	// Draw name
+	if(ClientPlayer != this) {
+		bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
+		std::string Color = SameParty ? "green" : "white";
+		std::string NameText = "[c " + Color + "]" + Name + "[c white]";
+		if(Character->Bounty > 0)
+			NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
+
+		// Cap name to screen
+		glm::vec2 NamePosition = DrawPosition;
+		float OffsetY = -0.5f;
+		if(SameParty || Character->Bounty > 0) {
+			ae::_TextBounds TextBounds;
+			ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
+			float HalfWidth = TextBounds.Width * 0.5f / Model->Texture->Size.x;
+			float HalfAbove = (TextBounds.AboveBase) * 0.5f / Model->Texture->Size.x;
+			float Above = (TextBounds.AboveBase) * 1.0f / Model->Texture->Size.x;
+			NamePosition[0] = glm::clamp(NamePosition[0], ViewBounds[0] + HalfWidth, ViewBounds[2] - HalfWidth);
+			NamePosition[1] = glm::clamp(NamePosition[1], ViewBounds[1] + Above - OffsetY, ViewBounds[3] - HalfAbove - OffsetY);
 		}
 
-		// Draw name
-		if(ClientPlayer != this && Character->Invisible != 1) {
-			std::string NameText = Name;
-			if(Character->Bounty > 0)
-				NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
-
-			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f, 1.0f / Model->Texture->Size.x);
-		}
+		if(Character->Invisible != 1 || SameParty)
+			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f, 1.0f / Model->Texture->Size.x);
 	}
 }
 

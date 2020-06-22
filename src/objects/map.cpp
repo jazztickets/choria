@@ -742,11 +742,11 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	}
 */
 	// Get render bounds
-	glm::vec4 Bounds = Camera->GetAABB();
-	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Size.x);
-	Bounds[1] = glm::clamp(Bounds[1], 0.0f, (float)Size.y);
-	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Size.x);
-	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
+	glm::vec4 ViewBounds = Camera->GetAABB();
+	ViewBounds[0] = glm::clamp(ViewBounds[0], 0.0f, (float)Size.x);
+	ViewBounds[1] = glm::clamp(ViewBounds[1], 0.0f, (float)Size.y);
+	ViewBounds[2] = glm::clamp(ViewBounds[2], 0.0f, (float)Size.x);
+	ViewBounds[3] = glm::clamp(ViewBounds[3], 0.0f, (float)Size.y);
 
 	// Set textures
 	ae::Assets.Programs["map"]->Use();
@@ -763,7 +763,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	ae::Graphics.ResetState();
 
 	// Draw layers
-	RenderTiles(ae::Assets.Programs["map"], Bounds, glm::vec3(0.0f), false);
+	RenderTiles(ae::Assets.Programs["map"], ViewBounds, glm::vec3(0.0f), false);
 
 	// Set program for objects
 	ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
@@ -774,14 +774,14 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	// Render floor props
 	PropCount = 0;
 	std::list<_Object *>::iterator Iterator = StaticObjects.begin();
-	RenderProps(Iterator, ClientPosition, ae::Assets.Programs["map_object"], Bounds, true);
+	RenderProps(Iterator, ClientPosition, ae::Assets.Programs["map_object"], ViewBounds, true);
 
 	// Render objects
 	for(const auto &Object : Objects)
-		Object->Render(ClientPlayer);
+		Object->Render(ViewBounds, ClientPlayer);
 
 	// Render foreground props
-	RenderProps(Iterator, ClientPosition, ae::Assets.Programs["map_object"], Bounds, false);
+	RenderProps(Iterator, ClientPosition, ae::Assets.Programs["map_object"], ViewBounds, false);
 
 	// Check for flags
 	if(!RenderFlags)
@@ -804,8 +804,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	// Draw zone overlays
 	if(RenderFlags & MAP_RENDER_ZONE) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
-			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
+		for(int j = (int)ViewBounds[1]; j < ViewBounds[3]; j++) {
+			for(int i = (int)ViewBounds[0]; i < ViewBounds[2]; i++) {
 				_Tile *Tile = &Tiles[i][j];
 
 				// Draw zone color
@@ -820,8 +820,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	}
 
 	// Draw text overlay
-	for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
-		for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
+	for(int j = (int)ViewBounds[1]; j < ViewBounds[3]; j++) {
+		for(int i = (int)ViewBounds[0]; i < ViewBounds[2]; i++) {
 			_Tile *Tile = &Tiles[i][j];
 			glm::vec3 DrawPosition = glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0);
 
