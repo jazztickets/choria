@@ -1395,6 +1395,7 @@ void _PlayState::HandleBattleJoin(ae::_Buffer &Data) {
 		if(DatabaseID)
 			Stats->GetMonsterStats(DatabaseID, Object);
 		Object->UnserializeBattle(Data, Player == Object);
+		Object->Character->CalculateStats();
 		Battle->AddObject(Object, Object->Fighter->BattleSide, true);
 	}
 }
