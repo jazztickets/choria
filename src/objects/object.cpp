@@ -960,6 +960,8 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 		StatusEffect->Unserialize(Data, Stats);
 		Character->StatusEffects.push_back(StatusEffect);
 	}
+
+	Character->CalculateStats();
 }
 
 // Update stats
