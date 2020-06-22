@@ -545,7 +545,7 @@ void _PlayState::HandleWindow(uint8_t Event) {
 
 		if(Framebuffer) {
 			Framebuffer->Resize(ae::Graphics.CurrentSize);
-			ae::Graphics.DirtyState();
+			ae::Graphics.ResetState();
 		}
 	}
 }

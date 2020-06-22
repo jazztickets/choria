@@ -675,7 +675,7 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
 	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
 
-	ae::Graphics.DirtyState();
+	ae::Graphics.ResetState();
 }
 
 // Add lights from objects
