@@ -1385,11 +1385,13 @@ void _Server::HandlePartyInfo(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Get party name
 	Player->Character->PartyName = Data.ReadString();
 
-	// Send info
+	// Broadcast party to all objects in map
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PARTY_INFO);
+	Packet.Write<ae::NetworkIDType>(Player->NetworkID);
 	Packet.WriteString(Player->Character->PartyName.c_str());
-	Network->SendPacket(Packet, Player->Peer);
+	if(Player->Map)
+		Player->Map->BroadcastPacket(Packet);
 }
 
 // Handles player status change

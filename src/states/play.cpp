@@ -1242,13 +1242,21 @@ void _PlayState::HandleInventoryGold(ae::_Buffer &Data) {
 	PlayCoinSound();
 }
 
-// Handle party info
+// Handle party name update from player on current map
 void _PlayState::HandlePartyInfo(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->Character->PartyName = Data.ReadString();
-	HUD->UpdateLabels();
+	// Read packet
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
+	std::string PartyName = Data.ReadString();
+
+	// Update object
+	_Object *Object = ObjectManager->GetObject(NetworkID);
+	if(Object && Object->Character) {
+		Object->Character->PartyName = PartyName;
+		HUD->UpdateLabels();
+	}
 }
 
 // Handles a trade request

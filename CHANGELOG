@@ -1,8 +1,10 @@
 choria 0.5.1 -
+- Direction of party members now show on current map
 - Added light spell
 - Added skill point unlocks
 - Fixed inventory bug
-- Fixed crash bug with fleeing enemies
+- Fixed crash with fleeing enemies
+- Balance updates
 
 choria 0.5.0 - 2019-09-27
 - Replaced irrlicht with a custom SDL2/OpenGL based engine
