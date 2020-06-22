@@ -338,9 +338,9 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	}
 
 	// Draw name
-	if(ClientPlayer != this && Character->Invisible != 1) {
-		//std::string Color = Character->SameParty ? "green" : "white";
-		std::string Color = "white";
+	if(ClientPlayer != this) {
+		bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
+		std::string Color = SameParty ? "green" : "white";
 		std::string NameText = "[c " + Color + "]" + Name + "[c white]";
 		if(Character->Bounty > 0)
 			NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
@@ -348,7 +348,7 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 		// Cap name to screen
 		glm::vec2 NamePosition = DrawPosition;
 		float OffsetY = -0.5f;
-		if(Character->Bounty > 0) {
+		if(SameParty || Character->Bounty > 0) {
 			ae::_TextBounds TextBounds;
 			ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
 			float HalfWidth = TextBounds.Width * 0.5f / ModelTexture->Size.x;
@@ -358,7 +358,8 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 			NamePosition[1] = glm::clamp(NamePosition[1], ViewBounds[1] + Above - OffsetY, ViewBounds[3] - HalfAbove - OffsetY);
 		}
 
-		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
+		if(Character->Invisible != 1 || SameParty)
+			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 	}
 }
 
@@ -712,6 +713,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.WriteString(Name.c_str());
+	Data.WriteString(Character->PartyName.c_str());
 	if(Character)
 		Data.Write<uint32_t>(Character->PortraitID);
 	else
@@ -813,6 +815,7 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
+	Character->PartyName = Data.ReadString();
 	uint32_t PortraitID = Data.Read<uint32_t>();
 	if(PortraitID && Character)
 		Character->PortraitID = PortraitID;
