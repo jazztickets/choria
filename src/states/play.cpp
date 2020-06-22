@@ -487,8 +487,11 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 					Network->SendPacket(Packet);
 				}
 			}
-			else
+			else {
+				if(Player)
+					Console->AddMessage("current: " + std::to_string(Player->Position.x) + " " + std::to_string(Player->Position.y));
 				Console->AddMessage("usage: move [x] [y]");
+			}
 		}
 		else if(Console->Command == "search") {
 			if(Parameters.size() == 2) {

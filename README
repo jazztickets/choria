@@ -97,6 +97,7 @@ Hit 1 to draw textures
 Hit 2 to draw zones
 Hit 3 to draw PVP/safe areas
 Hit 4 to draw events
+Hit 5 to draw lights
 
 Hit F1-F5 to change brush size
 Hit Spacebar to list textures
@@ -109,6 +110,7 @@ Hit V to paste a copied area of tiles
 Hit Z to rotate through different zone colors
 Hit T/Shift-T to cycle the clock
 Hit Ctrl+T to toggle day/night ambient light
+Hit D to delete light under cursor
 
 -- Mouse --
 Use Left-mouse button to apply the current brush
