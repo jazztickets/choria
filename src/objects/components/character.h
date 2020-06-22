@@ -172,6 +172,7 @@ class _Character {
 		int BaseEvasion;
 		int BaseHitChance;
 		int BaseDropRate;
+		int BaseAllSkills;
 
 		// Final attributes
 		int Health;
@@ -193,6 +194,7 @@ class _Character {
 		int Evasion;
 		int HitChance;
 		int DropRate;
+		int AllSkills;
 		std::unordered_map<uint32_t, int> Resistances;
 
 		// Status effects

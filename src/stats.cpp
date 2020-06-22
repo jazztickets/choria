@@ -255,6 +255,7 @@ void _Stats::LoadItems() {
 		Item->BattleSpeed = Database->GetInt<int>("battlespeed");
 		Item->MoveSpeed = Database->GetInt<int>("movespeed");
 		Item->DropRate = Database->GetInt<int>("droprate");
+		Item->AllSkills = Database->GetInt<int>("allskills");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
 		Item->Resistance = Database->GetInt<int>("res");
 		Item->Tradable = Database->GetInt<int>("tradable");

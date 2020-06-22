@@ -354,6 +354,10 @@ bool _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			HUD->UpdateSentHistory(1);
 	}
 
+	// Toggle bonus skill point display
+	if(HUD->SkillScreen->Element->Active && (KeyEvent.Scancode == SDL_SCANCODE_LCTRL || KeyEvent.Scancode == SDL_SCANCODE_RCTRL))
+		HUD->SkillScreen->RefreshSkillButtons(!KeyEvent.Pressed);
+
 	// Pass to menu
 	bool SendAction = true;
 	if(!Handled)

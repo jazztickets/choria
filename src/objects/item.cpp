@@ -27,6 +27,7 @@
 #include <ae/graphics.h>
 #include <ae/input.h>
 #include <ae/assets.h>
+#include <ae/input.h>
 #include <scripting.h>
 #include <stats.h>
 #include <constants.h>
@@ -36,6 +37,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include <SDL_keycode.h>
 
 // Draw tooltip
 void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
@@ -122,8 +124,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 
 		// Get skill level
 		auto SkillIterator = Player->Character->Skills.find(ID);
-		if(SkillIterator != Player->Character->Skills.end())
+		if(SkillIterator != Player->Character->Skills.end()) {
 			DrawLevel = SkillIterator->second;
+			if(!ae::Input.ModKeyDown(KMOD_CTRL) && SkillIterator->second > 0)
+				DrawLevel += Player->Character->AllSkills;
+		}
 		else
 			IsLocked = true;
 
@@ -363,6 +368,22 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 			Color = GetCompareColor(GetDropRate(Upgrades), CompareInventory.Item->GetDropRate(CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Drop Rate", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
+	// + all skills
+	int DrawAllSkills = (int)GetAllSkills(Upgrades);
+	if(DrawAllSkills != 0) {
+		std::stringstream Buffer;
+		Buffer << (DrawAllSkills < 0 ? "" : "+") << DrawAllSkills;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetAllSkills(Upgrades), CompareInventory.Item->GetAllSkills(CompareInventory.Upgrades));
+
+		ae::Assets.Fonts["hud_medium"]->DrawText("All Skills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -788,6 +809,11 @@ float _Item::GetResistance(int Upgrades) const {
 // Get drop rate
 float _Item::GetDropRate(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::DROPRATE, Upgrades, DropRate);
+}
+
+// Get + all skills
+float _Item::GetAllSkills(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::ALLSKILLS, Upgrades, AllSkills);
 }
 
 // Get appropriate text color when comparing items

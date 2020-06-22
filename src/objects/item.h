@@ -96,6 +96,7 @@ class _Item {
 		float GetMoveSpeed(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
 		float GetDropRate(int Upgrades) const;
+		float GetAllSkills(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 
 		const _Stats *Stats;
@@ -122,6 +123,7 @@ class _Item {
 		int BattleSpeed;
 		int MoveSpeed;
 		int DropRate;
+		int AllSkills;
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;

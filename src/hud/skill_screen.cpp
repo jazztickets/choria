@@ -26,11 +26,13 @@
 #include <ae/ui.h>
 #include <ae/assets.h>
 #include <ae/font.h>
+#include <ae/input.h>
 #include <ae/database.h>
 #include <ae/buffer.h>
 #include <packet.h>
 #include <stats.h>
 #include <glm/vec2.hpp>
+#include <SDL_keycode.h>
 #include <sstream>
 
 // Constructor
@@ -220,7 +222,7 @@ void _SkillScreen::ClearSkills() {
 }
 
 // Shows or hides the plus/minus buttons
-void _SkillScreen::RefreshSkillButtons() {
+void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 
 	// Get remaining points
 	int SkillPointsRemaining = HUD->Player->Character->GetSkillPointsAvailable();
@@ -229,7 +231,15 @@ void _SkillScreen::RefreshSkillButtons() {
 	for(auto &ChildElement : Element->Children) {
 		if(ChildElement->Name == "label_skills_level") {
 			uint32_t SkillID = (uint32_t)ChildElement->Index;
-			ChildElement->Text = std::to_string(HUD->Player->Character->Skills[SkillID]);
+			int DrawLevel = HUD->Player->Character->Skills[SkillID];
+			glm::vec4 LevelColor = glm::vec4(1.0f);
+			if(ShowBonusPoints && DrawLevel > 0 && HUD->Player->Character->AllSkills) {
+				DrawLevel += HUD->Player->Character->AllSkills;
+				LevelColor = ae::Assets.Colors["light_blue"];
+			}
+
+			ChildElement->Text = std::to_string(DrawLevel);
+			ChildElement->Color = LevelColor;
 		}
 		else if(ChildElement->Name == "button_skills_plus") {
 
@@ -282,7 +292,7 @@ void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 	// Update player
 	HUD->Player->Character->CalculateStats();
-	RefreshSkillButtons();
+	RefreshSkillButtons(!ae::Input.ModKeyDown(KMOD_CTRL));
 }
 
 // Equip a skill

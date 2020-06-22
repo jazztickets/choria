@@ -80,6 +80,7 @@ _Character::_Character(_Object *Object) :
 	BaseEvasion(0),
 	BaseHitChance(100),
 	BaseDropRate(0),
+	BaseAllSkills(0),
 
 	Health(1),
 	MaxHealth(1),
@@ -100,6 +101,7 @@ _Character::_Character(_Object *Object) :
 	Evasion(0),
 	HitChance(100),
 	DropRate(0),
+	AllSkills(0),
 
 	SkillPoints(0),
 	SkillPointsUnlocked(0),
@@ -298,6 +300,7 @@ void _Character::CalculateStats() {
 	Pierce = BasePierce;
 	MoveSpeed = BaseMoveSpeed;
 	DropRate = BaseDropRate;
+	AllSkills = BaseAllSkills;
 	Resistances.clear();
 
 	Object->Light = 0;
@@ -337,6 +340,7 @@ void _Character::CalculateStats() {
 			BattleSpeed += Item->GetBattleSpeed(Upgrades);
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
 			DropRate += Item->GetDropRate(Upgrades);
+			AllSkills += Item->GetAllSkills(Upgrades);
 
 			// Add resistances
 			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
@@ -563,8 +567,11 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 			return false;
 
 		// Determine if item is a skill, then look at object's skill levels
-		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
+		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item)) {
 			ReturnAction.Level = Skills[ReturnAction.Item->ID];
+			if(ReturnAction.Level > 0)
+				ReturnAction.Level += AllSkills;
+		}
 		else
 			ReturnAction.Level = ReturnAction.Item->Level;
 

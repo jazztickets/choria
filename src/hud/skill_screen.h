@@ -35,7 +35,7 @@ class _SkillScreen : public _Screen {
 		void Render(double BlendFactor) override;
 
 		void ClearSkills();
-		void RefreshSkillButtons();
+		void RefreshSkillButtons(bool ShowBonusPoints=true);
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void EquipSkill(uint32_t SkillID);
 
