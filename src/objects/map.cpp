@@ -569,7 +569,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 	// Render objects
 	for(const auto &Object : Objects) {
-		Object->Render(ClientPlayer);
+		Object->Render(Bounds, ClientPlayer);
 	}
 
 	// Check for flags

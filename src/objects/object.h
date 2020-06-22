@@ -20,6 +20,7 @@
 // Libraries
 #include <ae/baseobject.h>
 #include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 #include <unordered_map>
 #include <list>
 #include <vector>
@@ -75,7 +76,7 @@ class _Object : public ae::_BaseObject {
 		// Updates
 		void Update(double FrameTime) override;
 		void UpdateBot(double FrameTime);
-		void Render(const _Object *ClientPlayer=nullptr);
+		void Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer=nullptr);
 		void RenderBattle(_Object *ClientPlayer, double Time);
 
 		// Save

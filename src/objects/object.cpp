@@ -45,6 +45,7 @@
 #include <constants.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/common.hpp>
 #include <json/reader.h>
 #include <algorithm>
 #include <sstream>
@@ -303,43 +304,61 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 }
 
 // Renders the player while walking around the world
-void _Object::Render(const _Object *ClientPlayer) {
-	if(Map && ModelTexture) {
+void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
+	if(!Map)
+		return;
 
-		// Setup shader
-		ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
-		glUniformMatrix4fv(ae::Assets.Programs["map"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-		glUniformMatrix4fv(ae::Assets.Programs["map"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+	if(!ModelTexture)
+		return;
 
-		// Draw debug server position
-		glm::vec3 DrawPosition;
-		if(Character->HUD && Character->HUD->ShowDebug) {
-			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-			ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
-			ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
-		}
+	// Setup shader
+	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+	glUniformMatrix4fv(ae::Assets.Programs["map"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-		// Set invisible alpha
-		float Alpha = 1.0f;
-		if(Character->Invisible > 0)
-			Alpha = PLAYER_INVIS_ALPHA;
-
-		// Draw model
-		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
+	// Draw debug server position
+	glm::vec3 DrawPosition;
+	if(Character->HUD && Character->HUD->ShowDebug) {
+		DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+		ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 		ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
-		if(Character->StatusTexture) {
-			ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
+	}
+
+	// Set invisible alpha
+	float Alpha = 1.0f;
+	if(Character->Invisible > 0)
+		Alpha = PLAYER_INVIS_ALPHA;
+
+	// Draw model
+	DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+	ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
+	ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
+	if(Character->StatusTexture) {
+		ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
+	}
+
+	// Draw name
+	if(ClientPlayer != this && Character->Invisible != 1) {
+		//std::string Color = Character->SameParty ? "green" : "white";
+		std::string Color = "white";
+		std::string NameText = "[c " + Color + "]" + Name + "[c white]";
+		if(Character->Bounty > 0)
+			NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
+
+		// Cap name to screen
+		glm::vec2 NamePosition = DrawPosition;
+		float OffsetY = -0.5f;
+		if(Character->Bounty > 0) {
+			ae::_TextBounds TextBounds;
+			ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
+			float HalfWidth = TextBounds.Width * 0.5f / ModelTexture->Size.x;
+			float HalfAbove = (TextBounds.AboveBase) * 0.5f / ModelTexture->Size.x;
+			float Above = (TextBounds.AboveBase) * 1.0f / ModelTexture->Size.x;
+			NamePosition[0] = glm::clamp(NamePosition[0], ViewBounds[0] + HalfWidth, ViewBounds[2] - HalfWidth);
+			NamePosition[1] = glm::clamp(NamePosition[1], ViewBounds[1] + Above - OffsetY, ViewBounds[3] - HalfAbove - OffsetY);
 		}
 
-		// Draw name
-		if(ClientPlayer != this && Character->Invisible != 1) {
-			std::string NameText = Name;
-			if(Character->Bounty > 0)
-				NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
-
-			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
-		}
+		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 	}
 }
 
