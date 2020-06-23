@@ -292,7 +292,7 @@ void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 	// Update player
 	HUD->Player->Character->CalculateStats();
-	RefreshSkillButtons(!ae::Input.ModKeyDown(KMOD_CTRL));
+	RefreshSkillButtons(!ae::Input.ModKeyDown(KMOD_ALT));
 }
 
 // Equip a skill

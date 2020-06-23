@@ -355,7 +355,7 @@ bool _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	}
 
 	// Toggle bonus skill point display
-	if(HUD->SkillScreen->Element->Active && (KeyEvent.Scancode == SDL_SCANCODE_LCTRL || KeyEvent.Scancode == SDL_SCANCODE_RCTRL))
+	if(HUD->SkillScreen->Element->Active && (KeyEvent.Scancode == SDL_SCANCODE_LALT || KeyEvent.Scancode == SDL_SCANCODE_RALT))
 		HUD->SkillScreen->RefreshSkillButtons(!KeyEvent.Pressed);
 
 	// Pass to menu

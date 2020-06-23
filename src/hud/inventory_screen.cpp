@@ -27,8 +27,10 @@
 #include <ae/assets.h>
 #include <ae/font.h>
 #include <ae/ui.h>
+#include <ae/input.h>
 #include <stats.h>
 #include <sstream>
+#include <SDL_keycode.h>
 
 // Constructor
 _InventoryScreen::_InventoryScreen(_HUD *HUD, ae::_Element *Element) :
@@ -148,15 +150,17 @@ void _InventoryScreen::DrawBag(BagType Type) {
 			// Draw price if using vendor
 			HUD->DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false, Slot->Upgrades);
 
-			// Draw upgrade count if using blacksmith
-			if(HUD->Player->Character->Blacksmith && Slot->Item->MaxLevel) {
-				glm::vec4 Color;
-				if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= HUD->Player->Character->Blacksmith->Level)
-					Color = ae::Assets.Colors["red"];
-				else
-					Color = ae::Assets.Colors["green"];
+			// Draw upgrade count if using blacksmith or holding alt
+			if(Slot->Item->MaxLevel && (ae::Input.ModKeyDown(KMOD_ALT) || HUD->Player->Character->Blacksmith)) {
+				glm::vec4 Color = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
+				if(HUD->Player->Character->Blacksmith) {
+					if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= HUD->Player->Character->Blacksmith->Level)
+						Color = ae::Assets.Colors["red"];
+					else
+						Color = ae::Assets.Colors["green"];
+				}
 
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(28, -15) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(-30, 28) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE, Color);
 			}
 
 			// Draw count
