@@ -14,7 +14,9 @@ function Buff_Bleeding.Update(self, Level, Source, Change)
 	Damage = Damage * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(Damage, 0)
 
-	Change.Health = -Damage
+	Update = ResolveManaReductionRatio(Source, Damage)
+	Change.Health = Update.Health
+	Change.Mana = Update.Mana
 
 	return Change
 end
@@ -225,7 +227,9 @@ function Buff_Poisoned.Update(self, Level, Source, Change)
 	Damage = Damage * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(math.floor(Damage), 0)
 
-	Change.Health = -Damage
+	Update = ResolveManaReductionRatio(Source, Damage)
+	Change.Health = Update.Health
+	Change.Mana = Update.Mana
 
 	return Change
 end
@@ -252,7 +256,9 @@ function Buff_Burning.Update(self, Level, Source, Change)
 	Damage = Damage * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(math.floor(Damage), 0)
 
-	Change.Health = -Damage
+	Update = ResolveManaReductionRatio(Source, Damage)
+	Change.Health = Update.Health
+	Change.Mana = Update.Mana
 
 	return Change
 end

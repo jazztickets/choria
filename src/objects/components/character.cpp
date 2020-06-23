@@ -461,6 +461,8 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::MANAREGEN))
 		ManaRegen += StatChange.Values[StatType::MANAREGEN].Integer;
 
+	if(StatChange.HasStat(StatType::MANAREDUCTIONRATIO))
+		ManaReductionRatio += StatChange.Values[StatType::MANAREDUCTIONRATIO].Float;
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))

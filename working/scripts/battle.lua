@@ -86,11 +86,14 @@ Base_Spell = {
 	end,
 
 	Use = function(self, Level, Duration, Source, Target, Result)
-		Damage = self:GetDamage(Level)
-		Damage = math.floor(Damage * Target.GetDamageReduction(self.Item.DamageType))
-		Damage = math.max(Damage, 0)
+		Change = {}
+		Change.Damage = self:GetDamage(Level)
+		Change.Damage = math.floor(Change.Damage * Target.GetDamageReduction(self.Item.DamageType))
+		Change.Damage = math.max(Change.Damage, 0)
 
-		Result.Target.Health = -Damage
+		Update = ResolveManaReductionRatio(Target, Change.Damage)
+		Result.Target.Health = Update.Health
+		Result.Target.Mana = Update.Mana
 
 		self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 
@@ -165,24 +168,9 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		Change.Damage = math.floor(Change.Damage)
 
 		-- Handle mana damage reduction
-		if Target.ManaReductionRatio > 0 then
-			Result.Target.Health = -Change.Damage * (1.0 - Target.ManaReductionRatio)
-			Result.Target.Mana = -Change.Damage * Target.ManaReductionRatio
-
-			-- Remove fractions from damage
-			Fraction = math.abs(Result.Target.Health) - math.floor(math.abs(Result.Target.Health))
-			Result.Target.Health = Result.Target.Health + Fraction
-			Result.Target.Mana = Result.Target.Mana - Fraction
-
-			-- Carry over extra mana damage to health
-			ResultingMana = Target.Mana + Result.Target.Mana
-			if ResultingMana < 0 then
-				Result.Target.Health = Result.Target.Health + ResultingMana
-				Result.Target.Mana = Result.Target.Mana - ResultingMana
-			end
-		else
-			Result.Target.Health = -Change.Damage
-		end
+		Update = ResolveManaReductionRatio(Target, Change.Damage)
+		Result.Target.Health = Update.Health
+		Result.Target.Mana = Update.Mana
 
 		Hit = true
 	else
@@ -191,6 +179,33 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 	end
 
 	return Hit
+end
+
+-- Convert damage into health/mana reduction based on target's mana reduction ratio
+function ResolveManaReductionRatio(Target, Damage)
+	Update = {}
+	Update.Health = 0
+	Update.Mana = 0
+	if Target.ManaReductionRatio > 0 then
+		Update.Health = -Damage * (1.0 - Target.ManaReductionRatio)
+		Update.Mana = -Damage * Target.ManaReductionRatio
+
+		-- Remove fractions from damage
+		Fraction = math.abs(Update.Health) - math.floor(math.abs(Update.Health))
+		Update.Health = Update.Health + Fraction
+		Update.Mana = Update.Mana - Fraction
+
+		-- Carry over extra mana damage to health
+		ResultingMana = Target.Mana + Update.Mana
+		if ResultingMana < 0 then
+			Update.Health = Update.Health + ResultingMana
+			Update.Mana = Update.Mana - ResultingMana
+		end
+	else
+		Update.Health = -Damage
+	end
+
+	return Update
 end
 
 -- Storage for battle instance data

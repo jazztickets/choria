@@ -636,6 +636,28 @@ function Skill_Evasion.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Energy Field --
+
+Skill_EnergyField = {}
+Skill_EnergyField.BasePercent = 20
+Skill_EnergyField.PercentPerLevel = 5
+
+function Skill_EnergyField.GetReduction(self, Level)
+
+	return math.min(Skill_EnergyField.BasePercent + self.PercentPerLevel * math.floor(Level / 1), 100)
+end
+
+function Skill_EnergyField.GetInfo(self, Item)
+
+	return "Convert [c green]" .. self:GetReduction(Item.Level) .. "%[c white] of damage taken to mana drain"
+end
+
+function Skill_EnergyField.Stats(self, Level, Object, Change)
+	Change.ManaReductionRatio = self:GetReduction(Level) / 100.0
+
+	return Change
+end
+
 -- Flee --
 
 Skill_Flee = {}

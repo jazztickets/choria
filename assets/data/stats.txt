@@ -101,6 +101,7 @@ INSERT INTO stattype VALUES(38,'Bounty Hunt',1.0);
 INSERT INTO stattype VALUES(39,'Teleport',1.0);
 INSERT INTO stattype VALUES(40,'Light',1.0);
 INSERT INTO stattype VALUES(41,'Clock',1.0);
+INSERT INTO stattype VALUES(42,'Mana Reduction Ratio',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -482,6 +483,7 @@ INSERT INTO vendoritem VALUES(125,6,227);
 INSERT INTO vendoritem VALUES(126,8,228);
 INSERT INTO vendoritem VALUES(127,11,230);
 INSERT INTO vendoritem VALUES(128,13,229);
+INSERT INTO vendoritem VALUES(129,13,27);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1200,7 +1202,7 @@ INSERT INTO item VALUES(23,1,2,4,2,0,0,'Cleave','textures/skills/cleave.png','Sk
 INSERT INTO item VALUES(24,1,0,0,1,0,0,'Hunt','textures/skills/hunt.png','Skill_Hunt',500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(25,1,0,0,1,0,0,'Bounty Hunt','textures/skills/bounty_hunt.png','Skill_BountyHunt',100,0,0,1,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(26,1,0,1,1,0,0,'Light','textures/skills/light.png','Skill_Light',300,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(27,1,0,0,0,0,0,'','','',0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(27,1,0,0,0,0,0,'Energy Field','textures/skills/energy_field.png','Skill_EnergyField',1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(28,1,0,0,0,0,0,'','','',0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(29,1,0,0,0,0,0,'','','',0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(30,1,0,0,0,0,0,'','','',0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
