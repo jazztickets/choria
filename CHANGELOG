@@ -4,7 +4,7 @@ choria 0.5.1 -
 - Added skill point unlocks
 - Fixed inventory bug
 - Fixed crash with fleeing enemies
-- Balance updates
+- Balance and map updates
 
 choria 0.5.0 - 2019-09-27
 - Replaced irrlicht with a custom SDL2/OpenGL based engine

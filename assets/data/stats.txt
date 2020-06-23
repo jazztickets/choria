@@ -38,6 +38,9 @@ INSERT INTO light VALUES(27,'magic light',0.29999999999999998889,0.2999999999999
 INSERT INTO light VALUES(28,'magic light',0.29999999999999998889,0.29999999999999998889,1.0,9.0);
 INSERT INTO light VALUES(29,'magic light',0.29999999999999998889,0.29999999999999998889,1.0,10.0);
 INSERT INTO light VALUES(30,'magic light',0.29999999999999998889,0.29999999999999998889,1.0,11.0);
+INSERT INTO light VALUES(31,'tiny dim red',1.0,0.29999999999999998889,0.29999999999999998889,1.0);
+INSERT INTO light VALUES(32,'small dim red',1.0,0.29999999999999998889,0.29999999999999998889,2.0);
+INSERT INTO light VALUES(33,'small dim red',1.0,0.29999999999999998889,0.29999999999999998889,3.0);
 CREATE TABLE IF NOT EXISTS "damagetype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -606,6 +609,7 @@ INSERT INTO zone VALUES(27,'skeleton_priest',0,0.0,2,4);
 INSERT INTO zone VALUES(28,'skeleton_priest_dustyant_zombie',0,0.0,2,3);
 INSERT INTO zone VALUES(29,'goblin',0,0.0,2,4);
 INSERT INTO zone VALUES(30,'goblin_thief',0,0.0,2,3);
+INSERT INTO zone VALUES(31,'dungeon',0,0.0,2,4);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -691,6 +695,10 @@ INSERT INTO zonedata VALUES(75,29,3,1,0);
 INSERT INTO zonedata VALUES(76,29,5,1,2);
 INSERT INTO zonedata VALUES(77,30,3,5,0);
 INSERT INTO zonedata VALUES(78,29,4,1,0);
+INSERT INTO zonedata VALUES(79,31,25,3,2);
+INSERT INTO zonedata VALUES(80,31,11,5,0);
+INSERT INTO zonedata VALUES(81,31,5,5,0);
+INSERT INTO zonedata VALUES(82,31,4,5,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -780,7 +788,7 @@ INSERT INTO map VALUES(30,'maps/san.map.gz','textures/map/atlas0.png','town.ogg'
 INSERT INTO map VALUES(31,'maps/san_shop.map.gz','textures/map/atlas0.png','town.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(32,'maps/san_weapon.map.gz','textures/map/atlas0.png','town.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(33,'maps/san_armor.map.gz','textures/map/atlas0.png','town.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(34,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(34,'maps/san_dungeon.map.gz','textures/map/atlas0.png','cellar.ogg',0.020000000000000000416,0.010000000000000000208,0.010000000000000000208,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(35,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(36,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(37,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
@@ -818,6 +826,8 @@ INSERT INTO trader VALUES(18,'medium_torch',222,1);
 INSERT INTO trader VALUES(19,'cold_ring',175,1);
 INSERT INTO trader VALUES(20,'fire_ring',172,1);
 INSERT INTO trader VALUES(21,'mythical_amulet',231,1);
+INSERT INTO trader VALUES(22,'hunt',24,1);
+INSERT INTO trader VALUES(23,'dungeon_key',232,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -876,6 +886,9 @@ INSERT INTO traderitem VALUES(58,20,215,5);
 INSERT INTO traderitem VALUES(59,20,211,1);
 INSERT INTO traderitem VALUES(60,21,162,1);
 INSERT INTO traderitem VALUES(63,21,229,1);
+INSERT INTO traderitem VALUES(64,22,132,1);
+INSERT INTO traderitem VALUES(65,22,150,1);
+INSERT INTO traderitem VALUES(66,23,140,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1367,6 +1380,7 @@ INSERT INTO item VALUES(228,12,0,0,1,7,0,'Skill Point III','textures/items/skill
 INSERT INTO item VALUES(229,12,0,0,1,8,0,'Skill Point IV','textures/items/skillpoint.png','Item_SkillPoint',2000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(230,12,0,0,1,9,0,'Skill Point V','textures/items/skillpoint.png','Item_SkillPoint',4000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(231,9,0,0,0,0,0,'Mythical Amulet','textures/items/amulet_blue.png','',2000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
+INSERT INTO item VALUES(232,13,0,0,1,0,0,'Dungeon Key','textures/items/key.png','',100,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
