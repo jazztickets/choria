@@ -10,7 +10,7 @@ end
 Script_Lava = { BaseHealth = -10 }
 
 function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
-	Change.Health = self.BaseHealth * Level
+	Change.Health = self.BaseHealth * Level * Object.GetDamageReduction(DamageType["Fire"])
 
 	return Change
 end
