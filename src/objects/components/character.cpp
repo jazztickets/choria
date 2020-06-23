@@ -67,6 +67,7 @@ _Character::_Character(_Object *Object) :
 	BaseMaxMana(0),
 	BaseHealthRegen(0),
 	BaseManaRegen(0),
+	BaseManaReductionRatio(0.0f),
 	BaseHealPower(1.0f),
 	BaseAttackPower(1.0f),
 	BaseMinDamage(0),
@@ -88,6 +89,7 @@ _Character::_Character(_Object *Object) :
 	MaxMana(0),
 	HealthRegen(0),
 	ManaRegen(0),
+	ManaReductionRatio(0.0f),
 	HealPower(0.0f),
 	AttackPower(0.0f),
 	MinDamage(0),
@@ -288,6 +290,7 @@ void _Character::CalculateStats() {
 	MaxMana = BaseMaxMana;
 	HealthRegen = BaseHealthRegen;
 	ManaRegen = BaseManaRegen;
+	ManaReductionRatio = BaseManaReductionRatio;
 	HealPower = BaseHealPower;
 	AttackPower = BaseAttackPower;
 	BattleSpeed = BaseBattleSpeed;

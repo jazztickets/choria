@@ -187,12 +187,22 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	TextColor.a = AlphaPercent;
 
+	// Draw damage done
 	std::stringstream Buffer;
 	if(ActionResult.Target.HasStat(StatType::MISS))
 		Buffer << "miss";
 	else if(ActionResult.Target.HasStat(StatType::HEALTH))
 		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Integer);
 	ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
+
+	// Draw mana damage
+	if(ActionResult.Target.HasStat(StatType::MANA) && ActionResult.Target.Values[StatType::MANA].Integer < 0) {
+		Buffer.str("");
+		Buffer << std::abs(ActionResult.Target.Values[StatType::MANA].Integer);
+		TextColor = ae::Assets.Colors["light_blue"];
+		TextColor.a = AlphaPercent;
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(24, 24), ae::RIGHT_BASELINE, TextColor);
+	}
 }
 
 // Sends an action selection to the server

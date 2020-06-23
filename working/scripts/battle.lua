@@ -163,7 +163,27 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
 		-- Update health
 		Change.Damage = math.floor(Change.Damage)
-		Result.Target.Health = -Change.Damage
+
+		-- Handle mana damage reduction
+		if Target.ManaReductionRatio > 0 then
+			Result.Target.Health = -Change.Damage * (1.0 - Target.ManaReductionRatio)
+			Result.Target.Mana = -Change.Damage * Target.ManaReductionRatio
+
+			-- Remove fractions from damage
+			Fraction = math.abs(Result.Target.Health) - math.floor(math.abs(Result.Target.Health))
+			Result.Target.Health = Result.Target.Health + Fraction
+			Result.Target.Mana = Result.Target.Mana - Fraction
+
+			-- Carry over extra mana damage to health
+			ResultingMana = Target.Mana + Result.Target.Mana
+			if ResultingMana < 0 then
+				Result.Target.Health = Result.Target.Health + ResultingMana
+				Result.Target.Mana = Result.Target.Mana - ResultingMana
+			end
+		else
+			Result.Target.Health = -Change.Damage
+		end
+
 		Hit = true
 	else
 		Result.Target.Miss = true
