@@ -400,6 +400,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GetTileEvent");
 
 	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetTileZone, 1);
+	lua_setfield(LuaState, -2, "GetTileZone");
+
+	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectRespawn, 1);
 	lua_setfield(LuaState, -2, "Respawn");
 
@@ -987,6 +991,23 @@ int _Scripting::ObjectGetTileEvent(lua_State *LuaState) {
 	lua_pushinteger(LuaState, Event.Data);
 
 	return 2;
+}
+
+// Get zone from a tile position
+int _Scripting::ObjectGetTileZone(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	int X = (int)lua_tointeger(LuaState, 1);
+	int Y = (int)lua_tointeger(LuaState, 2);
+
+	if(!Object->Map)
+		return 0;
+
+	const _Tile *Tile = Object->Map->GetTile(glm::ivec2(X, Y));
+
+	lua_pushinteger(LuaState, Tile->Zone);
+
+	return 1;
 }
 
 // Get the next input state from a path

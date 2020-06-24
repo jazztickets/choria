@@ -108,8 +108,17 @@ function Item_BattlePotion.GetInfo(self, Item)
 	return "Get into a fight"
 end
 
+function Item_BattlePotion.CanUse(self, Level, Object)
+	Zone = Object.GetTileZone(Object.X, Object.Y)
+	if Zone > 0 then
+		return true
+	end
+
+	return false
+end
+
 function Item_BattlePotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Battle = Level
+	Result.Target.Battle = Source.GetTileZone(Source.X, Source.Y)
 
 	return Result
 end
