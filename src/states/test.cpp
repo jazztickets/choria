@@ -53,7 +53,7 @@ void _TestState::Init() {
 	int MinBounces = 99999;
 
 	// gawk 'BEGIN{IFS=OFS="\t";print "runs", "time", "sold", "profit", "gold/sec"} { time+=$1; total+=int($2/2) } END{ prof=(total-NR*10); print NR, time, total, prof, prof/time }'
-	int Simulations = 0;
+	int Simulations = 10;
 	for(int i = 0; i < Simulations; i++) {
 		//double StartTime = SDL_GetPerformanceCounter();
 		uint32_t Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
@@ -65,7 +65,7 @@ void _TestState::Init() {
 
 		// Drop ball over highest value prize
 		float X = 0;
-		if(0) {
+		if(1) {
 			int HighestPrizeIndex = 0;
 			int HighestPrizeValue = 0;
 			int Index = 0;
@@ -79,7 +79,9 @@ void _TestState::Init() {
 
 			X = Minigame->Boundary.Start.x + 1 + HighestPrizeIndex * 2;
 		}
-		X = (float)ae::GetRandomReal(-7.65, 7.65);
+		else
+			X = (float)ae::GetRandomReal(-7.65, 7.65);
+
 		Minigame->Drop(X);
 
 		Time = 0;
@@ -109,15 +111,15 @@ void _TestState::Init() {
 			MaxBounces = Minigame->Bounces;
 		}
 
-		std::cout << Minigame->Bounces << std::endl;
+		//std::cout << Minigame->Bounces << std::endl;
 
 		if(Minigame->Bucket < Minigame->Prizes.size()) {
 			const _MinigameItem *MinigameItem = Minigame->Prizes[Minigame->Bucket];
 			if(MinigameItem && MinigameItem->Item) {
-				//std::cout << Time << "\t" << MinigameItem->Item->Cost * MinigameItem->Count << std::endl;
+				std::cout << Time << "\t" << MinigameItem->Item->Cost * MinigameItem->Count << std::endl;
 			}
 			else {
-				//std::cout << Time << "\t" << "0" << std::endl;
+				std::cout << Time << "\t" << "0" << std::endl;
 			}
 		}
 
@@ -128,7 +130,7 @@ void _TestState::Init() {
 
 	Minigame = nullptr;
 
-	//Framework.Done = true;
+	Framework.Done = true;
 
 	//Minigame = new _Minigame(&Stats->Minigames.at(1));
 	//Minigame->Debug = -1;
