@@ -1098,6 +1098,15 @@ INSERT INTO builditem VALUES(44,9,105,1);
 INSERT INTO builditem VALUES(45,9,221,10);
 INSERT INTO builditem VALUES(46,40,233,5);
 INSERT INTO builditem VALUES(47,40,174,1);
+INSERT INTO builditem VALUES(48,40,235,1);
+INSERT INTO builditem VALUES(49,24,234,1);
+INSERT INTO builditem VALUES(50,29,235,1);
+INSERT INTO builditem VALUES(51,32,236,1);
+INSERT INTO builditem VALUES(52,22,236,1);
+INSERT INTO builditem VALUES(53,23,236,1);
+INSERT INTO builditem VALUES(54,37,172,1);
+INSERT INTO builditem VALUES(55,31,236,1);
+INSERT INTO builditem VALUES(56,21,234,1);
 CREATE TABLE IF NOT EXISTS "buildactionbar" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1402,6 +1411,9 @@ INSERT INTO item VALUES(230,12,0,0,1,9,0,'Skill Point V','textures/items/skillpo
 INSERT INTO item VALUES(231,9,0,0,0,0,0,'Mythical Amulet','textures/items/amulet_blue.png','',2000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
 INSERT INTO item VALUES(232,13,0,0,1,0,0,'Dungeon Key','textures/items/key.png','',100,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(233,10,0,2,2,0,0,'Lava Sludge','textures/items/lava_sludge.png','Item_LavaSludge',100,1,20,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(234,8,0,0,0,0,3,'Negative Fire Ring I','textures/items/ring.png','',0,1,0,5,0.0,1,0,0,0,0,0,-25,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(235,8,0,0,0,0,4,'Negative Cold Ring I','textures/items/ring.png','',0,1,0,5,0.0,1,0,0,0,0,0,-25,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(236,8,0,0,0,0,5,'Negative Lightning Ring I','textures/items/ring.png','',0,1,0,5,0.0,1,0,0,0,0,0,-25,0,0,0,0,0,0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
