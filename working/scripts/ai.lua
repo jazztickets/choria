@@ -188,3 +188,24 @@ function AI_GoblinThief.Update(self, Object, Enemies, Allies)
 		Object.SetAction(Action)
 	end
 end
+
+AI_LavaMan = {}
+
+function AI_LavaMan.Update(self, Object, Enemies, Allies)
+
+	-- Chance to do special attack
+	if Random.GetInt(1, 5) == 1 then
+		CanUse = Object.SetAction(1)
+		if CanUse == false then
+			Object.SetAction(0)
+		end
+	else
+		Object.SetAction(0)
+	end
+
+	-- Get random target
+	Target = Random.GetInt(1, #Enemies)
+
+	-- Set target
+	Object.AddTarget(Enemies[Target])
+end

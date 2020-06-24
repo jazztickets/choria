@@ -205,7 +205,7 @@ void _Object::Update(double FrameTime) {
 
 	// Check events
 	if(Map && CheckEvent)
-		Map->CheckEvents(this);
+		Map->CheckEvents(this, Scripting);
 
 	// Update status
 	if(Character)

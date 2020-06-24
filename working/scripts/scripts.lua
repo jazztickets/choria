@@ -10,9 +10,17 @@ end
 Script_Lava = { BaseHealth = -10 }
 
 function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
-	Change.Health = self.BaseHealth * Level * Object.GetDamageReduction(DamageType["Fire"])
+	Damage = -self.BaseHealth * Level * Object.GetDamageReduction(DamageType["Fire"])
+
+	Update = ResolveManaReductionRatio(Object, Damage)
+	Change.Health = Update.Health
+	Change.Mana = Update.Mana
 
 	return Change
+end
+
+function Script_Lava.PlaySound(self, Level)
+	Audio.Play("flame0.ogg")
 end
 
 Script_Boss = {}

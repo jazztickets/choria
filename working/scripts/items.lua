@@ -390,6 +390,30 @@ function Item_SwampGlob.PlaySound(self, Level)
 	Audio.Play("sludge0.ogg")
 end
 
+-- Lava Sludge --
+
+Item_LavaSludge = { }
+
+function Item_LavaSludge.GetInfo(self, Item)
+
+	return "Ignite yourself and a target for [c green]" .. math.floor(Buff_Burning.Damage * Item.Level * Item.Duration) .. " [c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
+end
+
+function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Burning.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+	Result.Source.Buff = Buff_Burning.Pointer
+	Result.Source.BuffLevel = Level
+	Result.Source.BuffDuration = Duration
+
+	return Result
+end
+
+function Item_LavaSludge.PlaySound(self, Level)
+	Audio.Play("flame0.ogg")
+end
+
 -- Torch --
 
 Item_Torch = { }

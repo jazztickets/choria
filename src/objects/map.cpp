@@ -38,6 +38,7 @@
 #include <ae/light.h>
 #include <states/editor.h>
 #include <server.h>
+#include <scripting.h>
 #include <constants.h>
 #include <stats.h>
 #include <packet.h>
@@ -287,7 +288,7 @@ void _Map::Update(double FrameTime) {
 }
 
 // Check for events
-void _Map::CheckEvents(_Object *Object) const {
+void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 
 	// Check for teleporting
 	if(Server && Object->Character->TeleportTime == 0.0) {
@@ -324,8 +325,22 @@ void _Map::CheckEvents(_Object *Object) const {
 				Object->Controller->WaitForServer = true;
 		} break;
 		case _Map::EVENT_SCRIPT: {
-			if(Server)
+			if(Server) {
 				Server->RunEventScript(Tile->Event.Data, Object);
+				CheckBattle(Object, Tile);
+			}
+			else {
+
+				// Find script
+				auto Iterator = Stats->Scripts.find(Tile->Event.Data);
+				if(Iterator != Stats->Scripts.end()) {
+					const _Script &Script = Iterator->second;
+					if(Scripting->StartMethodCall(Script.Name, "PlaySound")) {
+						Scripting->MethodCall(0, 0);
+						Scripting->FinishMethodCall();
+					}
+				}
+			}
 		} break;
 		case _Map::EVENT_PORTAL: {
 			if(Server) {
@@ -351,13 +366,19 @@ void _Map::CheckEvents(_Object *Object) const {
 			if(Server) {
 				Object->Character->Vendor = nullptr;
 				Object->Character->Trader = nullptr;
-
-				if(Object->Character->NextBattle <= 0) {
-					Server->QueueBattle(Object, Tile->Zone, false, false, 0.0f, 0.0f);
-				}
+				CheckBattle(Object, Tile);
 			}
 		break;
 	}
+}
+
+// Check for next battle
+void _Map::CheckBattle(_Object *Object, const _Tile *Tile) const {
+	if(!Server)
+		return;
+
+	if(Object->Character->NextBattle <= 0)
+		Server->QueueBattle(Object, Tile->Zone, false, false, 0.0f, 0.0f);
 }
 
 // Build indexed events list
