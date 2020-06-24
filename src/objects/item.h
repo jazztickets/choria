@@ -67,7 +67,7 @@ class _Item {
 		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY; }
 		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY; }
 		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
-		int GetTargetCount() const;
+		int GetTargetCount(_Scripting *Scripting, _Object *Object) const;
 
 		void GetEquipmentSlot(_Slot &Slot) const;
 

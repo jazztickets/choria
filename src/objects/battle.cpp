@@ -345,7 +345,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 	// Set up targets
-	int TargetCount = Item->GetTargetCount();
+	int TargetCount = Item->GetTargetCount(Scripting, ClientPlayer);
 	for(size_t i = 0; i < ObjectList.size(); i++) {
 
 		// Check for valid target

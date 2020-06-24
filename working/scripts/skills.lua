@@ -194,16 +194,20 @@ end
 
 Skill_Attack = Base_Attack:New()
 Skill_Attack.BaseChance = 4
-Skill_Attack.ChancePerLevel = 2
+Skill_Attack.ChancePerLevel = 1
+Skill_Attack.DamageBase = 100
+Skill_Attack.DamagePerLevel = 4
+
+function Skill_Attack.GetDamage(self, Level)
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
+end
 
 function Skill_Attack.GetChance(self, Level)
-
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 
 function Skill_Attack.GetInfo(self, Item)
-
-	return "Attack with your weapon\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
+	return "Attack for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
 end
 
 function Skill_Attack.PlaySound(self, Level)
@@ -211,7 +215,7 @@ function Skill_Attack.PlaySound(self, Level)
 end
 
 function Skill_Attack.GenerateDamage(self, Level, Source)
-	Damage = Source.GenerateDamage()
+	Damage = math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
 
 	Crit = false
 	if Random.GetInt(1, 100) <= self:GetChance(Level) then
@@ -227,15 +231,19 @@ end
 Skill_Fury = Base_Attack:New()
 Skill_Fury.StaminaPerLevel = 0.04
 Skill_Fury.BaseStamina = 0.25
+Skill_Fury.SpeedDuration = 3
+Skill_Fury.SpeedDurationPerLevel = 0.2
 
 function Skill_Fury.GetStaminaGain(self, Level)
-
 	return math.min(self.BaseStamina + self.StaminaPerLevel * Level, 1.0)
 end
 
-function Skill_Fury.GetInfo(self, Item)
+function Skill_Fury.GetDuration(self, Level)
+	return self.SpeedDuration + self.SpeedDurationPerLevel * (Level - 1)
+end
 
-	return "Attack with your weapon and gain [c green]" .. math.floor(self:GetStaminaGain(Item.Level) * 100) .. "% [c yellow]stamina [c white]for a killing blow"
+function Skill_Fury.GetInfo(self, Item)
+	return "Strike down your enemy, gaining [c green]" .. math.floor(self:GetStaminaGain(Item.Level) * 100) .. "% [c yellow]stamina[c white] and a [c green]" .. self:GetDuration(Item.Level) .. "[c white] second battle speed boost for a killing blow"
 end
 
 function Skill_Fury.PlaySound(self, Level)
@@ -245,6 +253,10 @@ end
 function Skill_Fury.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	if Target.Health + Result.Target.Health <= 0 then
 		Result.Source.Stamina = self:GetStaminaGain(Level)
+
+		Result.Source.Buff = Buff_Hasted.Pointer
+		Result.Source.BuffLevel = 30
+		Result.Source.BuffDuration = self:GetDuration(Level)
 	end
 end
 
@@ -332,8 +344,8 @@ end
 
 Skill_Whirlwind = Base_Attack:New()
 Skill_Whirlwind.DamageBase = 20
-Skill_Whirlwind.DamagePerLevel = 2
-Skill_Whirlwind.SlowDurationPerLevel = 2.0 / 3.0
+Skill_Whirlwind.DamagePerLevel = 3
+Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 4.0
 Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
 
 function Skill_Whirlwind.CanUse(self, Level, Object)
@@ -492,7 +504,7 @@ function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
 end
 
 function Skill_Icicle.PlaySound(self, Level)
-	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg")
+	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg", 0.65)
 end
 
 -- Fire Blast --
@@ -502,9 +514,15 @@ Skill_FireBlast.DamageBase = 50
 Skill_FireBlast.Multiplier = 30
 Skill_FireBlast.CostPerLevel = 10
 Skill_FireBlast.ManaCostBase = 60 - Skill_FireBlast.CostPerLevel
+Skill_FireBlast.BaseTargets = 3
+Skill_FireBlast.TargetsPerLevel = 0.2
+
+function Skill_FireBlast.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level);
+end
 
 function Skill_FireBlast.GetInfo(self, Item)
-	return "Blast multiple foes with fire for [c green]" .. self:GetDamage(Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with fire for [c green]" .. self:GetDamage(Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self, Level)
@@ -663,7 +681,7 @@ end
 Skill_Flee = {}
 Skill_Flee.BaseChance = 22
 Skill_Flee.ChancePerLevel = 6
-Skill_Flee.Duration = 10
+Skill_Flee.Duration = 5
 
 function Skill_Flee.GetChance(self, Level)
 
@@ -678,7 +696,7 @@ end
 function Skill_Flee.ApplyCost(self, Level, Result)
 	Result.Source.Buff = Buff_Slowed.Pointer
 	Result.Source.BuffLevel = 30
-	Result.Source.BuffDuration = 5
+	Result.Source.BuffDuration = self.Duration
 
 	return Result
 end
@@ -904,6 +922,8 @@ Skill_Enfeeble.DurationPerLevel = 0.4
 Skill_Enfeeble.Duration = 5 - Skill_Enfeeble.DurationPerLevel
 Skill_Enfeeble.CostPerLevel = 10
 Skill_Enfeeble.ManaCostBase = 10 - Skill_Enfeeble.CostPerLevel
+Skill_Enfeeble.BaseTargets = 1
+Skill_Enfeeble.TargetsPerLevel = 0.2
 
 function Skill_Enfeeble.GetPercent(self, Level)
 	return math.floor(self.BasePercent + self.PercentPerLevel * Level)
@@ -913,8 +933,18 @@ function Skill_Enfeeble.GetDuration(self, Level)
 	return math.floor(self.Duration + self.DurationPerLevel * Level)
 end
 
+function Skill_Enfeeble.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level);
+end
+
 function Skill_Enfeeble.GetInfo(self, Item)
-	return "Cripple your foe and reduce attack damage by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	Count = self:GetTargetCount(Item.Level)
+	Plural = ""
+	if Count ~= 1 then
+		Plural = "s"
+	end
+
+	return "Cripple [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their attack damage by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Enfeeble.Use(self, Level, Duration, Source, Target, Result)
@@ -933,18 +963,24 @@ end
 
 Skill_Cleave = Base_Attack:New()
 Skill_Cleave.DamageBase = 32
-Skill_Cleave.DamagePerLevel = 2
+Skill_Cleave.DamagePerLevel = 1
+Skill_Cleave.BaseTargets = 3
+Skill_Cleave.TargetsPerLevel = 0.2
 
 function Skill_Cleave.GetDamage(self, Level)
-	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
 end
 
 function Skill_Cleave.GenerateDamage(self, Level, Source)
 	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
 end
 
+function Skill_Cleave.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level);
+end
+
 function Skill_Cleave.GetInfo(self, Item)
-	return "Swing your weapon and hit multiple foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage"
+	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage"
 end
 
 function Skill_Cleave.PlaySound(self, Level)

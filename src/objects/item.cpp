@@ -517,30 +517,35 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 }
 
 // Get target count based on target type
-int _Item::GetTargetCount() const {
+int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object) const {
 
 	int TargetCount = 0;
 	switch(TargetID) {
 		case TargetType::SELF:
-			TargetCount = 1;
-		break;
 		case TargetType::ALLY:
+		case TargetType::ANY:
 			TargetCount = 1;
 		break;
 		case TargetType::ENEMY_MULTI:
-			TargetCount = BATTLE_MULTI_TARGET_COUNT;
-		break;
 		case TargetType::ALLY_MULTI:
-			TargetCount = BATTLE_MULTI_TARGET_COUNT;
+			if(Scripting->StartMethodCall(Script, "GetTargetCount")) {
+				int SkillLevel = 1;
+				auto SkillIterator = Object->Character->Skills.find(ID);
+				if(SkillIterator != Object->Character->Skills.end()) {
+					SkillLevel = SkillIterator->second;
+				}
+
+				Scripting->PushInt(SkillLevel);
+				Scripting->MethodCall(1, 1);
+				TargetCount = Scripting->GetInt(1);
+				Scripting->FinishMethodCall();
+			}
+			else
+				TargetCount = BATTLE_MULTI_TARGET_COUNT;
 		break;
 		case TargetType::ENEMY_ALL:
-			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
-		break;
 		case TargetType::ALLY_ALL:
 			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
-		break;
-		case TargetType::ANY:
-			TargetCount = 1;
 		break;
 		default:
 		break;
