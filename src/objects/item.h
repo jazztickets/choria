@@ -140,5 +140,5 @@ class _Item {
 };
 
 inline bool CompareItems(const _Item *First, const _Item *Second) {
-	return First->Name < Second->Name;
+	return First->Category < Second->Category || (First->Category == Second->Category && First->Name < Second->Name);
 }
