@@ -44,16 +44,16 @@ INSERT INTO light VALUES(33,'small dim red',1.0,0.29999999999999998889,0.2999999
 CREATE TABLE IF NOT EXISTS "damagetype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
-);
-INSERT INTO damagetype VALUES(0,'None');
-INSERT INTO damagetype VALUES(1,'All');
-INSERT INTO damagetype VALUES(2,'Physical');
-INSERT INTO damagetype VALUES(3,'Fire');
-INSERT INTO damagetype VALUES(4,'Cold');
-INSERT INTO damagetype VALUES(5,'Lightning');
-INSERT INTO damagetype VALUES(6,'Poison');
-INSERT INTO damagetype VALUES(7,'Bleed');
-INSERT INTO damagetype VALUES(8,'Stun');
+, "color" TEXT);
+INSERT INTO damagetype VALUES(0,'None','white');
+INSERT INTO damagetype VALUES(1,'All','white');
+INSERT INTO damagetype VALUES(2,'Physical','white');
+INSERT INTO damagetype VALUES(3,'Fire','light_red');
+INSERT INTO damagetype VALUES(4,'Cold','light_blue');
+INSERT INTO damagetype VALUES(5,'Lightning','light_yellow');
+INSERT INTO damagetype VALUES(6,'Poison','white');
+INSERT INTO damagetype VALUES(7,'Bleed','white');
+INSERT INTO damagetype VALUES(8,'Stun','white');
 CREATE TABLE IF NOT EXISTS "stattype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -102,6 +102,7 @@ INSERT INTO stattype VALUES(39,'Teleport',1.0);
 INSERT INTO stattype VALUES(40,'Light',1.0);
 INSERT INTO stattype VALUES(41,'Clock',1.0);
 INSERT INTO stattype VALUES(42,'Mana Reduction Ratio',1.0);
+INSERT INTO stattype VALUES(43,'Damage Type',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT

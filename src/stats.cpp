@@ -211,8 +211,12 @@ void _Stats::LoadDamageTypes() {
 
 	// Get data
 	while(Database->FetchRow()) {
+		_DamageType DamageType;
 		uint32_t ID = Database->GetInt<uint32_t>("id");
-		DamageTypes[ID] = Database->GetString("name");
+		DamageType.Name = Database->GetString("name");
+		std::string ColorName = Database->GetString("color");
+		DamageType.Color = ae::Assets.Colors[ColorName];
+		DamageTypes[ID] = DamageType;
 	}
 	Database->CloseQuery();
 }

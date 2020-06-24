@@ -180,21 +180,29 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 		ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
 	ae::Graphics.DrawScaledImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
 
-	// Draw damage dealt
+	// Get damage value and color
 	glm::vec4 TextColor = glm::vec4(1.0f);
+	std::stringstream Buffer;
+	if(ActionResult.Target.HasStat(StatType::HEALTH)) {
+
+		if(ActionResult.Target.HasStat(StatType::DAMAGETYPE)) {
+			uint32_t DamageTypeID = ActionResult.Target.Values[StatType::DAMAGETYPE].Integer;
+			TextColor = Stats->DamageTypes.at(DamageTypeID).Color;
+		}
+
+		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Integer);
+	}
+	else if(ActionResult.Target.HasStat(StatType::MISS))
+		Buffer << "miss";
+
+	// Change color
 	if(ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer > 0)
 		TextColor = ae::Assets.Colors["green"];
 	else if(ActionResult.Target.HasStat(StatType::CRIT) && ActionResult.Target.Values[StatType::CRIT].Integer)
 		TextColor = ae::Assets.Colors["yellow"];
 
+	// Draw damage dealt
 	TextColor.a = AlphaPercent;
-
-	// Draw damage done
-	std::stringstream Buffer;
-	if(ActionResult.Target.HasStat(StatType::MISS))
-		Buffer << "miss";
-	else if(ActionResult.Target.HasStat(StatType::HEALTH))
-		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Integer);
 	ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
 
 	// Draw mana damage

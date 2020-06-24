@@ -80,6 +80,7 @@ struct _Level {
 
 struct _DamageType {
 	std::string Name;
+	glm::vec4 Color;
 };
 
 struct _Zone {
@@ -191,7 +192,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _LightType> Lights;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
-		std::unordered_map<uint32_t, std::string> DamageTypes;
+		std::unordered_map<uint32_t, _DamageType> DamageTypes;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;

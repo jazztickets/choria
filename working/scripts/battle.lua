@@ -91,6 +91,8 @@ Base_Spell = {
 		Change.Damage = math.floor(Change.Damage * Target.GetDamageReduction(self.Item.DamageType))
 		Change.Damage = math.max(Change.Damage, 0)
 
+		Result.Target.DamageType = self.Item.DamageType
+
 		Update = ResolveManaReductionRatio(Target, Change.Damage)
 		Result.Target.Health = Update.Health
 		Result.Target.Mana = Update.Mana
@@ -162,6 +164,7 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		Change.Damage = math.max(Change.Damage - DamageBlock, 0)
 
 		-- Apply resistance
+		Result.Target.DamageType = Action:GetDamageType(Source)
 		Change.Damage = Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source))
 
 		-- Update health

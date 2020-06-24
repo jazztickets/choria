@@ -105,7 +105,7 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	for(const auto &Iterator : Stats->DamageTypes) {
 
 		// Add pointer to table
-		lua_pushstring(LuaState, Iterator.second.c_str());
+		lua_pushstring(LuaState, Iterator.second.Name.c_str());
 		lua_pushinteger(LuaState, Iterator.first);
 		lua_settable(LuaState, -3);
 	}

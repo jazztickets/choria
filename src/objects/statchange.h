@@ -86,6 +86,7 @@ enum class StatType : int {
 	LIGHT,
 	CLOCK,
 	MANAREDUCTIONRATIO,
+	DAMAGETYPE,
 	COUNT,
 };
 
@@ -145,6 +146,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "Light",              { StatType::LIGHT              , StatValueType::INTEGER } },
 	{ "Clock",              { StatType::CLOCK              , StatValueType::FLOAT   } },
 	{ "ManaReductionRatio", { StatType::MANAREDUCTIONRATIO , StatValueType::FLOAT   } },
+	{ "DamageType",         { StatType::DAMAGETYPE         , StatValueType::INTEGER } },
 };
 
 union _Value {
