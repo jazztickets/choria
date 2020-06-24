@@ -364,7 +364,8 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 }
 
 // Renders the object during a battle
-void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
+void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
+	std::stringstream Buffer;
 
 	// Set color
 	glm::vec4 GlobalColor(glm::vec4(1.0f));
@@ -386,7 +387,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Size.x/2 + (10 + BATTLE_HEALTHBAR_WIDTH/2) * ae::_Element::GetUIScale(), -Character->Portrait->Size.y/2);
 
 	// Name
-	ae::Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
+	Buffer << Name;
+	if(ShowLevel && !Monster->DatabaseID)
+		Buffer << " (" << Character->Level << ")" << std::endl;
+	ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
+	Buffer.str("");
 
 	// Portrait
 	if(Character->Portrait) {
@@ -419,7 +424,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_full"]->Texture);
 
 	// Draw health text
-	std::stringstream Buffer;
 	Buffer << ae::Round(Character->Health) << " / " << ae::Round(Character->MaxHealth);
 	SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
@@ -797,6 +801,7 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<uint32_t>(Monster->DatabaseID);
 	Data.Write<glm::ivec2>(Position);
+	Data.Write<int>(Character->Level);
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
@@ -900,6 +905,7 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 
 	// Get object type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
+	Character->Level = Data.Read<int>();
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();

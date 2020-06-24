@@ -77,7 +77,7 @@ class _Object : public ae::_BaseObject {
 		void Update(double FrameTime) override;
 		void UpdateBot(double FrameTime);
 		void Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer=nullptr);
-		void RenderBattle(_Object *ClientPlayer, double Time);
+		void RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel);
 
 		// Save
 		void SerializeSaveData(Json::Value &Data) const;

@@ -2,7 +2,7 @@ choria 0.5.1 -
 - Direction of party members now show on current map
 - Added light spell
 - Added skill point unlocks
-- Hold alt to view item levels in inventory or base skill levels on skill screen
+- Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle
 - Fixed inventory bug
 - Fixed crash with fleeing enemies
 - Balance and map updates

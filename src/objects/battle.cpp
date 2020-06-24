@@ -38,6 +38,7 @@
 #include <ae/assets.h>
 #include <ae/font.h>
 #include <ae/random.h>
+#include <ae/input.h>
 #include <constants.h>
 #include <server.h>
 #include <actiontype.h>
@@ -46,6 +47,7 @@
 #include <config.h>
 #include <packet.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <SDL_keycode.h>
 #include <vector>
 #include <algorithm>
 #include <iostream>
@@ -150,7 +152,7 @@ void _Battle::Render(double BlendFactor) {
 
 	// Draw battle elements
 	for(auto &Object : Objects)
-		Object->RenderBattle(ClientPlayer, Time);
+		Object->RenderBattle(ClientPlayer, Time, ae::Input.ModKeyDown(KMOD_ALT));
 
 	// Draw action results
 	for(auto &ActionResult : ActionResults)
