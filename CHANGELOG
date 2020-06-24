@@ -3,6 +3,7 @@ choria 0.5.1 -
 - Added light spell
 - Added skill point unlocks
 - Added lava man
+- Added password hashing
 - Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle
 - Fixed inventory bug
 - Fixed crash with fleeing enemies
