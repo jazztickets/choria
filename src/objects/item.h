@@ -106,6 +106,7 @@ class _Item {
 		std::string Script;
 		const ae::_Texture *Texture;
 		ItemType Type;
+		int Category;
 		int Level;
 		int MaxLevel;
 		double Duration;

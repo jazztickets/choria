@@ -242,6 +242,7 @@ void _Stats::LoadItems() {
 		Item->Texture = ae::Assets.Textures[TexturePath];
 		Item->Script = Database->GetString("script");
 		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
+		Item->Category = Database->GetInt<int>("category");
 		Item->Level = Database->GetInt<int>("level");
 		Item->MaxLevel = Database->GetInt<int>("maxlevel");
 		Item->Duration = Database->GetReal("duration");
