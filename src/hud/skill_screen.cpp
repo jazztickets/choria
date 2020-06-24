@@ -50,8 +50,8 @@ void _SkillScreen::Init() {
 	glm::vec2 Offset(Start);
 	glm::vec2 LevelOffset(0, -6);
 	glm::vec2 Spacing(14, 70);
-	glm::vec2 PlusOffset(-16, 52);
-	glm::vec2 MinusOffset(16, 52);
+	glm::vec2 PlusOffset(7, 64 + 9);
+	glm::vec2 MinusOffset(37, 64 + 9);
 	glm::vec2 LabelOffset(0, 2);
 	glm::vec2 ButtonSize(23, 23);
 	size_t i = 0;
@@ -97,24 +97,26 @@ void _SkillScreen::Init() {
 		// Add plus button
 		ae::_Element *PlusButton = new ae::_Element();
 		PlusButton->Name = "button_skills_plus";
-		PlusButton->Parent = Button;
+		PlusButton->Parent = Element;
 		PlusButton->BaseSize = ButtonSize;
-		PlusButton->BaseOffset = PlusOffset;
-		PlusButton->Alignment = ae::CENTER_MIDDLE;
+		PlusButton->BaseOffset = Offset + PlusOffset;
+		PlusButton->Alignment = ae::LEFT_TOP;
 		PlusButton->Style = ae::Assets.Styles["style_menu_button"];
 		PlusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		PlusButton->Index = (int)Skill->ID;
 		PlusButton->Clickable = true;
 		Element->Children.push_back(PlusButton);
 
 		// Add minus button
 		ae::_Element *MinusButton = new ae::_Element();
 		MinusButton->Name = "button_skills_minus";
-		MinusButton->Parent = Button;
+		MinusButton->Parent = Element;
 		MinusButton->BaseSize = ButtonSize;
-		MinusButton->BaseOffset = MinusOffset;
-		MinusButton->Alignment = ae::CENTER_MIDDLE;
+		MinusButton->BaseOffset = Offset + MinusOffset;
+		MinusButton->Alignment = ae::LEFT_TOP;
 		MinusButton->Style = ae::Assets.Styles["style_menu_button"];
 		MinusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		MinusButton->Index = (int)Skill->ID;
 		MinusButton->Clickable = true;
 		Element->Children.push_back(MinusButton);
 
@@ -244,7 +246,7 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 		else if(ChildElement->Name == "button_skills_plus") {
 
 			// Get skill
-			uint32_t SkillID = (uint32_t)ChildElement->Parent->Index;
+			uint32_t SkillID = (uint32_t)ChildElement->Index;
 			if(SkillPointsRemaining <= 0 || HUD->Player->Character->Skills[SkillID] >= HUD->Player->Stats->Items.at(SkillID)->MaxLevel)
 				ChildElement->SetActive(false);
 			else
@@ -253,7 +255,7 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 		else if(ChildElement->Name == "button_skills_minus") {
 
 			// Get skill
-			uint32_t SkillID = (uint32_t)ChildElement->Parent->Index;
+			uint32_t SkillID = (uint32_t)ChildElement->Index;
 			if(HUD->Player->Character->Skills[SkillID] == 0)
 				ChildElement->SetActive(false);
 			else

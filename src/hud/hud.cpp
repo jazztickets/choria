@@ -241,12 +241,14 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 				break;
 				case WINDOW_SKILLS:
-					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(Player->Character->Skills[Tooltip.InventorySlot.Item->ID] > 0)
-							Cursor = Tooltip;
-					}
-					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						SkillScreen->EquipSkill(Tooltip.InventorySlot.Item->ID);
+					if(ae::Graphics.Element->HitElement && ae::Graphics.Element->HitElement->Name == "button_skills_skill") {
+						if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+							if(Player->Character->Skills[Tooltip.InventorySlot.Item->ID] > 0)
+								Cursor = Tooltip;
+						}
+						else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
+							SkillScreen->EquipSkill(Tooltip.InventorySlot.Item->ID);
+						}
 					}
 				break;
 			}
@@ -313,10 +315,10 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		// Check skill level up/down
 		else if(SkillScreen->Element->GetClickedElement()) {
 			if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_plus") {
-				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Parent->Index, 1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT));
+				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Index, 1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT));
 			}
 			else if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_minus") {
-				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Parent->Index, -(1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT)));
+				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Index, -(1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT)));
 			}
 		}
 		// Accept trader button
