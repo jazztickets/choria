@@ -1390,7 +1390,7 @@ INSERT INTO item VALUES(209,4,0,0,0,0,0,'Mage Slippers','textures/items/mage_sli
 INSERT INTO item VALUES(210,4,0,0,0,0,0,'Wizard Slippers','textures/items/wizard_slippers.png','',140,1,0,20,0.0,1,0,0,2,0,0,0,0,40,0,1,0,5,0,0);
 INSERT INTO item VALUES(211,8,0,0,0,0,0,'Ring','textures/items/ring.png','',50,1,0,20,0.0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(212,6,2,0,0,0,0,'Dark Staff','textures/items/dark_staff.png','',65,1,0,20,0.0,1,10,50,0,0,0,0,0,50,0,2,0,0,0,0);
-INSERT INTO item VALUES(213,6,2,0,0,0,0,'Demon Stick','textures/items/demon_stick.png','',800,1,0,20,0.0,1,50,120,0,5,0,0,0,250,0,6,0,0,0,0);
+INSERT INTO item VALUES(213,6,2,0,0,0,0,'Demon Stick','textures/items/demon_stick.png','',800,1,0,20,0.0,1,50,120,0,5,0,0,0,250,0,6,0,0,0,1);
 INSERT INTO item VALUES(214,8,0,0,0,0,0,'Warm Ring','textures/items/warm_ring.png','',800,1,0,20,0.0,1,0,0,0,0,0,0,35,0,3,0,0,0,0,0);
 INSERT INTO item VALUES(215,10,0,2,2,0,0,'Fire Dust','textures/items/fire_dust.png','Item_FireDust',20,1,20,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(216,13,0,0,1,0,0,'Prisoner Key','textures/items/key.png','',1000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
