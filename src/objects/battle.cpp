@@ -866,15 +866,24 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			++Iterator;
 	}
 
-	// Remove object from last target array
+	// Remove object from last target array and status effect's source object
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
-		if(!Object || !Object->Fighter)
+		if(!Object)
 			continue;
 
-		for(int i = 0; i < 2; i++) {
-			if(Object->Fighter->LastTarget[i] == RemoveObject)
-				Object->Fighter->LastTarget[i] = nullptr;
+		if(Object->Fighter) {
+			for(int i = 0; i < 2; i++) {
+				if(Object->Fighter->LastTarget[i] == RemoveObject)
+					Object->Fighter->LastTarget[i] = nullptr;
+			}
+		}
+
+		if(Object->Character) {
+			for(auto &StatusEffect : Object->Character->StatusEffects) {
+				if(RemoveObject == StatusEffect->Source)
+					StatusEffect->Source = nullptr;
+			}
 		}
 	}
 

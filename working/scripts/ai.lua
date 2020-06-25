@@ -12,7 +12,7 @@ function AI_AddTarget(Source, Target, AffectedByTaunt)
 	-- Check for taunt
 	for i = 1, #Source.StatusEffects do
 		Effect = Source.StatusEffects[i]
-		if Effect.Buff == Buff_Taunted then
+		if Effect.Buff == Buff_Taunted and Effect.Source ~= nil then
 			Source.AddTarget(Effect.Source)
 			return
 		end

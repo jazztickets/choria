@@ -556,7 +556,11 @@ void _Scripting::PushStatusEffect(_StatusEffect *StatusEffect) {
 	lua_pushnumber(LuaState, StatusEffect->Duration);
 	lua_setfield(LuaState, -2, "Duration");
 
-	lua_pushlightuserdata(LuaState, StatusEffect->Source);
+	if(StatusEffect->Source)
+		lua_pushlightuserdata(LuaState, StatusEffect->Source);
+	else
+		lua_pushnil(LuaState);
+
 	lua_setfield(LuaState, -2, "Source");
 }
 
