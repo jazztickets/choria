@@ -399,6 +399,9 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 // Fills an array with inventory indices correlating to a trader's required items
 _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots) {
 
+	// Bags to search through
+	std::vector<BagType> SearchsBags({ BagType::INVENTORY, BagType::EQUIPMENT });
+
 	// Find a slot for the reward
 	_Slot RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
 
@@ -409,18 +412,22 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 		RequiredItemSlots[i].Type = BagType::NONE;
 
 		// Search for the required item
-		for(auto &Bag : Bags) {
-			if(Bag.Type == BagType::TRADE)
-				continue;
+		bool Done = false;
+		for(const auto &BagType : SearchsBags) {
+			_Bag &Bag = Bags[(int)BagType];
 
 			for(size_t j = 0; j < Bag.Slots.size(); j++) {
 				_InventorySlot &InventoryItem = Bag.Slots[j];
 				if(InventoryItem.Item == RequiredItem && InventoryItem.Count >= RequiredCount) {
 					RequiredItemSlots[i].Type = Bag.Type;
 					RequiredItemSlots[i].Index = j;
+					Done = true;
 					break;
 				}
 			}
+
+			if(Done)
+				break;
 		}
 
 		// Didn't find an item
