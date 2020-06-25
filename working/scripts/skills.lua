@@ -829,6 +829,10 @@ function Skill_Taunt.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+function Skill_Taunt.PlaySound(self, Level)
+	Audio.Play("taunt" .. Random.GetInt(0, 2) .. ".ogg")
+end
+
 -- Backstab --
 
 Skill_Backstab = Base_Attack:New()
