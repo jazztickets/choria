@@ -167,32 +167,21 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		// Get database id
 		uint32_t SummonDatabaseID = ActionResult.Summon.ID;
 
-		// Check for existing summon
-		_Object *ExistingSummon = nullptr;
+		// Check for existing summons and get count of fighters on player's side
+		std::vector<_Object *>ExistingSummons;
+		ExistingSummons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 		int SideCount = 0;
 		for(auto &Object : Battle->Objects) {
 			if(Object->Fighter->BattleSide == SourceObject->Fighter->BattleSide) {
-				if(Object->Monster->Owner == SourceObject && Object->Monster->DatabaseID == SummonDatabaseID) {
-					ExistingSummon = Object;
-				}
+				if(Object->Monster->Owner == SourceObject && Object->Monster->DatabaseID == SummonDatabaseID)
+					ExistingSummons.push_back(Object);
 
 				SideCount++;
 			}
 		}
 
-		// Heal summon
-		if(ExistingSummon) {
-			_StatChange Heal;
-			Heal.Object = ExistingSummon;
-			Heal.Values[StatType::HEALTH].Integer = ExistingSummon->Character->MaxHealth;
-			ExistingSummon->UpdateStats(Heal);
-
-			ae::_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-			Heal.Serialize(Packet);
-			Battle->BroadcastPacket(Packet);
-		}
-		else if(SideCount < BATTLE_MAX_OBJECTS_PER_SIDE) {
+		// Create new summon if below limit
+		if(SideCount < BATTLE_MAX_OBJECTS_PER_SIDE && (int)ExistingSummons.size() < ActionResult.Summon.Limit) {
 
 			// Create monster
 			_Object *Object = SourceObject->Server->ObjectManager->Create();
@@ -219,6 +208,29 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 
 			// Add monster to battle
 			Battle->AddObject(Object, 0, true);
+		}
+		// Heal existing summon if already at limit
+		else if(ExistingSummons.size()) {
+
+			// Get lowest health summon
+			int LowestHealth = ExistingSummons[0]->Character->Health;
+			_Object *LowestHealthSummon = ExistingSummons[0];
+			for(auto &ExistingSummon : ExistingSummons) {
+				if(ExistingSummon->Character->Health < LowestHealth) {
+					LowestHealth = ExistingSummon->Character->Health;
+					LowestHealthSummon = ExistingSummon;
+				}
+			}
+
+			_StatChange Heal;
+			Heal.Object = LowestHealthSummon;
+			Heal.Values[StatType::HEALTH].Integer = LowestHealthSummon->Character->MaxHealth;
+			LowestHealthSummon->UpdateStats(Heal);
+
+			ae::_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+			Heal.Serialize(Packet);
+			Battle->BroadcastPacket(Packet);
 		}
 	}
 }

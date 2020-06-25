@@ -299,6 +299,7 @@ end
 -- Shield Bash --
 
 Skill_ShieldBash = Base_Attack:New()
+Skill_ShieldBash.MaxPercent = 75
 Skill_ShieldBash.BaseChance = 23
 Skill_ShieldBash.ChancePerLevel = 4
 Skill_ShieldBash.Duration = 2
@@ -319,7 +320,7 @@ end
 
 function Skill_ShieldBash.GetChance(self, Level)
 
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, self.MaxPercent)
 end
 
 function Skill_ShieldBash.CanUse(self, Level, Object)
@@ -878,6 +879,8 @@ Skill_DemonicConjuring.BaseArmor = 1
 Skill_DemonicConjuring.HealthPerLevel = 40
 Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 1
+Skill_DemonicConjuring.Limit = 1
+Skill_DemonicConjuring.LimitPerLevel = 0.2
 Skill_DemonicConjuring.Monster = Monsters[23]
 
 function Skill_DemonicConjuring.GetHealth(self, Level)
@@ -888,6 +891,10 @@ function Skill_DemonicConjuring.GetArmor(self, Level)
 	return math.floor(self.BaseArmor + (Level - 1) * self.ArmorPerLevel)
 end
 
+function Skill_DemonicConjuring.GetLimit(self, Level)
+	return math.floor(self.Limit + (Level) * self.LimitPerLevel)
+end
+
 function Skill_DemonicConjuring.GetDamage(self, Level)
 	AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
 	return self.BaseMinDamage + AddedDamage, self.BaseMaxDamage + AddedDamage
@@ -896,7 +903,7 @@ end
 function Skill_DemonicConjuring.GetInfo(self, Item)
 	MinDamage, MaxDamage = self:GetDamage(Item.Level)
 
-	return "Summon a demon to fight for you that has [c green]" .. self:GetHealth(Item.Level) .. " HP [c white]and does [c green]" .. MinDamage .. "-" .. MaxDamage .. " [c white]damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon a demon to fight for you that has [c green]" .. self:GetHealth(Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. " [c white]damage\nCan summon a maximum of [c green]" .. self:GetLimit(Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
@@ -905,6 +912,7 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	Result.Summon.Health = self:GetHealth(Level)
 	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Level)
 	Result.Summon.Armor = self:GetArmor(Level)
+	Result.Summon.Limit = self:GetLimit(Level)
 
 	return Result
 end
@@ -916,6 +924,7 @@ end
 -- Enfeeble --
 
 Skill_Enfeeble = Base_Spell:New()
+Skill_Enfeeble.MaxPercent = 75
 Skill_Enfeeble.PercentPerLevel = 4
 Skill_Enfeeble.BasePercent = 25 - Skill_Enfeeble.PercentPerLevel
 Skill_Enfeeble.DurationPerLevel = 0.4
@@ -926,7 +935,7 @@ Skill_Enfeeble.BaseTargets = 1
 Skill_Enfeeble.TargetsPerLevel = 0.2
 
 function Skill_Enfeeble.GetPercent(self, Level)
-	return math.floor(self.BasePercent + self.PercentPerLevel * Level)
+	return math.min(math.floor(self.BasePercent + self.PercentPerLevel * Level), self.MaxPercent)
 end
 
 function Skill_Enfeeble.GetDuration(self, Level)

@@ -57,12 +57,13 @@ enum class ScopeType : uint8_t {
 };
 
 struct _Summon {
-	_Summon() : ID(0), Health(0), Mana(0), Armor(0), MinDamage(0), MaxDamage(0) { }
+	_Summon() : ID(0), Health(0), Mana(0), Armor(0), Limit(0), MinDamage(0), MaxDamage(0) { }
 
 	uint32_t ID;
 	int Health;
 	int Mana;
 	int Armor;
+	int Limit;
 	int MinDamage;
 	int MaxDamage;
 };

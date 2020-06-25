@@ -725,6 +725,11 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 	Summon.Armor = (int)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
+	// Get Limit
+	lua_getfield(LuaState, -1, "Limit");
+	Summon.Limit = (int)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
 	// Get Damage
 	lua_getfield(LuaState, -1, "MinDamage");
 	Summon.MinDamage = (int)lua_tonumber(LuaState, -1);
