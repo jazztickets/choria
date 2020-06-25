@@ -24,6 +24,7 @@
 // Forward Declarations
 class _Buff;
 class _Stats;
+class _Object;
 
 namespace ae {
 	class _Element;
@@ -48,6 +49,7 @@ class _StatusEffect {
 		const _Buff *Buff;
 		ae::_Element *BattleElement;
 		ae::_Element *HUDElement;
+		_Object *Source;
 		double Time;
 		int Level;
 		double Duration;

@@ -1,3 +1,27 @@
+
+
+-- Wrapper function for Object.AddTarget that handles taunted state
+function AI_AddTarget(Source, Target, AffectedByTaunt)
+
+	-- Check if affected by taunt
+	if AffectedByTaunt == false then
+		Source.AddTarget(Target.Pointer)
+		return
+	end
+
+	-- Check for taunt
+	for i = 1, #Source.StatusEffects do
+		Effect = Source.StatusEffects[i]
+		if Effect.Buff == Buff_Taunted then
+			Source.AddTarget(Effect.Source)
+			return
+		end
+	end
+
+	-- Continue with normal target
+	Source.AddTarget(Target.Pointer)
+end
+
 AI_Dumb = {}
 
 function AI_Dumb.Update(self, Object, Enemies, Allies)
@@ -6,7 +30,7 @@ function AI_Dumb.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	Object.AddTarget(Enemies[Target])
+	AI_AddTarget(Object, Enemies[Target], true)
 
 	-- Set skill
 	Object.SetAction(0)
@@ -27,7 +51,7 @@ function AI_Smart.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Set target
-	Object.AddTarget(Enemies[TargetIndex])
+	AI_AddTarget(Object, Enemies[TargetIndex], true)
 
 	-- Set skill
 	Object.SetAction(0)
@@ -40,7 +64,7 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 	-- Chance to do special attack
 	if Random.GetInt(1, 10) == 1 then
 		for i = 1, #Enemies do
-			Object.AddTarget(Enemies[i])
+			Object.AddTarget(Enemies[i].Pointer)
 		end
 
 		Object.SetAction(1)
@@ -51,7 +75,7 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	Object.AddTarget(Enemies[Target])
+	AI_AddTarget(Object, Enemies[Target], true)
 
 	-- Set skill
 	Object.SetAction(0)
@@ -67,7 +91,7 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 		CanUse = Object.SetAction(1)
 		if CanUse == true then
 			for i = 1, #Enemies do
-				Object.AddTarget(Enemies[i])
+				Object.AddTarget(Enemies[i].Pointer)
 			end
 
 			return
@@ -78,7 +102,7 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	Object.AddTarget(Enemies[Target])
+	AI_AddTarget(Object, Enemies[Target], true)
 
 	-- Set skill
 	if Random.GetInt(1, 10) <= 7 then
@@ -92,6 +116,7 @@ AI_SlimePrince = {}
 
 function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 
+	-- Use potion when mana is low
 	CanUse = Object.SetAction(2)
 	if CanUse and Object.Mana < Object.MaxMana * 0.5 then
 
@@ -105,7 +130,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 		end
 
 		if ShouldUse == true then
-			Object.AddTarget(Object)
+			Object.AddTarget(Object.Pointer)
 			return
 		end
 	end
@@ -117,7 +142,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 		if CanUse == true then
 			for i = 1, #Allies do
 				if Allies[i].Health == 0 then
-					Object.AddTarget(Allies[i])
+					Object.AddTarget(Allies[i].Pointer)
 					return
 				end
 			end
@@ -128,7 +153,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	Object.AddTarget(Enemies[Target])
+	AI_AddTarget(Object, Enemies[Target], true)
 
 	-- Set skill
 	Object.SetAction(0)
@@ -143,7 +168,7 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 		if Allies[i].Health > 0 and Allies[i].Health <= Allies[i].MaxHealth * 0.75 then
 
 			-- See if target can be healed
-			Object.AddTarget(Allies[i])
+			Object.AddTarget(Allies[i].Pointer)
 			if Object.SetAction(1) == true then
 				return
 			end
@@ -157,7 +182,7 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	Object.AddTarget(Enemies[Target])
+	AI_AddTarget(Object, Enemies[Target], true)
 
 	-- Set skill
 	Object.SetAction(0)
@@ -174,11 +199,11 @@ function AI_GoblinThief.Update(self, Object, Enemies, Allies)
 
 	-- Flee
 	if Storage[Object.ID].Steals >= 2 then
-		Object.AddTarget(Object)
+		Object.AddTarget(Object.Pointer)
 		Object.SetAction(2)
 	else
 		Target = Random.GetInt(1, #Enemies)
-		Object.AddTarget(Enemies[Target])
+		AI_AddTarget(Object, Enemies[Target], true)
 
 		Action = Random.GetInt(0, 1)
 		if Action == 1 then
@@ -207,5 +232,5 @@ function AI_LavaMan.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	Object.AddTarget(Enemies[Target])
+	AI_AddTarget(Object, Enemies[Target], true)
 end

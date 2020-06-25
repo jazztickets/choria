@@ -555,6 +555,9 @@ void _Scripting::PushStatusEffect(_StatusEffect *StatusEffect) {
 
 	lua_pushnumber(LuaState, StatusEffect->Duration);
 	lua_setfield(LuaState, -2, "Duration");
+
+	lua_pushlightuserdata(LuaState, StatusEffect->Source);
+	lua_setfield(LuaState, -2, "Source");
 }
 
 // Push list of objects
@@ -820,18 +823,22 @@ int _Scripting::AudioPlay(lua_State *LuaState) {
 
 // Set battle target
 int _Scripting::ObjectAddTarget(lua_State *LuaState) {
-	if(!lua_istable(LuaState, 1))
-		throw std::runtime_error("ObjectAddTarget: Target is not a table!");
 
-	// Get self pointer
+	// Get self object pointer
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 
-	// Get pointer of target table
-	lua_pushstring(LuaState, "Pointer");
-	lua_gettable(LuaState, -2);
-	_Object *Target = (_Object *)lua_touserdata(LuaState, -1);
-	lua_pop(LuaState, 1);
+	// Get target object
+	_Object *Target = (_Object *)lua_touserdata(LuaState, 1);
+	if(!Target)
+		return 0;
 
+	// Check for existing target
+	for(const auto &ExistingTarget : Object->Character->Targets) {
+		if(Target == ExistingTarget)
+			return 0;
+	}
+
+	// Add target
 	Object->Character->Targets.push_back(Target);
 
 	return 0;

@@ -769,14 +769,11 @@ Skill_Parry.Duration = 0.5
 Skill_Parry.DurationPerLevel = 0.2
 
 function Skill_Parry.GetDuration(self, Level)
-
 	return self.Duration + self.DurationPerLevel * Level
 end
 
 function Skill_Parry.GetInfo(self, Item)
-
-	return "Block [c green]" .. math.floor(self.DamageReduction * 100) .. "% [c white]damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n" ..
-	"Gain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
+	return "Block [c green]" .. math.floor(self.DamageReduction * 100) .. "% [c white]damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
 end
 
 function Skill_Parry.Use(self, Level, Duration, Source, Target, Result)
@@ -787,38 +784,46 @@ function Skill_Parry.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
--- Defend --
+-- Taunt --
 
-Skill_Defend = {}
-Skill_Defend.Armor = 10
-Skill_Defend.ArmorPerLevel = 2
-Skill_Defend.Duration = 3.4
-Skill_Defend.DurationPerLevel = 0.2
+Skill_Taunt = {}
+Skill_Taunt.Armor = 10
+Skill_Taunt.ArmorPerLevel = 2
+Skill_Taunt.FatigueDuration = 5
+Skill_Taunt.Duration = 3.4
+Skill_Taunt.DurationPerLevel = 0.2
+Skill_Taunt.BaseTargets = 1
+Skill_Taunt.TargetsPerLevel = 0.2
 
-function Skill_Defend.GetArmor(self, Level)
-
-	return math.floor(self.Armor + self.ArmorPerLevel * Level)
-end
-
-function Skill_Defend.GetDuration(self, Level)
-
+function Skill_Taunt.GetDuration(self, Level)
 	return self.Duration + self.DurationPerLevel * Level
 end
 
-function Skill_Defend.GetInfo(self, Item)
-
-	return "Gain [c green]" .. self:GetArmor(Item.Level) .. " [c white]armor [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nRequires a shield"
+function Skill_Taunt.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level);
 end
 
-function Skill_Defend.CanUse(self, Level, Object)
-	Shield = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+function Skill_Taunt.GetInfo(self, Item)
+	Count = self:GetTargetCount(Item.Level)
+	Plural = "enemies"
+	if Count == 1 then
+		Plural = "enemy"
+	end
 
-	return Shield ~= nil
+	return "Taunt [c green]" .. Count .. "[c white] " .. Plural .. " for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, forcing them to attack you\nCauses [c yellow]fatigue[c white] for [c green]" .. self.FatigueDuration .."[c white] seconds"
 end
 
-function Skill_Defend.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Buff = Buff_Hardened.Pointer
-	Result.Target.BuffLevel = self:GetArmor(Level)
+function Skill_Taunt.ApplyCost(self, Level, Result)
+	Result.Source.Buff = Buff_Slowed.Pointer
+	Result.Source.BuffLevel = 30
+	Result.Source.BuffDuration = self.FatigueDuration
+
+	return Result
+end
+
+function Skill_Taunt.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Taunted.Pointer
+	Result.Target.BuffLevel = 1
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
 	return Result

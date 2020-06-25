@@ -96,6 +96,14 @@ function Buff_Stunned.Stats(self, Level, Source, Change)
 	return Change
 end
 
+-- Taunted --
+
+Buff_Taunted = {}
+
+function Buff_Taunted.GetInfo(self, Level)
+	return "Can only target taunter"
+end
+
 -- Hasted --
 
 Buff_Hasted = Base_Buff:New()
