@@ -18,6 +18,20 @@ type xmllint >/dev/null 2>&1 || {
 	exit 1;
 }
 
+# check for parallel
+type parallel >/dev/null 2>&1 || {
+	echo >&2 "parallel is not installed ";
+	exit 1;
+}
+
+# function to optimize and rename png
+worker_img() {
+	mv "$1" "$2"
+	pngcrush -brute "$2" "$3"
+}
+
+export -f worker_img
+
 # get parameters
 file=$1
 scale=$2
@@ -45,22 +59,21 @@ names=`xmllint --xpath "//*[local-name()='svg']/*[local-name()='metadata']//*[lo
 
 # create export directory
 mkdir -p export
-rm export/*.png
+rm -f export/*.png
 
 # export pngs
 convert -density ${density} -background none ${file} -crop ${size}x${size} -depth 8 +repage PNG32:export/_out.png
 
-# name files
+# name files and optimize in parallel
 i=0
 for name in $names; do
 	oldname="export/_out-${i}.png"
 	newname="export/_${name}.png"
 	optname="export/${name}.png"
 
-	mv "$oldname" "${newname}"
-	pngcrush -brute "${newname}" "${optname}"
+	echo worker_img \"$oldname\" \"$newname\" \"$optname\"
 	((i++))
-done
+done | parallel
 
 # clean up
-rm export/_*
+rm -f export/_*
