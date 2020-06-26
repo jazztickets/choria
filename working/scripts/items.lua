@@ -180,12 +180,14 @@ end
 Item_ThrowingKnives = Base_Attack:New()
 
 function Item_ThrowingKnives.GenerateDamage(self, Level, Source)
-
 	return self.Item.GenerateDamage()
 end
 
-function Item_ThrowingKnives.GetInfo(self, Item)
+function Item_ThrowingKnives.GetPierce(self, Source)
+	return self.Item.Pierce
+end
 
+function Item_ThrowingKnives.GetInfo(self, Item)
 	return "Throw a knife at your enemy"
 end
 
@@ -198,8 +200,11 @@ end
 Item_PoisonKnives = Base_Attack:New()
 
 function Item_PoisonKnives.GetInfo(self, Item)
-
 	return "Throw a poison-tipped knife at your enemy"
+end
+
+function Item_PoisonKnives.GetPierce(self, Source)
+	return self.Item.Pierce
 end
 
 function Item_PoisonKnives.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -209,7 +214,6 @@ function Item_PoisonKnives.Proc(self, Roll, Level, Duration, Source, Target, Res
 end
 
 function Item_PoisonKnives.GenerateDamage(self, Level, Source)
-
 	return self.Item.GenerateDamage()
 end
 

@@ -520,6 +520,9 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	lua_pushinteger(LuaState, (int)Item->GetDamageBlock(Upgrades));
 	lua_setfield(LuaState, -2, "DamageBlock");
 
+	lua_pushinteger(LuaState, (int)Item->GetPierce(Upgrades));
+	lua_setfield(LuaState, -2, "Pierce");
+
 	lua_pushinteger(LuaState, Upgrades);
 	lua_setfield(LuaState, -2, "Upgrades");
 
