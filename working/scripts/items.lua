@@ -137,7 +137,7 @@ Item_ActionSlot = { }
 
 function Item_ActionSlot.GetInfo(self, Item)
 
-	return "Increase your action bar size"
+	return "Increase your action bar size\n[c yellow]Can only be used once"
 end
 
 function Item_ActionSlot.Use(self, Level, Duration, Source, Target, Result)

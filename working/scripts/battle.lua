@@ -8,6 +8,10 @@ Base_Attack = {
 		return Object
 	end,
 
+	GetPierce = function(self, Source)
+		return Source.Pierce
+	end,
+
 	GetInfo = function(self, Item)
 		return ""
 	end,
@@ -180,12 +184,13 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		end
 
 		-- Apply pierce
-		DamageBlock = math.max(Target.DamageBlock - Source.Pierce, 0);
+		DamageBlock = math.max(Target.DamageBlock - Action:GetPierce(Source), 0);
 
 		-- Apply damage block
 		Change.Damage = math.max(Change.Damage - DamageBlock, 0)
 
 		-- Apply resistance
+		Result.Target.DamageType = Action:GetDamageType(Source)
 		Change.Damage = Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source))
 
 		-- Update health
