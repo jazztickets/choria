@@ -984,7 +984,7 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 }
 
 // Update stats
-_StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
+_StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	_StatusEffect *StatusEffect = nullptr;
 
 	// Add buffs
@@ -993,6 +993,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		StatusEffect->Buff = (_Buff *)StatChange.Values[StatType::BUFF].Pointer;
 		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
 		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
+		StatusEffect->Source = Source;
 
 		if(Character->AddStatusEffect(StatusEffect)) {
 			if(Fighter->BattleElement)

@@ -32,6 +32,7 @@ _StatusEffect::_StatusEffect() :
 	Buff(nullptr),
 	BattleElement(nullptr),
 	HUDElement(nullptr),
+	Source(nullptr),
 	Time(0.0),
 	Level(0),
 	Duration(0.0),

@@ -643,6 +643,7 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 				ExistingEffect->MaxDuration = ExistingEffect->Duration = StatusEffect->Duration;
 				ExistingEffect->Level = StatusEffect->Level;
 				ExistingEffect->Time = 0.0;
+				ExistingEffect->Source = StatusEffect->Source;
 			}
 
 			return false;

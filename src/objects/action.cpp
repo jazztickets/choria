@@ -141,7 +141,7 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 		// Update objects
 		ActionResult.Source.Object->UpdateStats(ActionResult.Source);
-		ActionResult.Target.Object->UpdateStats(ActionResult.Target);
+		ActionResult.Target.Object->UpdateStats(ActionResult.Target, ActionResult.Source.Object);
 		HandleSummons(ActionResult);
 
 		// Write stat changes
