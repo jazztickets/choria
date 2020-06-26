@@ -89,11 +89,11 @@ build() {
 
 # remove old versions from server
 if [ -n "$upload_server" ]; then
-	ssh $upload_server rm -f "$upload_path"/"${project}"*.zip
+	ssh $upload_server rm -f "$upload_path"/"${project}-${version}"*.zip
 fi
 
 # remove old zips
-rm -f "$outputdir"/"${project}"*.zip
+rm -f "$outputdir"/"${project}-${version}"*.zip
 
 # build project
 #build 32
