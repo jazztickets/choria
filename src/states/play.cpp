@@ -441,6 +441,14 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			else
 				Console->AddMessage("usage: " + Console->Command + " [+-][amount]");
 		}
+		else if(Console->Command == "clearbuffs") {
+			if(Player && Network && Network->IsConnected()) {
+				Network->SendPacket(Packet);
+
+				for(auto &StatusEffect : Player->Character->StatusEffects)
+					StatusEffect->Duration = 0;
+			}
+		}
 		else if(Console->Command == "clock") {
 			if(Parameters.size() == 1) {
 				if(Network && Network->IsConnected()) {

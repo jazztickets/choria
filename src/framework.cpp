@@ -167,6 +167,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		if(PlayState.DevMode) {
 			Console->CommandList.push_back("battle");
 			Console->CommandList.push_back("bounty");
+			Console->CommandList.push_back("clearbuffs");
 			Console->CommandList.push_back("clock");
 			Console->CommandList.push_back("event");
 			Console->CommandList.push_back("experience");

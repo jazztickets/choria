@@ -26,6 +26,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
+#include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
@@ -1620,6 +1621,9 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 // Handle console commands
 void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
+	if(!IsTesting)
+		return;
+
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1639,6 +1643,10 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		int Change = Data.Read<int>();
 		Player->Character->Bounty = std::max(0, Adjust ? Player->Character->Bounty + Change : Change);
 		SendHUD(Peer);
+	}
+	else if(Command == "clearbuffs") {
+		for(auto &StatusEffect : Player->Character->StatusEffects)
+			StatusEffect->Duration = 0;
 	}
 	else if(Command == "clock") {
 		double Clock = Data.Read<int>();
