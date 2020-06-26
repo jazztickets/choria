@@ -445,8 +445,8 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			if(Player && Network && Network->IsConnected()) {
 				Network->SendPacket(Packet);
 
-				for(auto &StatusEffect : Player->Character->StatusEffects)
-					StatusEffect->Duration = 0;
+				Player->Character->DeleteStatusEffects();
+				Player->Character->CalculateStats();
 			}
 		}
 		else if(Console->Command == "clock") {

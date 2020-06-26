@@ -1645,8 +1645,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		SendHUD(Peer);
 	}
 	else if(Command == "clearbuffs") {
-		for(auto &StatusEffect : Player->Character->StatusEffects)
-			StatusEffect->Duration = 0;
+		Player->Character->DeleteStatusEffects();
+		Player->Character->CalculateStats();
 	}
 	else if(Command == "clock") {
 		double Clock = Data.Read<int>();
