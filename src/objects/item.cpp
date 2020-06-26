@@ -126,7 +126,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 		auto SkillIterator = Player->Character->Skills.find(ID);
 		if(SkillIterator != Player->Character->Skills.end()) {
 			DrawLevel = SkillIterator->second;
-			if(!ae::Input.ModKeyDown(KMOD_CTRL) && SkillIterator->second > 0)
+			if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0)
 				DrawLevel += Player->Character->AllSkills;
 		}
 		else
@@ -156,7 +156,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	DrawDescription(Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
-	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel)
+	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
 		DrawDescription(Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
