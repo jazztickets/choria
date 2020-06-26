@@ -1139,5 +1139,5 @@ function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
 end
 
 function Skill_MagicBarrier.PlaySound(self, Level)
-	--Audio.Play("barrier0.ogg")
+	Audio.Play("barrier0.ogg")
 end

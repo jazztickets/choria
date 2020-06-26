@@ -336,8 +336,10 @@ function Buff_Shielded.OnHit(self, Object, Level, Duration, Change)
 		Change.Damage = 0
 		Object.UpdateBuff(self.ID, Level, Duration)
 	end
+
+	Change.BuffSound = self.ID
 end
 
 function Buff_Shielded.PlaySound(self, Level)
-	--Audio.Play("absorb0.ogg")
+	Audio.Play("absorb" .. Random.GetInt(0, 1) .. ".ogg", 0.5)
 end
