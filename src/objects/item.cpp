@@ -240,7 +240,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	int DrawMoveSpeed = (int)GetMoveSpeed(Upgrades);
 	if(DrawMoveSpeed != 0) {
 		std::stringstream Buffer;
-		Buffer << (MoveSpeed < 0 ? "" : "+") << DrawMoveSpeed << "%";
+		Buffer << (DrawMoveSpeed < 0 ? "" : "+") << DrawMoveSpeed << "%";
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
