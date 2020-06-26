@@ -263,24 +263,21 @@ end
 -- Gash --
 
 Skill_Gash = Base_Attack:New()
-Skill_Gash.BaseChance = 35
-Skill_Gash.ChancePerLevel = 0
+Skill_Gash.BaseChance = 34
+Skill_Gash.ChancePerLevel = 1
 Skill_Gash.Duration = 5
 Skill_Gash.IncreasePerLevel = 6
-Skill_Gash.BleedingLevel = 10 - Skill_Gash.IncreasePerLevel
+Skill_Gash.BleedingLevel = 10
 
 function Skill_Gash.GetChance(self, Level)
-
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 
 function Skill_Gash.GetBleedLevel(self, Level)
-
-	return math.floor(self.BleedingLevel + self.IncreasePerLevel * Level)
+	return math.floor(self.BleedingLevel + self.IncreasePerLevel * (Level - 1))
 end
 
 function Skill_Gash.GetInfo(self, Item)
-
 	return "Slice your enemy\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Item.Level) .. " [c yellow]bleeding"
 end
 
@@ -1066,4 +1063,49 @@ function Skill_Light.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
 	return Result
+end
+
+-- Blade Dance --
+
+Skill_BladeDance = Base_Attack:New()
+Skill_BladeDance.BaseChance = 25
+Skill_BladeDance.ChancePerLevel = 0
+Skill_BladeDance.Duration = 5
+Skill_BladeDance.IncreasePerLevel = 6
+Skill_BladeDance.BleedingLevel = 10
+Skill_BladeDance.BaseTargets = 2
+Skill_BladeDance.TargetsPerLevel = 0.2
+Skill_BladeDance.DamageBase = 40
+Skill_BladeDance.DamagePerLevel = 1
+
+function Skill_BladeDance.GetDamage(self, Level)
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
+end
+
+function Skill_BladeDance.GetChance(self, Level)
+	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
+end
+
+function Skill_BladeDance.GetBleedLevel(self, Level)
+	return math.floor(self.BleedingLevel + self.IncreasePerLevel * (Level - 1))
+end
+
+function Skill_BladeDance.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level);
+end
+
+function Skill_BladeDance.GetInfo(self, Item)
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Item.Level) .. " [c yellow]bleeding"
+end
+
+function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= self:GetChance(Level) then
+		Result.Target.Buff = Buff_Bleeding.Pointer
+		Result.Target.BuffLevel = self:GetBleedLevel(Level)
+		Result.Target.BuffDuration = self.Duration
+	end
+end
+
+function Skill_BladeDance.PlaySound(self, Level)
+	Audio.Play("gash0.ogg")
 end

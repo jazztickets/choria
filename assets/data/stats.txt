@@ -846,6 +846,7 @@ INSERT INTO trader VALUES(22,'hunt',24,1);
 INSERT INTO trader VALUES(23,'dungeon_key',232,1);
 INSERT INTO trader VALUES(24,'taunt',14,1);
 INSERT INTO trader VALUES(25,'battle_potion',151,1);
+INSERT INTO trader VALUES(26,'blade_dance',28,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -917,6 +918,9 @@ INSERT INTO traderitem VALUES(73,25,146,1);
 INSERT INTO traderitem VALUES(74,25,124,1);
 INSERT INTO traderitem VALUES(75,25,134,1);
 INSERT INTO traderitem VALUES(76,25,237,1);
+INSERT INTO traderitem VALUES(77,26,10,1);
+INSERT INTO traderitem VALUES(78,26,23,1);
+INSERT INTO traderitem VALUES(79,26,8,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1247,7 +1251,7 @@ INSERT INTO item VALUES(24,1,0,0,1,0,0,'Hunt','textures/skills/hunt.png','Skill_
 INSERT INTO item VALUES(25,1,0,0,1,0,0,'Bounty Hunt','textures/skills/bounty_hunt.png','Skill_BountyHunt',4,100,0,0,1,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(26,1,0,1,1,0,0,'Light','textures/skills/light.png','Skill_Light',3,300,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(27,1,0,0,0,0,0,'Energy Field','textures/skills/energy_field.png','Skill_EnergyField',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(28,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(28,1,2,4,2,0,0,'Blade Dance','textures/skills/blade_dance.png','Skill_BladeDance',2,900,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(29,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(30,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(31,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
