@@ -447,6 +447,8 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 
 				Player->Character->DeleteStatusEffects();
 				Player->Character->CalculateStats();
+				if(HUD)
+					HUD->SetPlayer(Player);
 			}
 		}
 		else if(Console->Command == "clock") {
@@ -911,6 +913,9 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 		break;
 		case PacketType::MINIGAME_SEED:
 			HandleMinigameSeed(Data);
+		break;
+		case PacketType::PLAYER_UPDATEBUFF:
+			HandleBuffUpdate(Data);
 		break;
 		default:
 			Menu.HandlePacket(Data, Type);
@@ -1655,6 +1660,29 @@ void _PlayState::HandleMinigameSeed(ae::_Buffer &Data) {
 		return;
 
 	HUD->Minigame->StartGame(Data.Read<uint32_t>());
+}
+
+// Handle a buff update
+void _PlayState::HandleBuffUpdate(ae::_Buffer &Data) {
+
+	// Read packet
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
+	uint32_t BuffID = Data.Read<uint32_t>();
+	int Level = Data.Read<int>();
+	double Duration = (double)Data.Read<float>();
+
+	// Get affected player
+	_Object *Object = ObjectManager->GetObject(NetworkID);
+	if(!Object)
+		return;
+
+	// Update buff
+	for(auto &StatusEffect : Object->Character->StatusEffects) {
+		if(StatusEffect->Buff->ID == BuffID) {
+			StatusEffect->Level = Level;
+			StatusEffect->Duration = Duration;
+		}
+	}
 }
 
 // Creates an object from a buffer

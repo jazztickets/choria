@@ -206,12 +206,10 @@ function Buff_Parry.GetInfo(self, Level)
 	return "Blocking attacks"
 end
 
-function Buff_Parry.OnHit(self, Level, Change)
+function Buff_Parry.OnHit(self, Object, Level, Duration, Change)
 	Change.BuffSound = self.ID
 	Change.Damage = math.floor(Change.Damage * self.DamageReduction)
 	Change.Stamina = self.StaminaGain
-
-	return Change
 end
 
 function Buff_Parry.PlaySound(self, Level)
@@ -315,4 +313,31 @@ function Buff_Light.Stats(self, Level, Source, Change)
 	Change.Light = Level
 
 	return Change
+end
+
+-- Shielded --
+
+Buff_Shielded = Base_Buff:New()
+
+function Buff_Shielded.GetInfo(self, Level)
+	return "Blocking [c green]" .. Level .. "[c white] damage before breaking"
+end
+
+function Buff_Shielded.OnHit(self, Object, Level, Duration, Change)
+
+	-- Reduce shield
+	Level = Level - Change.Damage
+
+	-- Check for shield breaking
+	if Level <= 0 then
+		Change.Damage = math.abs(Level)
+		Object.UpdateBuff(self.ID, 0, 0)
+	else
+		Change.Damage = 0
+		Object.UpdateBuff(self.ID, Level, Duration)
+	end
+end
+
+function Buff_Shielded.PlaySound(self, Level)
+	--Audio.Play("absorb0.ogg")
 end

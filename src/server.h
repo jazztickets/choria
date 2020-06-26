@@ -35,6 +35,7 @@ class _Save;
 class _Object;
 class _Scripting;
 class _Item;
+class _StatusEffect;
 
 namespace ae {
 	template<class T> class _Manager;
@@ -75,6 +76,7 @@ class _Server {
 		void SendPlayerPosition(ae::_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
 		void SetClock(double Clock);
+		void UpdateBuff(_Object *Player, _StatusEffect *StatusEffect);
 
 		// Packet handling
 		void HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer);

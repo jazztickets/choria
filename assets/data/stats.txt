@@ -583,6 +583,7 @@ INSERT INTO buff VALUES(16,'Evasion','Buff_Evasion','textures/buffs/evasion.png'
 INSERT INTO buff VALUES(17,'Weak','Buff_Weak','textures/buffs/weak.png');
 INSERT INTO buff VALUES(18,'Light','Buff_Light','textures/buffs/light.png');
 INSERT INTO buff VALUES(19,'Taunted','Buff_Taunted','textures/buffs/taunted.png');
+INSERT INTO buff VALUES(20,'Shielded','Buff_Shielded','textures/buffs/shielded.png');
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -857,6 +858,7 @@ INSERT INTO trader VALUES(25,'battle_potion',151,1);
 INSERT INTO trader VALUES(26,'blade_dance',28,1);
 INSERT INTO trader VALUES(27,'actionslot_iii',98,1);
 INSERT INTO trader VALUES(28,'invis_potion',110,1);
+INSERT INTO trader VALUES(29,'magic_barrier',29,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -935,6 +937,8 @@ INSERT INTO traderitem VALUES(80,27,233,10);
 INSERT INTO traderitem VALUES(81,28,108,1);
 INSERT INTO traderitem VALUES(82,28,109,1);
 INSERT INTO traderitem VALUES(83,28,146,1);
+INSERT INTO traderitem VALUES(84,29,206,1);
+INSERT INTO traderitem VALUES(85,29,135,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1266,7 +1270,7 @@ INSERT INTO item VALUES(25,1,0,0,1,0,0,'Bounty Hunt','textures/skills/bounty_hun
 INSERT INTO item VALUES(26,1,0,1,1,0,0,'Light','textures/skills/light.png','Skill_Light',3,300,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(27,1,0,0,0,0,0,'Energy Field','textures/skills/energy_field.png','Skill_EnergyField',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(28,1,2,4,2,0,0,'Blade Dance','textures/skills/blade_dance.png','Skill_BladeDance',2,900,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(29,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(29,1,0,3,3,0,0,'Magic Barrier','textures/skills/magic_barrier.png','Skill_MagicBarrier',3,500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(30,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(31,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(32,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

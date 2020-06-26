@@ -27,6 +27,7 @@
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
 #include <objects/statuseffect.h>
+#include <objects/buff.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
@@ -1815,6 +1816,24 @@ void _Server::SetClock(double Clock) {
 	// Broadcast packet
 	for(auto &Peer : Network->GetPeers())
 		Network->SendPacket(Packet, Peer);
+}
+
+// Update buff on client
+void _Server::UpdateBuff(_Object *Player, _StatusEffect *StatusEffect) {
+
+	// Create packet
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::PLAYER_UPDATEBUFF);
+	Packet.Write<ae::NetworkIDType>(Player->NetworkID);
+	Packet.Write<uint32_t>(StatusEffect->Buff->ID);
+	Packet.Write<int>(StatusEffect->Level);
+	Packet.Write<float>(StatusEffect->Duration);
+
+	// Notify players in battle
+	if(Player->Character->Battle)
+		Player->Character->Battle->BroadcastPacket(Packet);
+	else
+		Network->SendPacket(Packet, Player->Peer);
 }
 
 // Send a message to the player

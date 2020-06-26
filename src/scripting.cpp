@@ -419,6 +419,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushcclosure(LuaState, &ObjectVendorExchange, 1);
 	lua_setfield(LuaState, -2, "VendorExchange");
 
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectUpdateBuff, 1);
+	lua_setfield(LuaState, -2, "UpdateBuff");
+
 	lua_pushinteger(LuaState, Object->Character->Status);
 	lua_setfield(LuaState, -2, "Status");
 
@@ -1114,6 +1118,29 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 
 		Packet.StartRead();
 		Object->Server->HandleVendorExchange(Packet, Object->Peer);
+	}
+
+	return 0;
+}
+
+// Update level and duration for a status effect owned by an object
+int _Scripting::ObjectUpdateBuff(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	uint32_t BuffID = (uint32_t)lua_tointeger(LuaState, 1);
+	int Level = (int)lua_tointeger(LuaState, 2);
+	double Duration = lua_tonumber(LuaState, 3);
+
+	if(!Object)
+		return 0;
+
+	// Find buff in status effect list and update
+	for(auto &StatusEffect : Object->Character->StatusEffects) {
+		if(StatusEffect->Buff->ID == BuffID) {
+			StatusEffect->Level = Level;
+			StatusEffect->Duration = Duration;
+			Object->Server->UpdateBuff(Object, StatusEffect);
+		}
 	}
 
 	return 0;

@@ -399,9 +399,7 @@ function Skill_Rejuvenation.GetDuration(self, Level)
 end
 
 function Skill_Rejuvenation.GetInfo(self, Item)
-
 	return "Heal [c green]" .. Buff_Healing.Heal * self:GetLevel(Item.Level) * self:GetDuration(Item.Level) .. " [c white]HP [c white]over [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
-
 end
 
 function Skill_Rejuvenation.Use(self, Level, Duration, Source, Target, Result)
@@ -1108,4 +1106,38 @@ end
 
 function Skill_BladeDance.PlaySound(self, Level)
 	Audio.Play("gash0.ogg")
+end
+
+-- Magic Barrier --
+
+Skill_MagicBarrier = Base_Spell:New()
+Skill_MagicBarrier.CostPerLevel = 10
+Skill_MagicBarrier.ManaCostBase = 25 - Skill_MagicBarrier.CostPerLevel
+Skill_MagicBarrier.BaseBlock = 80
+Skill_MagicBarrier.BlockPerLevel = 20
+Skill_MagicBarrier.Duration = 10
+Skill_MagicBarrier.DurationPerLevel = 1
+
+function Skill_MagicBarrier.GetLevel(self, Level)
+	return self.BaseBlock + self.BlockPerLevel * (Level - 1)
+end
+
+function Skill_MagicBarrier.GetDuration(self, Level)
+	return self.Duration + self.DurationPerLevel * (Level - 1)
+end
+
+function Skill_MagicBarrier.GetInfo(self, Item)
+	return "Create a magic shield around an ally that blocks [c green]" .. self:GetLevel(Item.Level) .. "[c white] damage before breaking\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Shielded.Pointer
+	Result.Target.BuffLevel = self:GetLevel(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
+
+function Skill_MagicBarrier.PlaySound(self, Level)
+	--Audio.Play("barrier0.ogg")
 end

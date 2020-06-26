@@ -1,7 +1,9 @@
 choria 0.5.1 -
 - Direction of party members now show on current map
-- Added light spell
 - Added taunt skill
+- Added light spell
+- Added magic barrier spell
+- Added blade dance skill
 - Added skill point unlocks
 - Added lava man
 - Removed defend skill

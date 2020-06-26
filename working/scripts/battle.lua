@@ -149,15 +149,23 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		for i = 1, #Target.StatusEffects do
 			Effect = Target.StatusEffects[i]
 			if Effect.Buff.OnHit ~= nil then
-				Effect.Buff:OnHit(Effect.Level, Change)
-				StaminaChange = StaminaChange + Change.Stamina
-				BuffSound = Change.BuffSound
+				Effect.Buff:OnHit(Target, Effect.Level, Effect.Duration, Change)
+				if Change.Stamina ~= nil then
+					StaminaChange = StaminaChange + Change.Stamina
+				end
+				if Change.BuffSound ~= nil then
+					BuffSound = Change.BuffSound
+				end
 			end
 		end
 
 		-- Update stamina
 		if StaminaChange ~= 0 then
 			Result.Target.Stamina = StaminaChange
+		end
+
+		-- Set sound from buff
+		if BuffSound ~= 0 then
 			Result.Target.BuffSound = BuffSound
 		end
 
