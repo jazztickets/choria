@@ -471,7 +471,7 @@ Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 
 function Skill_Spark.GetInfo(self, Item)
-	return "Shock a target for [c green]" .. self:GetDamage(Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Shock a target for [c green]" .. self:GetDamage(Item.Level) .. "[c white] damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Spark.PlaySound(self, Level)
@@ -488,7 +488,7 @@ Skill_Icicle.Duration = 5
 Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
 
 function Skill_Icicle.GetInfo(self, Item)
-	return "Pierce a target for [c green]" .. self:GetDamage(Item.Level) .. "[c white] HP\nSlows for [c green]" .. self.Duration .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Pierce a target for [c green]" .. self:GetDamage(Item.Level) .. "[c white] damage\nSlows for [c green]" .. self.Duration .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -518,7 +518,7 @@ function Skill_FireBlast.GetTargetCount(self, Level)
 end
 
 function Skill_FireBlast.GetInfo(self, Item)
-	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with fire for [c green]" .. self:GetDamage(Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with fire for [c green]" .. self:GetDamage(Item.Level) .. "[c white] damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self, Level)
@@ -768,7 +768,7 @@ function Skill_Parry.GetDuration(self, Level)
 end
 
 function Skill_Parry.GetInfo(self, Item)
-	return "Block [c green]" .. math.floor(self.DamageReduction * 100) .. "% [c white]damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
+	return "Block [c green]" .. math.floor(self.DamageReduction * 100) .. "% [c white]attack damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
 end
 
 function Skill_Parry.Use(self, Level, Duration, Source, Target, Result)
@@ -1127,7 +1127,7 @@ function Skill_MagicBarrier.GetDuration(self, Level)
 end
 
 function Skill_MagicBarrier.GetInfo(self, Item)
-	return "Create a magic shield around an ally that blocks [c green]" .. self:GetLevel(Item.Level) .. "[c white] damage before breaking\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Create a magic shield around an ally that blocks [c green]" .. self:GetLevel(Item.Level) .. "[c white] attack damage before breaking\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
@@ -1163,7 +1163,7 @@ function Skill_IceNova.GetDuration(self, Level)
 end
 
 function Skill_IceNova.GetInfo(self, Item)
-	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Item.Level) .. "[c white] cold damage that slows for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Item.Level) .. "[c white] damage that slows for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_IceNova.Proc(self, Roll, Level, Duration, Source, Target, Result)
