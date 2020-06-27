@@ -50,8 +50,8 @@ void _SkillScreen::Init() {
 	glm::vec2 Offset(Start);
 	glm::vec2 LevelOffset(0, -6);
 	glm::vec2 Spacing(14, 70);
-	glm::vec2 PlusOffset(7, 64 + 9);
-	glm::vec2 MinusOffset(37, 64 + 9);
+	glm::vec2 PlusOffset(6, 64 + 9);
+	glm::vec2 MinusOffset(36, 64 + 9);
 	glm::vec2 LabelOffset(0, 2);
 	glm::vec2 ButtonSize(23, 23);
 	size_t i = 0;
