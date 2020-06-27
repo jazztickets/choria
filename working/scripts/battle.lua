@@ -52,7 +52,7 @@ Base_Spell = {
 	DamageType = 0,
 	ManaCostBase = 0,
 	DamageBase = 0,
-	Multiplier = 0,
+	DamagerPerLevel = 0,
 	CostPerLevel = 0,
 
 	New = function(self, Object)
@@ -63,7 +63,7 @@ Base_Spell = {
 	end,
 
 	GetDamage = function(self, Level)
-		return self.DamageBase + Level * self.Multiplier
+		return self.DamageBase + Level * self.DamagerPerLevel
 	end,
 
 	GetCost = function(self, Level)

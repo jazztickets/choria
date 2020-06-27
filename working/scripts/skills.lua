@@ -466,7 +466,7 @@ end
 
 Skill_Spark = Base_Spell:New()
 Skill_Spark.DamageBase = 10
-Skill_Spark.Multiplier = 30
+Skill_Spark.DamagerPerLevel = 30
 Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 
@@ -482,7 +482,7 @@ end
 
 Skill_Icicle = Base_Spell:New()
 Skill_Icicle.DamageBase = 25
-Skill_Icicle.Multiplier = 25
+Skill_Icicle.DamagerPerLevel = 25
 Skill_Icicle.CostPerLevel = 4
 Skill_Icicle.Duration = 5
 Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
@@ -507,7 +507,7 @@ end
 
 Skill_FireBlast = Base_Spell:New()
 Skill_FireBlast.DamageBase = 50
-Skill_FireBlast.Multiplier = 30
+Skill_FireBlast.DamagerPerLevel = 30
 Skill_FireBlast.CostPerLevel = 10
 Skill_FireBlast.ManaCostBase = 60 - Skill_FireBlast.CostPerLevel
 Skill_FireBlast.BaseTargets = 3
@@ -1140,4 +1140,40 @@ end
 
 function Skill_MagicBarrier.PlaySound(self, Level)
 	Audio.Play("barrier0.ogg")
+end
+
+-- Ice Nova --
+
+Skill_IceNova = Base_Spell:New()
+Skill_IceNova.DamageBase = 50
+Skill_IceNova.DamagerPerLevel = 25
+Skill_IceNova.CostPerLevel = 10
+Skill_IceNova.ManaCostBase = 80 - Skill_IceNova.CostPerLevel
+Skill_IceNova.BaseTargets = 3
+Skill_IceNova.TargetsPerLevel = 0.2
+Skill_IceNova.Duration = 3
+Skill_IceNova.DurationPerLevel = 0.2
+
+function Skill_IceNova.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level);
+end
+
+function Skill_IceNova.GetDuration(self, Level)
+	return math.floor(self.Duration + self.DurationPerLevel * Level)
+end
+
+function Skill_IceNova.GetInfo(self, Item)
+	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Item.Level) .. "[c white] cold damage that slows for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_IceNova.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Slowed.Pointer
+	Result.Target.BuffLevel = 20
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
+
+function Skill_IceNova.PlaySound(self, Level)
+	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
