@@ -84,7 +84,7 @@ void _TradeScreen::Toggle() {
 		return;
 
 	// Restrict trading for new characters
-	if(HUD->Player->Character->Level < GAME_TRADING_LEVEL) {
+	if(!HUD->Player->Character->CanTrade()) {
 		HUD->SetMessage("Trading unlocks at level " + std::to_string(GAME_TRADING_LEVEL));
 		return;
 	}

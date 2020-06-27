@@ -1223,7 +1223,7 @@ void _Server::HandleTradeRequest(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	// Check for level requirement
-	if(Player->Character->Level < GAME_TRADING_LEVEL)
+	if(!Player->Character->CanTrade())
 		return;
 
 	// Set status

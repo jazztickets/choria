@@ -638,6 +638,11 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	}
 }
 
+// Determine if character has unlocked trading
+bool _Character::CanTrade() const {
+	return Object->ModelID == 7 || Level >= GAME_TRADING_LEVEL;
+}
+
 // Reset ui state variables
 void _Character::ResetUIState() {
 	InventoryOpen = false;

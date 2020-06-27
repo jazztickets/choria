@@ -106,6 +106,7 @@ class _Character {
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
 		// UI
+		bool CanTrade() const;
 		void ResetUIState();
 		bool AddStatusEffect(_StatusEffect *StatusEffect);
 		void DeleteStatusEffects();
