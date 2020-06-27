@@ -1111,10 +1111,10 @@ end
 -- Magic Barrier --
 
 Skill_MagicBarrier = Base_Spell:New()
-Skill_MagicBarrier.CostPerLevel = 10
+Skill_MagicBarrier.CostPerLevel = 5
 Skill_MagicBarrier.ManaCostBase = 25 - Skill_MagicBarrier.CostPerLevel
-Skill_MagicBarrier.BaseBlock = 80
-Skill_MagicBarrier.BlockPerLevel = 20
+Skill_MagicBarrier.BaseBlock = 120
+Skill_MagicBarrier.BlockPerLevel = 40
 Skill_MagicBarrier.Duration = 10
 Skill_MagicBarrier.DurationPerLevel = 1
 
