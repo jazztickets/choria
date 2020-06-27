@@ -867,6 +867,7 @@ INSERT INTO trader VALUES(26,'blade_dance',28,1);
 INSERT INTO trader VALUES(27,'actionslot_iii',98,1);
 INSERT INTO trader VALUES(28,'invis_potion',110,1);
 INSERT INTO trader VALUES(29,'magic_barrier',29,1);
+INSERT INTO trader VALUES(30,'ice_nova',30,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -947,6 +948,8 @@ INSERT INTO traderitem VALUES(82,28,109,1);
 INSERT INTO traderitem VALUES(83,28,146,1);
 INSERT INTO traderitem VALUES(84,29,206,1);
 INSERT INTO traderitem VALUES(85,29,135,1);
+INSERT INTO traderitem VALUES(86,30,19,1);
+INSERT INTO traderitem VALUES(87,30,32,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
