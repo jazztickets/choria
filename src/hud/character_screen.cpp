@@ -126,6 +126,42 @@ void _CharacterScreen::Render(double BlendFactor) {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
+	// Fire Power
+	if(HUD->Player->Character->FirePower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->FirePower * 100) << "%";
+		Font->DrawText("Fire Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Cold Power
+	if(HUD->Player->Character->ColdPower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->ColdPower * 100) << "%";
+		Font->DrawText("Cold Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Lightning Power
+	if(HUD->Player->Character->LightningPower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->LightningPower * 100) << "%";
+		Font->DrawText("Lightning Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Bleed Power
+	if(HUD->Player->Character->BleedPower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->BleedPower * 100) << "%";
+		Font->DrawText("Bleed Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Drop rate
 	if(HUD->Player->Character->DropRate != 0) {
 		Buffer << HUD->Player->Character->DropRate;

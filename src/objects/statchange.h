@@ -87,6 +87,10 @@ enum class StatType : int {
 	CLOCK,
 	MANAREDUCTIONRATIO,
 	DAMAGETYPE,
+	FIREPOWER,
+	COLDPOWER,
+	LIGHTNINGPOWER,
+	BLEEDPOWER,
 	COUNT,
 };
 
@@ -147,6 +151,10 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "Clock",              { StatType::CLOCK              , StatValueType::FLOAT   } },
 	{ "ManaReductionRatio", { StatType::MANAREDUCTIONRATIO , StatValueType::FLOAT   } },
 	{ "DamageType",         { StatType::DAMAGETYPE         , StatValueType::INTEGER } },
+	{ "FirePower",          { StatType::FIREPOWER          , StatValueType::FLOAT   } },
+	{ "ColdPower",          { StatType::COLDPOWER          , StatValueType::FLOAT   } },
+	{ "LightningPower",     { StatType::LIGHTNINGPOWER     , StatValueType::FLOAT   } },
+	{ "BleedPower",         { StatType::BLEEDPOWER         , StatValueType::FLOAT   } },
 };
 
 union _Value {

@@ -52,7 +52,7 @@ Base_Spell = {
 	DamageType = 0,
 	ManaCostBase = 0,
 	DamageBase = 0,
-	DamagerPerLevel = 0,
+	DamagePerLevel = 0,
 	CostPerLevel = 0,
 
 	New = function(self, Object)
@@ -62,8 +62,12 @@ Base_Spell = {
 		return Object
 	end,
 
-	GetDamage = function(self, Level)
-		return self.DamageBase + Level * self.DamagerPerLevel
+	GetDamage = function(self, Source, Level)
+		return math.floor((self.DamageBase + Level * self.DamagePerLevel) * self:GetDamagePower(Source, Level))
+	end,
+
+	GetDamagePower = function(self, Source, Level)
+		return 1.0
 	end,
 
 	GetCost = function(self, Level)
@@ -91,7 +95,7 @@ Base_Spell = {
 
 	Use = function(self, Level, Duration, Source, Target, Result)
 		Change = {}
-		Change.Damage = self:GetDamage(Level)
+		Change.Damage = self:GetDamage(Source, Level)
 		Change.Damage = math.floor(Change.Damage * Target.GetDamageReduction(self.Item.DamageType))
 		Change.Damage = math.max(Change.Damage, 0)
 
@@ -170,7 +174,7 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		end
 
 		-- Apply pierce
-		DamageBlock = math.max(Target.DamageBlock - Action:GetPierce(Source), 0);
+		DamageBlock = math.max(Target.DamageBlock - Action:GetPierce(Source), 0)
 
 		-- Apply damage block
 		Change.Damage = math.max(Change.Damage - DamageBlock, 0)

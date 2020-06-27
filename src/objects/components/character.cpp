@@ -92,6 +92,10 @@ _Character::_Character(_Object *Object) :
 	ManaReductionRatio(0.0f),
 	HealPower(0.0f),
 	AttackPower(0.0f),
+	FirePower(0.0f),
+	ColdPower(0.0f),
+	LightningPower(0.0f),
+	BleedPower(0.0f),
 	MinDamage(0),
 	MaxDamage(0),
 	Armor(0),
@@ -304,6 +308,10 @@ void _Character::CalculateStats() {
 	MoveSpeed = BaseMoveSpeed;
 	DropRate = BaseDropRate;
 	AllSkills = BaseAllSkills;
+	FirePower = 1.0f;
+	ColdPower = 1.0f;
+	LightningPower = 1.0f;
+	BleedPower = 1.0f;
 	Resistances.clear();
 
 	Object->Light = 0;
@@ -467,6 +475,14 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
 		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
+	if(StatChange.HasStat(StatType::FIREPOWER))
+		FirePower += StatChange.Values[StatType::FIREPOWER].Float;
+	if(StatChange.HasStat(StatType::COLDPOWER))
+		ColdPower += StatChange.Values[StatType::COLDPOWER].Float;
+	if(StatChange.HasStat(StatType::LIGHTNINGPOWER))
+		LightningPower += StatChange.Values[StatType::LIGHTNINGPOWER].Float;
+	if(StatChange.HasStat(StatType::BLEEDPOWER))
+		BleedPower += StatChange.Values[StatType::BLEEDPOWER].Float;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
 		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;

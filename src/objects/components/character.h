@@ -186,6 +186,10 @@ class _Character {
 		float ManaReductionRatio;
 		float HealPower;
 		float AttackPower;
+		float FirePower;
+		float ColdPower;
+		float LightningPower;
+		float BleedPower;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;

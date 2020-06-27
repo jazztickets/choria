@@ -40,7 +40,7 @@
 #include <SDL_keycode.h>
 
 // Draw tooltip
-void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
+void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
@@ -153,11 +153,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	}
 
 	// Draw description
-	DrawDescription(Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
+	DrawDescription(Player, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
-		DrawDescription(Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(Player, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -480,15 +480,17 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 }
 
 // Draw item description
-void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
+void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
+	_Scripting *Scripting = Object->Scripting;
 
 	// Check for scripting function
 	std::string Info = "";
 	if(Scripting->StartMethodCall(Script, "GetInfo")) {
 
 		// Get description from script
+		Scripting->PushObject(Object);
 		Scripting->PushItemParameters(DrawLevel, Duration);
-		Scripting->MethodCall(1, 1);
+		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
 

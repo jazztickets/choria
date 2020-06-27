@@ -456,6 +456,18 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->AttackPower);
 	lua_setfield(LuaState, -2, "AttackPower");
 
+	lua_pushnumber(LuaState, Object->Character->FirePower);
+	lua_setfield(LuaState, -2, "FirePower");
+
+	lua_pushnumber(LuaState, Object->Character->ColdPower);
+	lua_setfield(LuaState, -2, "ColdPower");
+
+	lua_pushnumber(LuaState, Object->Character->LightningPower);
+	lua_setfield(LuaState, -2, "LightningPower");
+
+	lua_pushnumber(LuaState, Object->Character->BleedPower);
+	lua_setfield(LuaState, -2, "BleedPower");
+
 	lua_pushinteger(LuaState, Object->Character->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 

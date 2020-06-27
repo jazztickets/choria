@@ -103,6 +103,10 @@ INSERT INTO stattype VALUES(40,'Light',1.0);
 INSERT INTO stattype VALUES(41,'Clock',1.0);
 INSERT INTO stattype VALUES(42,'Mana Reduction Ratio',1.0);
 INSERT INTO stattype VALUES(43,'Damage Type',1.0);
+INSERT INTO stattype VALUES(44,'Fire Power',1.0);
+INSERT INTO stattype VALUES(45,'Cold Power',1.0);
+INSERT INTO stattype VALUES(46,'Lightning Power',1.0);
+INSERT INTO stattype VALUES(47,'Bleed Power',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -489,6 +493,10 @@ INSERT INTO vendoritem VALUES(128,13,229);
 INSERT INTO vendoritem VALUES(129,13,27);
 INSERT INTO vendoritem VALUES(130,14,191);
 INSERT INTO vendoritem VALUES(131,14,97);
+INSERT INTO vendoritem VALUES(132,13,31);
+INSERT INTO vendoritem VALUES(133,13,32);
+INSERT INTO vendoritem VALUES(134,13,33);
+INSERT INTO vendoritem VALUES(135,13,34);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1268,14 +1276,14 @@ INSERT INTO item VALUES(23,1,2,4,2,0,0,'Cleave','textures/skills/cleave.png','Sk
 INSERT INTO item VALUES(24,1,0,0,1,0,0,'Hunt','textures/skills/hunt.png','Skill_Hunt',4,500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(25,1,0,0,1,0,0,'Bounty Hunt','textures/skills/bounty_hunt.png','Skill_BountyHunt',4,100,0,0,1,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(26,1,0,1,1,0,0,'Light','textures/skills/light.png','Skill_Light',3,300,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(27,1,0,0,0,0,0,'Energy Field','textures/skills/energy_field.png','Skill_EnergyField',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(27,1,0,0,0,0,0,'Energy Field','textures/skills/energy_field.png','Skill_EnergyField',1,900,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(28,1,2,4,2,0,0,'Blade Dance','textures/skills/blade_dance.png','Skill_BladeDance',2,900,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(29,1,0,3,3,0,0,'Magic Barrier','textures/skills/magic_barrier.png','Skill_MagicBarrier',3,500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(30,1,4,4,2,0,0,'Ice Nova','textures/skills/ice_nova.png','Skill_IceNova',3,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(31,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(32,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(33,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(34,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(31,1,0,0,0,0,0,'Fire Mastery','textures/skills/fire_mastery.png','Skill_FireMastery',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(32,1,0,0,0,0,0,'Cold Mastery','textures/skills/cold_mastery.png','Skill_ColdMastery',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(33,1,0,0,0,0,0,'Lightning Mastery','textures/skills/lightning_mastery.png','Skill_LightningMastery',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(34,1,0,0,0,0,0,'Bleed Mastery','textures/skills/bleed_mastery.png','Skill_BleedMastery',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(35,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(36,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(37,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1449,7 +1457,7 @@ INSERT INTO item VALUES(229,12,0,0,1,8,0,'Skill Point IV','textures/items/skillp
 INSERT INTO item VALUES(230,12,0,0,1,9,0,'Skill Point V','textures/items/skillpoint2.png','Item_SkillPoint',0,4000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(231,9,0,0,0,0,0,'Mythical Amulet','textures/items/amulet_blue.png','',0,2000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1);
 INSERT INTO item VALUES(232,13,0,0,1,0,0,'Dungeon Key','textures/items/key.png','',0,100,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(233,10,0,2,2,0,0,'Lava Sludge','textures/items/lava_sludge.png','Item_LavaSludge',0,100,1,20,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(233,10,0,2,2,0,0,'Lava Sludge','textures/items/lava_sludge.png','Item_LavaSludge',0,100,1,60,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(234,8,0,0,0,0,3,'Negative Fire Ring I','textures/items/ring.png','',0,0,1,0,5,0.0,1,0,0,0,0,0,-25,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(235,8,0,0,0,0,4,'Negative Cold Ring I','textures/items/ring.png','',0,0,1,0,5,0.0,1,0,0,0,0,0,-25,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(236,8,0,0,0,0,5,'Negative Lightning Ring I','textures/items/ring.png','',0,0,1,0,5,0.0,1,0,0,0,0,0,-25,0,0,0,0,0,0,0,0);

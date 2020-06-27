@@ -249,7 +249,7 @@ end
 -- Burning --
 
 Buff_Burning = {}
-Buff_Burning.Damage = 3
+Buff_Burning.Damage = 1
 Buff_Burning.DamageType = DamageType["Fire"]
 
 function Buff_Burning.GetInfo(self, Level)
