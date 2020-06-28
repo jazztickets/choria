@@ -1647,6 +1647,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "clearbuffs") {
 		Player->Character->DeleteStatusEffects();
+		Player->Character->BattleCooldown.clear();
 		Player->Character->CalculateStats();
 	}
 	else if(Command == "clock") {

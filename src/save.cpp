@@ -271,6 +271,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
 	Object.Character->Hardcore = Hardcore;
+	Object.Character->BuildID = BuildID;
 	Object.Character->PortraitID = PortraitID;
 	Object.ModelID = Build->ModelID;
 	Object.Character->CharacterID = (uint32_t)Database->GetLastInsertID();

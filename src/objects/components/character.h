@@ -117,6 +117,7 @@ class _Character {
 		// Base
 		_Object *Object;
 		uint32_t CharacterID;
+		uint32_t BuildID;
 		double UpdateTimer;
 
 		// Pointers

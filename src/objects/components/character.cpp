@@ -32,6 +32,7 @@
 _Character::_Character(_Object *Object) :
 	Object(Object),
 	CharacterID(0),
+	BuildID(1),
 	UpdateTimer(0.0),
 
 	Battle(nullptr),

@@ -536,6 +536,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["map_y"] = Position.y;
 	StatsNode["spawnmap_id"] = Character->SpawnMapID;
 	StatsNode["spawnpoint"] = Character->SpawnPoint;
+	StatsNode["build_id"] = Character->BuildID;
 	StatsNode["portrait_id"] = Character->PortraitID;
 	StatsNode["model_id"] = ModelID;
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
@@ -622,6 +623,16 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		UnlocksNode.append(UnlockNode);
 	}
 	Data["unlocks"] = UnlocksNode;
+
+	// Write cooldowns
+	Json::Value CooldownsNode;
+	for(auto &Cooldown : Character->BattleCooldown) {
+		Json::Value CooldownNode;
+		CooldownNode["id"] = Cooldown.first;
+		CooldownNode["duration"] = Cooldown.second;
+		CooldownsNode.append(CooldownNode);
+	}
+	Data["cooldowns"] = CooldownsNode;
 }
 
 // Unserialize attributes from string
@@ -643,6 +654,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["spawnmap_id"].asUInt();
 	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
 	Character->Hardcore = StatsNode["hardcore"].asBool();
+	Character->BuildID = StatsNode["build_id"].asUInt();
 	Character->PortraitID = StatsNode["portrait_id"].asUInt();
 	ModelID = StatsNode["model_id"].asUInt();
 	Character->SkillPointsUnlocked = StatsNode["skillpoints_unlocked"].asInt();
@@ -663,6 +675,9 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	if(!Character->Seed)
 		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+
+	if(!Character->BuildID)
+		Character->BuildID = 1;
 
 	size_t ActionBarSize = 0;
 	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
@@ -710,6 +725,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set unlocks
 	for(const Json::Value &UnlockNode : Data["unlocks"])
 		Character->Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
+
+	// Set cooldowns
+	for(const Json::Value &CooldownNode : Data["cooldowns"])
+		Character->BattleCooldown[CooldownNode["id"].asUInt()] = CooldownNode["duration"].asDouble();
 }
 
 // Serialize for ObjectCreate
