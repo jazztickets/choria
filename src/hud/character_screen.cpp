@@ -144,6 +144,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Mana Power
+	if(HUD->Player->Character->ManaPower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->ManaPower * 100) << "%";
+		Font->DrawText("Mana Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Fire Power
 	if(HUD->Player->Character->FirePower != 1.0f) {
 		Buffer << (int)(HUD->Player->Character->FirePower * 100) << "%";

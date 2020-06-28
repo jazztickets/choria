@@ -35,12 +35,12 @@ end
 Item_ManaCider = Base_Potion:New()
 
 function Item_ManaCider.GetInfo(self, Source, Item)
-	return "Restore [c light_blue]" .. math.floor(Item.Level * Buff_Mana.Mana * Item.Duration) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Restore [c light_blue]" .. math.floor(Item.Level * Buff_Mana.Mana * Item.Duration * Source.ManaPower) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_ManaCider.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Mana.Pointer
-	Result.Target.BuffLevel = Level
+	Result.Target.BuffLevel = Level * Source.ManaPower
 	Result.Target.BuffDuration = Duration
 
 	return Result

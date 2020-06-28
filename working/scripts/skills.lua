@@ -624,18 +624,20 @@ end
 Skill_ArcaneMastery = {}
 Skill_ArcaneMastery.PerLevel = 40
 Skill_ArcaneMastery.ManaRegen = 1
+Skill_ArcaneMastery.Power = 50
+Skill_ArcaneMastery.PowerPerLevel = 5
 
-function Skill_ArcaneMastery.GetManaRegen(self, Level)
-	return self.ManaRegen * math.floor(Level / 1)
+function Skill_ArcaneMastery.GetPower(self, Level)
+	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
 end
 
 function Skill_ArcaneMastery.GetInfo(self, Source, Item)
-	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Item.Level .. "\n[c white]Increase mana regen by [c green]" .. self:GetManaRegen(Item.Level)
+	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Item.Level .. "\n[c white]Increase mana power by [c green]" .. self:GetPower(Item.Level) .. "%"
 end
 
 function Skill_ArcaneMastery.Stats(self, Level, Object, Change)
 	Change.MaxMana = self.PerLevel * Level
-	Change.ManaRegen = self:GetManaRegen(Level)
+	Change.ManaPower = self:GetPower(Level) / 100.0
 
 	return Change
 end

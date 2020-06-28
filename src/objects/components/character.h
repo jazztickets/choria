@@ -192,6 +192,7 @@ class _Character {
 		float LightningPower;
 		float BleedPower;
 		float HealPower;
+		float ManaPower;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;

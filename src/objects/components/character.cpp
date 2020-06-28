@@ -98,6 +98,7 @@ _Character::_Character(_Object *Object) :
 	LightningPower(0.0f),
 	BleedPower(0.0f),
 	HealPower(0.0f),
+	ManaPower(0.0f),
 	MinDamage(0),
 	MaxDamage(0),
 	Armor(0),
@@ -315,6 +316,7 @@ void _Character::CalculateStats() {
 	LightningPower = 1.0f;
 	BleedPower = 1.0f;
 	HealPower = 1.0f;
+	ManaPower = 1.0f;
 	Resistances.clear();
 
 	Object->Light = 0;
@@ -429,6 +431,8 @@ void _Character::CalculateStats() {
 	Mana = std::min(Mana, MaxMana);
 	if(HealthRegen > 0)
 		HealthRegen *= HealPower;
+	if(ManaRegen > 0)
+		ManaRegen *= ManaPower;
 
 	RefreshActionBarCount();
 }
@@ -490,6 +494,8 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		BleedPower += StatChange.Values[StatType::BLEEDPOWER].Float;
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
+	if(StatChange.HasStat(StatType::MANAPOWER))
+		ManaPower += StatChange.Values[StatType::MANAPOWER].Float;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
 		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
