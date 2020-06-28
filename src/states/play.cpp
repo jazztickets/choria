@@ -278,8 +278,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 				HUD->CharacterScreen->Toggle();
 			break;
 			default: {
-				if(Battle->ClientHandleInput(Action))
-					HUD->EnableMouseCombat = false;
+				HUD->EnableMouseCombat = Battle->ClientHandleInput(Action);
 			} break;
 		}
 	}
