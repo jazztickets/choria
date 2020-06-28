@@ -84,7 +84,7 @@ class _Battle : public ae::_BaseObject {
 		void ServerEndBattle();
 
 		// Input
-		bool ClientHandleInput(size_t Action);
+		bool ClientHandleInput(size_t Action, bool MouseCombat=false);
 		void ClientHandlePlayerAction(ae::_Buffer &Data);
 		void ClientSetAction(uint8_t ActionBarSlot);
 		void ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget);

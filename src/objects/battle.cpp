@@ -948,7 +948,7 @@ int _Battle::GetPeerCount() {
 }
 
 // Handle player input, return true if mouse combat should be enabled
-bool _Battle::ClientHandleInput(size_t Action) {
+bool _Battle::ClientHandleInput(size_t Action, bool MouseCombat) {
 
 	switch(Action) {
 		case Action::GAME_SKILL1:
@@ -960,7 +960,7 @@ bool _Battle::ClientHandleInput(size_t Action) {
 		case Action::GAME_SKILL7:
 		case Action::GAME_SKILL8:
 			ClientSetAction((uint8_t)(Action - Action::GAME_SKILL1));
-			return true;
+			return MouseCombat;
 		break;
 		case Action::GAME_UP:
 			ChangeTarget(-1, 0);
