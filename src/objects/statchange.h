@@ -91,6 +91,7 @@ enum class StatType : int {
 	COLDPOWER,
 	LIGHTNINGPOWER,
 	BLEEDPOWER,
+	HEALPOWER,
 	COUNT,
 };
 
@@ -155,6 +156,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "ColdPower",              { StatType::COLDPOWER              , StatValueType::FLOAT   } },
 	{ "LightningPower",         { StatType::LIGHTNINGPOWER         , StatValueType::FLOAT   } },
 	{ "BleedPower",             { StatType::BLEEDPOWER             , StatValueType::FLOAT   } },
+	{ "HealPower",              { StatType::HEALPOWER              , StatValueType::FLOAT   } },
 };
 
 union _Value {

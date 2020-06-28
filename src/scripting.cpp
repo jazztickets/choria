@@ -468,6 +468,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->BleedPower);
 	lua_setfield(LuaState, -2, "BleedPower");
 
+	lua_pushnumber(LuaState, Object->Character->HealPower);
+	lua_setfield(LuaState, -2, "HealPower");
+
 	lua_pushinteger(LuaState, Object->Character->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 

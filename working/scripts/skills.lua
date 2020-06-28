@@ -390,8 +390,12 @@ Skill_Rejuvenation.Duration = 5
 Skill_Rejuvenation.CostPerLevel = 5
 Skill_Rejuvenation.ManaCostBase = 5 - Skill_Rejuvenation.CostPerLevel
 
-function Skill_Rejuvenation.GetLevel(self, Level)
-	return 10 * (Level)
+function Skill_Rejuvenation.GetHeal(self, Source, Level)
+	return Buff_Healing.Heal * self:GetLevel(Source, Level) * self:GetDuration(Level)
+end
+
+function Skill_Rejuvenation.GetLevel(self, Source, Level)
+	return math.floor(10 * Level * Source.HealPower)
 end
 
 function Skill_Rejuvenation.GetDuration(self, Level)
@@ -399,12 +403,12 @@ function Skill_Rejuvenation.GetDuration(self, Level)
 end
 
 function Skill_Rejuvenation.GetInfo(self, Source, Item)
-	return "Heal [c green]" .. Buff_Healing.Heal * self:GetLevel(Item.Level) * self:GetDuration(Item.Level) .. " [c white]HP [c white]over [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Heal [c green]" .. self:GetHeal(Source, Item.Level) .. " [c white]HP [c white]over [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Rejuvenation.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Healing.Pointer
-	Result.Target.BuffLevel = self:GetLevel(Level)
+	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
 	return Result
@@ -422,14 +426,16 @@ Skill_Heal.HealPerLevel = 100
 Skill_Heal.CostPerLevel = 15
 Skill_Heal.ManaCostBase = 15 - Skill_Heal.CostPerLevel
 
-function Skill_Heal.GetInfo(self, Source, Item)
+function Skill_Heal.GetHeal(self, Source, Level)
+	return math.floor((self.HealBase + self.HealPerLevel * Level) * Source.HealPower + 0.001)
+end
 
-	return "Heal target for [c green]" .. (self.HealBase + self.HealPerLevel * Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+function Skill_Heal.GetInfo(self, Source, Item)
+	return "Heal target for [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Heal.Use(self, Level, Duration, Source, Target, Result)
-
-	Result.Target.Health = self.HealBase + self.HealPerLevel * Level
+	Result.Target.Health = self:GetHeal(Source, Level)
 
 	return Result
 end
@@ -446,14 +452,16 @@ Skill_Resurrect.HealPerLevel = 60
 Skill_Resurrect.CostPerLevel = 40
 Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
-function Skill_Resurrect.GetInfo(self, Source, Item)
+function Skill_Resurrect.GetHeal(self, Source, Level)
+	return math.floor((self.HealBase + self.HealPerLevel * Level) * Source.HealPower + 0.001)
+end
 
-	return "Resurrect target and give [c green]" .. (self.HealBase + self.HealPerLevel * Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+function Skill_Resurrect.GetInfo(self, Source, Item)
+	return "Resurrect target and give [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
-
-	Result.Target.Health = self.HealBase + self.HealPerLevel * Level
+	Result.Target.Health = self:GetHeal(Source, Level)
 
 	return Result
 end
@@ -618,17 +626,11 @@ Skill_ArcaneMastery.PerLevel = 40
 Skill_ArcaneMastery.ManaRegen = 1
 
 function Skill_ArcaneMastery.GetManaRegen(self, Level)
-
 	return self.ManaRegen * math.floor(Level / 1)
 end
 
 function Skill_ArcaneMastery.GetInfo(self, Source, Item)
-	BonusText = ""
-	if self:GetManaRegen(Item.Level) > 0 then
-		BonusText = "\n[c white]Increase mana regen by [c green]" .. self:GetManaRegen(Item.Level)
-	end
-
-	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Item.Level .. BonusText
+	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Item.Level .. "\n[c white]Increase mana regen by [c green]" .. self:GetManaRegen(Item.Level)
 end
 
 function Skill_ArcaneMastery.Stats(self, Level, Object, Change)
@@ -789,6 +791,26 @@ end
 
 function Skill_WeaponMastery.Stats(self, Level, Object, Change)
 	Change.AttackPower = self:GetPower(Level) / 100.0
+
+	return Change
+end
+
+-- Heal Mastery --
+
+Skill_HealMastery = {}
+Skill_HealMastery.Power = 25
+Skill_HealMastery.PowerPerLevel = 5
+
+function Skill_HealMastery.GetPower(self, Level)
+	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
+end
+
+function Skill_HealMastery.GetInfo(self, Source, Item)
+	return "Increase heal power by [c green]" .. self:GetPower(Item.Level) .. "%[c white]"
+end
+
+function Skill_HealMastery.Stats(self, Level, Object, Change)
+	Change.HealPower = self:GetPower(Level) / 100.0
 
 	return Change
 end
@@ -1035,7 +1057,7 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	Result.Summon = {}
 	Result.Summon.ID = self.Monster.ID
 	Result.Summon.Health = self:GetHealth(Level)
-	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Level)
+	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
 	Result.Summon.Armor = self:GetArmor(Level)
 	Result.Summon.Limit = self:GetLimit(Level)
 

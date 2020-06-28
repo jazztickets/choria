@@ -107,6 +107,7 @@ INSERT INTO stattype VALUES(44,'Fire Power',1.0);
 INSERT INTO stattype VALUES(45,'Cold Power',1.0);
 INSERT INTO stattype VALUES(46,'Lightning Power',1.0);
 INSERT INTO stattype VALUES(47,'Bleed Power',1.0);
+INSERT INTO stattype VALUES(48,'Heal Power',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -497,6 +498,7 @@ INSERT INTO vendoritem VALUES(132,13,31);
 INSERT INTO vendoritem VALUES(133,13,32);
 INSERT INTO vendoritem VALUES(134,13,33);
 INSERT INTO vendoritem VALUES(135,13,34);
+INSERT INTO vendoritem VALUES(136,13,36);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1288,7 +1290,7 @@ INSERT INTO item VALUES(32,1,0,0,0,0,0,'Cold Mastery','textures/skills/cold_mast
 INSERT INTO item VALUES(33,1,0,0,0,0,0,'Lightning Mastery','textures/skills/lightning_mastery.png','Skill_LightningMastery',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(34,1,0,0,0,0,0,'Bleed Mastery','textures/skills/bleed_mastery.png','Skill_BleedMastery',1,1000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(35,1,0,0,0,0,0,'Weapon Mastery','textures/skills/weapon_mastery.png','Skill_WeaponMastery',1,1250,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(36,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(36,1,0,0,0,0,0,'Heal Mastery','textures/skills/heal_mastery.png','Skill_HealMastery',1,1150,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(37,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(38,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(39,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

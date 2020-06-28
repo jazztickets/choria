@@ -19,12 +19,12 @@ Base_Potion = {
 Item_HealingSalve = Base_Potion:New()
 
 function Item_HealingSalve.GetInfo(self, Source, Item)
-	return "Restore [c green]" .. math.floor(Item.Level * Buff_Healing.Heal * Item.Duration) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Restore [c green]" .. math.floor(Item.Level * Buff_Healing.Heal * Item.Duration * Source.HealPower) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_HealingSalve.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Healing.Pointer
-	Result.Target.BuffLevel = Level
+	Result.Target.BuffLevel = Level * Source.HealPower
 	Result.Target.BuffDuration = Duration
 
 	return Result

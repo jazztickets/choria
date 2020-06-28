@@ -162,7 +162,7 @@ class _Character {
 		int BaseHealthRegen;
 		int BaseManaRegen;
 		float BaseManaReductionRatio;
-		float BaseHealPower;
+		float BaseHealthUpdateMultiplier;
 		float BaseAttackPower;
 		int BaseMinDamage;
 		int BaseMaxDamage;
@@ -191,6 +191,7 @@ class _Character {
 		float ColdPower;
 		float LightningPower;
 		float BleedPower;
+		float HealPower;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;
