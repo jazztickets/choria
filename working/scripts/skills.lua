@@ -773,6 +773,26 @@ function Skill_BleedMastery.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Weapon Mastery --
+
+Skill_WeaponMastery = {}
+Skill_WeaponMastery.Power = 25
+Skill_WeaponMastery.PowerPerLevel = 5
+
+function Skill_WeaponMastery.GetPower(self, Level)
+	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
+end
+
+function Skill_WeaponMastery.GetInfo(self, Source, Item)
+	return "Increase attack power by [c green]" .. self:GetPower(Item.Level) .. "%[c white]"
+end
+
+function Skill_WeaponMastery.Stats(self, Level, Object, Change)
+	Change.AttackPower = self:GetPower(Level) / 100.0
+
+	return Change
+end
+
 -- Flee --
 
 Skill_Flee = {}
