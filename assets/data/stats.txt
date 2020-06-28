@@ -1466,6 +1466,13 @@ INSERT INTO item VALUES(235,8,0,0,0,0,4,'Negative Cold Ring I','textures/items/r
 INSERT INTO item VALUES(236,8,0,0,0,0,5,'Negative Lightning Ring I','textures/items/ring.png','',0,0,1,0,5,0.0,1,0,0,0,0,0,-25,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(237,11,0,0,0,0,0,'Bone','textures/items/bone.png','',0,25,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(238,13,0,0,1,0,0,'Chamber Key','textures/items/key.png','',0,100,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+CREATE TABLE IF NOT EXISTS "zonedrops" (
+"id" INTEGER PRIMARY KEY,
+"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
+"item_id" INTEGER REFERENCES item(id) ON DELETE CASCADE,
+"count" INTEGER DEFAULT(1)
+);
+INSERT INTO zonedrops VALUES(1,33,99,1);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

@@ -27,6 +27,7 @@
 #include <objects/statuseffect.h>
 #include <hud/hud.h>
 #include <ae/manager.h>
+#include <ae/database.h>
 #include <ae/servernetwork.h>
 #include <ae/clientnetwork.h>
 #include <ae/peer.h>
@@ -665,11 +666,25 @@ void _Battle::ServerEndBattle() {
 			// Convert winning side list to array
 			std::vector<_Object *> ObjectArray { std::begin(RewardObjects), std::end(RewardObjects) };
 
-			// Generate items drops
+			// Get items from zonedrops if present
+			Stats->Database->PrepareQuery("SELECT item_id, count FROM zonedrops WHERE zone_id = @zone_id");
+			Stats->Database->BindInt(1, Zone);
 			std::list<uint32_t> ItemDrops;
-			for(auto &Object : SideObjects[!WinningSide]) {
-				if(Object->IsMonster())
-					Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, DropRate, ItemDrops);
+			while(Stats->Database->FetchRow()) {
+				uint32_t ItemID = Stats->Database->GetInt<uint32_t>("item_id");
+				int Count = Stats->Database->GetInt<int>("count");
+
+				for(int i = 0; i < Count; i++)
+					ItemDrops.push_back(ItemID);
+			}
+			Stats->Database->CloseQuery();
+
+			// Generate items drops from monsters if zonedrops is empty
+			if(ItemDrops.empty()) {
+				for(auto &Object : SideObjects[!WinningSide]) {
+					if(Object->IsMonster())
+						Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, DropRate, ItemDrops);
+				}
 			}
 
 			// Boss drops aren't divided up
