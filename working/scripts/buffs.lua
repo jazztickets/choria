@@ -219,7 +219,7 @@ end
 -- Poisoned --
 
 Buff_Poisoned = {}
-Buff_Poisoned.HealPower = -0.5
+Buff_Poisoned.HealthUpdateMultiplier = -0.5
 Buff_Poisoned.Damage = 1
 Buff_Poisoned.DamageType = DamageType["Poison"]
 
@@ -241,7 +241,7 @@ function Buff_Poisoned.Update(self, Level, Source, Change)
 end
 
 function Buff_Poisoned.Stats(self, Level, Source, Change)
-	Change.HealPower = self.HealPower
+	Change.HealthUpdateMultiplier = self.HealthUpdateMultiplier
 
 	return Change
 end

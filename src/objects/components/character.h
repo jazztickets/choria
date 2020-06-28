@@ -185,7 +185,7 @@ class _Character {
 		int HealthRegen;
 		int ManaRegen;
 		float ManaReductionRatio;
-		float HealPower;
+		float HealthUpdateMultiplier;
 		float AttackPower;
 		float FirePower;
 		float ColdPower;

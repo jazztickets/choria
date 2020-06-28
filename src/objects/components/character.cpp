@@ -91,7 +91,7 @@ _Character::_Character(_Object *Object) :
 	HealthRegen(0),
 	ManaRegen(0),
 	ManaReductionRatio(0.0f),
-	HealPower(0.0f),
+	HealthUpdateMultiplier(0.0f),
 	AttackPower(0.0f),
 	FirePower(0.0f),
 	ColdPower(0.0f),
@@ -220,7 +220,7 @@ void _Character::Update(double FrameTime) {
 // Update health
 void _Character::UpdateHealth(int &Value) {
 	if(Object->Server && Value > 0)
-		Value *= HealPower;
+		Value *= HealthUpdateMultiplier;
 
 	Health += Value;
 
@@ -296,7 +296,7 @@ void _Character::CalculateStats() {
 	HealthRegen = BaseHealthRegen;
 	ManaRegen = BaseManaRegen;
 	ManaReductionRatio = BaseManaReductionRatio;
-	HealPower = BaseHealPower;
+	HealthUpdateMultiplier = BaseHealPower;
 	AttackPower = BaseAttackPower;
 	BattleSpeed = BaseBattleSpeed;
 	Evasion = BaseEvasion;
@@ -472,8 +472,8 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::MANAREDUCTIONRATIO))
 		ManaReductionRatio += StatChange.Values[StatType::MANAREDUCTIONRATIO].Float;
-	if(StatChange.HasStat(StatType::HEALPOWER))
-		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
+	if(StatChange.HasStat(StatType::HEALTHUPDATEMULTIPLIER))
+		HealthUpdateMultiplier += StatChange.Values[StatType::HEALTHUPDATEMULTIPLIER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
 		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
 	if(StatChange.HasStat(StatType::FIREPOWER))
