@@ -337,30 +337,29 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 		ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
 	}
 
-	// Draw name
-	if(ClientPlayer != this) {
-		bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
-		std::string Color = SameParty ? "green" : "white";
-		std::string NameText = "[c " + Color + "]" + Name + "[c white]";
-		if(Character->Bounty > 0)
-			NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
+	// Get name text
+	bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
+	std::string Color = SameParty ? "green" : "white";
+	std::string NameText = "[c " + Color + "]" + Name + "[c white]";
+	if(Character->Bounty > 0)
+		NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
 
-		// Cap name to screen
-		glm::vec2 NamePosition = DrawPosition;
-		float OffsetY = -0.5f;
-		if(SameParty || Character->Bounty > 0) {
-			ae::_TextBounds TextBounds;
-			ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
-			float HalfWidth = TextBounds.Width * 0.5f / ModelTexture->Size.x;
-			float HalfAbove = (TextBounds.AboveBase) * 0.5f / ModelTexture->Size.x;
-			float Above = (TextBounds.AboveBase) * 1.0f / ModelTexture->Size.x;
-			NamePosition[0] = glm::clamp(NamePosition[0], ViewBounds[0] + HalfWidth, ViewBounds[2] - HalfWidth);
-			NamePosition[1] = glm::clamp(NamePosition[1], ViewBounds[1] + Above - OffsetY, ViewBounds[3] - HalfAbove - OffsetY);
-		}
-
-		if(Character->Invisible != 1 || SameParty)
-			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
+	// Cap name to screen
+	glm::vec2 NamePosition = DrawPosition;
+	float OffsetY = -0.5f;
+	if(SameParty || Character->Bounty > 0) {
+		ae::_TextBounds TextBounds;
+		ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
+		float HalfWidth = TextBounds.Width * 0.5f / ModelTexture->Size.x;
+		float HalfAbove = (TextBounds.AboveBase) * 0.5f / ModelTexture->Size.x;
+		float Above = (TextBounds.AboveBase) * 1.0f / ModelTexture->Size.x;
+		NamePosition[0] = glm::clamp(NamePosition[0], ViewBounds[0] + HalfWidth, ViewBounds[2] - HalfWidth);
+		NamePosition[1] = glm::clamp(NamePosition[1], ViewBounds[1] + Above - OffsetY, ViewBounds[3] - HalfAbove - OffsetY);
 	}
+
+	// Draw name
+	if(Character->Invisible != 1 || SameParty)
+		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 }
 
 // Renders the object during a battle
