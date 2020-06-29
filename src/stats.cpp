@@ -367,8 +367,8 @@ void _Stats::LoadMinigames() {
 	Database->PrepareQuery("SELECT * FROM minigame");
 
 	// Get data
-	_MinigameType Minigame;
 	while(Database->FetchRow()) {
+		_MinigameType Minigame;
 		Minigame.ID = Database->GetInt<uint32_t>("id");
 		Minigame.Name = Database->GetString("name");
 		Minigame.Script = Database->GetString("script");

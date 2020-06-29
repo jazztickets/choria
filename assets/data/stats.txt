@@ -376,6 +376,8 @@ INSERT INTO vendor VALUES(11,'ruins_vendor',1.0,0.59999999999999997779);
 INSERT INTO vendor VALUES(12,'ham_game',1.0,0.5);
 INSERT INTO vendor VALUES(13,'lighthouse_skills',1.0,0.5);
 INSERT INTO vendor VALUES(14,'dungeon_vendor',1.0,0.5);
+INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5);
+INSERT INTO vendor VALUES(16,'wym_gear',1.0,0.5);
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,
@@ -501,6 +503,15 @@ INSERT INTO vendoritem VALUES(134,13,33);
 INSERT INTO vendoritem VALUES(135,13,34);
 INSERT INTO vendoritem VALUES(136,13,36);
 INSERT INTO vendoritem VALUES(137,13,35);
+INSERT INTO vendoritem VALUES(138,15,221);
+INSERT INTO vendoritem VALUES(139,15,155);
+INSERT INTO vendoritem VALUES(140,15,223);
+INSERT INTO vendoritem VALUES(141,16,241);
+INSERT INTO vendoritem VALUES(142,16,242);
+INSERT INTO vendoritem VALUES(143,16,243);
+INSERT INTO vendoritem VALUES(144,16,244);
+INSERT INTO vendoritem VALUES(145,15,127);
+INSERT INTO vendoritem VALUES(146,15,128);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -577,6 +588,8 @@ INSERT INTO monsterdrop VALUES(67,29,125,20);
 INSERT INTO monsterdrop VALUES(68,28,0,80);
 INSERT INTO monsterdrop VALUES(69,28,127,10);
 INSERT INTO monsterdrop VALUES(70,28,128,10);
+INSERT INTO monsterdrop VALUES(71,30,0,80);
+INSERT INTO monsterdrop VALUES(72,30,237,20);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -995,6 +1008,7 @@ CREATE TABLE IF NOT EXISTS "minigame" (
 	"cost" INTEGER DEFAULT(0)
 );
 INSERT INTO minigame VALUES(1,'Ball Drop','',221,1);
+INSERT INTO minigame VALUES(2,'Ball Drop','',221,5);
 CREATE TABLE IF NOT EXISTS "minigameitem" (
 	"id" INTEGER PRIMARY KEY,
 	"minigame_id" INTEGER DEFAULT(0) REFERENCES minigame(id) ON DELETE CASCADE,
@@ -1017,6 +1031,13 @@ INSERT INTO minigameitem VALUES(13,1,127,1);
 INSERT INTO minigameitem VALUES(14,1,128,1);
 INSERT INTO minigameitem VALUES(15,1,221,5);
 INSERT INTO minigameitem VALUES(16,1,220,1);
+INSERT INTO minigameitem VALUES(17,2,146,1);
+INSERT INTO minigameitem VALUES(18,2,237,1);
+INSERT INTO minigameitem VALUES(19,2,155,1);
+INSERT INTO minigameitem VALUES(20,2,240,1);
+INSERT INTO minigameitem VALUES(21,2,223,1);
+INSERT INTO minigameitem VALUES(22,2,233,1);
+INSERT INTO minigameitem VALUES(23,2,221,20);
 CREATE TABLE IF NOT EXISTS "build" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1508,6 +1529,10 @@ INSERT INTO item VALUES(237,11,0,0,0,0,0,'Bone','textures/items/bone.png','',0,2
 INSERT INTO item VALUES(238,13,0,0,1,0,0,'Chamber Key','textures/items/key.png','',0,100,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(239,13,0,0,0,0,0,'Bridge Key','textures/items/key.png','',0,50,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(240,11,0,0,0,0,0,'Stinger','textures/items/stinger.png','',0,80,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(241,5,2,0,0,0,0,'Light Blade','textures/items/light_blade.png','',0,12000,1,0,20,0.0,1,400,900,0,0,0,0,0,0,0,0,15,5,0,0);
+INSERT INTO item VALUES(242,5,2,0,0,0,0,'Moon Blade','textures/items/moon_blade.png','',0,8000,1,0,20,0.0,1,360,360,0,0,40,0,0,20,0,0,40,0,0,0);
+INSERT INTO item VALUES(243,5,0,0,0,0,0,'Arcane Wand','textures/items/arcane_wand.png','',0,7500,1,0,20,0.0,1,150,250,0,0,0,0,0,500,0,10,0,0,0,2);
+INSERT INTO item VALUES(244,6,2,0,0,0,0,'Greatsword','textures/items/greatsword.png','',0,25000,1,0,20,0.0,1,1400,2500,-10,0,0,0,0,0,0,0,-20,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

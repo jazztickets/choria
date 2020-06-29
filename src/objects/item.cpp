@@ -37,6 +37,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include <algorithm>
 #include <SDL_keycode.h>
 
 // Draw tooltip
@@ -851,5 +852,8 @@ template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Va
 	if(MaxLevel <= 0)
 		return Value;
 
-	return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
+	if(Value < 0)
+		return std::min(0.0f, Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value)));
+	else
+		return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
 }
