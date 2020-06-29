@@ -384,7 +384,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 	// Save positions
 	Fighter->ResultPosition = Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f;
-	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Size.x/2 + (10 + BATTLE_HEALTHBAR_WIDTH/2) * ae::_Element::GetUIScale(), -Character->Portrait->Size.y/2);
+	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2((Character->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2), 0) * ae::_Element::GetUIScale();
 
 	// Name
 	Buffer << Name;
