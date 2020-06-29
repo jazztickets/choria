@@ -1452,13 +1452,17 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::HEALTH)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
+		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Integer;
 		if(StatChangeUI.Object->Character->Battle) {
-			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition;
+			float OffsetX = 55;
+			if(StatChangeUI.Change < 0)
+				OffsetX = 0;
+
+			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition + glm::vec2(OffsetX, -50) * ae::_Element::GetUIScale();
 			StatChangeUI.Battle = true;
 		}
 		else
 			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Integer;
 		StatChangeUI.Font = ae::Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(ae::Assets.Colors["red"], ae::Assets.Colors["green"]);
 		StatChanges.push_back(StatChangeUI);
@@ -1467,13 +1471,17 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::MANA)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
+		StatChangeUI.Change = StatChange.Values[StatType::MANA].Integer;
 		if(StatChangeUI.Object->Character->Battle) {
-			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition + glm::vec2(0, 32);
+			float OffsetX = 55;
+			if(StatChangeUI.Change < 0)
+				OffsetX = 0;
+
+			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition + glm::vec2(OffsetX, -14) * ae::_Element::GetUIScale();
 			StatChangeUI.Battle = true;
 		}
 		else
 			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = StatChange.Values[StatType::MANA].Integer;
 		StatChangeUI.Font = ae::Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(ae::Assets.Colors["blue"], ae::Assets.Colors["light_blue"]);
 		StatChanges.push_back(StatChangeUI);
@@ -1482,9 +1490,9 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::EXPERIENCE)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + ExperienceElement->Size / 2.0f;
+		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -50 * ae::_Element::GetUIScale());
 		StatChangeUI.Change = StatChange.Values[StatType::EXPERIENCE].Integer;
-		StatChangeUI.Direction = -2.0f;
+		StatChangeUI.Direction = -1.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = ae::Assets.Fonts["battle_large"];
 		StatChangeUI.SetText(glm::vec4(1.0f), glm::vec4(1.0f));
@@ -1497,7 +1505,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 		// Check for battle
 		if(StatChangeUI.Object->Character->Battle) {
-			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->ResultPosition + glm::vec2(0, 32);
+			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->ResultPosition;
 			StatChangeUI.Battle = true;
 		}
 		else  {
