@@ -28,6 +28,7 @@
 #include <objects/battle.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
+#include <objects/components/monster.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <objects/map.h>
@@ -110,6 +111,10 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 		lua_settable(LuaState, -3);
 	}
 	lua_setglobal(LuaState, "DamageType");
+
+	// Push max side count
+	lua_pushinteger(LuaState, BATTLE_MAX_OBJECTS_PER_SIDE);
+	lua_setglobal(LuaState, "BATTLE_LIMIT");
 
 	// Push bag types
 	lua_pushinteger(LuaState, (int)BagType::NONE);
@@ -434,6 +439,12 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->Fighter->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
+
+	lua_pushinteger(LuaState, Object->Monster->DatabaseID);
+	lua_setfield(LuaState, -2, "MonsterID");
+
+	lua_pushlightuserdata(LuaState, Object->Monster->Owner);
+	lua_setfield(LuaState, -2, "Owner");
 
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");

@@ -207,7 +207,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			Battle->BroadcastPacket(Packet);
 
 			// Add monster to battle
-			Battle->AddObject(Object, 0, true);
+			Battle->AddObject(Object, SourceObject->Fighter->BattleSide, true);
 		}
 		// Heal existing summon if already at limit
 		else if(ExistingSummons.size()) {

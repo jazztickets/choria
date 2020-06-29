@@ -98,6 +98,10 @@ Skill_Sting = Base_Attack:New()
 
 function Skill_Sting.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	if Roll <= 15 then
+		Result.Target.Buff = Buff_Stunned.Pointer
+		Result.Target.BuffLevel = 1
+		Result.Target.BuffDuration = 1
+	elseif Roll <= 30 then
 		Result.Target.Buff = Buff_Poisoned.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
@@ -105,7 +109,7 @@ function Skill_Sting.Proc(self, Roll, Level, Duration, Source, Target, Result)
 end
 
 function Skill_Sting.PlaySound(self, Level)
-	--Audio.Play("bat0.ogg")
+	Audio.Play("sting" .. Random.GetInt(0, 2) .. ".ogg", 0.75)
 end
 
 -- Ghost attack --
@@ -1077,7 +1081,13 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	Result.Summon.Health = self:GetHealth(Level)
 	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
 	Result.Summon.Armor = self:GetArmor(Level)
-	Result.Summon.Limit = self:GetLimit(Level)
+
+	-- Limit monster summons to 1
+	if Source.MonsterID == 0 then
+		Result.Summon.Limit = self:GetLimit(Level)
+	else
+		Result.Summon.Limit = 1
+	end
 
 	return Result
 end

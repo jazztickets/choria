@@ -234,3 +234,70 @@ function AI_LavaMan.Update(self, Object, Enemies, Allies)
 	-- Set target
 	AI_AddTarget(Object, Enemies[Target], true)
 end
+
+AI_SkeletonMage = {}
+
+function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
+
+	-- Look for existing demon
+	FoundDemon = false
+	AllyCount = 0
+	for i = 1, #Allies do
+		if Allies[i].MonsterID == 23 and Allies[i].Owner == Object.Pointer then
+			FoundDemon = true
+		end
+
+		AllyCount = AllyCount + 1
+	end
+
+	-- Don't summon if one exists
+	SummonDemon = false
+	if FoundDemon == false then
+		SummonDemon = true
+	end
+
+	-- Can't summon due to limit
+	if AllyCount == BATTLE_LIMIT then
+		SummonDemon = false
+	end
+
+	-- Summon demon
+	if SummonDemon == true then
+		Object.AddTarget(Object.Pointer)
+		if Object.SetAction(1) == true then
+			return
+		end
+
+		Object.ClearTargets()
+	end
+
+	-- Cast spell
+	Roll = Random.GetInt(1, 10)
+	if Roll < 3 then
+
+		-- Ice nova
+		CanCast = Object.SetAction(3)
+		if CanCast == true then
+			for i = 1, #Enemies do
+				Object.AddTarget(Enemies[i].Pointer)
+			end
+
+			return
+		end
+	else
+
+		-- Enfeeble
+		CanCast = Object.SetAction(2)
+		if CanCast == true then
+			Target = Random.GetInt(1, #Enemies)
+			AI_AddTarget(Object, Enemies[Target], false)
+
+			return
+		end
+
+	end
+
+	-- Attack
+	AI_AddTarget(Object, Enemies[Target], true)
+	Object.SetAction(0)
+end
