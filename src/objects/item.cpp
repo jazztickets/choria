@@ -464,7 +464,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			}
 		} break;
 		case ItemType::KEY: {
-			if(!Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID)) {
+			if(Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID)) {
 				InfoText = "Already in keychain";
 				InfoColor = ae::Assets.Colors["red"];
 			}
