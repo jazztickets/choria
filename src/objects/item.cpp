@@ -56,6 +56,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);
 
 	// Set up window size
+	std::list<std::string> HelpTextList;
 	glm::vec2 Size;
 	Size.x = INVENTORY_TOOLTIP_WIDTH * ae::_Element::GetUIScale();
 	float SidePadding = 36 * ae::_Element::GetUIScale();
@@ -399,20 +400,25 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			Buffer << "Buy " << Tooltip.InventorySlot.Count << "x for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
-			ae::Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
+			HelpTextList.push_back("Right-click to buy");
 		}
 		else if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY) {
 			Buffer << "Sell for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
-			ae::Assets.Fonts["hud_small"]->DrawText("Shift+Right-click to sell", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
+			HelpTextList.push_back("Shift+Right-click to sell");
 		}
+	}
+
+	// Tradable
+	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
+		ae::Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+		DrawPosition.y += ControlSpacingY;
 	}
 
 	// Draw help text
 	std::string InfoText;
+	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	switch(Type) {
 		case ItemType::ONEHANDED_WEAPON:
 		case ItemType::TWOHANDED_WEAPON:
@@ -421,60 +427,67 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		case ItemType::BOOTS:
 		case ItemType::SHIELD:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY)
-				InfoText = "Right-click to equip";
+				HelpTextList.push_back("Right-click to equip");
 		break;
 		case ItemType::CONSUMABLE:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && CheckScope(ScopeType::WORLD))
-				InfoText = "Right-click to use";
+				HelpTextList.push_back("Right-click to use");
 			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
-				InfoText = "Left-click to use";
+				HelpTextList.push_back("Left-click to use");
 		break;
 		case ItemType::SKILL:
 			if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
 				if(CheckScope(ScopeType::WORLD) && TargetID != TargetType::NONE)
-					InfoText = "Left-click to use";
+					HelpTextList.push_back("Left-click to use");
 			}
 			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
 				if(Scope == ScopeType::NONE)
-					InfoText = "Passive skills must be equipped";
+					HelpTextList.push_back("Passive skills must be equipped");
 			}
 			else {
 				if(IsLocked) {
 					if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
-						InfoText = "Right-click to learn";
+						HelpTextList.push_back("Right-click to learn");
 				}
-				else
+				else {
 					InfoText = "Already learned";
+					InfoColor = ae::Assets.Colors["red"];
+				}
 			}
 		break;
 		case ItemType::UNLOCKABLE: {
-			if(!Player->Character->HasUnlocked(this))
-				InfoText = "Right-click to unlock";
-			else
+			if(!Player->Character->HasUnlocked(this) && Tooltip.Window == _HUD::WINDOW_INVENTORY)
+				HelpTextList.push_back("Right-click to unlock");
+			else {
 				InfoText = "Already unlocked";
+				InfoColor = ae::Assets.Colors["red"];
+			}
 		} break;
 		case ItemType::KEY: {
-			if(!Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID))
-				InfoText = "Right-click to add to keychain";
-			else
+			if(!Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID)) {
 				InfoText = "Already in keychain";
+				InfoColor = ae::Assets.Colors["red"];
+			}
+			else if(Tooltip.Window == _HUD::WINDOW_INVENTORY) {
+				HelpTextList.push_back("Right-click to add to keychain");
+			}
 		} break;
 		default:
 		break;
 	}
 
 	if(InfoText.length()) {
-		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, InfoColor);
 		DrawPosition.y += ControlSpacingY;
 	}
 
-	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-		DrawPosition.y += SpacingY;
-	}
+	// Split hint
+	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1)
+		HelpTextList.push_back("Ctrl+click to split");
 
-	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+	// Draw ui hints
+	for(const auto &Text : HelpTextList) {
+		ae::Assets.Fonts["hud_small"]->DrawText(Text, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 		DrawPosition.y += ControlSpacingY;
 	}
 }
