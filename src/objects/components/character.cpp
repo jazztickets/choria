@@ -195,8 +195,11 @@ void _Character::Update(double FrameTime) {
 			}
 		}
 
-		// Reduce count
-		StatusEffect->Duration -= FrameTime;
+		// Update duration
+		if(!StatusEffect->Buff->PauseDuringBattle || (StatusEffect->Buff->PauseDuringBattle && !Object->Character->Battle))
+			StatusEffect->Duration -= FrameTime;
+
+		// Remove when expired
 		if(StatusEffect->Duration <= 0 || !IsAlive()) {
 			delete StatusEffect;
 			Iterator = StatusEffects.erase(Iterator);

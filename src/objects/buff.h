@@ -43,6 +43,7 @@ class _Buff {
 		std::string Name;
 		std::string Script;
 		const ae::_Texture *Texture;
+		bool PauseDuringBattle;
 
 	private:
 
