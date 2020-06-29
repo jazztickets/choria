@@ -92,6 +92,22 @@ function Skill_VenomBite.PlaySound(self, Level)
 	Audio.Play("bat0.ogg")
 end
 
+-- Sting --
+
+Skill_Sting = Base_Attack:New()
+
+function Skill_Sting.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buff_Poisoned.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
+function Skill_Sting.PlaySound(self, Level)
+	--Audio.Play("bat0.ogg")
+end
+
 -- Ghost attack --
 
 Skill_GhostAttack = Base_Attack:New()
@@ -1019,7 +1035,7 @@ end
 -- Demonic Conjuring --
 
 Skill_DemonicConjuring = Base_Spell:New()
-Skill_DemonicConjuring.CostPerLevel = 20
+Skill_DemonicConjuring.CostPerLevel = 10
 Skill_DemonicConjuring.ManaCostBase = 20 - Skill_DemonicConjuring.CostPerLevel
 Skill_DemonicConjuring.BaseHealth = 100
 Skill_DemonicConjuring.BaseMinDamage = 10
