@@ -174,7 +174,7 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		end
 
 		-- Apply pierce
-		DamageBlock = math.max(Target.DamageBlock - Action:GetPierce(Source), 0)
+		DamageBlock = Target.DamageBlock - Action:GetPierce(Source)
 
 		-- Apply damage block
 		Change.Damage = math.max(Change.Damage - DamageBlock, 0)
