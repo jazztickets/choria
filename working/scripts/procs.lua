@@ -59,3 +59,45 @@ function Proc_Slow.Proc(self, Roll, Chance, Level, Duration, Source, Target, Res
 
 	return false
 end
+
+-- Bleed --
+
+Proc_Bleed = { }
+
+function Proc_Bleed.GetInfo(self, Source, Item)
+
+	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] bleeding damage over [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Proc_Bleed.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance then
+		Result.Target.Buff = Buff_Bleeding.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = Duration
+
+		return true
+	end
+
+	return false
+end
+
+-- Haste --
+
+Proc_Haste = { }
+
+function Proc_Haste.GetInfo(self, Source, Item)
+
+	return "[c green]" .. Item.Chance .. "%[c white] chance for a [c green]" .. Item.Level .. "%[c white] speed boost for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Proc_Haste.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance and Result.Source.Buff == nil then
+		Result.Source.Buff = Buff_Hasted.Pointer
+		Result.Source.BuffLevel = Level
+		Result.Source.BuffDuration = Duration
+
+		return true
+	end
+
+	return false
+end
