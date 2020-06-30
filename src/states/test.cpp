@@ -52,8 +52,8 @@ void _TestState::Init() {
 	int MaxBounces = 0;
 	int MinBounces = 99999;
 
-	// gawk 'BEGIN{IFS=OFS="\t";print "runs", "time", "sold", "profit", "gold/sec"} { time+=$1; total+=int($2/2) } END{ prof=(total-NR*10); print NR, time, total, prof, prof/time }'
-	int Simulations = 10;
+	// time ./choria -test | gawk 'BEGIN{cost=10;IFS=OFS="\t";print "runs", "time", "cost", "sold", "profit", "gold/min"} { time+=$1; total+=int($2/2) } END{ prof=(total-NR*cost); print NR, time, NR*cost, total, prof, 60*prof/time }'
+	int Simulations = 100000;
 	for(int i = 0; i < Simulations; i++) {
 		//double StartTime = SDL_GetPerformanceCounter();
 		uint32_t Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());

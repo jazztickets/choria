@@ -20,7 +20,7 @@ Base_Potion = {
 Item_HealingSalve = Base_Potion:New()
 
 function Item_HealingSalve.GetInfo(self, Source, Item)
-	return "Restore [c green]" .. math.floor(Item.Level * Buff_Healing.Heal * Item.Duration * Source.HealPower) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Restore [c green]" .. math.floor(Item.Level * Buff_Healing.Heal * Item.Duration * Source.HealPower + 0.001) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_HealingSalve.Use(self, Level, Duration, Source, Target, Result)
@@ -36,7 +36,7 @@ end
 Item_ManaCider = Base_Potion:New()
 
 function Item_ManaCider.GetInfo(self, Source, Item)
-	return "Restore [c light_blue]" .. math.floor(Item.Level * Buff_Mana.Mana * Item.Duration * Source.ManaPower) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Restore [c light_blue]" .. math.floor(Item.Level * Buff_Mana.Mana * Item.Duration * Source.ManaPower + 0.001) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_ManaCider.Use(self, Level, Duration, Source, Target, Result)
