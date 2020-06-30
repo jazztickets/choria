@@ -133,6 +133,7 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 		// Set objects
 		ActionResult.Source.Reset();
+		ActionResult.Target.Reset();
 		ActionResult.Source.Object = Source;
 		ActionResult.Target.Object = Target;
 
