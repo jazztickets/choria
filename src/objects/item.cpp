@@ -40,6 +40,13 @@
 #include <algorithm>
 #include <SDL_keycode.h>
 
+const std::string SkillCategories[4] = {
+	"Passive Skill",
+	"Attack Skill",
+	"Spell",
+	"Skill",
+};
+
 // Draw tooltip
 void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
@@ -53,7 +60,9 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	// Set label values
 	TooltipName->Text = Name;
 	TooltipType->Text = "";
-	if(Type != ItemType::NONE)
+	if(Category && Category <= 4)
+		TooltipType->Text = SkillCategories[Category-1];
+	else if(Type != ItemType::NONE)
 		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);
 
 	// Set up window size

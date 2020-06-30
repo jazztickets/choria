@@ -514,7 +514,7 @@ function Skill_Resurrect.GetHeal(self, Source, Level)
 end
 
 function Skill_Resurrect.GetInfo(self, Source, Item)
-	return "Resurrect target and give [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Resurrect an ally and give them [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
