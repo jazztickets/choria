@@ -331,7 +331,6 @@ void _Character::CalculateStats() {
 	int ItemMaxDamage = 0;
 	int ItemArmor = 0;
 	int ItemDamageBlock = 0;
-	float WeaponDamageModifier = 1.0f;
 	_Bag &EquipmentBag = Object->Inventory->GetBag(BagType::EQUIPMENT);
 	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
 
@@ -401,8 +400,8 @@ void _Character::CalculateStats() {
 	}
 
 	// Get damage
-	MinDamage += (int)std::roundf(ItemMinDamage * WeaponDamageModifier);
-	MaxDamage += (int)std::roundf(ItemMaxDamage * WeaponDamageModifier);
+	MinDamage += (int)std::roundf(ItemMinDamage * AttackPower);
+	MaxDamage += (int)std::roundf(ItemMaxDamage * AttackPower);
 	MinDamage = std::max(MinDamage, 0);
 	MaxDamage = std::max(MaxDamage, 0);
 	Pierce = std::max(Pierce, 0);

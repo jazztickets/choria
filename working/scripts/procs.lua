@@ -101,3 +101,66 @@ function Proc_Haste.Proc(self, Roll, Chance, Level, Duration, Source, Target, Re
 
 	return false
 end
+
+-- Harden --
+
+Proc_Harden = { }
+
+function Proc_Harden.GetInfo(self, Source, Item)
+
+	return "[c green]" .. Item.Chance .. "%[c white] chance for a [c green]" .. Item.Level .. "[c white] armor buff for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Proc_Harden.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance and Result.Source.Buff == nil then
+		Result.Source.Buff = Buff_Hardened.Pointer
+		Result.Source.BuffLevel = Level
+		Result.Source.BuffDuration = Duration
+
+		return true
+	end
+
+	return false
+end
+
+-- Blind --
+
+Proc_Blind = { }
+
+function Proc_Blind.GetInfo(self, Source, Item)
+
+	return "[c green]" .. Item.Chance .. "%[c white] chance to inflict [c green]" .. Item.Level .. "%[c white] blindness for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Proc_Blind.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance and Result.Source.Buff == nil then
+		Result.Target.Buff = Buff_Blinded.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = Duration
+
+		return true
+	end
+
+	return false
+end
+
+-- Empowered --
+
+Proc_Empowered = { }
+
+function Proc_Empowered.GetInfo(self, Source, Item)
+
+	return "[c green]" .. Item.Chance .. "%[c white] chance for a [c green]" .. Item.Level .. "%[c white] damage buff for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Proc_Empowered.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance and Result.Source.Buff == nil then
+		Result.Source.Buff = Buff_Empowered.Pointer
+		Result.Source.BuffLevel = Level
+		Result.Source.BuffDuration = Duration
+
+		return true
+	end
+
+	return false
+end

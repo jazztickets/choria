@@ -155,7 +155,7 @@ Buff_Mighty = Base_Buff:New()
 
 function Buff_Mighty.GetInfo(self, Level)
 
-	return "Damage increased by [c green]" .. Level
+	return "Attack damage increased by [c green]" .. Level
 end
 
 function Buff_Mighty.Stats(self, Level, Source, Change)
@@ -342,4 +342,19 @@ end
 
 function Buff_Shielded.PlaySound(self, Level)
 	Audio.Play("absorb" .. Random.GetInt(0, 1) .. ".ogg", 0.5)
+end
+
+-- Empowered --
+
+Buff_Empowered = Base_Buff:New()
+
+function Buff_Empowered.GetInfo(self, Level)
+
+	return "Attack damage increased by [c green]" .. Level .. "%"
+end
+
+function Buff_Empowered.Stats(self, Level, Source, Change)
+	Change.AttackPower = Level / 100.0
+
+	return Change
 end
