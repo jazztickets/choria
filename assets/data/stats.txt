@@ -108,6 +108,7 @@ INSERT INTO stattype VALUES(45,'Cold Power',1.0);
 INSERT INTO stattype VALUES(46,'Lightning Power',1.0);
 INSERT INTO stattype VALUES(47,'Bleed Power',1.0);
 INSERT INTO stattype VALUES(48,'Heal Power',1.0);
+INSERT INTO stattype VALUES(49,'Respec',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -505,13 +506,14 @@ INSERT INTO vendoritem VALUES(136,13,36);
 INSERT INTO vendoritem VALUES(137,13,35);
 INSERT INTO vendoritem VALUES(138,15,221);
 INSERT INTO vendoritem VALUES(139,15,155);
-INSERT INTO vendoritem VALUES(140,15,223);
+INSERT INTO vendoritem VALUES(140,15,222);
 INSERT INTO vendoritem VALUES(141,16,241);
 INSERT INTO vendoritem VALUES(142,16,242);
 INSERT INTO vendoritem VALUES(143,16,243);
 INSERT INTO vendoritem VALUES(144,16,244);
 INSERT INTO vendoritem VALUES(145,15,247);
 INSERT INTO vendoritem VALUES(146,15,248);
+INSERT INTO vendoritem VALUES(147,15,191);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -911,6 +913,7 @@ INSERT INTO trader VALUES(29,'magic_barrier',29,1);
 INSERT INTO trader VALUES(30,'ice_nova',30,1);
 INSERT INTO trader VALUES(31,'spider_sword',245,1);
 INSERT INTO trader VALUES(32,'venom_blade',246,1);
+INSERT INTO trader VALUES(33,'respec_potion',249,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -997,6 +1000,8 @@ INSERT INTO traderitem VALUES(88,31,119,1);
 INSERT INTO traderitem VALUES(89,31,115,10);
 INSERT INTO traderitem VALUES(90,32,141,1);
 INSERT INTO traderitem VALUES(91,32,192,25);
+INSERT INTO traderitem VALUES(92,33,156,1);
+INSERT INTO traderitem VALUES(93,33,102,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1048,6 +1053,7 @@ INSERT INTO minigameitem VALUES(24,2,224,1);
 INSERT INTO minigameitem VALUES(25,2,225,1);
 INSERT INTO minigameitem VALUES(26,2,247,1);
 INSERT INTO minigameitem VALUES(27,2,248,1);
+INSERT INTO minigameitem VALUES(28,1,249,1);
 CREATE TABLE IF NOT EXISTS "build" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1548,6 +1554,7 @@ INSERT INTO item VALUES(245,5,2,0,0,0,0,'Spider Sword','textures/items/spider_sw
 INSERT INTO item VALUES(246,5,2,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,20,5.0,1,110,180,0,0,0,0,0,0,0,0,5,0,0,0,15);
 INSERT INTO item VALUES(247,10,0,1,3,0,0,'Glowing Salve','textures/items/glowing_salve.png','Item_HealingSalve',0,250,1,600,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(248,10,0,1,3,0,0,'Glowing Cider','textures/items/glowing_cider.png','Item_ManaCider',0,375,1,200,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

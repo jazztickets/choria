@@ -1031,6 +1031,30 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->CalculateStats();
 	}
 
+	// Reset skills
+	if(StatChange.HasStat(StatType::RESPEC)) {
+		for(const auto &SkillLevel : Character->Skills) {
+			const _Item *Skill = Stats->Items.at(SkillLevel.first);
+			if(Skill && SkillLevel.second > 0) {
+
+				// Set action bar skill to 1
+				bool SetToZero = true;
+				for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+					if(Character->ActionBar[i].Item == Skill) {
+						Character->Skills[SkillLevel.first] = 1;
+						SetToZero = false;
+						break;
+					}
+				}
+
+				if(SetToZero)
+					Character->Skills[SkillLevel.first] = 0;
+			}
+		}
+
+		Character->CalculateStats();
+	}
+
 	// Flee from battle
 	if(StatChange.HasStat(StatType::FLEE)) {
 		if(Character->Battle)
