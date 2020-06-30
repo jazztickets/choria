@@ -25,6 +25,15 @@ Base_Attack = {
 		return self.Item.DamageType
 	end,
 
+	WeaponProc = function(self, Roll, Source, Target, Result)
+		Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+		if Weapon == nil or Weapon.Script == nil then
+			return false
+		end
+
+		return Weapon.Script:Proc(Roll, Weapon.Level, Weapon.Duration, Source, Target, Result)
+	end,
+
 	GenerateDamage = function(self, Level, Source)
 		Damage = Source.GenerateDamage()
 
@@ -41,6 +50,9 @@ Base_Attack = {
 
 		if Hit then
 			Procced = self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
+			if Procced == false then
+				self:WeaponProc(Random.GetInt(1, 100), Source, Target, Result)
+			end
 		end
 
 		return Result

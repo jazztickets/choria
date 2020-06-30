@@ -1,5 +1,6 @@
 
--- Base Potion Class --
+-- Base Potion class --
+
 Base_Potion = {
 
 	New = function(self, Object)

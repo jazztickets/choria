@@ -1,5 +1,6 @@
 require("scripts/battle")
 require("scripts/items")
+require("scripts/procs")
 require("scripts/buffs")
 require("scripts/skills")
 require("scripts/ai")
