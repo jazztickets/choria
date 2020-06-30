@@ -95,6 +95,7 @@ class _Character {
 		// Battle
 		void GenerateNextBattle();
 		int GenerateDamage();
+		float GetDamagePower(int DamageTypeID);
 
 		// Actions
 		void RefreshActionBarCount();
@@ -187,10 +188,12 @@ class _Character {
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
 		float AttackPower;
+		float PhysicalPower;
 		float FirePower;
 		float ColdPower;
 		float LightningPower;
 		float BleedPower;
+		float PoisonPower;
 		float HealPower;
 		float ManaPower;
 		int MinDamage;

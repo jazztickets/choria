@@ -93,10 +93,12 @@ _Character::_Character(_Object *Object) :
 	ManaReductionRatio(0.0f),
 	HealthUpdateMultiplier(0.0f),
 	AttackPower(0.0f),
+	PhysicalPower(0.0f),
 	FirePower(0.0f),
 	ColdPower(0.0f),
 	LightningPower(0.0f),
 	BleedPower(0.0f),
+	PoisonPower(0.0f),
 	HealPower(0.0f),
 	ManaPower(0.0f),
 	MinDamage(0),
@@ -314,10 +316,12 @@ void _Character::CalculateStats() {
 	MoveSpeed = BaseMoveSpeed;
 	DropRate = BaseDropRate;
 	AllSkills = BaseAllSkills;
+	PhysicalPower = 1.0f;
 	FirePower = 1.0f;
 	ColdPower = 1.0f;
 	LightningPower = 1.0f;
 	BleedPower = 1.0f;
+	PoisonPower = 1.0f;
 	HealPower = 1.0f;
 	ManaPower = 1.0f;
 	Resistances.clear();
@@ -327,8 +331,8 @@ void _Character::CalculateStats() {
 	Stunned = 0;
 
 	// Get item stats
-	int ItemMinDamage = 0;
-	int ItemMaxDamage = 0;
+	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
+	std::vector<int> ItemMaxDamage(Object->Stats->DamageTypes.size(), 0);
 	int ItemArmor = 0;
 	int ItemDamageBlock = 0;
 	_Bag &EquipmentBag = Object->Inventory->GetBag(BagType::EQUIPMENT);
@@ -341,8 +345,8 @@ void _Character::CalculateStats() {
 
 			// Add damage
 			if(Item->Type != ItemType::SHIELD) {
-				ItemMinDamage += Item->GetMinDamage(Upgrades);
-				ItemMaxDamage += Item->GetMaxDamage(Upgrades);
+				ItemMinDamage[Item->DamageTypeID] += Item->GetMinDamage(Upgrades);
+				ItemMaxDamage[Item->DamageTypeID] += Item->GetMaxDamage(Upgrades);
 			}
 			Pierce += Item->GetPierce(Upgrades);
 
@@ -400,8 +404,10 @@ void _Character::CalculateStats() {
 	}
 
 	// Get damage
-	MinDamage += (int)std::roundf(ItemMinDamage * AttackPower);
-	MaxDamage += (int)std::roundf(ItemMaxDamage * AttackPower);
+	for(size_t i = 0; i < ItemMinDamage.size(); i++) {
+		MinDamage += (int)std::roundf(ItemMinDamage[i] * AttackPower * GetDamagePower(i));
+		MaxDamage += (int)std::roundf(ItemMaxDamage[i] * AttackPower * GetDamagePower(i));
+	}
 	MinDamage = std::max(MinDamage, 0);
 	MaxDamage = std::max(MaxDamage, 0);
 	Pierce = std::max(Pierce, 0);
@@ -486,6 +492,8 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		HealthUpdateMultiplier += StatChange.Values[StatType::HEALTHUPDATEMULTIPLIER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
 		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
+	if(StatChange.HasStat(StatType::PHYSICALPOWER))
+		PhysicalPower += StatChange.Values[StatType::PHYSICALPOWER].Float;
 	if(StatChange.HasStat(StatType::FIREPOWER))
 		FirePower += StatChange.Values[StatType::FIREPOWER].Float;
 	if(StatChange.HasStat(StatType::COLDPOWER))
@@ -494,6 +502,8 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		LightningPower += StatChange.Values[StatType::LIGHTNINGPOWER].Float;
 	if(StatChange.HasStat(StatType::BLEEDPOWER))
 		BleedPower += StatChange.Values[StatType::BLEEDPOWER].Float;
+	if(StatChange.HasStat(StatType::POISONPOWER))
+		PoisonPower += StatChange.Values[StatType::POISONPOWER].Float;
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 	if(StatChange.HasStat(StatType::MANAPOWER))
@@ -577,6 +587,21 @@ void _Character::GenerateNextBattle() {
 // Generate damage
 int _Character::GenerateDamage() {
 	return ae::GetRandomInt(MinDamage, MaxDamage);
+}
+
+// Get damage power from a type
+float _Character::GetDamagePower(int DamageTypeID) {
+
+	switch(DamageTypeID) {
+		case 2: return PhysicalPower;
+		case 3: return FirePower;
+		case 4: return ColdPower;
+		case 5: return LightningPower;
+		case 6: return PoisonPower;
+		case 7: return BleedPower;
+	}
+
+	return 1.0f;
 }
 
 // Update counts on action bar

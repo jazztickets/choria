@@ -153,6 +153,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Physical Power
+	if(HUD->Player->Character->PhysicalPower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->PhysicalPower * 100) << "%";
+		Font->DrawText("Physical Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Fire Power
 	if(HUD->Player->Character->FirePower != 1.0f) {
 		Buffer << (int)(HUD->Player->Character->FirePower * 100) << "%";
@@ -184,6 +193,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 	if(HUD->Player->Character->BleedPower != 1.0f) {
 		Buffer << (int)(HUD->Player->Character->BleedPower * 100) << "%";
 		Font->DrawText("Bleed Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Poison Power
+	if(HUD->Player->Character->PoisonPower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->PoisonPower * 100) << "%";
+		Font->DrawText("Poison Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;

@@ -467,6 +467,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->AttackPower);
 	lua_setfield(LuaState, -2, "AttackPower");
 
+	lua_pushnumber(LuaState, Object->Character->PhysicalPower);
+	lua_setfield(LuaState, -2, "PhysicalPower");
+
 	lua_pushnumber(LuaState, Object->Character->FirePower);
 	lua_setfield(LuaState, -2, "FirePower");
 
@@ -478,6 +481,9 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushnumber(LuaState, Object->Character->BleedPower);
 	lua_setfield(LuaState, -2, "BleedPower");
+
+	lua_pushnumber(LuaState, Object->Character->PoisonPower);
+	lua_setfield(LuaState, -2, "PoisonPower");
 
 	lua_pushnumber(LuaState, Object->Character->HealPower);
 	lua_setfield(LuaState, -2, "HealPower");
@@ -1200,9 +1206,12 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 
 	// Get self pointer
 	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	int Upgrades = (int)lua_tointeger(LuaState, 1);
+	_Object *Object = (_Object *)lua_touserdata(LuaState, 1);
+	int Upgrades = (int)lua_tointeger(LuaState, 2);
+	if(!Object)
+		return 0;
 
-	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)));
+	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)) * Object->Character->GetDamagePower(Item->DamageTypeID));
 
 	return 1;
 }

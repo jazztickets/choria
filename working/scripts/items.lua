@@ -123,12 +123,12 @@ end
 Item_PoisonPotion = Base_Potion:New()
 
 function Item_PoisonPotion.GetInfo(self, Source, Item)
-	return "Poison target for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Poison a target for [c green]" .. math.floor(Buff_Poisoned.Damage * Item.Level * Item.Duration * Source.PoisonPower) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Poisoned.Pointer
-	Result.Target.BuffLevel = Level
+	Result.Target.BuffLevel = Level * Source.PoisonPower
 	Result.Target.BuffDuration = Duration
 
 	return Result
@@ -173,7 +173,7 @@ end
 Item_ThrowingKnives = Base_Attack:New()
 
 function Item_ThrowingKnives.GenerateDamage(self, Level, Source)
-	return self.Item.GenerateDamage()
+	return self.Item.GenerateDamage(Source.Pointer, 0)
 end
 
 function Item_ThrowingKnives.GetPierce(self, Source)
@@ -202,14 +202,14 @@ end
 
 function Item_PoisonKnives.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Poisoned.Pointer
-	Result.Target.BuffLevel = Level
+	Result.Target.BuffLevel = Level * Source.PoisonPower
 	Result.Target.BuffDuration = Duration
 
 	return true
 end
 
 function Item_PoisonKnives.GenerateDamage(self, Level, Source)
-	return self.Item.GenerateDamage()
+	return self.Item.GenerateDamage(Source.Pointer, 0)
 end
 
 function Item_PoisonKnives.PlaySound(self, Level)

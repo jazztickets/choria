@@ -366,7 +366,7 @@ function Skill_ShieldBash.GenerateDamage(self, Level, Source)
 		return 0
 	end
 
-	return Shield.GenerateDamage(Shield.Upgrades)
+	return Shield.GenerateDamage(Source.Pointer, Shield.Upgrades)
 end
 
 function Skill_ShieldBash.GetChance(self, Level)
@@ -754,6 +754,26 @@ function Skill_EnergyField.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Physical Mastery --
+
+Skill_PhysicalMastery = {}
+Skill_PhysicalMastery.Power = 25
+Skill_PhysicalMastery.PowerPerLevel = 5
+
+function Skill_PhysicalMastery.GetPower(self, Level)
+	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
+end
+
+function Skill_PhysicalMastery.GetInfo(self, Source, Item)
+	return "Increase physical power by [c green]" .. self:GetPower(Item.Level) .. "%[c white]"
+end
+
+function Skill_PhysicalMastery.Stats(self, Level, Object, Change)
+	Change.PhysicalPower = self:GetPower(Level) / 100.0
+
+	return Change
+end
+
 -- Fire Mastery --
 
 Skill_FireMastery = {}
@@ -834,22 +854,22 @@ function Skill_BleedMastery.Stats(self, Level, Object, Change)
 	return Change
 end
 
--- Weapon Mastery --
+-- Poison Mastery --
 
-Skill_WeaponMastery = {}
-Skill_WeaponMastery.Power = 25
-Skill_WeaponMastery.PowerPerLevel = 5
+Skill_PoisonMastery = {}
+Skill_PoisonMastery.Power = 25
+Skill_PoisonMastery.PowerPerLevel = 5
 
-function Skill_WeaponMastery.GetPower(self, Level)
+function Skill_PoisonMastery.GetPower(self, Level)
 	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
 end
 
-function Skill_WeaponMastery.GetInfo(self, Source, Item)
-	return "Increase attack power by [c green]" .. self:GetPower(Item.Level) .. "%[c white]"
+function Skill_PoisonMastery.GetInfo(self, Source, Item)
+	return "Increase poison power by [c green]" .. self:GetPower(Item.Level) .. "%[c white]"
 end
 
-function Skill_WeaponMastery.Stats(self, Level, Object, Change)
-	Change.AttackPower = self:GetPower(Level) / 100.0
+function Skill_PoisonMastery.Stats(self, Level, Object, Change)
+	Change.PoisonPower = self:GetPower(Level) / 100.0
 
 	return Change
 end
@@ -1227,7 +1247,7 @@ function Skill_Hunt.GetGold(self, Level)
 end
 
 function Skill_Hunt.GetInfo(self, Source, Item)
-	return "Attack another player and get [c green]" .. self:GetGold(Item.Level) .. "% [c white]of their gold for a kill\n\n[c gray]Must be in a PVP zone to use"
+	return "Attack another player and get [c green]" .. self:GetGold(Item.Level) .. "% [c white]of their gold for a kill\n\n[c yellow]Must be in a PVP zone to use"
 end
 
 function Skill_Hunt.Use(self, Level, Duration, Source, Target, Result)
@@ -1241,7 +1261,7 @@ end
 Skill_BountyHunt = Base_Attack:New()
 
 function Skill_BountyHunt.GetInfo(self, Source, Item)
-	return "Attack a fugitive to claim their bounty with a kill\n\n[c gray]Can use anywhere"
+	return "Attack a fugitive to claim their bounty with a kill\n\n[c yellow]Can use anywhere"
 end
 
 function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result)
