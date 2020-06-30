@@ -364,8 +364,14 @@ void _Character::CalculateStats() {
 			DropRate += Item->GetDropRate(Upgrades);
 			AllSkills += Item->GetAllSkills(Upgrades);
 
-			// Add resistances
-			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
+			// Handle all resist
+			if(Item->ResistanceTypeID == 1) {
+				for(int i = 3; i <= 7; i++) {
+					Resistances[i] += Item->GetResistance(Upgrades);
+				}
+			}
+			else
+				Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
 		}
 	}
 
