@@ -31,7 +31,7 @@ Base_Attack = {
 			return false
 		end
 
-		return Weapon.Script:Proc(Roll, Weapon.Level, Weapon.Duration, Source, Target, Result)
+		return Weapon.Script:Proc(Roll, Weapon.Chance, Weapon.Level, Weapon.Duration, Source, Target, Result)
 	end,
 
 	GenerateDamage = function(self, Level, Source)

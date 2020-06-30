@@ -125,6 +125,7 @@ class _Item {
 		int MoveSpeed;
 		int DropRate;
 		int AllSkills;
+		int Chance;
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;

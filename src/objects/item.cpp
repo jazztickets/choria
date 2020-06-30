@@ -503,7 +503,7 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(DrawLevel, Duration);
+		Scripting->PushItemParameters(Chance, DrawLevel, Duration);
 		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
