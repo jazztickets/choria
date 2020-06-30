@@ -402,7 +402,7 @@
 	</element>
 	<element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
 	<element id="element_dark_overlay" style="style_hud_bg" size_x="100%" size_y="100%"/>
-	<element id="element_skills" style="style_hud_bg" size_x="716" size_y="632" index="11"/>
+	<element id="element_skills" style="style_hud_bg" size_x="716" size_y="766" index="11"/>
 	<element id="element_died" style="style_hud_died_bg" size_x="100%" size_y="100%" alignment_x="0" alignment_y="0">
 		<element id="label_died" font="hud_large" text="You died" offset_y="140" alignment_y="3"/>
 		<element id="label_died_respawn" font="menu_buttons" offset_y="210" alignment_y="3"/>
@@ -412,7 +412,7 @@
 		<element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
 		<element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
 	</element>
-	<element id="element_character" style="style_hud_bg" size_x="350" size_y="750" alignment_x="2"/>
+	<element id="element_character" style="style_hud_bg" size_x="350" size_y="766" alignment_x="2"/>
 	<element id="element_teleport" style="style_hud_bg" offset_y="-140" size_x="210" size_y="66">
 		<element id="label_teleport_timeleft" font="hud_medium" offset_y="44" alignment_y="3"/>
 	</element>

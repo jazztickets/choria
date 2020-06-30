@@ -203,6 +203,8 @@ function Item_PoisonKnives.Proc(self, Roll, Level, Duration, Source, Target, Res
 	Result.Target.Buff = Buff_Poisoned.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+
+	return true
 end
 
 function Item_PoisonKnives.GenerateDamage(self, Level, Source)

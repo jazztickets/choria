@@ -13,7 +13,10 @@ function Skill_CrowAttack.Proc(self, Roll, Level, Duration, Source, Target, Resu
 		Result.Target.Buff = Buff_Blinded.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
+		return true
 	end
+
+	return false
 end
 
 function Skill_CrowAttack.PlaySound(self, Level)
@@ -53,7 +56,10 @@ function Skill_SpiderBite.Proc(self, Roll, Level, Duration, Source, Target, Resu
 		Result.Target.Buff = Buff_Slowed.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
+		return true
 	end
+
+	return false
 end
 
 function Skill_SpiderBite.PlaySound(self, Level)
@@ -69,7 +75,10 @@ function Skill_FangBite.Proc(self, Roll, Level, Duration, Source, Target, Result
 		Result.Target.Buff = Buff_Bleeding.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
+		return true
 	end
+
+	return false
 end
 
 function Skill_FangBite.PlaySound(self, Level)
@@ -85,7 +94,10 @@ function Skill_VenomBite.Proc(self, Roll, Level, Duration, Source, Target, Resul
 		Result.Target.Buff = Buff_Poisoned.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 10
+		return true
 	end
+
+	return false
 end
 
 function Skill_VenomBite.PlaySound(self, Level)
@@ -101,11 +113,15 @@ function Skill_Sting.Proc(self, Roll, Level, Duration, Source, Target, Result)
 		Result.Target.Buff = Buff_Stunned.Pointer
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = 1
+		return true
 	elseif Roll <= 30 then
 		Result.Target.Buff = Buff_Poisoned.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
+		return true
 	end
+
+	return false
 end
 
 function Skill_Sting.PlaySound(self, Level)
@@ -139,7 +155,10 @@ function Skill_Swoop.Proc(self, Roll, Level, Duration, Source, Target, Result)
 		Result.Target.Buff = Buff_Stunned.Pointer
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = 3
+		return true
 	end
+
+	return false
 end
 
 function Skill_Swoop.PlaySound(self, Level)
@@ -155,7 +174,10 @@ function Skill_PincerAttack.Proc(self, Roll, Level, Duration, Source, Target, Re
 		Result.Target.Buff = Buff_Bleeding.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
+		return true
 	end
+
+	return false
 end
 
 function Skill_PincerAttack.PlaySound(self, Level)
@@ -169,7 +191,10 @@ Skill_ChewAttack = Base_Attack:New()
 function Skill_ChewAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	if Roll <= 75 then
 		Result.Source.Health = -Result.Target.Health
+		return true
 	end
+
+	return false
 end
 
 function Skill_ChewAttack.PlaySound(self, Level)
@@ -185,7 +210,10 @@ function Skill_SwampAttack.Proc(self, Roll, Level, Duration, Source, Target, Res
 		Result.Target.Buff = Buff_Slowed.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
+		return true
 	end
+
+	return false
 end
 
 function Skill_SwampAttack.PlaySound(self, Level)
@@ -277,7 +305,10 @@ function Skill_Fury.Proc(self, Roll, Level, Duration, Source, Target, Result)
 		Result.Source.Buff = Buff_Hasted.Pointer
 		Result.Source.BuffLevel = 30
 		Result.Source.BuffDuration = self:GetDuration(Level)
+		return true
 	end
+
+	return false
 end
 
 -- Gash --
@@ -306,7 +337,10 @@ function Skill_Gash.Proc(self, Roll, Level, Duration, Source, Target, Result)
 		Result.Target.Buff = Buff_Bleeding.Pointer
 		Result.Target.BuffLevel = self:GetBleedLevel(Source, Level)
 		Result.Target.BuffDuration = self.Duration
+		return true
 	end
+
+	return false
 end
 
 function Skill_Gash.PlaySound(self, Level)
@@ -351,7 +385,10 @@ function Skill_ShieldBash.Proc(self, Roll, Level, Duration, Source, Target, Resu
 		Result.Target.Buff = Buff_Stunned.Pointer
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = self.Duration
+		return true
 	end
+
+	return false
 end
 
 function Skill_ShieldBash.PlaySound(self, Level)
@@ -537,7 +574,7 @@ function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	Result.Target.BuffLevel = 20
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
-	return Result
+	return true
 end
 
 function Skill_Icicle.PlaySound(self, Level)
@@ -868,7 +905,10 @@ function Skill_Flee.Proc(self, Roll, Level, Duration, Source, Target, Result)
 		Result.Target.Buff = Buff_Slowed.Pointer
 		Result.Target.BuffLevel = 70
 		Result.Target.BuffDuration = self.Duration
+		return true
 	end
+
+	return false
 end
 
 function Skill_Flee.Use(self, Level, Duration, Source, Target, Result)
@@ -905,9 +945,13 @@ function Skill_Pickpocket.Proc(self, Roll, Level, Duration, Source, Target, Resu
 			Result.Target.Gold = -HalfGold
 			Result.Source.GoldStolen = HalfGold
 		end
+
+		return true
 	else
 		Result.Target.Miss = true
 	end
+
+	return false
 end
 
 function Skill_Pickpocket.Use(self, Level, Duration, Source, Target, Result)
@@ -1025,11 +1069,12 @@ function Skill_Backstab.Proc(self, Roll, Level, Duration, Source, Target, Result
 		if Effect.Buff == Buff_Stunned then
 			Result.Target.Health = math.floor(Result.Target.Health * self:GetDamage(Level))
 			Result.Target.Crit = true
-			return
+			return true
 		end
 	end
 
 	Result.Target.Health = math.floor(Result.Target.Health * self.BaseDamage)
+	return false
 end
 
 function Skill_Backstab.PlaySound(self, Level)
@@ -1272,7 +1317,10 @@ function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Resu
 		Result.Target.Buff = Buff_Bleeding.Pointer
 		Result.Target.BuffLevel = self:GetBleedLevel(Source, Level)
 		Result.Target.BuffDuration = self.Duration
+		return true
 	end
+
+	return false
 end
 
 function Skill_BladeDance.PlaySound(self, Level)
@@ -1346,7 +1394,7 @@ function Skill_IceNova.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	Result.Target.BuffLevel = 20
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
-	return Result
+	return true
 end
 
 function Skill_IceNova.PlaySound(self, Level)

@@ -204,7 +204,9 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	// Draw damage dealt
 	TextColor.a = AlphaPercent;
-	ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
+	std::string DamageText = Buffer.str();
+	std::string Font = DamageText.length() >= 4 ? "hud_small" : "hud_medium";
+	ae::Assets.Fonts[Font]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
 
 	// Draw mana damage
 	if(ActionResult.Target.HasStat(StatType::MANA) && ActionResult.Target.Values[StatType::MANA].Integer < 0) {

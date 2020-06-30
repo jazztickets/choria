@@ -33,14 +33,14 @@ Base_Attack = {
 
 	Proc = function(self, Roll, Level, Duration, Source, Target, Result)
 
-		return Result
+		return false
 	end,
 
 	Use = function(self, Level, Duration, Source, Target, Result)
 		Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 		if Hit then
-			self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
+			Procced = self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 		end
 
 		return Result
@@ -90,7 +90,7 @@ Base_Spell = {
 
 	Proc = function(self, Roll, Level, Duration, Source, Target, Result)
 
-		return Result
+		return false
 	end,
 
 	Use = function(self, Level, Duration, Source, Target, Result)
