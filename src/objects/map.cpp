@@ -1083,6 +1083,28 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 	return ClosestPlayer;
 }
 
+// Find a player that's dead in the world
+_Object *_Map::FindDeadPlayer(const _Object *Player, float MaxDistanceSquared) {
+
+	_Object *ClosestPlayer = nullptr;
+	float ClosestDistanceSquared = HUGE_VAL;
+	for(const auto &Object : Objects) {
+		if(!Object->Character)
+			continue;
+
+		if(Object != Player && !Object->Character->IsAlive()) {
+			glm::vec2 Delta = Object->Position - Player->Position;
+			float DistanceSquared = glm::dot(Delta, Delta);
+			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
+				ClosestDistanceSquared = DistanceSquared;
+				ClosestPlayer = Object;
+			}
+		}
+	}
+
+	return ClosestPlayer;
+}
+
 // Find closest event on the map, returns true on found
 bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) const {
 

@@ -730,9 +730,10 @@ bool _Item::CheckScope(ScopeType CheckScope) const {
 // Apply the cost
 void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
+		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushActionResult(&ActionResult);
-		Scripting->MethodCall(2, 1);
+		Scripting->MethodCall(3, 1);
 		Scripting->GetActionResult(1, ActionResult);
 		Scripting->FinishMethodCall();
 	}

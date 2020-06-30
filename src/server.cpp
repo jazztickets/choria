@@ -155,6 +155,19 @@ void _Server::StopServer(int Seconds) {
 	}
 }
 
+// Resurrect player in the world
+void _Server::Resurrect(_Object *Source, int Health) {
+	if(Source->Character->Battle || !Source->Map)
+		return;
+
+	_Object *DeadPlayer = Source->Map->FindDeadPlayer(Source, 1.0f);
+	if(!DeadPlayer || DeadPlayer->Character->Hardcore)
+		return;
+
+	DeadPlayer->Character->Health = Health;
+	SendHUD(DeadPlayer->Peer);
+}
+
 // Update
 void _Server::Update(double FrameTime) {
 	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)

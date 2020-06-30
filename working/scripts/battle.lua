@@ -86,7 +86,7 @@ Base_Spell = {
 		return self.ManaCostBase + Level * self.CostPerLevel
 	end,
 
-	ApplyCost = function(self, Level, Result)
+	ApplyCost = function(self, Source, Level, Result)
 		Result.Source.Mana = -self:GetCost(Level)
 
 		return Result

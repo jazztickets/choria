@@ -1083,6 +1083,10 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		// Set clock
 		if(StatChange.HasStat(StatType::CLOCK))
 			Server->SetClock(StatChange.Values[StatType::CLOCK].Float);
+
+		// Resurrect
+		if(StatChange.HasStat(StatType::RESURRECT))
+			Server->Resurrect(this, StatChange.Values[StatType::RESURRECT].Integer);
 	}
 
 	return StatusEffect;

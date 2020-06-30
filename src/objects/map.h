@@ -132,6 +132,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty);
 		void GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, bool UsePVPZone);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
+		_Object *FindDeadPlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(const _Event &Event, glm::ivec2 &Position) const;
 		void DeleteStaticObject(const glm::ivec2 &Position);
 

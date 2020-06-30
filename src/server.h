@@ -67,6 +67,7 @@ class _Server {
 		void JoinThread();
 		void StopServer(int Seconds=0);
 
+		void Resurrect(_Object *Source, int Health);
 		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);
 		void StartTeleport(_Object *Object, double Time);

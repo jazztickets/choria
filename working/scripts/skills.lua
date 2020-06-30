@@ -424,7 +424,7 @@ function Skill_Whirlwind.GenerateDamage(self, Level, Source)
 	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
 end
 
-function Skill_Whirlwind.ApplyCost(self, Level, Result)
+function Skill_Whirlwind.ApplyCost(self, Source, Level, Result)
 	Result.Source.Buff = Buff_Slowed.Pointer
 	Result.Source.BuffLevel = 30
 	Result.Source.BuffDuration = self:GetDuration(Level)
@@ -515,6 +515,15 @@ end
 
 function Skill_Resurrect.GetInfo(self, Source, Item)
 	return "Resurrect an ally and give them [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Resurrect.ApplyCost(self, Source, Level, Result)
+	Result.Source.Mana = -self:GetCost(Level)
+
+	-- Hack for using in world
+	Result.Source.Resurrect = self:GetHeal(Source, Level)
+
+	return Result
 end
 
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
@@ -911,7 +920,7 @@ function Skill_Flee.GetInfo(self, Source, Item)
 	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from combat\nCauses [c yellow]fatigue [c white]for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
-function Skill_Flee.ApplyCost(self, Level, Result)
+function Skill_Flee.ApplyCost(self, Source, Level, Result)
 	Result.Source.Buff = Buff_Slowed.Pointer
 	Result.Source.BuffLevel = 30
 	Result.Source.BuffDuration = self.Duration
@@ -1037,7 +1046,7 @@ function Skill_Taunt.GetInfo(self, Source, Item)
 	return "Taunt [c green]" .. Count .. "[c white] " .. Plural .. " for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, forcing them to attack you\nCauses [c yellow]fatigue[c white] for [c green]" .. self.FatigueDuration .."[c white] seconds"
 end
 
-function Skill_Taunt.ApplyCost(self, Level, Result)
+function Skill_Taunt.ApplyCost(self, Source, Level, Result)
 	Result.Source.Buff = Buff_Slowed.Pointer
 	Result.Source.BuffLevel = 30
 	Result.Source.BuffDuration = self.FatigueDuration
