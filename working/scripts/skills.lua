@@ -1365,6 +1365,15 @@ Skill_BladeDance.TargetsPerLevel = 0.2
 Skill_BladeDance.DamageBase = 40
 Skill_BladeDance.DamagePerLevel = 1
 
+function Skill_BladeDance.CanUse(self, Level, Object)
+	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if Weapon == nil then
+		return false
+	end
+
+	return Weapon.Type == ITEM_OFFHAND
+end
+
 function Skill_BladeDance.GetDamage(self, Level)
 	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
 end
@@ -1382,7 +1391,12 @@ function Skill_BladeDance.GetTargetCount(self, Level)
 end
 
 function Skill_BladeDance.GetInfo(self, Source, Item)
-	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding"
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source) then
+		TextColor = "red"
+	end
+
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires an off-hand weapon"
 end
 
 function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
