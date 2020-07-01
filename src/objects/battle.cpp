@@ -250,17 +250,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		// Clear existing targets
 		ClientPlayer->Character->Targets.clear();
 
-		// Check if item can be used
-		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
-		if(Item) {
-			if(!Item->CanUse(Scripting, ActionResult))
-				Item = nullptr;
-
-			if(Item && !Item->IsSkill() && ClientPlayer->Character->ActionBar[ActionBarSlot].Count == 0)
-				Item = nullptr;
-		}
-
 		// Set up initial target
+		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
 		if(Item) {
 			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1 && ClientPlayer->Character->HUD)
 				ClientPlayer->Character->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
@@ -277,10 +268,20 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 			// Set target
 			ClientSetTarget(Item, StartingSide, ClientPlayer->Fighter->LastTarget[StartingSide]);
+			if(ClientPlayer->Character->Targets.size()) {
+
+				// Check if item can be used
+				if(!Item->CanUse(Scripting, ActionResult))
+					Item = nullptr;
+
+				// Check quantity
+				if(Item && !Item->IsSkill() && ClientPlayer->Character->ActionBar[ActionBarSlot].Count == 0)
+					Item = nullptr;
+			}
 		}
 
 		// Set potential skill
-		if(ClientPlayer->Character->Targets.size()) {
+		if(ClientPlayer->Character->Targets.size() && Item) {
 			ClientPlayer->Fighter->PotentialAction.Item = Item;
 			ClientPlayer->Fighter->PotentialAction.ActionBarSlot = ActionBarSlot;
 		}
@@ -344,7 +345,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 	// Get iterator to last target
 	_Object *LastTarget = InitialTarget;
-	if(ObjectList.size() && LastTarget && Item->CanTarget(ClientPlayer, LastTarget))
+	if(ObjectList.size() && LastTarget && Item->CanTarget(Scripting, ClientPlayer, LastTarget))
 	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 	// Set up targets
@@ -353,7 +354,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 		// Check for valid target
 		_Object *Target = *Iterator;
-		if(Item->CanTarget(ClientPlayer, Target)) {
+		if(Item->CanTarget(Scripting, ClientPlayer, Target)) {
 
 			// Add object to list of targets
 			ClientPlayer->Character->Targets.push_back(Target);
@@ -404,7 +405,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	// Get max available targets
 	size_t MaxTargets = 0;
 	for(auto &Target : ObjectList) {
-		if(Item->CanTarget(ClientPlayer, Target))
+		if(Item->CanTarget(Scripting, ClientPlayer, Target))
 			MaxTargets++;
 	}
 
@@ -442,7 +443,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 			NewTarget = *Iterator;
 
 		// Check break condition
-		if(Item->CanTarget(ClientPlayer, NewTarget)) {
+		if(Item->CanTarget(Scripting, ClientPlayer, NewTarget)) {
 			ClientPlayer->Character->Targets.push_back(NewTarget);
 
 			// Update count
@@ -468,6 +469,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Character->ResetUIState();
 	Object->Fighter->JoinedBattle = Join;
 	Object->Fighter->GoldStolen = 0;
+	Object->Fighter->Corpse = 1;
 	if(Server) {
 		Object->Character->GenerateNextBattle();
 		Object->Fighter->TurnTimer = ae::GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);

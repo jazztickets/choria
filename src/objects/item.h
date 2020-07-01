@@ -76,7 +76,7 @@ class _Item {
 		int GetUpgradePrice(int Level) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		bool CanTarget(_Object *Source, _Object *Target) const;
+		bool CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target) const;
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;

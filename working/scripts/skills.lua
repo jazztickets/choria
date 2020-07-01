@@ -320,8 +320,8 @@ Skill_Gash.Duration = 5
 Skill_Gash.IncreasePerLevel = 6
 Skill_Gash.BleedingLevel = 10
 
-function Skill_Gash.CanUse(self, Level, Object)
-	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+function Skill_Gash.CanUse(self, Level, Source, Target)
+	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
 	if Weapon == nil then
 		return false
 	end
@@ -339,7 +339,7 @@ end
 
 function Skill_Gash.GetInfo(self, Source, Item)
 	TextColor = "yellow"
-	if not self:CanUse(Item.Level, Source) then
+	if not self:CanUse(Item.Level, Source, nil) then
 		TextColor = "red"
 	end
 
@@ -388,8 +388,8 @@ function Skill_ShieldBash.GetChance(self, Level)
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, self.MaxPercent)
 end
 
-function Skill_ShieldBash.CanUse(self, Level, Object)
-	Shield = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+function Skill_ShieldBash.CanUse(self, Level, Source, Target)
+	Shield = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
 
 	return Shield ~= nil
 end
@@ -417,8 +417,8 @@ Skill_Whirlwind.DamagePerLevel = 3
 Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 4.0
 Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
 
-function Skill_Whirlwind.CanUse(self, Level, Object)
-	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+function Skill_Whirlwind.CanUse(self, Level, Source, Target)
+	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 	if Weapon == nil then
 		return false
 	end
@@ -448,7 +448,7 @@ end
 
 function Skill_Whirlwind.GetInfo(self, Source, Item)
 	TextColor = "yellow"
-	if not self:CanUse(Item.Level, Source) then
+	if not self:CanUse(Item.Level, Source, nil) then
 		TextColor = "red"
 	end
 
@@ -547,6 +547,7 @@ end
 
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Health = self:GetHeal(Source, Level)
+	Result.Target.Corpse = 1
 
 	return Result
 end
@@ -1098,15 +1099,15 @@ end
 
 function Skill_Backstab.GetInfo(self, Source, Item)
 	TextColor = "yellow"
-	if not self:CanUse(Item.Level, Source) then
+	if not self:CanUse(Item.Level, Source, nil) then
 		TextColor = "red"
 	end
 
 	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Item.Level) * 100) .. "% [c white]damage to stunned enemies\n[c " .. TextColor .. "]Requires a one-handed weapon"
 end
 
-function Skill_Backstab.CanUse(self, Level, Object)
-	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+function Skill_Backstab.CanUse(self, Level, Source, Target)
+	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 	if Weapon == nil then
 		return false
 	end
@@ -1188,7 +1189,67 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	return Result
 end
 
-function Skill_DemonicConjuring.PlaySound(self, Level)
+-- Raise Dead --
+
+Skill_RaiseDead = Base_Spell:New()
+Skill_RaiseDead.CostPerLevel = 5
+Skill_RaiseDead.ManaCostBase = 10 - Skill_RaiseDead.CostPerLevel
+Skill_RaiseDead.BaseHealth = 50
+Skill_RaiseDead.BaseMinDamage = 10
+Skill_RaiseDead.BaseMaxDamage = 20
+Skill_RaiseDead.BaseArmor = 0
+Skill_RaiseDead.HealthPerLevel = 30
+Skill_RaiseDead.DamagePerLevel = 8
+Skill_RaiseDead.ArmorPerLevel = 0
+Skill_RaiseDead.Limit = 3
+Skill_RaiseDead.LimitPerLevel = 0.2
+Skill_RaiseDead.Monster = Monsters[20]
+
+function Skill_RaiseDead.GetHealth(self, Level)
+	return math.floor(self.BaseHealth + (Level - 1) * self.HealthPerLevel)
+end
+
+function Skill_RaiseDead.GetArmor(self, Level)
+	return math.floor(self.BaseArmor + (Level - 1) * self.ArmorPerLevel)
+end
+
+function Skill_RaiseDead.GetLimit(self, Level)
+	return math.floor(self.Limit + (Level) * self.LimitPerLevel)
+end
+
+function Skill_RaiseDead.GetDamage(self, Source, Level)
+	AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
+	return self.BaseMinDamage + AddedDamage, self.BaseMaxDamage + AddedDamage
+end
+
+function Skill_RaiseDead.CanTarget(self, Source, Target)
+	return Target.Corpse > 0 and Target.Health == 0
+end
+
+function Skill_RaiseDead.CanUse(self, Level, Source, Target)
+	return self:CanTarget(Source, Target)
+end
+
+function Skill_RaiseDead.GetInfo(self, Source, Item)
+	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
+
+	return "Raise a skeleton from the dead that has [c green]" .. self:GetHealth(Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\nCan summon a maximum of [c green]" .. self:GetLimit(Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
+	Result.Summon = {}
+	Result.Summon.ID = self.Monster.ID
+	Result.Summon.Health = self:GetHealth(Level)
+	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
+	Result.Summon.Armor = self:GetArmor(Level)
+	Result.Summon.Limit = self:GetLimit(Level)
+
+	Result.Target.Corpse = -1
+
+	return Result
+end
+
+function Skill_RaiseDead.PlaySound(self, Level)
 	Audio.Play("summon0.ogg")
 end
 
@@ -1365,8 +1426,8 @@ Skill_BladeDance.TargetsPerLevel = 0.2
 Skill_BladeDance.DamageBase = 40
 Skill_BladeDance.DamagePerLevel = 1
 
-function Skill_BladeDance.CanUse(self, Level, Object)
-	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+function Skill_BladeDance.CanUse(self, Level, Source, Target)
+	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
 	if Weapon == nil then
 		return false
 	end
@@ -1392,7 +1453,7 @@ end
 
 function Skill_BladeDance.GetInfo(self, Source, Item)
 	TextColor = "yellow"
-	if not self:CanUse(Item.Level, Source) then
+	if not self:CanUse(Item.Level, Source, nil) then
 		TextColor = "red"
 	end
 

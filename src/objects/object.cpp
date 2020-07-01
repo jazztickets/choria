@@ -486,7 +486,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 			if(ClientPlayer->Fighter->PotentialAction.Item) {
 
 				// Skip dead targets
-				if(!ClientPlayer->Fighter->PotentialAction.Item->CanTarget(ClientPlayer, BattleTarget))
+				if(!ClientPlayer->Fighter->PotentialAction.Item->CanTarget(Scripting, ClientPlayer, BattleTarget))
 					break;
 
 				// Get texture
@@ -1061,6 +1061,15 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 			Character->Battle->RemoveObject(this);
 	}
 
+	// Use corpse
+	if(StatChange.HasStat(StatType::CORPSE)) {
+		Fighter->Corpse += StatChange.Values[StatType::CORPSE].Integer;
+		if(Fighter->Corpse < 0)
+			Fighter->Corpse = 0;
+		else if(Fighter->Corpse > 1)
+			Fighter->Corpse = 1;
+	}
+
 	// Run server only commands
 	if(Server) {
 		if(!Character->Battle) {
@@ -1217,7 +1226,7 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 		for(int i = 0; i < TargetCount; i++) {
 			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
-			if(Target && Character->Action.Item->CanTarget(this, Target))
+			if(Target && Character->Action.Item->CanTarget(Scripting, this, Target))
 				Character->Targets.push_back(Target);
 		}
 	}

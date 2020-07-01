@@ -32,6 +32,7 @@ _Fighter::_Fighter(_Object *Object) :
 	LastTarget{nullptr, nullptr},
 	TurnTimer(0.0),
 	GoldStolen(0),
+	Corpse(1),
 	JoinedBattle(false),
 	BattleSide(0) {
 

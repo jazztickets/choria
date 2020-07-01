@@ -58,6 +58,7 @@ class _Fighter {
 		std::list<uint32_t> ItemDropsReceived;
 		double TurnTimer;
 		int GoldStolen;
+		int Corpse;
 		bool JoinedBattle;
 		uint8_t BattleSide;
 

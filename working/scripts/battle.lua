@@ -102,8 +102,8 @@ Base_Spell = {
 		return Result
 	end,
 
-	CanUse = function(self, Level, Object)
-		if Object.Mana >= self:GetCost(Level) then
+	CanUse = function(self, Level, Source, Target)
+		if Source.Mana >= self:GetCost(Level) then
 			return true
 		end
 

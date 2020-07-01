@@ -353,6 +353,11 @@ void _Scripting::DeleteBattle(_Battle *Battle) {
 
 // Push object onto stack
 void _Scripting::PushObject(_Object *Object) {
+	if(!Object) {
+		lua_pushnil(LuaState);
+		return;
+	}
+
 	lua_newtable(LuaState);
 
 	PushObjectStatusEffects(Object);
@@ -447,6 +452,9 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushlightuserdata(LuaState, Object->Monster->Owner);
 	lua_setfield(LuaState, -2, "Owner");
+
+	lua_pushinteger(LuaState, Object->Fighter->Corpse);
+	lua_setfield(LuaState, -2, "Corpse");
 
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");

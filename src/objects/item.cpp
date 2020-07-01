@@ -106,6 +106,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		WindowOffset.x -= Size.x + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
 	if(WindowOffset.y + Size.y > ae::Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
 		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+	if(WindowOffset.y < 0)
+		WindowOffset.y = 0;
 
 	TooltipElement->Offset = WindowOffset;
 	TooltipElement->Size = Size;
@@ -682,9 +684,10 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 		return false;
 
 	// Check if target is alive
+	_Object *Target = nullptr;
 	if(Object->Character->Targets.size() == 1) {
-		_Object *Target = *Object->Character->Targets.begin();
-		if(!CanTarget(Object, Target))
+		Target = *Object->Character->Targets.begin();
+		if(!CanTarget(Scripting, Object, Target))
 			return false;
 	}
 
@@ -692,7 +695,8 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "CanUse")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
-		Scripting->MethodCall(2, 1);
+		Scripting->PushObject(Target);
+		Scripting->MethodCall(3, 1);
 		int Value = Scripting->GetBoolean(1);
 		Scripting->FinishMethodCall();
 
@@ -703,7 +707,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Check if an item can target an object
-bool _Item::CanTarget(_Object *Source, _Object *Target) const {
+bool _Item::CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target) const {
 	if(TargetAlive && !Target->Character->IsAlive())
 		return false;
 
@@ -711,12 +715,22 @@ bool _Item::CanTarget(_Object *Source, _Object *Target) const {
 		return false;
 
 	if(Source->Character->Battle) {
-
 		if(Source->Fighter->BattleSide == Target->Fighter->BattleSide && !CanTargetAlly())
 			return false;
 
 		if(Source->Fighter->BattleSide != Target->Fighter->BattleSide && !CanTargetEnemy())
 			return false;
+	}
+
+	// Check script's function
+	if(Scripting->StartMethodCall(Script, "CanTarget")) {
+		Scripting->PushObject(Source);
+		Scripting->PushObject(Target);
+		Scripting->MethodCall(2, 1);
+		int Value = Scripting->GetBoolean(1);
+		Scripting->FinishMethodCall();
+
+		return Value;
 	}
 
 	return true;
