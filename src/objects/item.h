@@ -65,10 +65,10 @@ class _Item {
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type == ItemType::OFFHAND || (Type >= ItemType::HELMET && Type <= ItemType::AMULET); }
 		bool IsStackable() const { return !IsEquippable(); }
-		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY; }
-		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY; }
+		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
+		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
 		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
-		int GetTargetCount(_Scripting *Scripting, _Object *Object) const;
+		int GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTarget=true) const;
 
 		void GetEquipmentSlot(_Slot &Slot) const;
 
@@ -76,7 +76,7 @@ class _Item {
 		int GetUpgradePrice(int Level) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		bool CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target) const;
+		bool CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target, bool ForceTargetAlive=false) const;
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;

@@ -679,6 +679,11 @@ void _Scripting::PushItemParameters(int Chance, int Level, double Duration) {
 	lua_setfield(LuaState, -2, "Duration");
 }
 
+// Push boolean value
+void _Scripting::PushBoolean(bool Value) {
+	lua_pushboolean(LuaState, Value);
+}
+
 // Push int value
 void _Scripting::PushInt(int Value) {
 	lua_pushinteger(LuaState, Value);

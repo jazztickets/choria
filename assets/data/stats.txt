@@ -159,6 +159,7 @@ INSERT INTO target VALUES(5,'Multiple Allies');
 INSERT INTO target VALUES(6,'All Enemies');
 INSERT INTO target VALUES(7,'All Allies');
 INSERT INTO target VALUES(8,'Any');
+INSERT INTO target VALUES(9,'Enemy Corpse AOE');
 CREATE TABLE IF NOT EXISTS "scope" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -1397,7 +1398,7 @@ INSERT INTO item VALUES(38,1,0,1,1,0,0,'Portal','textures/skills/portal.png','Sk
 INSERT INTO item VALUES(39,1,0,2,2,0,0,'Raise Dead','textures/skills/raise_dead.png','Skill_RaiseDead',3,300,0,0,10,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(40,1,0,0,0,0,0,'Pet Mastery','textures/skills/pet_mastery.png','Skill_PetMastery',1,1500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(41,1,5,4,2,0,0,'Chain Lightning','textures/skills/chain_lightning.png','Skill_ChainLightning',1,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(42,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(42,1,6,9,2,0,0,'Rupture','textures/skills/rupture.png','Skill_Rupture',3,1150,0,0,10,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(43,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(44,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(45,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

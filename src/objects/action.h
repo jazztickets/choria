@@ -45,7 +45,7 @@ enum class TargetType : uint32_t {
 	ENEMY_ALL,
 	ALLY_ALL,
 	ANY,
-	ALL,
+	ENEMY_CORPSE_AOE,
 };
 
 // Scope of action

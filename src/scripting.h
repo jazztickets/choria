@@ -60,6 +60,7 @@ class _Scripting {
 		void PushObjectList(std::list<_Object *> &Objects);
 		void PushObjectStatusEffects(_Object *Object);
 		void PushItemParameters(int Chance, int Level, double Duration);
+		void PushBoolean(bool Value);
 		void PushInt(int Value);
 		void PushReal(double Value);
 

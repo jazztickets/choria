@@ -1221,14 +1221,67 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 		if(!Character->GetActionFromActionBar(Character->Action, ActionBarSlot))
 			return;
 
-		// Get targets
-		Character->Targets.clear();
-		for(int i = 0; i < TargetCount; i++) {
+		// Handle corpse aoe
+		const _Item *Item = Character->Action.Item;
+		if(Item->TargetID == TargetType::ENEMY_CORPSE_AOE) {
+			Character->Targets.clear();
+			if(TargetCount != 1)
+				return;
+
+			// Get first target
 			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
-			if(Target && Character->Action.Item->CanTarget(Scripting, this, Target))
+			_Battle *Battle = Target->Character->Battle;
+			if(!Target || !Battle)
+				return;
+
+			// Set initial target
+			if(Item->CanTarget(Scripting, this, Target))
 				Character->Targets.push_back(Target);
+
+			// Get alive target count
+			int TargetCount = Item->GetTargetCount(Scripting, this, false);
+
+			// Get list of objects on each side
+			std::list<_Object *> ObjectList;
+			for(auto &Object : Battle->Objects) {
+				if(Object->Fighter->BattleSide == Target->Fighter->BattleSide)
+					ObjectList.push_back(Object);
+			}
+
+			// Get iterator to last target
+			_Object *LastTarget = Target;
+			auto Iterator = ObjectList.begin();
+			if(ObjectList.size())
+			   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
+
+			// Set up alive targets
+			for(size_t i = 0; i < ObjectList.size(); i++) {
+				_Object *CheckObject = *Iterator;
+				if(Item->CanTarget(Scripting, this, CheckObject, true)) {
+					this->Character->Targets.push_back(CheckObject);
+
+					TargetCount--;
+					if(TargetCount <= 0)
+						break;
+				}
+				++Iterator;
+				if(Iterator == ObjectList.end())
+					Iterator = ObjectList.begin();
+			}
 		}
+		else {
+
+			// Get targets
+			Character->Targets.clear();
+			for(int i = 0; i < TargetCount; i++) {
+				ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
+				_Object *Target = ObjectManager->GetObject(NetworkID);
+				if(Target && Item->CanTarget(Scripting, this, Target))
+					Character->Targets.push_back(Target);
+			}
+		}
+
 	}
 }
 

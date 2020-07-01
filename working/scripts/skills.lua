@@ -710,7 +710,7 @@ end
 Skill_ArcaneMastery = {}
 Skill_ArcaneMastery.PerLevel = 40
 Skill_ArcaneMastery.ManaRegen = 1
-Skill_ArcaneMastery.Power = 50
+Skill_ArcaneMastery.Power = 25
 Skill_ArcaneMastery.PowerPerLevel = 5
 
 function Skill_ArcaneMastery.GetPower(self, Level)
@@ -1227,7 +1227,7 @@ function Skill_RaiseDead.GetSpecialChance(self, Source, Level)
 	return math.floor(self.SpecialChance + (Level - 1) * self.SpecialPerLevel)
 end
 
-function Skill_RaiseDead.CanTarget(self, Source, Target)
+function Skill_RaiseDead.CanTarget(self, Source, Target, Alive)
 	return Target.Corpse > 0 and Target.Health == 0
 end
 
@@ -1236,7 +1236,7 @@ function Skill_RaiseDead.CanUse(self, Level, Source, Target)
 		return false
 	end
 
-	return self:CanTarget(Source, Target)
+	return self:CanTarget(Source, Target, false)
 end
 
 function Skill_RaiseDead.GetInfo(self, Source, Item)
@@ -1610,4 +1610,76 @@ end
 
 function Skill_ChainLightning.PlaySound(self, Level)
 	Audio.Play("shock0.ogg")
+end
+
+-- Rupture --
+
+Skill_Rupture = Base_Spell:New()
+Skill_Rupture.Level = 20
+Skill_Rupture.LevelPerLevel = 10
+Skill_Rupture.CostPerLevel = 15
+Skill_Rupture.ManaCostBase = 90 - Skill_Rupture.CostPerLevel
+Skill_Rupture.BaseTargets = 3
+Skill_Rupture.TargetsPerLevel = 0.2
+Skill_Rupture.Duration = 5
+Skill_Rupture.DurationPerLevel = 0
+
+function Skill_Rupture.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+end
+
+function Skill_Rupture.GetDamage(self, Source, Level)
+	return Buff_Poisoned.Damage * self:GetLevel(Source, Level) * self:GetDuration(Level)
+end
+
+function Skill_Rupture.GetDamagePower(self, Source, Level)
+	return Source.PoisonPower
+end
+
+function Skill_Rupture.GetLevel(self, Source, Level)
+	return math.floor((self.Level + self.LevelPerLevel * Level) * self:GetDamagePower(Source, Level))
+end
+
+function Skill_Rupture.GetDuration(self, Level)
+	return self.Duration + self.DurationPerLevel * (Level - 1)
+end
+
+function Skill_Rupture.GetChance(self, Level)
+	return math.floor(self.Chance + self.ChancePerLevel * (Level - 1))
+end
+
+function Skill_Rupture.CanTarget(self, Source, Target, Alive)
+	if Alive == true then
+		return Target.Health > 0
+	else
+		return Target.Corpse > 0 and Target.Health == 0
+	end
+end
+
+function Skill_Rupture.CanUse(self, Level, Source, Target)
+	if Source.Mana < self:GetCost(Level) then
+		return false
+	end
+
+	return self:CanTarget(Source, Target, false)
+end
+
+function Skill_Rupture.GetInfo(self, Source, Item)
+	return "Explode a corpse, releasing noxious gas over [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Rupture.Use(self, Level, Duration, Source, Target, Result)
+	if Target.Health == 0 then
+		Result.Target.Corpse = -1
+	else
+		Result.Target.Buff = Buff_Poisoned.Pointer
+		Result.Target.BuffLevel = self:GetLevel(Source, Level)
+		Result.Target.BuffDuration = self:GetDuration(Level)
+	end
+
+	return Result
+end
+
+function Skill_Rupture.PlaySound(self, Level)
+	Audio.Play("gash0.ogg")
 end

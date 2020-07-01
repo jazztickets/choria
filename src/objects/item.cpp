@@ -130,6 +130,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
 		std::string DeadText = TargetAlive ? "" : "Dead ";
 		std::string InfoText = "Target " + DeadText + Player->Stats->TargetTypes.at((uint32_t)TargetID);
+		if(TargetID == TargetType::ENEMY_CORPSE_AOE)
+			InfoText = "Target Dead Enemy";
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += LargeSpacingY;
 	}
@@ -549,17 +551,22 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 }
 
 // Get target count based on target type
-int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object) const {
+int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTarget) const {
 
-	int TargetCount = 0;
 	switch(TargetID) {
 		case TargetType::SELF:
 		case TargetType::ALLY:
 		case TargetType::ANY:
-			TargetCount = 1;
+			return 1;
 		break;
 		case TargetType::ENEMY_MULTI:
 		case TargetType::ALLY_MULTI:
+		case TargetType::ENEMY_CORPSE_AOE: {
+
+			if(InitialTarget && TargetID == TargetType::ENEMY_CORPSE_AOE)
+				return 1;
+
+			int TargetCount = 0;
 			if(Scripting->StartMethodCall(Script, "GetTargetCount")) {
 				int SkillLevel = 1;
 				auto SkillIterator = Object->Character->Skills.find(ID);
@@ -574,16 +581,18 @@ int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object) const {
 			}
 			else
 				TargetCount = BATTLE_MULTI_TARGET_COUNT;
-		break;
+
+			return TargetCount;
+		} break;
 		case TargetType::ENEMY_ALL:
 		case TargetType::ALLY_ALL:
-			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
+			return BATTLE_MAX_OBJECTS_PER_SIDE;
 		break;
 		default:
 		break;
 	}
 
-	return TargetCount;
+	return 0;
 }
 
 // Return a valid equipment slot for an item
@@ -690,7 +699,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 	// Check if target is alive
 	_Object *Target = nullptr;
-	if(Object->Character->Targets.size() == 1) {
+	if(Object->Character->Targets.size()) {
 		Target = *Object->Character->Targets.begin();
 		if(!CanTarget(Scripting, Object, Target))
 			return false;
@@ -712,11 +721,15 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Check if an item can target an object
-bool _Item::CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target) const {
-	if(TargetAlive && !Target->Character->IsAlive())
+bool _Item::CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target, bool ForceTargetAlive) const {
+	bool CurrentTargetAlive = TargetAlive;
+	if(ForceTargetAlive)
+		CurrentTargetAlive = true;
+
+	if(CurrentTargetAlive && !Target->Character->IsAlive())
 		return false;
 
-	if(!TargetAlive && Target->Character->IsAlive())
+	if(!CurrentTargetAlive && Target->Character->IsAlive())
 		return false;
 
 	if(Source->Character->Battle) {
@@ -731,7 +744,8 @@ bool _Item::CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target) c
 	if(Scripting->StartMethodCall(Script, "CanTarget")) {
 		Scripting->PushObject(Source);
 		Scripting->PushObject(Target);
-		Scripting->MethodCall(2, 1);
+		Scripting->PushBoolean(CurrentTargetAlive);
+		Scripting->MethodCall(3, 1);
 		int Value = Scripting->GetBoolean(1);
 		Scripting->FinishMethodCall();
 
