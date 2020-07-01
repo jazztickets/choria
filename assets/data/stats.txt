@@ -589,8 +589,8 @@ INSERT INTO monsterdrop VALUES(54,20,237,15);
 INSERT INTO monsterdrop VALUES(55,24,0,80);
 INSERT INTO monsterdrop VALUES(56,24,221,15);
 INSERT INTO monsterdrop VALUES(57,24,133,5);
-INSERT INTO monsterdrop VALUES(58,25,0,95);
-INSERT INTO monsterdrop VALUES(59,25,217,5);
+INSERT INTO monsterdrop VALUES(58,25,0,75);
+INSERT INTO monsterdrop VALUES(59,25,217,25);
 INSERT INTO monsterdrop VALUES(60,26,0,50);
 INSERT INTO monsterdrop VALUES(61,26,233,50);
 INSERT INTO monsterdrop VALUES(62,20,127,5);
@@ -757,15 +757,15 @@ INSERT INTO zonedata VALUES(70,28,22,2,0);
 INSERT INTO zonedata VALUES(71,17,21,2,0);
 INSERT INTO zonedata VALUES(72,30,25,1,1);
 INSERT INTO zonedata VALUES(73,29,24,3,0);
-INSERT INTO zonedata VALUES(74,30,24,8,0);
+INSERT INTO zonedata VALUES(74,30,24,11,0);
 INSERT INTO zonedata VALUES(75,29,3,1,0);
 INSERT INTO zonedata VALUES(76,29,5,1,2);
-INSERT INTO zonedata VALUES(77,30,3,5,0);
+INSERT INTO zonedata VALUES(77,30,3,8,0);
 INSERT INTO zonedata VALUES(78,29,4,1,0);
-INSERT INTO zonedata VALUES(79,31,25,3,2);
-INSERT INTO zonedata VALUES(80,31,11,5,0);
-INSERT INTO zonedata VALUES(81,31,5,5,0);
-INSERT INTO zonedata VALUES(82,31,4,5,0);
+INSERT INTO zonedata VALUES(79,31,25,1,2);
+INSERT INTO zonedata VALUES(80,31,11,6,0);
+INSERT INTO zonedata VALUES(81,31,5,6,0);
+INSERT INTO zonedata VALUES(82,31,4,6,0);
 INSERT INTO zonedata VALUES(83,32,26,3,2);
 INSERT INTO zonedata VALUES(84,32,13,1,0);
 INSERT INTO zonedata VALUES(85,32,11,1,0);
@@ -824,7 +824,7 @@ INSERT INTO monster VALUES(21,1,'Skeleton Priest','textures/monsters/skeleton_pr
 INSERT INTO monster VALUES(22,1,'Dusty Ant','textures/monsters/dusty_ant.png',40,40,1000,0,125,175,25,15,2.0,2,29);
 INSERT INTO monster VALUES(23,1,'Demon','textures/monsters/demon.png',40,35,1200,0,100,225,10,0,2.0,1,37);
 INSERT INTO monster VALUES(24,1,'Goblin','textures/monsters/goblin.png',6,5,175,0,20,40,2,0,2.0,1,38);
-INSERT INTO monster VALUES(25,1,'Goblin Thief','textures/monsters/goblin_thief.png',15,50,300,0,50,100,5,5,1.6000000000000000888,7,39);
+INSERT INTO monster VALUES(25,1,'Goblin Thief','textures/monsters/goblin_thief.png',15,200,300,0,50,100,5,5,1.6000000000000000888,7,39);
 INSERT INTO monster VALUES(26,1,'Lava Man','textures/monsters/lava_man.png',50,50,1250,0,125,200,10,5,2.0,8,40);
 INSERT INTO monster VALUES(27,1,'Hornet','textures/monsters/hornet.png',60,50,1800,0,150,250,5,0,1.75,1,41);
 INSERT INTO monster VALUES(28,1,'The Drowned','textures/monsters/the_drowned.png',70,75,2000,0,150,200,10,5,2.8500000000000000888,1,28);
@@ -916,7 +916,7 @@ INSERT INTO trader VALUES(13,'poison_knives',192,5);
 INSERT INTO trader VALUES(14,'poison_ring',181,1);
 INSERT INTO trader VALUES(15,'chamber_key',238,1);
 INSERT INTO trader VALUES(16,'fireblast',9,1);
-INSERT INTO trader VALUES(17,'lucky_amulet',217,1);
+INSERT INTO trader VALUES(17,'graveyard_key',251,1);
 INSERT INTO trader VALUES(18,'medium_torch',222,1);
 INSERT INTO trader VALUES(19,'cold_ring',175,1);
 INSERT INTO trader VALUES(20,'fire_ring',172,1);
@@ -1395,7 +1395,7 @@ INSERT INTO item VALUES(36,1,0,0,0,0,0,'Heal Mastery','textures/skills/heal_mast
 INSERT INTO item VALUES(37,1,0,0,0,0,0,'Poison Mastery','textures/skills/poison_mastery.png','Skill_PoisonMastery',1,1500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(38,1,0,1,1,0,0,'Portal','textures/skills/portal.png','Skill_Portal',3,450,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(39,1,0,2,2,0,0,'Raise Dead','textures/skills/raise_dead.png','Skill_RaiseDead',3,300,0,0,10,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(40,1,0,0,0,0,0,'Pet Mastery','textures/skills/pet_mastery.png','Skill_PetMastery',1,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(40,1,0,0,0,0,0,'Pet Mastery','textures/skills/pet_mastery.png','Skill_PetMastery',1,1500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(41,1,5,4,2,0,0,'Chain Lightning','textures/skills/chain_lightning.png','Skill_ChainLightning',1,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(42,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(43,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1549,7 +1549,7 @@ INSERT INTO item VALUES(215,10,0,2,2,0,0,'Fire Dust','textures/items/fire_dust.p
 INSERT INTO item VALUES(216,13,0,0,1,0,0,'Prisoner Key','textures/items/key1.png','',0,1000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(217,9,0,0,0,0,0,'Lucky Amulet','textures/items/amulet.png','',0,150,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,25,0,0);
 INSERT INTO item VALUES(218,7,0,0,0,0,0,'Gauntlet','textures/items/gauntlet.png','',0,35,1,0,20,0.0,1,0,0,0,3,2,0,0,0,0,0,10,0,0,0,0);
-INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key2.png','',0,5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key2.png','',0,5,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(220,10,0,1,1,0,0,'Torch','textures/items/torch.png','Item_Torch',0,15,1,3,0,60.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(221,11,0,0,0,0,0,'Game Token','textures/items/token.png','',0,10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/medium_torch.png','Item_Torch',0,35,1,5,0,120.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1580,7 +1580,8 @@ INSERT INTO item VALUES(246,5,6,0,0,0,0,'Venom Blade','textures/items/venom_blad
 INSERT INTO item VALUES(247,10,0,1,3,0,0,'Glowing Salve','textures/items/glowing_salve.png','Item_HealingSalve',0,250,1,600,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(248,10,0,1,3,0,0,'Glowing Cider','textures/items/glowing_cider.png','Item_ManaCider',0,375,1,200,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key1.png','',0,5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key0.png','',0,5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(251,13,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','',0,150,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
