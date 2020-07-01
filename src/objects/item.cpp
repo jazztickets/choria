@@ -557,7 +557,7 @@ int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object) const {
 				int SkillLevel = 1;
 				auto SkillIterator = Object->Character->Skills.find(ID);
 				if(SkillIterator != Object->Character->Skills.end()) {
-					SkillLevel = SkillIterator->second;
+					SkillLevel = SkillIterator->second + Object->Character->AllSkills;
 				}
 
 				Scripting->PushInt(SkillLevel);

@@ -83,7 +83,7 @@ Base_Spell = {
 	end,
 
 	GetCost = function(self, Level)
-		return self.ManaCostBase + Level * self.CostPerLevel
+		return math.max(self.ManaCostBase + Level * self.CostPerLevel, 0)
 	end,
 
 	ApplyCost = function(self, Source, Level, Result)

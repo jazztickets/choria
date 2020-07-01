@@ -1308,6 +1308,28 @@ function Skill_Light.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+-- Portal --
+
+Skill_Portal = Base_Spell:New()
+Skill_Portal.Duration = 11
+Skill_Portal.DurationPerLevel = -1
+Skill_Portal.CostPerLevel = -10
+Skill_Portal.ManaCostBase = 200 - Skill_Portal.CostPerLevel
+
+function Skill_Portal.GetDuration(self, Level)
+	return math.max(self.Duration + self.DurationPerLevel * Level, 0.5)
+end
+
+function Skill_Portal.GetInfo(self, Source, Item)
+	return "Teleport home after [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Portal.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Teleport = self:GetDuration(Level)
+
+	return Result
+end
+
 -- Blade Dance --
 
 Skill_BladeDance = Base_Attack:New()
