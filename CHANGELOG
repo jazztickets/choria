@@ -5,6 +5,7 @@ choria 0.5.1 -
 - Added passive mastery skills
 - Added skill point unlocks
 - Added procs to weapons
+- Added off-hand weapons and dual wielding
 - Direction of party members now show on current map
 - Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle
 - Skills are now sorted by category

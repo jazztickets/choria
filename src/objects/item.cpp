@@ -606,6 +606,9 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 		case ItemType::AMULET:
 			Slot.Index = EquipmentType::AMULET;
 		break;
+		case ItemType::OFFHAND:
+			Slot.Index = EquipmentType::HAND2;
+		break;
 		default:
 			Slot.Type = BagType::NONE;
 		break;

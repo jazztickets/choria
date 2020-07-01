@@ -48,6 +48,7 @@ enum class ItemType : uint32_t {
 	TRADABLE,
 	UNLOCKABLE,
 	KEY,
+	OFFHAND,
 };
 
 // Classes
@@ -62,7 +63,7 @@ class _Item {
 		bool IsConsumable() const { return Type == ItemType::CONSUMABLE; }
 		bool IsKey() const { return Type == ItemType::KEY; }
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
-		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
+		bool IsEquippable() const { return Type == ItemType::OFFHAND || (Type >= ItemType::HELMET && Type <= ItemType::AMULET); }
 		bool IsStackable() const { return !IsEquippable(); }
 		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY; }
 		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY; }

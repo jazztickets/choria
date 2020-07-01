@@ -25,13 +25,25 @@ Base_Attack = {
 		return self.Item.DamageType
 	end,
 
-	WeaponProc = function(self, Roll, Source, Target, Result)
+	WeaponProc = function(self, Source, Target, Result)
+
+		-- Check for main weapon
 		Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 		if Weapon == nil or Weapon.Script == nil then
-			return false
+			return
 		end
 
-		return Weapon.Script:Proc(Roll, Weapon.Chance, Weapon.Level, Weapon.Duration, Source, Target, Result)
+		-- Proc main weapon
+		Weapon.Script:Proc(Random.GetInt(1, 100), Weapon.Chance, Weapon.Level, Weapon.Duration, Source, Target, Result)
+
+		-- Check for off-hand
+		WeaponOffHand = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+		if WeaponOffHand == nil or WeaponOffHand.Script == nil then
+			return
+		end
+
+		-- Proc off-hand weapon
+		WeaponOffHand.Script:Proc(Random.GetInt(1, 100), WeaponOffHand.Chance, WeaponOffHand.Level, WeaponOffHand.Duration, Source, Target, Result)
 	end,
 
 	GenerateDamage = function(self, Level, Source)
@@ -49,10 +61,8 @@ Base_Attack = {
 		Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 		if Hit then
-			Procced = self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
-			if Procced == false then
-				self:WeaponProc(Random.GetInt(1, 100), Source, Target, Result)
-			end
+			self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
+			self:WeaponProc(Source, Target, Result)
 		end
 
 		return Result

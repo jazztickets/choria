@@ -987,6 +987,10 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::RING2].Item)
 			TargetSlot.Index = EquipmentType::RING2;
 
+		// Check for empty main hand when equipping off-hand
+		if(Item->Type == ItemType::OFFHAND && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item)
+			TargetSlot.Index = EquipmentType::HAND1;
+
 		// Attempt to move
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);

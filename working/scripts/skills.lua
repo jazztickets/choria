@@ -320,6 +320,15 @@ Skill_Gash.Duration = 5
 Skill_Gash.IncreasePerLevel = 6
 Skill_Gash.BleedingLevel = 10
 
+function Skill_Gash.CanUse(self, Level, Object)
+	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if Weapon == nil then
+		return false
+	end
+
+	return Weapon.Type == ITEM_OFFHAND
+end
+
 function Skill_Gash.GetChance(self, Level)
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
@@ -329,7 +338,12 @@ function Skill_Gash.GetBleedLevel(self, Source, Level)
 end
 
 function Skill_Gash.GetInfo(self, Source, Item)
-	return "Slice your enemy\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding"
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source) then
+		TextColor = "red"
+	end
+
+	return "Slice your enemy\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires an off-hand weapon"
 end
 
 function Skill_Gash.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -433,7 +447,12 @@ function Skill_Whirlwind.ApplyCost(self, Source, Level, Result)
 end
 
 function Skill_Whirlwind.GetInfo(self, Source, Item)
-	return "Slash all enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .." [c white]seconds\nRequires a two-handed weapon"
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source) then
+		TextColor = "red"
+	end
+
+	return "Slash all enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .." [c white]seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
 end
 
 function Skill_Whirlwind.PlaySound(self, Level)
@@ -1074,13 +1093,16 @@ Skill_Backstab.DamagePerLevel = 0.2
 Skill_Backstab.DamageMultiplier = 1.6 - Skill_Backstab.DamagePerLevel
 
 function Skill_Backstab.GetDamage(self, Level)
-
 	return self.DamageMultiplier + self.DamagePerLevel * Level
 end
 
 function Skill_Backstab.GetInfo(self, Source, Item)
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source) then
+		TextColor = "red"
+	end
 
-	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Item.Level) * 100) .. "% [c white]damage to stunned enemies\nRequires a one-handed weapon"
+	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Item.Level) * 100) .. "% [c white]damage to stunned enemies\n[c " .. TextColor .. "]Requires a one-handed weapon"
 end
 
 function Skill_Backstab.CanUse(self, Level, Object)

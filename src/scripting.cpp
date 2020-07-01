@@ -169,6 +169,8 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "ITEM_TRADABLE");
 	lua_pushinteger(LuaState, (int)ItemType::UNLOCKABLE);
 	lua_setglobal(LuaState, "ITEM_UNLOCKABLE");
+	lua_pushinteger(LuaState, (int)ItemType::OFFHAND);
+	lua_setglobal(LuaState, "ITEM_OFFHAND");
 }
 
 // Inject items pointers into existing lua tables
