@@ -99,6 +99,7 @@ _Character::_Character(_Object *Object) :
 	LightningPower(0.0f),
 	BleedPower(0.0f),
 	PoisonPower(0.0f),
+	PetPower(0.0f),
 	HealPower(0.0f),
 	ManaPower(0.0f),
 	MinDamage(0),
@@ -113,6 +114,7 @@ _Character::_Character(_Object *Object) :
 	HitChance(100),
 	DropRate(0),
 	AllSkills(0),
+	SummonLimit(0),
 
 	SkillPoints(0),
 	SkillPointsUnlocked(0),
@@ -322,8 +324,10 @@ void _Character::CalculateStats() {
 	LightningPower = 1.0f;
 	BleedPower = 1.0f;
 	PoisonPower = 1.0f;
+	PetPower = 1.0f;
 	HealPower = 1.0f;
 	ManaPower = 1.0f;
+	SummonLimit = 0;
 	Resistances.clear();
 
 	Object->Light = 0;
@@ -510,10 +514,14 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		BleedPower += StatChange.Values[StatType::BLEEDPOWER].Float;
 	if(StatChange.HasStat(StatType::POISONPOWER))
 		PoisonPower += StatChange.Values[StatType::POISONPOWER].Float;
+	if(StatChange.HasStat(StatType::PETPOWER))
+		PetPower += StatChange.Values[StatType::PETPOWER].Float;
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 	if(StatChange.HasStat(StatType::MANAPOWER))
 		ManaPower += StatChange.Values[StatType::MANAPOWER].Float;
+	if(StatChange.HasStat(StatType::SUMMONLIMIT))
+		SummonLimit += StatChange.Values[StatType::SUMMONLIMIT].Integer;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
 		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;

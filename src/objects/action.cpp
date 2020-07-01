@@ -165,16 +165,13 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 	_Battle *Battle = SourceObject->Character->Battle;
 	if(Battle) {
 
-		// Get database id
-		uint32_t SummonDatabaseID = ActionResult.Summon.ID;
-
 		// Check for existing summons and get count of fighters on player's side
 		std::vector<_Object *>ExistingSummons;
 		ExistingSummons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 		int SideCount = 0;
 		for(auto &Object : Battle->Objects) {
 			if(Object->Fighter->BattleSide == SourceObject->Fighter->BattleSide) {
-				if(Object->Monster->Owner == SourceObject && Object->Monster->DatabaseID == SummonDatabaseID)
+				if(Object->Monster->Owner == SourceObject && Object->Monster->SpellID == ActionResult.Summon.SpellID)
 					ExistingSummons.push_back(Object);
 
 				SideCount++;
@@ -188,9 +185,10 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			_Object *Object = SourceObject->Server->ObjectManager->Create();
 			Object->Server = SourceObject->Server;
 			Object->Scripting = SourceObject->Scripting;
-			Object->Monster->DatabaseID = SummonDatabaseID;
+			Object->Monster->DatabaseID = ActionResult.Summon.ID;
 			Object->Stats = SourceObject->Stats;
 			Object->Monster->Owner = SourceObject;
+			Object->Monster->SpellID = ActionResult.Summon.SpellID;
 			SourceObject->Stats->GetMonsterStats(Object->Monster->DatabaseID, Object);
 
 			// Add stats from script

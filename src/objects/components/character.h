@@ -194,6 +194,7 @@ class _Character {
 		float LightningPower;
 		float BleedPower;
 		float PoisonPower;
+		float PetPower;
 		float HealPower;
 		float ManaPower;
 		int MinDamage;
@@ -208,6 +209,7 @@ class _Character {
 		int HitChance;
 		int DropRate;
 		int AllSkills;
+		int SummonLimit;
 		std::unordered_map<uint32_t, int> Resistances;
 
 		// Status effects

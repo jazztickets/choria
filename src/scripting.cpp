@@ -453,6 +453,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushlightuserdata(LuaState, Object->Monster->Owner);
 	lua_setfield(LuaState, -2, "Owner");
 
+	lua_pushinteger(LuaState, Object->Character->SummonLimit);
+	lua_setfield(LuaState, -2, "SummonLimit");
+
 	lua_pushinteger(LuaState, Object->Fighter->Corpse);
 	lua_setfield(LuaState, -2, "Corpse");
 
@@ -494,6 +497,9 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushnumber(LuaState, Object->Character->PoisonPower);
 	lua_setfield(LuaState, -2, "PoisonPower");
+
+	lua_pushnumber(LuaState, Object->Character->PetPower);
+	lua_setfield(LuaState, -2, "PetPower");
 
 	lua_pushnumber(LuaState, Object->Character->HealPower);
 	lua_setfield(LuaState, -2, "HealPower");
@@ -787,6 +793,11 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 	// Get ID
 	lua_getfield(LuaState, -1, "ID");
 	Summon.ID = (uint32_t)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get ID
+	lua_getfield(LuaState, -1, "SpellID");
+	Summon.SpellID = (uint32_t)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	// Get Health

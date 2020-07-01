@@ -93,11 +93,13 @@ enum class StatType : int {
 	LIGHTNINGPOWER,
 	BLEEDPOWER,
 	POISONPOWER,
+	PETPOWER,
 	HEALPOWER,
 	MANAPOWER,
 	RESPEC,
 	RESURRECT,
 	CORPSE,
+	SUMMONLIMIT,
 	COUNT,
 };
 
@@ -164,11 +166,13 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "LightningPower",         { StatType::LIGHTNINGPOWER         , StatValueType::FLOAT   } },
 	{ "BleedPower",             { StatType::BLEEDPOWER             , StatValueType::FLOAT   } },
 	{ "PoisonPower",            { StatType::POISONPOWER            , StatValueType::FLOAT   } },
+	{ "PetPower",               { StatType::PETPOWER               , StatValueType::FLOAT   } },
 	{ "HealPower",              { StatType::HEALPOWER              , StatValueType::FLOAT   } },
 	{ "ManaPower",              { StatType::MANAPOWER              , StatValueType::FLOAT   } },
 	{ "Respec",                 { StatType::RESPEC                 , StatValueType::BOOLEAN } },
 	{ "Resurrect",              { StatType::RESURRECT              , StatValueType::INTEGER } },
 	{ "Corpse",                 { StatType::CORPSE                 , StatValueType::INTEGER } },
+	{ "SummonLimit",            { StatType::SUMMONLIMIT            , StatValueType::INTEGER } },
 };
 
 union _Value {

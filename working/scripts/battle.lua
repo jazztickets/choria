@@ -133,6 +133,59 @@ Base_Spell = {
 	end
 }
 
+
+-- Base Summon Spell Skill --
+Base_SummonSpell = {
+	ManaCostBase = 0,
+	CostPerLevel = 0,
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetCost = function(self, Level)
+		return math.max(self.ManaCostBase + Level * self.CostPerLevel, 0)
+	end,
+
+	ApplyCost = function(self, Source, Level, Result)
+		Result.Source.Mana = -self:GetCost(Level)
+
+		return Result
+	end,
+
+	CanUse = function(self, Level, Source, Target)
+		if Source.Mana >= self:GetCost(Level) then
+			return true
+		end
+
+		return false
+	end,
+
+	GetHealth = function(self, Source, Level)
+		return math.floor((self.BaseHealth + (Level - 1) * self.HealthPerLevel) * Source.PetPower)
+	end,
+
+	GetMana = function(self, Source, Level)
+		return math.floor((self.BaseMana + (Level - 1) * self.ManaPerLevel) * Source.PetPower)
+	end,
+
+	GetArmor = function(self, Source, Level)
+		return math.floor((self.BaseArmor + (Level - 1) * self.ArmorPerLevel) * Source.PetPower)
+	end,
+
+	GetLimit = function(self, Source, Level)
+		return math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit)
+	end,
+
+	GetDamage = function(self, Source, Level)
+		AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
+		return math.floor((self.BaseMinDamage + AddedDamage) * Source.PetPower), math.floor((self.BaseMaxDamage + AddedDamage) * Source.PetPower)
+	end
+}
+
 -- Base Buff --
 Base_Buff = {
 

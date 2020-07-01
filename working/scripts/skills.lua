@@ -923,6 +923,33 @@ function Skill_HealMastery.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Pet Mastery --
+
+Skill_PetMastery = {}
+Skill_PetMastery.Power = 50
+Skill_PetMastery.PowerPerLevel = 5
+Skill_PetMastery.SummonLimit = 1
+Skill_PetMastery.SummonLimitPerLevel = 0.25
+
+function Skill_PetMastery.GetPower(self, Level)
+	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
+end
+
+function Skill_PetMastery.GetSummonLimit(self, Level)
+	return math.floor(self.SummonLimit + self.SummonLimitPerLevel * (Level - 1))
+end
+
+function Skill_PetMastery.GetInfo(self, Source, Item)
+	return "Increase pet stats by [c green]" .. self:GetPower(Item.Level) .. "%\nIncrease summon limit by [c green]" .. self:GetSummonLimit(Item.Level)
+end
+
+function Skill_PetMastery.Stats(self, Level, Object, Change)
+	Change.PetPower = self:GetPower(Level) / 100.0
+	Change.SummonLimit = self:GetSummonLimit(Level)
+
+	return Change
+end
+
 -- Flee --
 
 Skill_Flee = {}
@@ -1135,7 +1162,7 @@ end
 
 -- Demonic Conjuring --
 
-Skill_DemonicConjuring = Base_Spell:New()
+Skill_DemonicConjuring = Base_SummonSpell:New()
 Skill_DemonicConjuring.CostPerLevel = 10
 Skill_DemonicConjuring.ManaCostBase = 20 - Skill_DemonicConjuring.CostPerLevel
 Skill_DemonicConjuring.BaseHealth = 100
@@ -1146,42 +1173,26 @@ Skill_DemonicConjuring.HealthPerLevel = 40
 Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 1
 Skill_DemonicConjuring.Limit = 1
-Skill_DemonicConjuring.LimitPerLevel = 0.2
+Skill_DemonicConjuring.LimitPerLevel = 0.1
 Skill_DemonicConjuring.Monster = Monsters[23]
-
-function Skill_DemonicConjuring.GetHealth(self, Level)
-	return math.floor(self.BaseHealth + (Level - 1) * self.HealthPerLevel)
-end
-
-function Skill_DemonicConjuring.GetArmor(self, Level)
-	return math.floor(self.BaseArmor + (Level - 1) * self.ArmorPerLevel)
-end
-
-function Skill_DemonicConjuring.GetLimit(self, Level)
-	return math.floor(self.Limit + (Level) * self.LimitPerLevel)
-end
-
-function Skill_DemonicConjuring.GetDamage(self, Source, Level)
-	AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
-	return self.BaseMinDamage + AddedDamage, self.BaseMaxDamage + AddedDamage
-end
 
 function Skill_DemonicConjuring.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
 
-	return "Summon a demon to fight for you that has [c green]" .. self:GetHealth(Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] fire damage\nCan summon a maximum of [c green]" .. self:GetLimit(Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon a demon to fight for you that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] fire damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
 	Result.Summon = {}
+	Result.Summon.SpellID = self.Item.ID
 	Result.Summon.ID = self.Monster.ID
-	Result.Summon.Health = self:GetHealth(Level)
+	Result.Summon.Health = self:GetHealth(Source, Level)
 	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
-	Result.Summon.Armor = self:GetArmor(Level)
+	Result.Summon.Armor = self:GetArmor(Source, Level)
 
 	-- Limit monster summons to 1
 	if Source.MonsterID == 0 then
-		Result.Summon.Limit = self:GetLimit(Level)
+		Result.Summon.Limit = self:GetLimit(Source, Level)
 	else
 		Result.Summon.Limit = 1
 	end
@@ -1189,37 +1200,33 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	return Result
 end
 
+function Skill_DemonicConjuring.PlaySound(self, Level)
+	Audio.Play("summon0.ogg")
+end
+
 -- Raise Dead --
 
-Skill_RaiseDead = Base_Spell:New()
+Skill_RaiseDead = Base_SummonSpell:New()
 Skill_RaiseDead.CostPerLevel = 5
 Skill_RaiseDead.ManaCostBase = 10 - Skill_RaiseDead.CostPerLevel
 Skill_RaiseDead.BaseHealth = 50
+Skill_RaiseDead.BaseMana = 100
 Skill_RaiseDead.BaseMinDamage = 10
 Skill_RaiseDead.BaseMaxDamage = 20
-Skill_RaiseDead.BaseArmor = 0
+Skill_RaiseDead.BaseArmor = 1
 Skill_RaiseDead.HealthPerLevel = 30
+Skill_RaiseDead.ManaPerLevel = 25
 Skill_RaiseDead.DamagePerLevel = 8
-Skill_RaiseDead.ArmorPerLevel = 0
-Skill_RaiseDead.Limit = 3
+Skill_RaiseDead.ArmorPerLevel = 0.25
+Skill_RaiseDead.SpecialChance = 25
+Skill_RaiseDead.SpecialPerLevel = 1
+Skill_RaiseDead.Limit = 2
 Skill_RaiseDead.LimitPerLevel = 0.2
 Skill_RaiseDead.Monster = Monsters[20]
+Skill_RaiseDead.SpecialMonster = Monsters[21]
 
-function Skill_RaiseDead.GetHealth(self, Level)
-	return math.floor(self.BaseHealth + (Level - 1) * self.HealthPerLevel)
-end
-
-function Skill_RaiseDead.GetArmor(self, Level)
-	return math.floor(self.BaseArmor + (Level - 1) * self.ArmorPerLevel)
-end
-
-function Skill_RaiseDead.GetLimit(self, Level)
-	return math.floor(self.Limit + (Level) * self.LimitPerLevel)
-end
-
-function Skill_RaiseDead.GetDamage(self, Source, Level)
-	AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
-	return self.BaseMinDamage + AddedDamage, self.BaseMaxDamage + AddedDamage
+function Skill_RaiseDead.GetSpecialChance(self, Source, Level)
+	return math.floor(self.SpecialChance + (Level - 1) * self.SpecialPerLevel)
 end
 
 function Skill_RaiseDead.CanTarget(self, Source, Target)
@@ -1227,22 +1234,31 @@ function Skill_RaiseDead.CanTarget(self, Source, Target)
 end
 
 function Skill_RaiseDead.CanUse(self, Level, Source, Target)
+	if Source.Mana < self:GetCost(Level) then
+		return false
+	end
+
 	return self:CanTarget(Source, Target)
 end
 
 function Skill_RaiseDead.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
 
-	return "Raise a skeleton from the dead that has [c green]" .. self:GetHealth(Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\nCan summon a maximum of [c green]" .. self:GetLimit(Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Raise a skeleton from the dead that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Source, Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 	Result.Summon = {}
+	Result.Summon.SpellID = self.Item.ID
 	Result.Summon.ID = self.Monster.ID
-	Result.Summon.Health = self:GetHealth(Level)
+	Result.Summon.Health = self:GetHealth(Source, Level)
 	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
-	Result.Summon.Armor = self:GetArmor(Level)
-	Result.Summon.Limit = self:GetLimit(Level)
+	Result.Summon.Armor = self:GetArmor(Source, Level)
+	Result.Summon.Limit = self:GetLimit(Source, Level)
+	if Random.GetInt(1, 100) <= self:GetSpecialChance(Source, Level) then
+		Result.Summon.ID = self.SpecialMonster.ID
+		Result.Summon.Mana = self:GetMana(Source, Level)
+	end
 
 	Result.Target.Corpse = -1
 

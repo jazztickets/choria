@@ -89,6 +89,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(Player->Character->Vendor)
 		Size.y += LargeSpacingY;
 
+	// Remove extra size
+	if(IsSkill() && Tooltip.Window != _HUD::WINDOW_SKILLS)
+		Size.y -= INVENTORY_TOOLTIP_HEIGHT_EXTRA;
+
 	// Position window
 	glm::vec2 WindowOffset = Position;
 
@@ -124,7 +128,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	// Draw target text
 	if(TargetID != TargetType::NONE) {
 		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
-		std::string InfoText = "Target " + Player->Stats->TargetTypes.at((uint32_t)TargetID);
+		std::string DeadText = TargetAlive ? "" : "Dead ";
+		std::string InfoText = "Target " + DeadText + Player->Stats->TargetTypes.at((uint32_t)TargetID);
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += LargeSpacingY;
 	}

@@ -37,6 +37,7 @@ class _Monster {
 		// Attributes
 		_Object *Owner;
 		uint32_t DatabaseID;
+		uint32_t SpellID;
 		int ExperienceGiven;
 		int GoldGiven;
 		std::string AI;

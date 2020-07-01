@@ -207,6 +207,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Pet Power
+	if(HUD->Player->Character->PetPower != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->PetPower * 100) << "%";
+		Font->DrawText("Pet Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Drop rate
 	if(HUD->Player->Character->DropRate != 0) {
 		Buffer << HUD->Player->Character->DropRate;
