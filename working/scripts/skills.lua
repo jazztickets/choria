@@ -768,12 +768,10 @@ Skill_EnergyField.BasePercent = 20
 Skill_EnergyField.PercentPerLevel = 5
 
 function Skill_EnergyField.GetReduction(self, Level)
-
-	return math.min(Skill_EnergyField.BasePercent + self.PercentPerLevel * math.floor(Level / 1), 100)
+	return math.min(Skill_EnergyField.BasePercent + self.PercentPerLevel * math.floor(Level / 1), 95)
 end
 
 function Skill_EnergyField.GetInfo(self, Source, Item)
-
 	return "Convert [c green]" .. self:GetReduction(Item.Level) .. "%[c white] of damage taken to mana drain"
 end
 
@@ -1410,13 +1408,13 @@ end
 -- Portal --
 
 Skill_Portal = Base_Spell:New()
-Skill_Portal.Duration = 11
-Skill_Portal.DurationPerLevel = -1
+Skill_Portal.Duration = 6
+Skill_Portal.DurationPerLevel = -0.5
 Skill_Portal.CostPerLevel = -10
 Skill_Portal.ManaCostBase = 200 - Skill_Portal.CostPerLevel
 
 function Skill_Portal.GetDuration(self, Level)
-	return math.max(self.Duration + self.DurationPerLevel * Level, 0.5)
+	return math.max(self.Duration + self.DurationPerLevel * (Level - 1), 0.5)
 end
 
 function Skill_Portal.GetInfo(self, Source, Item)
@@ -1563,4 +1561,53 @@ end
 
 function Skill_IceNova.PlaySound(self, Level)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Chain Lightning --
+
+Skill_ChainLightning = Base_Spell:New()
+Skill_ChainLightning.DamageBase = 100
+Skill_ChainLightning.DamagePerLevel = 20
+Skill_ChainLightning.CostPerLevel = 8
+Skill_ChainLightning.ManaCostBase = 90 - Skill_ChainLightning.CostPerLevel
+Skill_ChainLightning.BaseTargets = 3
+Skill_ChainLightning.TargetsPerLevel = 0.2
+Skill_ChainLightning.Duration = 2
+Skill_ChainLightning.DurationPerLevel = 0.1
+Skill_ChainLightning.Chance = 35
+Skill_ChainLightning.ChancePerLevel = 0
+
+function Skill_ChainLightning.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+end
+
+function Skill_ChainLightning.GetDamagePower(self, Source, Level)
+	return Source.LightningPower
+end
+
+function Skill_ChainLightning.GetDuration(self, Level)
+	return self.Duration + self.DurationPerLevel * (Level - 1)
+end
+
+function Skill_ChainLightning.GetChance(self, Level)
+	return math.floor(self.Chance + self.ChancePerLevel * (Level - 1))
+end
+
+function Skill_ChainLightning.GetInfo(self, Source, Item)
+	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_ChainLightning.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= self:GetChance(Level) then
+		Result.Target.Buff = Buff_Stunned.Pointer
+		Result.Target.BuffLevel = 1
+		Result.Target.BuffDuration = self:GetDuration(Level)
+		return true
+	end
+
+	return false
+end
+
+function Skill_ChainLightning.PlaySound(self, Level)
+	Audio.Play("shock0.ogg")
 end
