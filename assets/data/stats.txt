@@ -209,6 +209,7 @@ INSERT INTO script VALUES(5,'Script_Boss',17,0.0);
 INSERT INTO script VALUES(6,'Script_Boss',20,0.0);
 INSERT INTO script VALUES(7,'Script_Boss',23,0.0);
 INSERT INTO script VALUES(8,'Script_Boss',33,0.0);
+INSERT INTO script VALUES(9,'Script_Boss',38,0.0);
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -384,6 +385,7 @@ INSERT INTO vendor VALUES(13,'lighthouse_skills',1.0,0.5);
 INSERT INTO vendor VALUES(14,'dungeon_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(16,'wym_gear',1.0,0.5);
+INSERT INTO vendor VALUES(17,'graveyard_skills',1.0,0.5500000000000000444);
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,
@@ -450,7 +452,6 @@ INSERT INTO vendoritem VALUES(75,9,150);
 INSERT INTO vendoritem VALUES(76,9,190);
 INSERT INTO vendoritem VALUES(77,9,154);
 INSERT INTO vendoritem VALUES(78,9,141);
-INSERT INTO vendoritem VALUES(79,14,17);
 INSERT INTO vendoritem VALUES(80,8,4);
 INSERT INTO vendoritem VALUES(81,4,204);
 INSERT INTO vendoritem VALUES(82,4,195);
@@ -478,8 +479,6 @@ INSERT INTO vendoritem VALUES(103,8,20);
 INSERT INTO vendoritem VALUES(104,5,191);
 INSERT INTO vendoritem VALUES(105,3,212);
 INSERT INTO vendoritem VALUES(106,9,213);
-INSERT INTO vendoritem VALUES(107,14,21);
-INSERT INTO vendoritem VALUES(108,14,22);
 INSERT INTO vendoritem VALUES(109,11,127);
 INSERT INTO vendoritem VALUES(110,11,128);
 INSERT INTO vendoritem VALUES(111,11,155);
@@ -521,6 +520,9 @@ INSERT INTO vendoritem VALUES(146,15,248);
 INSERT INTO vendoritem VALUES(147,15,191);
 INSERT INTO vendoritem VALUES(148,13,37);
 INSERT INTO vendoritem VALUES(149,6,38);
+INSERT INTO vendoritem VALUES(150,17,17);
+INSERT INTO vendoritem VALUES(151,17,39);
+INSERT INTO vendoritem VALUES(152,17,22);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -671,6 +673,7 @@ INSERT INTO zone VALUES(34,'hornet_aquaslime',0,0.0,2,3);
 INSERT INTO zone VALUES(35,'drowned',0,0.0,2,4);
 INSERT INTO zone VALUES(36,'skeletonmage',0,0.0,1,1);
 INSERT INTO zone VALUES(37,'ghost_thief',0,0.0,3,6);
+INSERT INTO zone VALUES(38,'grave_boss',1,14400.0,1,1);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -775,6 +778,8 @@ INSERT INTO zonedata VALUES(94,34,29,2,0);
 INSERT INTO zonedata VALUES(95,36,30,1,1);
 INSERT INTO zonedata VALUES(96,37,11,20,0);
 INSERT INTO zonedata VALUES(97,37,25,1,1);
+INSERT INTO zonedata VALUES(98,38,21,1,0);
+INSERT INTO zonedata VALUES(99,38,11,3,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -853,7 +858,7 @@ INSERT INTO map VALUES(14,'maps/choria_slimecave1.map.gz','textures/map/atlas0.p
 INSERT INTO map VALUES(15,'maps/choria_slimecave2.map.gz','textures/map/atlas0.png','',0.0,0.050000000000000002775,0.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(16,'maps/choria_ruins1.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(17,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(18,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(18,'maps/choria_graveyard.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(19,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(20,'maps/fem.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(21,'maps/fem_house_top.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,0,'',0.0,0.0,0.0);
@@ -1569,6 +1574,7 @@ INSERT INTO item VALUES(246,5,6,0,0,0,0,'Venom Blade','textures/items/venom_blad
 INSERT INTO item VALUES(247,10,0,1,3,0,0,'Glowing Salve','textures/items/glowing_salve.png','Item_HealingSalve',0,250,1,600,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(248,10,0,1,3,0,0,'Glowing Cider','textures/items/glowing_cider.png','Item_ManaCider',0,375,1,200,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key1.png','',0,5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -1576,6 +1582,7 @@ CREATE TABLE IF NOT EXISTS "zonedrops" (
 "count" INTEGER DEFAULT(1)
 );
 INSERT INTO zonedrops VALUES(1,33,99,1);
+INSERT INTO zonedrops VALUES(2,38,250,1);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
