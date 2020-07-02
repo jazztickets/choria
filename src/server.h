@@ -55,9 +55,17 @@ struct _BattleEvent {
 };
 
 struct _RebirthEvent {
+	static int GetSaveCount(int Rebirths) { return 1 + Rebirths / 5; }
 	_Object *Object;
 	int Type;
 	int Value;
+};
+
+struct _HighestSkill {
+	_HighestSkill(uint32_t ID, int Level) : ID(ID), Level(Level) { }
+	bool operator<(const _HighestSkill &Skill) const { return Skill.Level < Level; }
+	uint32_t ID;
+	int Level;
 };
 
 // Server class

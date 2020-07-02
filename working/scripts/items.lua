@@ -493,15 +493,14 @@ end
 
 -- Rebirth --
 function RebirthText(UpgradeText, Skills, Items)
-
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, equipment, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. "\n\nYou will keep your starting skills, plus [c green]" .. Skills .. "[c white] of your highest skills and [c green]" .. Items .. "[c white] of your items in your trade stash\n[c yellow]All unlocks are kept"
 end
 
 Item_RebirthStrength = { }
 
 function Item_RebirthStrength.GetInfo(self, Source, Item)
-	Skills = 1
-	Items = 1
+	Skills = Source.RebirthSaveCount
+	Items = Source.RebirthSaveCount
 
 	return RebirthText("[c green]10%[c white] damage bonus", Skills, Items)
 end

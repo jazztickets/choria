@@ -929,6 +929,7 @@ void _PlayState::HandleObjectStats(ae::_Buffer &Data) {
 
 	Player->UnserializeStats(Data);
 
+	HUD->Reset();
 	HUD->UpdateLabels();
 	HUD->SetActionBarSize(Player->Character->ActionBar.size());
 }
@@ -943,6 +944,7 @@ void _PlayState::HandleClock(ae::_Buffer &Data) {
 
 // Called when the player changes maps
 void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
+	HUD->Reset();
 	Menu.InitPlay();
 
 	// Load map

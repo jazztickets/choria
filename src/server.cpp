@@ -2046,6 +2046,10 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 
 	const _Object *Build = BuildIterator->second;
 
+	// Save old info
+	_Bag OldTradeBag = Player->Inventory->GetBag(BagType::TRADE);
+	std::unordered_map<uint32_t, int> OldSkills = Character->Skills;
+
 	// Reset character
 	int OldActionBarSize = Character->ActionBar.size();
 	Character->ActionBar = Build->Character->ActionBar;
@@ -2079,6 +2083,34 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 		break;
 	}
 
+	// Keep items from trade bag
+	int ItemCount = _RebirthEvent::GetSaveCount(Character->Rebirths + 1);
+	for(const auto &Slot : OldTradeBag.Slots) {
+		if(ItemCount && Slot.Item) {
+			Player->Inventory->AddItem(Slot.Item, Slot.Upgrades, Slot.Count);
+			ItemCount--;
+			if(ItemCount <= 0)
+				break;
+		}
+	}
+
+	// Get highest skills
+	std::list<_HighestSkill> Skills;
+	for(const auto &Skill : OldSkills) {
+		if(Skill.second > 0)
+			Skills.push_back(_HighestSkill(Skill.first, Skill.second));
+	}
+	Skills.sort();
+
+	// Learn old skills
+	int SkillCount = _RebirthEvent::GetSaveCount(Character->Rebirths + 1);
+	for(const auto &Skill : Skills) {
+		Character->Skills[Skill.ID] = 0;
+
+		SkillCount--;
+		if(SkillCount <= 0)
+			break;
+	}
 	Character->CalculateStats();
 
 	// Spawn player
