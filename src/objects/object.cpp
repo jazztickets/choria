@@ -326,7 +326,7 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 
 	// Set invisible alpha
 	float Alpha = 1.0f;
-	if(Character->Invisible > 0)
+	if(Character->Invisible)
 		Alpha = PLAYER_INVIS_ALPHA;
 
 	// Draw model
@@ -358,7 +358,7 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	}
 
 	// Draw name
-	if(Character->Invisible != 1 || SameParty)
+	if(!Character->Invisible || SameParty)
 		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 }
 
@@ -386,11 +386,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2((Character->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2), 0) * ae::_Element::GetUIScale();
 
 	// Name
-	Buffer << Name;
-	if(ShowLevel && !Monster->DatabaseID)
-		Buffer << " (" << Character->Level << ")" << std::endl;
-	ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
-	Buffer.str("");
+	if(!Character->Invisible) {
+		Buffer << Name;
+		if(ShowLevel && !Monster->DatabaseID)
+			Buffer << " (" << Character->Level << ")" << std::endl;
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
+		Buffer.str("");
+	}
 
 	// Portrait
 	if(Character->Portrait) {
@@ -495,8 +497,9 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 			// Make icon flash
 			glm::vec4 Color(glm::vec4(1.0f));
-			if(Time - (int)Time < 0.5)
-				Color.a = 0.5f;
+			double FastTime = Time * 2;
+			if(FastTime - (int)FastTime < 0.5)
+				Color.a = 0.75f;
 
 			// Draw background icon
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
@@ -1121,7 +1124,7 @@ int _Object::Move() {
 	// Move player
 	if(Map->CanMoveTo(Position + Direction, this)) {
 		Position += Direction;
-		if(GetTile()->Zone > 0 && Character->Invisible != 1)
+		if(GetTile()->Zone > 0 && !Character->Invisible)
 			Character->NextBattle--;
 
 		return InputState;
