@@ -20,6 +20,7 @@
 // Libraries
 #include <constants.h>
 #include <vector>
+#include <list>
 #include <string>
 #include <cstdint>
 
@@ -134,6 +135,7 @@ class _Inventory {
 		bool AddItem(const _Item *Item, int Upgrades, int Count, _Slot TargetSlot=_Slot());
 		void MoveTradeToInventory();
 		bool SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count);
+		int Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::list<_Slot> &SlotsUpdated);
 
 		// Traders
 		_Slot GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots);
