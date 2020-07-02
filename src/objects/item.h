@@ -127,6 +127,7 @@ class _Item {
 		int DropRate;
 		int AllSkills;
 		int Chance;
+		int SpellProc;
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;

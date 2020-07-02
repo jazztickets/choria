@@ -1,25 +1,25 @@
 -- Functions --
 
-function Proc_AddBuff(Result, Buff, Level, Duration)
+function Proc_AddBuff(Change, Buff, Level, Duration)
 
 	-- Check for existing buff
-	if Result.Target.Buff == nil then
-		Result.Target.Buff = Buff
-		Result.Target.BuffLevel = Level
-		Result.Target.BuffDuration = Duration
+	if Change.Buff == nil then
+		Change.Buff = Buff
+		Change.BuffLevel = Level
+		Change.BuffDuration = Duration
 		return
 	end
 
 	-- Buff exists, but is different
-	if Result.Target.Buff ~= Buff then
+	if Change.Buff ~= Buff then
 		return
 	end
 
 	-- Take better level or duration
-	if Level > Result.Target.BuffLevel then
-		Result.Target.BuffLevel = Level
-	elseif Level == Result.Target.BuffLevel and Duration > Result.Target.BuffDuration then
-		Result.Target.BuffDuration = Duration
+	if Level > Change.BuffLevel then
+		Change.BuffLevel = Level
+	elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
+		Change.BuffDuration = Duration
 	end
 end
 
@@ -33,7 +33,7 @@ end
 
 function Proc_Stun.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result, Buff_Stunned.Pointer, 1, Duration)
+		Proc_AddBuff(Result.Target, Buff_Stunned.Pointer, 1, Duration)
 
 		return true
 	end
@@ -51,7 +51,7 @@ end
 
 function Proc_Poison.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result, Buff_Poisoned.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Poisoned.Pointer, Level, Duration)
 
 		return true
 	end
@@ -69,7 +69,7 @@ end
 
 function Proc_Slow.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result, Buff_Slowed.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Slowed.Pointer, Level, Duration)
 
 		return true
 	end
@@ -87,7 +87,7 @@ end
 
 function Proc_Bleed.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result, Buff_Bleeding.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Bleeding.Pointer, Level, Duration)
 
 		return true
 	end
@@ -105,7 +105,7 @@ end
 
 function Proc_Haste.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance and Result.Source.Buff == nil then
-		Proc_AddBuff(Result, Buff_Hasted.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Source, Buff_Hasted.Pointer, Level, Duration)
 
 		return true
 	end
@@ -123,7 +123,7 @@ end
 
 function Proc_Harden.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance and Result.Source.Buff == nil then
-		Proc_AddBuff(Result, Buff_Hardened.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Source, Buff_Hardened.Pointer, Level, Duration)
 
 		return true
 	end
@@ -141,7 +141,7 @@ end
 
 function Proc_Blind.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance and Result.Source.Buff == nil then
-		Proc_AddBuff(Result, Buff_Blinded.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Blinded.Pointer, Level, Duration)
 
 		return true
 	end
@@ -159,9 +159,49 @@ end
 
 function Proc_Empowered.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance and Result.Source.Buff == nil then
-		Proc_AddBuff(Result, Buff_Empowered.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Source, Buff_Empowered.Pointer, Level, Duration)
 
 		return true
+	end
+
+	return false
+end
+
+-- Health --
+
+Proc_Health = { }
+
+function Proc_Health.GetInfo(self, Source, Item)
+	return "[c green]" .. Item.Chance .. "%[c white] chance to restore [c green]" .. Item.Level .. "[c white] HP"
+end
+
+function Proc_Health.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance then
+		if Result.Source.Health == nil then
+			Result.Source.Health = Level
+		else
+			Result.Source.Health = Result.Source.Health + Level
+		end
+	end
+
+	return false
+end
+
+-- Mana --
+
+Proc_Mana = { }
+
+function Proc_Mana.GetInfo(self, Source, Item)
+	return "[c green]" .. Item.Chance .. "%[c white] chance to restore [c green]" .. Item.Level .. "[c white] MP"
+end
+
+function Proc_Mana.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance then
+		if Result.Source.Mana == nil then
+			Result.Source.Mana = Level
+		else
+			Result.Source.Mana = Result.Source.Mana + Level
+		end
 	end
 
 	return false

@@ -25,27 +25,6 @@ Base_Attack = {
 		return self.Item.DamageType
 	end,
 
-	WeaponProc = function(self, Source, Target, Result)
-
-		-- Check for main weapon
-		Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-		if Weapon == nil or Weapon.Script == nil then
-			return
-		end
-
-		-- Proc main weapon
-		Weapon.Script:Proc(Random.GetInt(1, 100), Weapon.Chance, Weapon.Level, Weapon.Duration, Source, Target, Result)
-
-		-- Check for off-hand
-		WeaponOffHand = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-		if WeaponOffHand == nil or WeaponOffHand.Script == nil then
-			return
-		end
-
-		-- Proc off-hand weapon
-		WeaponOffHand.Script:Proc(Random.GetInt(1, 100), WeaponOffHand.Chance, WeaponOffHand.Level, WeaponOffHand.Duration, Source, Target, Result)
-	end,
-
 	GenerateDamage = function(self, Level, Source)
 		Damage = Source.GenerateDamage()
 
@@ -62,7 +41,7 @@ Base_Attack = {
 
 		if Hit then
 			self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
-			self:WeaponProc(Source, Target, Result)
+			WeaponProc(Source, Target, Result, false)
 		end
 
 		return Result
@@ -128,6 +107,7 @@ Base_Spell = {
 		Result.Target.Mana = Update.Mana
 
 		self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
+		WeaponProc(Source, Target, Result, true)
 
 		return Result
 	end
@@ -297,6 +277,32 @@ function ResolveManaReductionRatio(Target, Damage)
 	end
 
 	return Update
+end
+
+-- Roll for proccing weapons
+function WeaponProc(Source, Target, Result, IsSpell)
+
+	-- Check for main weapon
+	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if Weapon == nil or Weapon.Script == nil then
+		return
+	end
+
+	if IsSpell == true and Weapon.SpellProc == 0 then
+		return
+	end
+
+	-- Proc main weapon
+	Weapon.Script:Proc(Random.GetInt(1, 100), Weapon.Chance, Weapon.Level, Weapon.Duration, Source, Target, Result)
+
+	-- Check for off-hand
+	WeaponOffHand = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if WeaponOffHand == nil or WeaponOffHand.Script == nil or WeaponOffHand.SpellProc == 0 then
+		return
+	end
+
+	-- Proc off-hand weapon
+	WeaponOffHand.Script:Proc(Random.GetInt(1, 100), WeaponOffHand.Chance, WeaponOffHand.Level, WeaponOffHand.Duration, Source, Target, Result)
 end
 
 -- Storage for battle instance data

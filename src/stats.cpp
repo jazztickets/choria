@@ -263,6 +263,7 @@ void _Stats::LoadItems() {
 		Item->DropRate = Database->GetInt<int>("droprate");
 		Item->AllSkills = Database->GetInt<int>("allskills");
 		Item->Chance = Database->GetInt<int>("chance");
+		Item->SpellProc = Database->GetInt<int>("spellproc");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
 		Item->Resistance = Database->GetInt<int>("res");
 		Item->Tradable = Database->GetInt<int>("tradable");

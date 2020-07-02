@@ -486,6 +486,7 @@ function Skill_Rejuvenation.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Healing.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -512,6 +513,7 @@ end
 
 function Skill_Heal.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Health = self:GetHeal(Source, Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -548,6 +550,7 @@ end
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Health = self:GetHeal(Source, Level)
 	Result.Target.Corpse = 1
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -670,6 +673,7 @@ function Skill_Ignite.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Burning.Pointer
 	Result.Target.BuffLevel = self:GetBurnLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1194,6 +1198,7 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	else
 		Result.Summon.Limit = 1
 	end
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1259,6 +1264,7 @@ function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 	end
 
 	Result.Target.Corpse = -1
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1306,6 +1312,7 @@ function Skill_Enfeeble.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Weak.Pointer
 	Result.Target.BuffLevel = self:GetPercent(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1401,6 +1408,7 @@ function Skill_Light.Use(self, Level, Duration, Source, Target, Result)
 		Result.Target.BuffLevel = 30
 	end
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1408,8 +1416,8 @@ end
 -- Portal --
 
 Skill_Portal = Base_Spell:New()
-Skill_Portal.Duration = 6
-Skill_Portal.DurationPerLevel = -0.5
+Skill_Portal.Duration = 3
+Skill_Portal.DurationPerLevel = 0
 Skill_Portal.CostPerLevel = -10
 Skill_Portal.ManaCostBase = 200 - Skill_Portal.CostPerLevel
 
@@ -1423,6 +1431,7 @@ end
 
 function Skill_Portal.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Teleport = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1515,6 +1524,7 @@ function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Shielded.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1676,6 +1686,7 @@ function Skill_Rupture.Use(self, Level, Duration, Source, Target, Result)
 		Result.Target.BuffLevel = self:GetLevel(Source, Level)
 		Result.Target.BuffDuration = self:GetDuration(Level)
 	end
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
@@ -1728,6 +1739,7 @@ function Skill_Sanctuary.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Sanctuary.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
 
 	return Result
 end
