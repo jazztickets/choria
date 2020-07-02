@@ -284,11 +284,7 @@ function WeaponProc(Source, Target, Result, IsSpell)
 
 	-- Check for main weapon
 	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-	if Weapon == nil or Weapon.Script == nil then
-		return
-	end
-
-	if IsSpell == true and Weapon.SpellProc == 0 then
+	if Weapon == nil or Weapon.Script == nil or (IsSpell == true and Weapon.SpellProc == 0) then
 		return
 	end
 
@@ -297,7 +293,7 @@ function WeaponProc(Source, Target, Result, IsSpell)
 
 	-- Check for off-hand
 	WeaponOffHand = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-	if WeaponOffHand == nil or WeaponOffHand.Script == nil or WeaponOffHand.SpellProc == 0 then
+	if WeaponOffHand == nil or WeaponOffHand.Script == nil or (IsSpell == true and WeaponOffHand.SpellProc == 0) then
 		return
 	end
 
