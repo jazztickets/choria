@@ -562,6 +562,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["nextbattle"] = Character->NextBattle;
 	StatsNode["rebirths"] = Character->Rebirths;
 	StatsNode["seed"] = Character->Seed;
+	StatsNode["rebirth_damage"] = Character->RebirthDamage;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -680,6 +681,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->NextBattle = StatsNode["nextbattle"].asInt();
 	Character->Rebirths = StatsNode["rebirths"].asInt();
 	Character->Seed = StatsNode["seed"].asUInt();
+	Character->RebirthDamage = StatsNode["rebirth_damage"].asInt();
 
 	if(!Character->Seed)
 		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
@@ -794,6 +796,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->GamesPlayed);
 	Data.Write<int>(Character->Bounty);
 	Data.Write<int>(Character->Rebirths);
+	Data.Write<int>(Character->RebirthDamage);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -887,6 +890,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->GamesPlayed = Data.Read<int>();
 	Character->Bounty = Data.Read<int>();
 	Character->Rebirths = Data.Read<int>();
+	Character->RebirthDamage = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 

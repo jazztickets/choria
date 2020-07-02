@@ -2080,6 +2080,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	// Give bonus
 	switch(RebirthEvent.Type) {
 		case 1:
+			Character->RebirthDamage += RebirthEvent.Value;
 		break;
 	}
 

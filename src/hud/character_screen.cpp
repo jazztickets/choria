@@ -47,7 +47,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	glm::vec2 Spacing((int)(SpacingY * 0.5f), 0);
 	glm::vec2 DrawPosition = Element->Bounds.Start;
 	DrawPosition.x += (int)(Element->Size.x/2 + SpacingY * 0.8f);
-	DrawPosition.y += SpacingY * 2;
+	DrawPosition.y += (int)(SpacingY * 1.5f);
 	std::stringstream Buffer;
 
 	// Damage
@@ -224,9 +224,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
-
-	// Separator
-	DrawPosition.y += SpacingY;
 
 	// Resistances
 	bool HasResist = false;

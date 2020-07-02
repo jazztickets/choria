@@ -59,6 +59,8 @@ _Character::_Character(_Object *Object) :
 	GoldLost(0),
 	Rebirths(0),
 
+	RebirthDamage(0),
+
 	CalcLevelStats(true),
 	Level(0),
 	Experience(0),
@@ -319,13 +321,15 @@ void _Character::CalculateStats() {
 	MoveSpeed = BaseMoveSpeed;
 	DropRate = BaseDropRate;
 	AllSkills = BaseAllSkills;
-	PhysicalPower = 1.0f;
-	FirePower = 1.0f;
-	ColdPower = 1.0f;
-	LightningPower = 1.0f;
-	BleedPower = 1.0f;
-	PoisonPower = 1.0f;
-	PetPower = 1.0f;
+
+	float AllDamage = RebirthDamage / 100.0f;
+	PhysicalPower = 1.0f + AllDamage;
+	FirePower = 1.0f + AllDamage;
+	ColdPower = 1.0f + AllDamage;
+	LightningPower = 1.0f + AllDamage;
+	BleedPower = 1.0f + AllDamage;
+	PoisonPower = 1.0f + AllDamage;
+	PetPower = 1.0f + AllDamage;
 	HealPower = 1.0f;
 	ManaPower = 1.0f;
 	SummonLimit = 0;

@@ -151,6 +151,9 @@ class _Character {
 		int GoldLost;
 		int Rebirths;
 
+		// Rebirths
+		int RebirthDamage;
+
 		// Levels
 		bool CalcLevelStats;
 		int Level;
