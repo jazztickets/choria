@@ -1683,3 +1683,55 @@ end
 function Skill_Rupture.PlaySound(self, Level)
 	Audio.Play("gash0.ogg")
 end
+
+-- Sanctuary --
+
+Skill_Sanctuary = Base_Spell:New()
+Skill_Sanctuary.Level = 1
+Skill_Sanctuary.LevelPerLevel = 1
+Skill_Sanctuary.CostPerLevel = 20
+Skill_Sanctuary.ManaCostBase = 100 - Skill_Sanctuary.CostPerLevel
+Skill_Sanctuary.BaseTargets = 3
+Skill_Sanctuary.TargetsPerLevel = 0.2
+Skill_Sanctuary.Duration = 10
+Skill_Sanctuary.DurationPerLevel = 0
+
+function Skill_Sanctuary.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+end
+
+function Skill_Sanctuary.GetHeal(self, Source, Level)
+	return Buff_Sanctuary.Heal * self:GetLevel(Source, Level) * self:GetDuration(Level)
+end
+
+function Skill_Sanctuary.GetArmor(self, Source, Level)
+	return math.floor(Buff_Sanctuary.Armor * self:GetLevel(Source, Level))
+end
+
+function Skill_Sanctuary.GetDamageBlock(self, Source, Level)
+	return math.floor(Buff_Sanctuary.DamageBlock * self:GetLevel(Source, Level))
+end
+
+function Skill_Sanctuary.GetLevel(self, Source, Level)
+	return math.floor((self.Level + self.LevelPerLevel * (Level - 1)) * Source.HealPower)
+end
+
+function Skill_Sanctuary.GetDuration(self, Level)
+	return self.Duration + self.DurationPerLevel * (Level - 1)
+end
+
+function Skill_Sanctuary.GetInfo(self, Source, Item)
+	return "Imbue [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies with sanctuary for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, granting [c green]" .. self:GetArmor(Source, Item.Level) .. "[c white] armor, [c green]" .. self:GetDamageBlock(Source, Item.Level) .. "[c white] damage block and [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Sanctuary.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Sanctuary.Pointer
+	Result.Target.BuffLevel = self:GetLevel(Source, Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
+
+function Skill_Sanctuary.PlaySound(self, Level)
+	Audio.Play("rejuv0.ogg")
+end

@@ -68,27 +68,50 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const
 	TooltipElement->Render();
 	TooltipElement->SetActive(false);
 
-	// Set draw position to center of window
-	glm::vec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, (int)(TooltipName->Bounds.End.y + 40));
-
-	if(!Script.length())
-		return;
-
-	// Get description
+	// Get info and line count
+	std::string Token;
 	std::string Info = "";
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
-		Scripting->PushInt(Level);
-		Scripting->MethodCall(1, 1);
-		Info = Scripting->GetString(1);
-		Scripting->FinishMethodCall();
+	int Lines = 0;
+	if(Script.length()) {
+
+		// Get description
+		if(Scripting->StartMethodCall(Script, "GetInfo")) {
+			Scripting->PushInt(Level);
+			Scripting->MethodCall(1, 1);
+			Info = Scripting->GetString(1);
+			Scripting->FinishMethodCall();
+		}
+
+		// Get line count
+		Buffer << Info;
+		while(std::getline(Buffer, Token, '\n')) {
+			std::list<std::string> Strings;
+			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings, true);
+			Lines += Strings.size();
+		}
+		Buffer.clear();
+		Buffer.str("");
 	}
 
-	float SpacingY = 18;
+	// Get offset of description
+	int OffsetY = 0;
+	switch(Lines) {
+		case 1:
+			OffsetY = 50;
+		break;
+		case 2:
+			OffsetY = 42;
+		break;
+		case 3:
+			OffsetY = 32;
+		break;
+	}
 
-	Buffer << Info;
-	std::string Token;
+	glm::vec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, (int)(TooltipName->Bounds.End.y + OffsetY * ae::_Element::GetUIScale()));
 
 	// Draw description
+	float SpacingY = 26 * ae::_Element::GetUIScale();
+	Buffer << Info;
 	while(std::getline(Buffer, Token, '\n')) {
 		std::list<std::string> Strings;
 		ae::Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings, true);

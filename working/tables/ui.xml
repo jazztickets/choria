@@ -425,9 +425,9 @@
 	<element id="element_skills_tooltip" style="style_hud_item_tooltip_bg" size_x="520" size_y="350" alignment_x="0" alignment_y="0">
 		<element id="label_skills_tooltip_name" font="menu_buttons" offset_y="42" alignment_y="3"/>
 	</element>
-	<element id="element_buffs_tooltip" style="style_hud_item_tooltip_bg" size_x="420" size_y="168" alignment_x="0" alignment_y="0">
+	<element id="element_buffs_tooltip" style="style_hud_item_tooltip_bg" size_x="420" size_y="180" alignment_x="0" alignment_y="0">
 		<element id="label_buffs_tooltip_name" font="menu_buttons" offset_y="42" alignment_y="3"/>
-		<element id="label_buffs_tooltip_duration" color="gray" font="hud_small" offset_y="146" alignment_y="3"/>
+		<element id="label_buffs_tooltip_duration" color="gray" font="hud_small" offset_y="158" alignment_y="3"/>
 	</element>
 	<element id="element_party" style="style_hud_item_tooltip_bg" size_x="420" size_y="168">
 		<element id="element_textbox_party" style="style_menu_textbox" offset_y="28" size_x="350" size_y="42" clickable="true">

@@ -5,7 +5,6 @@ Buff_Bleeding.Damage = 1
 Buff_Bleeding.DamageType = DamageType["Bleed"]
 
 function Buff_Bleeding.GetInfo(self, Level)
-
 	return "Slowly bleeding for [c red]" .. self.Damage * Level .. " [c white]damage"
 end
 
@@ -26,7 +25,6 @@ end
 Buff_Healing = { Heal = 1 }
 
 function Buff_Healing.GetInfo(self, Level)
-
 	return "Slowly healing for [c green]" .. self.Heal * Level .. " [c white]HP"
 end
 
@@ -41,7 +39,6 @@ end
 Buff_Mana = { Mana = 1 }
 
 function Buff_Mana.GetInfo(self, Level)
-
 	return "Slowly regaining [c light_blue]" .. self.Mana * Level .. " [c white]MP"
 end
 
@@ -56,7 +53,6 @@ end
 Buff_Invis = {}
 
 function Buff_Invis.GetInfo(self, Level)
-
 	return "Avoiding combat"
 end
 
@@ -71,7 +67,6 @@ end
 Buff_Slowed = Base_Buff:New()
 
 function Buff_Slowed.GetInfo(self, Level)
-
 	return "Battle speed reduced by [c green]" .. self:GetChange(Level) .. "%"
 end
 
@@ -86,7 +81,6 @@ end
 Buff_Stunned = {}
 
 function Buff_Stunned.GetInfo(self, Level)
-
 	return "Unable to act"
 end
 
@@ -109,7 +103,6 @@ end
 Buff_Hasted = Base_Buff:New()
 
 function Buff_Hasted.GetInfo(self, Level)
-
 	return "Battle speed increased by [c green]" .. self:GetChange(Level) .. "%"
 end
 
@@ -124,7 +117,6 @@ end
 Buff_Fast = Base_Buff:New()
 
 function Buff_Fast.GetInfo(self, Level)
-
 	return "Move speed increased by [c green]" .. self:GetChange(Level) .. "%"
 end
 
@@ -139,7 +131,6 @@ end
 Buff_Blinded = Base_Buff:New()
 
 function Buff_Blinded.GetInfo(self, Level)
-
 	return "Hit chance reduced by [c green]" .. self:GetChange(Level) .. "%"
 end
 
@@ -154,7 +145,6 @@ end
 Buff_Mighty = Base_Buff:New()
 
 function Buff_Mighty.GetInfo(self, Level)
-
 	return "Attack damage increased by [c green]" .. Level
 end
 
@@ -170,7 +160,6 @@ end
 Buff_Hardened = Base_Buff:New()
 
 function Buff_Hardened.GetInfo(self, Level)
-
 	return "Armor increased by [c green]" .. Level
 end
 
@@ -185,7 +174,6 @@ end
 Buff_Evasion = Base_Buff:New()
 
 function Buff_Evasion.GetInfo(self, Level)
-
 	return "Evasion increased by [c green]" .. self:GetChange(Level) .. "%"
 end
 
@@ -202,7 +190,6 @@ Buff_Parry.DamageReduction = 0.5
 Buff_Parry.StaminaGain = 0.2
 
 function Buff_Parry.GetInfo(self, Level)
-
 	return "Blocking attacks"
 end
 
@@ -224,7 +211,6 @@ Buff_Poisoned.Damage = 1
 Buff_Poisoned.DamageType = DamageType["Poison"]
 
 function Buff_Poisoned.GetInfo(self, Level)
-
 	return "Healing reduced and taking [c red]" .. self.Damage * Level .. " [c white]damage"
 end
 
@@ -253,7 +239,6 @@ Buff_Burning.Damage = 1
 Buff_Burning.DamageType = DamageType["Fire"]
 
 function Buff_Burning.GetInfo(self, Level)
-
 	return "Burning for [c red]" .. self.Damage * Level .. " [c white]damage"
 end
 
@@ -274,7 +259,6 @@ end
 Buff_BleedResist = Base_Buff:New()
 
 function Buff_BleedResist.GetInfo(self, Level)
-
 	return "Bleed resist increased by [c green]" .. Level .. "%"
 end
 
@@ -290,7 +274,6 @@ end
 Buff_Weak = Base_Buff:New()
 
 function Buff_Weak.GetInfo(self, Level)
-
 	return "Attack damage reduced by [c green]" .. Level .. "%"
 end
 
@@ -305,7 +288,6 @@ end
 Buff_Light = Base_Buff:New()
 
 function Buff_Light.GetInfo(self, Level)
-
 	return "Giving off light"
 end
 
@@ -349,12 +331,35 @@ end
 Buff_Empowered = Base_Buff:New()
 
 function Buff_Empowered.GetInfo(self, Level)
-
 	return "Attack damage increased by [c green]" .. Level .. "%"
 end
 
 function Buff_Empowered.Stats(self, Level, Source, Change)
 	Change.AttackPower = Level / 100.0
+
+	return Change
+end
+
+-- Sanctuary --
+
+Buff_Sanctuary = Base_Buff:New()
+Buff_Sanctuary.Heal = 5
+Buff_Sanctuary.Armor = 1
+Buff_Sanctuary.DamageBlock = 2
+
+function Buff_Sanctuary.GetInfo(self, Level)
+	return "Armor increased by [c green]" .. self.Armor * Level .. "[c white]\nDamage block increased by [c green]" .. self.DamageBlock * Level .. "[c white]\nSlowly healing for [c green]" .. self.Heal * Level .. " [c white]HP"
+end
+
+function Buff_Sanctuary.Stats(self, Level, Source, Change)
+	Change.Armor = self.Armor * Level
+	Change.DamageBlock = self.DamageBlock * Level
+
+	return Change
+end
+
+function Buff_Sanctuary.Update(self, Level, Source, Change)
+	Change.Health = self.Heal * Level
 
 	return Change
 end
