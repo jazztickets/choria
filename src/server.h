@@ -54,6 +54,12 @@ struct _BattleEvent {
 	bool Scripted;
 };
 
+struct _RebirthEvent {
+	_Object *Object;
+	int Type;
+	int Value;
+};
+
 // Server class
 class _Server {
 
@@ -69,6 +75,7 @@ class _Server {
 
 		void Resurrect(_Object *Source, int Health);
 		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType);
+		void QueueRebirth(_Object *Object, int Type, int Value);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);
 		void StartTeleport(_Object *Object, double Time);
 		void SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName);
@@ -143,6 +150,7 @@ class _Server {
 		ae::_Manager<_Map> *MapManager;
 		ae::_Manager<_Battle> *BattleManager;
 		std::list<_BattleEvent> BattleEvents;
+		std::list<_RebirthEvent> RebirthEvents;
 
 	private:
 
@@ -151,6 +159,7 @@ class _Server {
 		bool ValidatePeer(ae::_Peer *Peer);
 		bool CheckAccountUse(ae::_Peer *Peer);
 		void StartBattle(_BattleEvent &BattleEvent);
+		void StartRebirth(_RebirthEvent &RebirthEvent);
 
 		void HandleConnect(ae::_NetworkEvent &Event);
 		void HandleDisconnect(ae::_NetworkEvent &Event);

@@ -20,6 +20,7 @@
 #include <ae/peer.h>
 #include <ae/manager.h>
 #include <ae/database.h>
+#include <ae/random.h>
 #include <ae/util.h>
 #include <objects/object.h>
 #include <objects/components/character.h>
@@ -244,6 +245,12 @@ void _Server::Update(double FrameTime) {
 			}
 		}
 	}
+
+	// Handle rebirths
+	for(auto &RebirthEvent : RebirthEvents)
+		StartRebirth(RebirthEvent);
+
+	RebirthEvents.clear();
 
 	// Wait for peers to disconnect
 	if(StartShutdownTimer) {
@@ -803,6 +810,16 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 		SendPlayerPosition(Player->Peer);
 		SendHUD(Player->Peer);
 	}
+}
+
+// Queue a player for rebirth
+void _Server::QueueRebirth(_Object *Object, int Type, int Value) {
+	_RebirthEvent RebirthEvent;
+	RebirthEvent.Object = Object;
+	RebirthEvent.Type = Type;
+	RebirthEvent.Value = Value;
+
+	RebirthEvents.push_back(RebirthEvent);
 }
 
 // Queue a battle for an object
@@ -2013,4 +2030,65 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Battle->BroadcastPacket(Packet);
 		}
 	}
+}
+
+// Start a rebirth
+void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
+	_Object *Player = RebirthEvent.Object;
+	_Character *Character = Player->Character;
+	if(Character->Battle)
+		return;
+
+	// Load build
+	const auto &BuildIterator = Stats->Builds.find(Character->BuildID);
+	if(BuildIterator == Stats->Builds.end())
+		return;
+
+	const _Object *Build = BuildIterator->second;
+
+	// Reset character
+	int OldActionBarSize = Character->ActionBar.size();
+	Character->ActionBar = Build->Character->ActionBar;
+	Character->ActionBar.resize(OldActionBarSize);
+	Player->Inventory->Bags = Build->Inventory->GetBags();
+	Character->Skills = Build->Character->Skills;
+	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+	Character->Gold = 0;
+	Character->Experience = 0;
+	Character->UpdateTimer = 0;
+	Character->Invisible = 0;
+	Character->Stunned = 0;
+	Character->Vendor = nullptr;
+	Character->Trader = nullptr;
+	Character->Blacksmith = nullptr;
+	Character->Minigame = nullptr;
+	Character->TradePlayer = nullptr;
+	Character->TradeGold = 0;
+	Character->WaitingForTrade = false;
+	Character->TradeAccepted = false;
+	Character->TeleportTime = -1;
+	Character->MenuOpen = false;
+	Character->InventoryOpen = false;
+	Character->SkillsOpen = false;
+	Character->BattleCooldown.clear();
+	Character->DeleteStatusEffects();
+
+	// Give bonus
+	switch(RebirthEvent.Type) {
+		case 1:
+		break;
+	}
+
+	Character->CalculateStats();
+
+	// Spawn player
+	Character->Health = Character->MaxHealth;
+	Character->Mana = Character->MaxMana;
+	Character->GenerateNextBattle();
+	Character->LoadMapID = 0;
+	Character->SpawnMapID = 1;
+	Character->SpawnPoint = 0;
+	Character->Rebirths++;
+	SpawnPlayer(Player, Character->LoadMapID, _Map::EVENT_NONE);
+	SendPlayerInfo(Player->Peer);
 }

@@ -344,6 +344,10 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	if(Character->Bounty > 0)
 		NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
 
+	std::string Prefix;
+	if(Character->Rebirths)
+		Prefix = "[c gold]" + std::to_string(Character->Rebirths) + "[c white] ";
+
 	// Cap name to screen
 	glm::vec2 NamePosition = DrawPosition;
 	float OffsetY = -0.5f;
@@ -359,7 +363,7 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 
 	// Draw name
 	if(!Character->Invisible || SameParty)
-		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
+		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(Prefix + NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 }
 
 // Renders the object during a battle
@@ -556,6 +560,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["gamesplayed"] = Character->GamesPlayed;
 	StatsNode["bounty"] = Character->Bounty;
 	StatsNode["nextbattle"] = Character->NextBattle;
+	StatsNode["rebirths"] = Character->Rebirths;
 	StatsNode["seed"] = Character->Seed;
 	Data["stats"] = StatsNode;
 
@@ -673,6 +678,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->GamesPlayed = StatsNode["gamesplayed"].asInt();
 	Character->Bounty = StatsNode["bounty"].asInt();
 	Character->NextBattle = StatsNode["nextbattle"].asInt();
+	Character->Rebirths = StatsNode["rebirths"].asInt();
 	Character->Seed = StatsNode["seed"].asUInt();
 
 	if(!Character->Seed)
@@ -744,6 +750,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	else
 		Data.Write<uint32_t>(0);
 	Data.Write<uint32_t>(ModelID);
+	Data.Write<int>(Character->Rebirths);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 }
@@ -786,6 +793,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->PlayerKills);
 	Data.Write<int>(Character->GamesPlayed);
 	Data.Write<int>(Character->Bounty);
+	Data.Write<int>(Character->Rebirths);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -846,6 +854,7 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	if(PortraitID && Character)
 		Character->PortraitID = PortraitID;
 	ModelID = Data.Read<uint32_t>();
+	Character->Rebirths = Data.Read<int>();
 	Light = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();
 
@@ -877,6 +886,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->PlayerKills = Data.Read<int>();
 	Character->GamesPlayed = Data.Read<int>();
 	Character->Bounty = Data.Read<int>();
+	Character->Rebirths = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1102,10 +1112,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 		// Rebirth
 		if(StatChange.HasStat(StatType::REBIRTH)) {
-
-			if(StatChange.HasStat(StatType::MAXDAMAGE)) {
-				int Value = StatChange.Values[StatType::MAXDAMAGE].Integer;
-			}
+			if(StatChange.HasStat(StatType::MAXDAMAGE))
+				Server->QueueRebirth(this, 1, StatChange.Values[StatType::MAXDAMAGE].Integer);
 		}
 	}
 

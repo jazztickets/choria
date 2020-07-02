@@ -321,14 +321,19 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 	Database->CloseQuery();
 
 	if(Log) {
-		*Log << "[SAVE] Saving player " << Player->Name
-			 << " ( character_id=" << Player->Character->CharacterID
-			 << " exp=" << Player->Character->Experience
-			 << " gold=" << Player->Character->Gold
-			 << " playtime=" << Player->Character->PlayTime
-			 << " monsterkills=" << Player->Character->MonsterKills
-			 << " deaths=" << Player->Character->Deaths
-			 << " )" << std::endl;
+		*Log
+			<< "[SAVE] Saving player " << Player->Name
+			<< " ( character_id=" << Player->Character->CharacterID
+			<< " exp=" << Player->Character->Experience
+			<< " gold=" << Player->Character->Gold
+			<< " playtime=" << Player->Character->PlayTime
+			<< " monsterkills=" << Player->Character->MonsterKills
+			<< " deaths=" << Player->Character->Deaths
+			<< " battletime=" << Player->Character->BattleTime
+			<< " bounty=" << Player->Character->Bounty
+			<< " gamesplayed=" << Player->Character->GamesPlayed
+			<< " rebirths=" << Player->Character->Rebirths
+			<< " )" << std::endl;
 	}
 }
 

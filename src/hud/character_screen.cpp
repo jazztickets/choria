@@ -328,4 +328,13 @@ void _CharacterScreen::Render(double BlendFactor) {
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
+
+	// Rebirths
+	if(HUD->Player->Character->Rebirths > 0) {
+		Buffer << HUD->Player->Character->Rebirths;
+		Font->DrawText("Rebirths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 }

@@ -57,6 +57,7 @@ _Character::_Character(_Object *Object) :
 	GamesPlayed(0),
 	Bounty(0),
 	GoldLost(0),
+	Rebirths(0),
 
 	CalcLevelStats(true),
 	Level(0),

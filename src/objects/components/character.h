@@ -149,6 +149,7 @@ class _Character {
 		int GamesPlayed;
 		int Bounty;
 		int GoldLost;
+		int Rebirths;
 
 		// Levels
 		bool CalcLevelStats;

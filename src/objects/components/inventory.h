@@ -110,6 +110,7 @@ class _Inventory {
 
 	friend class _Save;
 	friend class _Stats;
+	friend class _Server;
 
 	public:
 
