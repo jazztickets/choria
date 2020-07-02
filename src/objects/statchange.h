@@ -100,6 +100,7 @@ enum class StatType : int {
 	RESURRECT,
 	CORPSE,
 	SUMMONLIMIT,
+	REBIRTH,
 	COUNT,
 };
 
@@ -173,6 +174,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "Resurrect",              { StatType::RESURRECT              , StatValueType::INTEGER } },
 	{ "Corpse",                 { StatType::CORPSE                 , StatValueType::INTEGER } },
 	{ "SummonLimit",            { StatType::SUMMONLIMIT            , StatValueType::INTEGER } },
+	{ "Rebirth",                { StatType::REBIRTH                , StatValueType::INTEGER } },
 };
 
 union _Value {

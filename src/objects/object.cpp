@@ -1099,6 +1099,14 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		// Resurrect
 		if(StatChange.HasStat(StatType::RESURRECT))
 			Server->Resurrect(this, StatChange.Values[StatType::RESURRECT].Integer);
+
+		// Rebirth
+		if(StatChange.HasStat(StatType::REBIRTH)) {
+
+			if(StatChange.HasStat(StatType::MAXDAMAGE)) {
+				int Value = StatChange.Values[StatType::MAXDAMAGE].Integer;
+			}
+		}
 	}
 
 	return StatusEffect;

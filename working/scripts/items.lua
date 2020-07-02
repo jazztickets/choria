@@ -490,3 +490,25 @@ function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
 
 	return Result
 end
+
+-- Rebirth --
+function RebirthText(UpgradeText, Skills, Items)
+
+	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, equipment, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. "\n\nYou will keep your starting skills, plus [c green]" .. Skills .. "[c white] of your highest skills and [c green]" .. Items .. "[c white] of your items in your trade stash\n[c yellow]All unlocks are kept"
+end
+
+Item_RebirthStrength = { }
+
+function Item_RebirthStrength.GetInfo(self, Source, Item)
+	Skills = 1
+	Items = 1
+
+	return RebirthText("[c green]10%[c white] damage bonus", Skills, Items)
+end
+
+function Item_RebirthStrength.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.MaxDamage = 10
+
+	return Result
+end

@@ -388,6 +388,7 @@ INSERT INTO vendor VALUES(14,'dungeon_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(16,'wym_gear',1.0,0.5);
 INSERT INTO vendor VALUES(17,'graveyard_skills',1.0,0.5500000000000000444);
+INSERT INTO vendor VALUES(18,'mountain_vendor',1.0,0.5);
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,
@@ -528,6 +529,7 @@ INSERT INTO vendoritem VALUES(152,17,22);
 INSERT INTO vendoritem VALUES(153,17,40);
 INSERT INTO vendoritem VALUES(154,17,21);
 INSERT INTO vendoritem VALUES(155,14,43);
+INSERT INTO vendoritem VALUES(156,18,98);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -942,6 +944,12 @@ INSERT INTO trader VALUES(32,'venom_blade',246,1);
 INSERT INTO trader VALUES(33,'respec_potion',249,1);
 INSERT INTO trader VALUES(34,'chain_lightning',41,1);
 INSERT INTO trader VALUES(35,'rupture',42,1);
+INSERT INTO trader VALUES(36,'eternal_strength',254,1);
+INSERT INTO trader VALUES(37,'eternal_strength',254,1);
+INSERT INTO trader VALUES(38,'eternal_strength',254,1);
+INSERT INTO trader VALUES(39,'eternal_strength',254,1);
+INSERT INTO trader VALUES(40,'eternal_strength',254,1);
+INSERT INTO trader VALUES(41,'eternal_strength',254,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1034,6 +1042,12 @@ INSERT INTO traderitem VALUES(94,34,3,1);
 INSERT INTO traderitem VALUES(95,34,33,1);
 INSERT INTO traderitem VALUES(96,35,156,50);
 INSERT INTO traderitem VALUES(97,35,39,1);
+INSERT INTO traderitem VALUES(98,36,253,1);
+INSERT INTO traderitem VALUES(99,37,253,1);
+INSERT INTO traderitem VALUES(100,38,253,1);
+INSERT INTO traderitem VALUES(101,39,253,1);
+INSERT INTO traderitem VALUES(102,40,253,1);
+INSERT INTO traderitem VALUES(103,41,253,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1437,9 +1451,9 @@ INSERT INTO item VALUES(68,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0
 INSERT INTO item VALUES(69,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(70,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(96,12,0,0,1,1,0,'Action Slot I','textures/items/actionslot1.png','Item_ActionSlot',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(97,12,0,0,1,2,0,'Action Slot II','textures/items/actionslot2.png','Item_ActionSlot',0,1500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(98,12,0,0,1,3,0,'Action Slot III','textures/items/actionslot3.png','Item_ActionSlot',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(99,12,0,0,1,4,0,'Action Slot IV','textures/items/actionslot4.png','Item_ActionSlot',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(97,12,0,0,1,2,0,'Action Slot II','textures/items/actionslot2.png','Item_ActionSlot',0,2500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(98,12,0,0,1,3,0,'Action Slot III','textures/items/actionslot3.png','Item_ActionSlot',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(99,12,0,0,1,4,0,'Action Slot IV','textures/items/actionslot4.png','Item_ActionSlot',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(100,5,2,0,0,0,0,'Short Sword','textures/items/short_sword.png','Proc_Haste',0,25,1,20,20,3.0,1,20,40,0,0,0,0,0,0,0,0,0,0,0,0,15,0);
 INSERT INTO item VALUES(101,5,2,0,0,0,0,'Stick','textures/items/stick.png','Proc_Mana',0,5,1,10,20,0.0,1,10,20,0,0,0,0,0,20,0,1,0,0,0,0,15,1);
 INSERT INTO item VALUES(102,5,2,0,0,0,0,'Mace','textures/items/mace.png','Proc_Stun',0,20,1,0,20,1.5,1,10,50,0,0,0,0,0,0,0,0,0,0,0,0,15,0);
@@ -1594,6 +1608,7 @@ INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key0.png'
 INSERT INTO item VALUES(251,13,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','',0,150,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(252,13,0,0,0,0,0,'Mountain Key','textures/items/key0.png','',0,5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(253,11,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(254,10,0,1,1,0,0,'Eternal Strength','textures/items/rebirth_sword.png','Item_RebirthStrength',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
