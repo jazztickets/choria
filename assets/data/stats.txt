@@ -963,6 +963,7 @@ INSERT INTO trader VALUES(42,'eternal_alacrity',260,1);
 INSERT INTO trader VALUES(43,'eternal_knowledge',261,1);
 INSERT INTO trader VALUES(44,'dimensional_slippers',263,1);
 INSERT INTO trader VALUES(45,'bloodletter',265,1);
+INSERT INTO trader VALUES(46,'flamuss',266,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1068,6 +1069,10 @@ INSERT INTO traderitem VALUES(107,44,217,1);
 INSERT INTO traderitem VALUES(108,45,150,1);
 INSERT INTO traderitem VALUES(109,45,184,1);
 INSERT INTO traderitem VALUES(110,45,214,1);
+INSERT INTO traderitem VALUES(111,46,241,1);
+INSERT INTO traderitem VALUES(112,46,233,20);
+INSERT INTO traderitem VALUES(113,46,31,1);
+INSERT INTO traderitem VALUES(114,46,214,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
