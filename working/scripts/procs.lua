@@ -95,6 +95,25 @@ function Proc_Bleed.Proc(self, Roll, Chance, Level, Duration, Source, Target, Re
 	return false
 end
 
+-- Bloodlet --
+
+Proc_Bloodlet = { }
+
+function Proc_Bloodlet.GetInfo(self, Source, Item)
+	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] bleeding damage and [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] healing over [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Proc_Bloodlet.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance then
+		Proc_AddBuff(Result.Target, Buff_Bleeding.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Source, Buff_Healing.Pointer, Level, Duration)
+
+		return true
+	end
+
+	return false
+end
+
 -- Haste --
 
 Proc_Haste = { }
