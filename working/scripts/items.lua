@@ -20,7 +20,7 @@ Base_Potion = {
 Item_HealingSalve = Base_Potion:New()
 
 function Item_HealingSalve.GetInfo(self, Source, Item)
-	return "Restore [c green]" .. math.floor(Item.Level * Buff_Healing.Heal * Item.Duration * Source.HealPower + 0.001) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Restore [c green]" .. math.floor(math.floor(Buff_Healing.Heal * Item.Level * Source.HealPower) * Item.Duration) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_HealingSalve.Use(self, Level, Duration, Source, Target, Result)
@@ -36,7 +36,7 @@ end
 Item_ManaCider = Base_Potion:New()
 
 function Item_ManaCider.GetInfo(self, Source, Item)
-	return "Restore [c light_blue]" .. math.floor(Item.Level * Buff_Mana.Mana * Item.Duration * Source.ManaPower + 0.001) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Restore [c light_blue]" .. math.floor(math.floor(Buff_Mana.Mana * Item.Level * Source.ManaPower) * Item.Duration) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_ManaCider.Use(self, Level, Duration, Source, Target, Result)
@@ -123,7 +123,7 @@ end
 Item_PoisonPotion = Base_Potion:New()
 
 function Item_PoisonPotion.GetInfo(self, Source, Item)
-	return "Poison a target for [c green]" .. math.floor(Buff_Poisoned.Damage * Item.Level * Item.Duration * Source.PoisonPower) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Poison a target for [c green]" .. math.floor(math.floor(Buff_Poisoned.Damage * Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)
@@ -184,6 +184,12 @@ function Item_ThrowingKnives.GetInfo(self, Source, Item)
 	return "Throw a knife at your enemy"
 end
 
+function Item_ThrowingKnives.Use(self, Level, Duration, Source, Target, Result)
+	Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+	return Result
+end
+
 function Item_ThrowingKnives.PlaySound(self, Level)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
@@ -193,7 +199,7 @@ end
 Item_PoisonKnives = Base_Attack:New()
 
 function Item_PoisonKnives.GetInfo(self, Source, Item)
-	return "Throw a poison-tipped knife at your enemy"
+	return "Throw a poison-tipped knife at your enemy, causing [c green]" .. math.floor(math.floor(Buff_Poisoned.Damage * Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_PoisonKnives.GetPierce(self, Source)
@@ -210,6 +216,13 @@ end
 
 function Item_PoisonKnives.GenerateDamage(self, Level, Source)
 	return self.Item.GenerateDamage(Source.Pointer, 0)
+end
+
+function Item_PoisonKnives.Use(self, Level, Duration, Source, Target, Result)
+	Battle_ResolveDamage(self, Level, Source, Target, Result)
+	self:Proc(1, Level, Duration, Source, Target, Result)
+
+	return Result
 end
 
 function Item_PoisonKnives.PlaySound(self, Level)
@@ -394,7 +407,7 @@ end
 Item_LavaSludge = { }
 
 function Item_LavaSludge.GetInfo(self, Source, Item)
-	return "Ignite a target for [c green]" .. math.floor(Buff_Burning.Damage * Item.Level * Item.Duration * Source.FirePower) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
+	return "Ignite a target for [c green]" .. math.floor(math.floor(Buff_Burning.Damage * Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
 end
 
 function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)

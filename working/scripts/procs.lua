@@ -77,6 +77,24 @@ function Proc_Slow.Proc(self, Roll, Chance, Level, Duration, Source, Target, Res
 	return false
 end
 
+-- Ignite --
+
+Proc_Ignite = { }
+
+function Proc_Ignite.GetInfo(self, Source, Item)
+	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] fire damage over [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Proc_Ignite.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
+	if Roll <= Chance then
+		Proc_AddBuff(Result.Target, Buff_Burning.Pointer, Level, Duration)
+
+		return true
+	end
+
+	return false
+end
+
 -- Bleed --
 
 Proc_Bleed = { }
