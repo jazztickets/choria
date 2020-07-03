@@ -182,6 +182,7 @@ INSERT INTO ai VALUES(6,'AI_SkeletonPriest');
 INSERT INTO ai VALUES(7,'AI_GoblinThief');
 INSERT INTO ai VALUES(8,'AI_LavaMan');
 INSERT INTO ai VALUES(9,'AI_SkeletonMage');
+INSERT INTO ai VALUES(10,'AI_Raj');
 CREATE TABLE IF NOT EXISTS "unlock" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None')
@@ -212,6 +213,7 @@ INSERT INTO script VALUES(6,'Script_Boss',20,0.0);
 INSERT INTO script VALUES(7,'Script_Boss',23,0.0);
 INSERT INTO script VALUES(8,'Script_Boss',33,0.0);
 INSERT INTO script VALUES(9,'Script_Boss',38,0.0);
+INSERT INTO script VALUES(10,'Script_Boss',39,0.0);
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -608,6 +610,7 @@ INSERT INTO monsterdrop VALUES(69,28,127,10);
 INSERT INTO monsterdrop VALUES(70,28,128,10);
 INSERT INTO monsterdrop VALUES(71,30,0,80);
 INSERT INTO monsterdrop VALUES(72,30,237,20);
+INSERT INTO monsterdrop VALUES(73,31,264,1);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -650,23 +653,23 @@ INSERT INTO zone VALUES(3,'crow_slime_ant',0,0.0,1,3);
 INSERT INTO zone VALUES(4,'ant_spider',0,0.0,1,2);
 INSERT INTO zone VALUES(5,'bat_spider',0,0.0,2,5);
 INSERT INTO zone VALUES(6,'bat_slime',0,0.0,1,4);
-INSERT INTO zone VALUES(7,'bat_lord',1,1440.0,1,1);
+INSERT INTO zone VALUES(7,'bat_lord',1,1440.0,0,0);
 INSERT INTO zone VALUES(8,'crab_slime_crow',0,0.0,1,3);
 INSERT INTO zone VALUES(9,'crab_blueslime',0,0.0,1,2);
 INSERT INTO zone VALUES(10,'watercrab_crab_slime',0,0.0,1,3);
 INSERT INTO zone VALUES(11,'watercrab_ghost',0,0.0,2,3);
-INSERT INTO zone VALUES(12,'king_krab',1,1440.0,1,1);
+INSERT INTO zone VALUES(12,'king_krab',1,1440.0,0,0);
 INSERT INTO zone VALUES(13,'zombie_ghost',0,0.0,2,4);
 INSERT INTO zone VALUES(14,'demoncrow_zombie_ghost',0,0.0,2,4);
 INSERT INTO zone VALUES(15,'crimsonslime_apparition',0,0.0,2,3);
 INSERT INTO zone VALUES(16,'crimsonslime_apparition_demoncrow_zombie',0,0.0,2,6);
-INSERT INTO zone VALUES(17,'dead_queen',1,1440.0,1,1);
+INSERT INTO zone VALUES(17,'dead_queen',1,1440.0,0,0);
 INSERT INTO zone VALUES(18,'slime',0,0.0,4,8);
 INSERT INTO zone VALUES(19,'slime_blueslime',0,0.0,4,8);
-INSERT INTO zone VALUES(20,'watercrab_bridge',1,120.0,1,1);
+INSERT INTO zone VALUES(20,'watercrab_bridge',1,120.0,0,0);
 INSERT INTO zone VALUES(21,'slime_crow_mud',0,0.0,1,3);
 INSERT INTO zone VALUES(22,'slime_venombat',0,0.0,3,5);
-INSERT INTO zone VALUES(23,'slime_prince',1,1440.0,1,1);
+INSERT INTO zone VALUES(23,'slime_prince',1,1440.0,0,0);
 INSERT INTO zone VALUES(24,'slime_mud',0,0.0,3,6);
 INSERT INTO zone VALUES(25,'crimsonslime_venombat',0,0.0,3,5);
 INSERT INTO zone VALUES(26,'skeleton_zombie_crab',0,0.0,1,3);
@@ -676,12 +679,13 @@ INSERT INTO zone VALUES(29,'goblin',0,0.0,2,4);
 INSERT INTO zone VALUES(30,'goblin_thief',0,0.0,2,3);
 INSERT INTO zone VALUES(31,'dungeon',0,0.0,2,4);
 INSERT INTO zone VALUES(32,'lava_tower',0,0.0,2,4);
-INSERT INTO zone VALUES(33,'megaboss',1,14400.0,1,1);
+INSERT INTO zone VALUES(33,'megaboss',1,14400.0,0,0);
 INSERT INTO zone VALUES(34,'hornet_aquaslime',0,0.0,2,3);
 INSERT INTO zone VALUES(35,'drowned_hornet_aquaslime',0,0.0,2,4);
 INSERT INTO zone VALUES(36,'skeletonmage',0,0.0,2,3);
 INSERT INTO zone VALUES(37,'ghost_thief',0,0.0,3,6);
-INSERT INTO zone VALUES(38,'grave_boss',1,14400.0,1,1);
+INSERT INTO zone VALUES(38,'grave_boss',1,14400.0,0,0);
+INSERT INTO zone VALUES(39,'raj',1,1440.0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -792,6 +796,9 @@ INSERT INTO zonedata VALUES(100,35,27,1,0);
 INSERT INTO zonedata VALUES(101,35,29,1,0);
 INSERT INTO zonedata VALUES(102,36,28,3,0);
 INSERT INTO zonedata VALUES(103,36,27,3,0);
+INSERT INTO zonedata VALUES(104,39,31,1,0);
+INSERT INTO zonedata VALUES(105,39,24,4,0);
+INSERT INTO zonedata VALUES(106,39,5,2,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -815,19 +822,19 @@ INSERT INTO monster VALUES(3,1,'Fire Ant','textures/monsters/fireant.png',4,4,15
 INSERT INTO monster VALUES(4,1,'Black Spider','textures/monsters/spider.png',3,3,125,0,20,40,1,0,2.0,1,21);
 INSERT INTO monster VALUES(5,1,'Bat','textures/monsters/bat.png',5,6,90,0,30,60,3,0,1.5500000000000000444,1,22);
 INSERT INTO monster VALUES(6,1,'Blue Slime','textures/monsters/blue_slime.png',5,7,200,0,10,50,5,0,2.8500000000000000888,1,35);
-INSERT INTO monster VALUES(7,1,'Bat Lord','textures/monsters/red_bat.png',25,50,1250,0,50,150,4,10,2.0,3,23);
+INSERT INTO monster VALUES(7,1,'Bat Lord','textures/monsters/red_bat.png',50,100,1250,0,50,150,4,10,2.0,3,23);
 INSERT INTO monster VALUES(8,1,'Crab','textures/monsters/crab.png',7,10,250,0,20,50,20,5,4.0,1,30);
 INSERT INTO monster VALUES(9,1,'Water Crab','textures/monsters/water_crab.png',10,15,400,0,50,100,25,10,2.2200000000000001953,1,30);
-INSERT INTO monster VALUES(10,1,'King Krab','textures/monsters/king_krab.png',50,100,1500,0,100,200,35,20,2.0,3,26);
+INSERT INTO monster VALUES(10,1,'King Krab','textures/monsters/king_krab.png',100,200,1500,0,100,200,35,20,2.0,3,26);
 INSERT INTO monster VALUES(11,1,'Ghost','textures/monsters/ghost.png',12,3,150,0,100,120,0,0,6.6600000000000001421,1,25);
 INSERT INTO monster VALUES(12,1,'Zombie','textures/monsters/zombie.png',15,20,500,0,70,180,10,10,2.8500000000000000888,1,28);
 INSERT INTO monster VALUES(13,1,'Demon Crow','textures/monsters/demon_crow.png',20,15,225,0,140,220,2,5,1.8100000000000000532,1,24);
 INSERT INTO monster VALUES(14,1,'Apparition','textures/monsters/apparition.png',25,7,350,0,200,210,5,5,6.6600000000000001421,1,25);
 INSERT INTO monster VALUES(15,1,'Venomous Bat','textures/monsters/venomous_bat.png',20,20,250,0,100,200,4,5,1.5300000000000000266,1,32);
 INSERT INTO monster VALUES(16,1,'Crimson Slime','textures/monsters/crimson_slime.png',30,30,800,0,120,250,6,5,2.8500000000000000888,1,35);
-INSERT INTO monster VALUES(17,1,'Dead Queen','textures/monsters/dead_queen.png',100,200,4000,1500,200,300,15,20,4.0,4,27);
+INSERT INTO monster VALUES(17,1,'Dead Queen','textures/monsters/dead_queen.png',250,500,4000,1500,200,300,15,20,4.0,4,27);
 INSERT INTO monster VALUES(18,1,'Mud Man','textures/monsters/mud_man.png',20,30,600,0,40,120,8,5,2.8500000000000000888,1,31);
-INSERT INTO monster VALUES(19,1,'Slime Prince','textures/monsters/slime_prince.png',100,150,3000,4000,100,350,25,30,2.5,5,33);
+INSERT INTO monster VALUES(19,1,'Slime Prince','textures/monsters/slime_prince.png',175,300,3000,4000,100,350,25,30,2.5,5,33);
 INSERT INTO monster VALUES(20,1,'Skeleton','textures/monsters/skeleton.png',30,25,650,0,100,150,5,10,2.0,1,36);
 INSERT INTO monster VALUES(21,1,'Skeleton Priest','textures/monsters/skeleton_priest.png',35,30,750,600,50,100,3,0,2.6600000000000001421,6,34);
 INSERT INTO monster VALUES(22,1,'Dusty Ant','textures/monsters/dusty_ant.png',40,40,1000,0,125,175,25,15,2.0,2,29);
@@ -839,6 +846,7 @@ INSERT INTO monster VALUES(27,1,'Hornet','textures/monsters/hornet.png',60,50,18
 INSERT INTO monster VALUES(28,1,'The Drowned','textures/monsters/the_drowned.png',70,75,2000,0,150,200,10,5,2.8500000000000000888,1,28);
 INSERT INTO monster VALUES(29,1,'Aqua Slime','textures/monsters/aqua_slime.png',40,35,1200,0,100,180,0,0,2.5,1,35);
 INSERT INTO monster VALUES(30,1,'Skeleton Mage','textures/monsters/skeleton_mage.png',100,100,1800,1000,100,150,3,0,4.0,9,42);
+INSERT INTO monster VALUES(31,1,'Raj','textures/monsters/raj.png',150,250,1750,0,100,200,5,5,1.8000000000000000444,10,43);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -1159,6 +1167,7 @@ INSERT INTO build VALUES(39,'Goblin Thief','',0,3,0,0);
 INSERT INTO build VALUES(40,'Lava Man','',0,2,0,0);
 INSERT INTO build VALUES(41,'Hornet','',0,1,0,0);
 INSERT INTO build VALUES(42,'Skeleton Mage','',0,4,0,0);
+INSERT INTO build VALUES(43,'Raj','',0,4,0,0);
 CREATE TABLE IF NOT EXISTS "buildskill" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1218,6 +1227,8 @@ INSERT INTO buildskill VALUES(52,42,64,1);
 INSERT INTO buildskill VALUES(53,42,21,20);
 INSERT INTO buildskill VALUES(54,42,22,5);
 INSERT INTO buildskill VALUES(55,42,30,6);
+INSERT INTO buildskill VALUES(56,43,51,1);
+INSERT INTO buildskill VALUES(57,43,28,10);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1284,6 +1295,8 @@ INSERT INTO builditem VALUES(57,42,185,1);
 INSERT INTO builditem VALUES(58,26,166,1);
 INSERT INTO builditem VALUES(59,23,166,1);
 INSERT INTO builditem VALUES(60,33,166,1);
+INSERT INTO builditem VALUES(61,43,131,1);
+INSERT INTO builditem VALUES(62,43,131,1);
 CREATE TABLE IF NOT EXISTS "buildactionbar" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1353,6 +1366,8 @@ INSERT INTO buildactionbar VALUES(61,42,64,0);
 INSERT INTO buildactionbar VALUES(62,42,21,1);
 INSERT INTO buildactionbar VALUES(63,42,22,2);
 INSERT INTO buildactionbar VALUES(64,42,30,3);
+INSERT INTO buildactionbar VALUES(65,43,51,0);
+INSERT INTO buildactionbar VALUES(66,43,28,1);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,
@@ -1625,6 +1640,7 @@ INSERT INTO item VALUES(260,10,0,1,1,0,0,'Eternal Alacrity','textures/items/rebi
 INSERT INTO item VALUES(261,10,0,1,1,0,0,'Eternal Knowledge','textures/items/rebirth_book.png','Item_RebirthKnowledge',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(262,13,0,0,0,0,0,'Old Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(263,4,0,0,0,0,0,'Dimensional Slippers','textures/items/dimensional_slippers.png','Item_DiagonalMovement',0,500,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0);
+INSERT INTO item VALUES(264,13,0,0,0,0,0,'Hideout Key','textures/items/key0.png','',0,100,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

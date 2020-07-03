@@ -301,3 +301,27 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	AI_AddTarget(Object, Enemies[Target], true)
 	Object.SetAction(0)
 end
+
+AI_Raj = {}
+
+function AI_Raj.Update(self, Object, Enemies, Allies)
+
+	-- Chance to do special attack
+	if Random.GetInt(1, 5) == 1 then
+		for i = 1, #Enemies do
+			Object.AddTarget(Enemies[i].Pointer)
+		end
+
+		Object.SetAction(1)
+		return
+	end
+
+	-- Get random target
+	Target = Random.GetInt(1, #Enemies)
+
+	-- Set target
+	AI_AddTarget(Object, Enemies[Target], true)
+
+	-- Set skill
+	Object.SetAction(0)
+end
