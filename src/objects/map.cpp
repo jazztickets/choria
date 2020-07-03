@@ -89,7 +89,7 @@ _Map::_Map() :
 	UseAtlas(false),
 	TileAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
-	IsOutside(true),
+	OutsideFlag(1),
 	Clock(0),
 	BackgroundOffset(0.0f),
 	BackgroundMap(nullptr),
@@ -419,7 +419,7 @@ void _Map::GetClockAsString(std::stringstream &Buffer) const {
 
 // Set ambient light for map
 void _Map::SetAmbientLightByClock() {
-	if(!IsOutside)
+	if(!OutsideFlag)
 		return;
 
 	// Find index by time
@@ -452,7 +452,11 @@ void _Map::SetAmbientLightByClock() {
 	float Percent = (float)(Diff / Length);
 
 	// Set color
-	AmbientLight = glm::mix(DayCycles[CurrentCycle], DayCycles[NextCycle], Percent);
+	glm::vec4 OutdoorLight = glm::mix(DayCycles[CurrentCycle], DayCycles[NextCycle], Percent);
+	if(OutsideFlag == 2)
+		AmbientLight = LightFilter * OutdoorLight;
+	else
+		AmbientLight = OutdoorLight;
 }
 
 // Start event for an object and send packet
@@ -759,9 +763,11 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 		throw std::runtime_error("Cannot load map: " + MapStat->File);
 
 	// Save map stats
-	AmbientLight = MapStat->AmbientLight;
-	IsOutside = MapStat->Outside;
+	AmbientLight = LightFilter = MapStat->AmbientLight;
 	Music = MapStat->Music;
+
+	// 0: static ambient light 1: use daytime cycle 2: multiply ambient with daytime cycle
+	OutsideFlag = MapStat->Outside;
 
 	// Load background map
 	if(UseAtlas && MapStat->BackgroundMapID) {

@@ -1029,7 +1029,7 @@ void _EditorState::LoadMap() {
 		// Save map id
 		MapID = Stats->GetMapIDByPath(Path);
 		UseClockAmbientLight = false;
-		if(Map->IsOutside)
+		if(Map->OutsideFlag)
 			UseClockAmbientLight = true;
 	}
 

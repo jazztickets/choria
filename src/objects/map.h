@@ -166,7 +166,8 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		bool UseAtlas;
 		const ae::_Atlas *TileAtlas;
 		glm::vec4 AmbientLight;
-		int IsOutside;
+		glm::vec4 LightFilter;
+		int OutsideFlag;
 		double Clock;
 
 		// Background

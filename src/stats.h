@@ -40,7 +40,7 @@ struct _MapStat {
 	glm::vec4 AmbientLight;
 	glm::vec3 BackgroundOffset;
 	uint32_t BackgroundMapID;
-	bool Outside;
+	int Outside;
 };
 
 struct _Portrait {
