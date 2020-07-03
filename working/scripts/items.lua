@@ -437,7 +437,7 @@ function Item_Torch.PlaySound(self, Level)
 	Audio.Play("flame0.ogg")
 end
 
--- BrightPotion --
+-- Bright Potion --
 
 Item_BrightPotion = { }
 
@@ -451,7 +451,7 @@ function Item_BrightPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
--- DarkPotion --
+-- Dark Potion --
 
 Item_DarkPotion = { }
 
@@ -465,7 +465,7 @@ function Item_DarkPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
--- RespecPotion --
+-- Respec Potion --
 
 Item_RespecPotion = { }
 
@@ -477,6 +477,20 @@ function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Respec = 1
 
 	return Result
+end
+
+-- Diagonal --
+
+Item_DiagonalMovement = { }
+
+function Item_DiagonalMovement.GetInfo(self, Source, Item)
+	return "[c yellow]Allows for diagonal movement"
+end
+
+function Item_DiagonalMovement.Stats(self, Level, Object, Change)
+	Change.DiagonalMovement = 1
+
+	return Change
 end
 
 -- Rebirth --

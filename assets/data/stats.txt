@@ -952,6 +952,7 @@ INSERT INTO trader VALUES(40,'eternal_wisdom',258,1);
 INSERT INTO trader VALUES(41,'eternal_wealth',259,1);
 INSERT INTO trader VALUES(42,'eternal_alacrity',260,1);
 INSERT INTO trader VALUES(43,'eternal_knowledge',261,1);
+INSERT INTO trader VALUES(44,'dimensional_slippers',263,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1052,6 +1053,8 @@ INSERT INTO traderitem VALUES(102,40,253,1);
 INSERT INTO traderitem VALUES(103,41,253,1);
 INSERT INTO traderitem VALUES(104,42,253,1);
 INSERT INTO traderitem VALUES(105,43,253,1);
+INSERT INTO traderitem VALUES(106,44,197,1);
+INSERT INTO traderitem VALUES(107,44,217,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1621,6 +1624,7 @@ INSERT INTO item VALUES(259,10,0,1,1,0,0,'Eternal Wealth','textures/items/rebirt
 INSERT INTO item VALUES(260,10,0,1,1,0,0,'Eternal Alacrity','textures/items/rebirth_speed.png','Item_RebirthAlacrity',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(261,10,0,1,1,0,0,'Eternal Knowledge','textures/items/rebirth_book.png','Item_RebirthKnowledge',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(262,13,0,0,0,0,0,'Old Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(263,4,0,0,0,0,0,'Dimensional Slippers','textures/items/dimensional_slippers.png','Item_DiagonalMovement',0,500,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

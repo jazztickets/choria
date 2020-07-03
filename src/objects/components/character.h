@@ -137,6 +137,7 @@ class _Character {
 		int NextBattle;
 		int Invisible;
 		int Stunned;
+		bool DiagonalMovement;
 		bool Hardcore;
 		uint8_t Status;
 

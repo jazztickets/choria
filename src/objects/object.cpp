@@ -1188,8 +1188,36 @@ int _Object::Move() {
 	glm::ivec2 Direction(0, 0);
 	GetDirectionFromInput(InputState, Direction);
 
+	// Test movement
+	bool Moved = false;
+	if(!Map->CanMoveTo(Position + Direction, this)) {
+
+		// Check for moving diagonally
+		if(Direction.x != 0 && Direction.y != 0) {
+
+			// Try moving horizontally
+			glm::ivec2 TestDirection(Direction.x, 0);
+			if(Map->CanMoveTo(Position + TestDirection, this)) {
+				Direction = TestDirection;
+				Moved = true;
+			}
+			else {
+
+				// Try moving vertically
+				TestDirection.x = 0;
+				TestDirection.y = Direction.y;
+				if(Map->CanMoveTo(Position + TestDirection, this)) {
+					Direction = TestDirection;
+					Moved = true;
+				}
+			}
+		}
+	}
+	else
+		Moved = true;
+
 	// Move player
-	if(Map->CanMoveTo(Position + Direction, this)) {
+	if(Moved) {
 		Position += Direction;
 		if(GetTile()->Zone > 0 && !Character->Invisible)
 			Character->NextBattle--;
@@ -1397,6 +1425,9 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 		Direction.x += -1;
 	if(InputState & MOVE_RIGHT)
 		Direction.x += 1;
+
+	if(Character->DiagonalMovement)
+		return;
 
 	// Remove diagonols
 	if(Direction.x != 0 && Direction.y != 0)

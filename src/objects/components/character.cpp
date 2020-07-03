@@ -46,6 +46,7 @@ _Character::_Character(_Object *Object) :
 	NextBattle(0),
 	Invisible(0),
 	Stunned(0),
+	DiagonalMovement(false),
 	Hardcore(false),
 	Status(0),
 
@@ -335,6 +336,7 @@ void _Character::CalculateStats() {
 
 	Object->Light = 0;
 	Invisible = 0;
+	DiagonalMovement = false;
 	Stunned = 0;
 	SummonLimit = 0;
 	Resistances.clear();
@@ -389,6 +391,10 @@ void _Character::CalculateStats() {
 		const _Item *Item = EquipmentBag.Slots[i].Item;
 		int Upgrades = EquipmentBag.Slots[i].Upgrades;
 		if(Item) {
+			_ActionResult ActionResult;
+			ActionResult.Source.Object = Object;
+			Item->GetStats(Object->Scripting, ActionResult);
+			CalculateStatBonuses(ActionResult.Source);
 
 			// Add damage
 			if(Item->Type != ItemType::SHIELD) {
@@ -599,6 +605,9 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::LIGHT))
 		Object->Light = StatChange.Values[StatType::LIGHT].Integer;
+
+	if(StatChange.HasStat(StatType::DIAGONAL_MOVEMENT))
+		DiagonalMovement = StatChange.Values[StatType::DIAGONAL_MOVEMENT].Integer;
 }
 
 // Get percentage to next level

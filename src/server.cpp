@@ -2061,6 +2061,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->Experience = 0;
 	Character->UpdateTimer = 0;
 	Character->Invisible = 0;
+	Character->DiagonalMovement = false;
 	Character->Stunned = 0;
 	Character->Vendor = nullptr;
 	Character->Trader = nullptr;
