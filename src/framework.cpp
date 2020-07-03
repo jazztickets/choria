@@ -102,7 +102,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			Config.TimeScale = ae::ToNumber<double>(Arguments[++i]);
 		}
 		else if(Token == "-dev") {
-			PlayState.DevMode = true;
+			if(DEBUG_BUILD)
+				PlayState.DevMode = true;
 		}
 		else if(Token == "-test") {
 			State = &TestState;
