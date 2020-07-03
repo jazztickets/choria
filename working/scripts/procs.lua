@@ -46,12 +46,12 @@ end
 Proc_Poison = { }
 
 function Proc_Poison.GetInfo(self, Source, Item)
-	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
+	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(math.floor(Buff_Poisoned.Damage * Item.Level * Item.Duration) * Source.PoisonPower) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Proc_Poison.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result.Target, Buff_Poisoned.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Poisoned.Pointer, math.floor(Level * Source.PoisonPower), Duration)
 
 		return true
 	end
@@ -82,12 +82,12 @@ end
 Proc_Ignite = { }
 
 function Proc_Ignite.GetInfo(self, Source, Item)
-	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] fire damage over [c green]" .. Item.Duration .. "[c white] seconds"
+	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(math.floor(Buff_Burning.Damage * Item.Level * Item.Duration) * Source.FirePower) .. "[c white] fire damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Proc_Ignite.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result.Target, Buff_Burning.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Burning.Pointer, math.floor(Level * Source.FirePower), Duration)
 
 		return true
 	end
@@ -100,12 +100,12 @@ end
 Proc_Bleed = { }
 
 function Proc_Bleed.GetInfo(self, Source, Item)
-	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] bleeding damage over [c green]" .. Item.Duration .. "[c white] seconds"
+	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(math.floor(Buff_Bleeding.Damage * Item.Level * Item.Duration) * Source.BleedPower) .. "[c white] bleeding damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Proc_Bleed.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result.Target, Buff_Bleeding.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Bleeding.Pointer, math.floor(Level * Source.BleedPower), Duration)
 
 		return true
 	end
@@ -118,13 +118,14 @@ end
 Proc_Bloodlet = { }
 
 function Proc_Bloodlet.GetInfo(self, Source, Item)
-	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] bleeding damage and [c green]" .. math.floor(Item.Level * Item.Duration) .. "[c white] healing over [c green]" .. Item.Duration .. "[c white] seconds"
+	DamageAndHeal = math.floor(math.floor(Buff_Bleeding.Damage * Item.Level * Item.Duration) * Source.BleedPower)
+	return "[c green]" .. Item.Chance .. "%[c white] chance for [c green]" .. DamageAndHeal .. "[c white] bleeding damage and [c green]" .. DamageAndHeal .. "[c white] healing over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Proc_Bloodlet.Proc(self, Roll, Chance, Level, Duration, Source, Target, Result)
 	if Roll <= Chance then
-		Proc_AddBuff(Result.Target, Buff_Bleeding.Pointer, Level, Duration)
-		Proc_AddBuff(Result.Source, Buff_Healing.Pointer, Level, Duration)
+		Proc_AddBuff(Result.Target, Buff_Bleeding.Pointer, math.floor(Level * Source.BleedPower), Duration)
+		Proc_AddBuff(Result.Source, Buff_Healing.Pointer, math.floor(Level * Source.BleedPower), Duration)
 
 		return true
 	end
