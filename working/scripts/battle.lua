@@ -227,13 +227,18 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
 		-- Apply pierce
 		DamageBlock = Target.DamageBlock - Action:GetPierce(Source)
+		ExtraPierce = 0
+		if DamageBlock < 0 then
+			ExtraPierce = -DamageBlock
+			DamageBlock = 0
+		end
 
 		-- Apply damage block
 		Change.Damage = math.max(Change.Damage - DamageBlock, 0)
 
 		-- Apply resistance
 		Result.Target.DamageType = Action:GetDamageType(Source)
-		Change.Damage = Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source))
+		Change.Damage = Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source)) + ExtraPierce
 
 		-- Update health
 		Change.Damage = math.floor(Change.Damage)
