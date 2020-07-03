@@ -221,7 +221,6 @@ end
 Item_SlimyGlob = { }
 
 function Item_SlimyGlob.GetInfo(self, Source, Item)
-
 	return "Gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
@@ -242,7 +241,6 @@ end
 Item_CrowFeather = { }
 
 function Item_CrowFeather.GetInfo(self, Source, Item)
-
 	return "Increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
@@ -263,7 +261,6 @@ end
 Item_FireDust = { }
 
 function Item_FireDust.GetInfo(self, Source, Item)
-
 	return "Reduce target's hit chance by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
@@ -283,7 +280,6 @@ end
 Item_SpiderLeg = { }
 
 function Item_SpiderLeg.GetInfo(self, Source, Item)
-
 	return "Increase battle speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
@@ -304,7 +300,6 @@ end
 Item_Fang = { }
 
 function Item_Fang.GetInfo(self, Source, Item)
-
 	return "Increase damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
@@ -325,7 +320,6 @@ end
 Item_SpectralDust = { }
 
 function Item_SpectralDust.GetInfo(self, Source, Item)
-
 	return "Increase evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
@@ -346,7 +340,6 @@ end
 Item_CrabLegs = { }
 
 function Item_CrabLegs.GetInfo(self, Source, Item)
-
 	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
@@ -367,7 +360,6 @@ end
 Item_TeleportScroll = { }
 
 function Item_TeleportScroll.GetInfo(self, Source, Item)
-
 	return "Teleport home after [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
@@ -382,7 +374,6 @@ end
 Item_SwampGlob = { }
 
 function Item_SwampGlob.GetInfo(self, Source, Item)
-
 	return "Slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
@@ -451,7 +442,6 @@ end
 Item_BrightPotion = { }
 
 function Item_BrightPotion.GetInfo(self, Source, Item)
-
 	return "Turn the world to daylight"
 end
 
@@ -466,7 +456,6 @@ end
 Item_DarkPotion = { }
 
 function Item_DarkPotion.GetInfo(self, Source, Item)
-
 	return "Turn the world to darkness"
 end
 
@@ -481,7 +470,6 @@ end
 Item_RespecPotion = { }
 
 function Item_RespecPotion.GetInfo(self, Source, Item)
-
 	return "Reset your spent skill points\n[c yellow]Action bar skills are set to level 1"
 end
 
@@ -496,18 +484,106 @@ function RebirthText(UpgradeText, Skills, Items)
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, equipment, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. "\n\nYou will keep your starting skills, plus [c green]" .. Skills .. "[c white] of your highest skills and [c green]" .. Items .. "[c white] of your items in your trade stash\n[c yellow]All unlocks are kept"
 end
 
-Item_RebirthStrength = { }
+Item_RebirthStrength = { Value = 10 }
 
 function Item_RebirthStrength.GetInfo(self, Source, Item)
-	Skills = Source.RebirthSaveCount
-	Items = Source.RebirthSaveCount
-
-	return RebirthText("[c green]10%[c white] damage bonus", Skills, Items)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] damage bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
 function Item_RebirthStrength.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.MaxDamage = 10
+	Result.Target.MaxDamage = self.Value
+
+	return Result
+end
+
+Item_RebirthGuard = { Value = 5 }
+
+function Item_RebirthGuard.GetInfo(self, Source, Item)
+	return RebirthText("[c green]" .. self.Value .. "[c white] armor, damage block, and resistance bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+end
+
+function Item_RebirthGuard.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.Armor = self.Value
+
+	return Result
+end
+
+Item_RebirthFortitude = { Value = 10 }
+
+function Item_RebirthFortitude.GetInfo(self, Source, Item)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] max health and heal power bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+end
+
+function Item_RebirthFortitude.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.Health = self.Value
+
+	return Result
+end
+
+Item_RebirthSpirit = { Value = 10 }
+
+function Item_RebirthSpirit.GetInfo(self, Source, Item)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] max mana and mana power bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+end
+
+function Item_RebirthSpirit.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.Mana = self.Value
+
+	return Result
+end
+
+Item_RebirthWisdom = { Value = 10 }
+
+function Item_RebirthWisdom.GetInfo(self, Source, Item)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] experience bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+end
+
+function Item_RebirthWisdom.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.Experience = self.Value
+
+	return Result
+end
+
+Item_RebirthWealth = { Value = 10 }
+
+function Item_RebirthWealth.GetInfo(self, Source, Item)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] gold bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+end
+
+function Item_RebirthWealth.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.Gold = self.Value
+
+	return Result
+end
+
+Item_RebirthAlacrity = { Value = 5 }
+
+function Item_RebirthAlacrity.GetInfo(self, Source, Item)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] battle speed bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+end
+
+function Item_RebirthAlacrity.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.BattleSpeed = self.Value
+
+	return Result
+end
+
+Item_RebirthKnowledge = { Value = 1 }
+
+function Item_RebirthKnowledge.GetInfo(self, Source, Item)
+	return RebirthText("[c green]" .. self.Value .. "[c white] extra skill point", Source.RebirthSaveCount, Source.RebirthSaveCount)
+end
+
+function Item_RebirthKnowledge.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Rebirth = 1
+	Result.Target.SkillPoint = self.Value
 
 	return Result
 end

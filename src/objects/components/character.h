@@ -152,7 +152,14 @@ class _Character {
 		int Rebirths;
 
 		// Rebirths
-		int RebirthDamage;
+		int EternalStrength;
+		int EternalGuard;
+		int EternalFortitude;
+		int EternalSpirit;
+		int EternalWisdom;
+		int EternalWealth;
+		int EternalAlacrity;
+		int EternalKnowledge;
 
 		// Levels
 		bool CalcLevelStats;
@@ -189,6 +196,10 @@ class _Character {
 		int MaxMana;
 		int HealthRegen;
 		int ManaRegen;
+		float ExperienceMultiplier;
+		float GoldMultiplier;
+		float MaxHealthMultiplier;
+		float MaxManaMultiplier;
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
 		float AttackPower;

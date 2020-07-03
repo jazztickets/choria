@@ -2080,7 +2080,28 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	// Give bonus
 	switch(RebirthEvent.Type) {
 		case 1:
-			Character->RebirthDamage += RebirthEvent.Value;
+			Character->EternalStrength += RebirthEvent.Value;
+		break;
+		case 2:
+			Character->EternalGuard += RebirthEvent.Value;
+		break;
+		case 3:
+			Character->EternalFortitude += RebirthEvent.Value;
+		break;
+		case 4:
+			Character->EternalSpirit += RebirthEvent.Value;
+		break;
+		case 5:
+			Character->EternalWisdom += RebirthEvent.Value;
+		break;
+		case 6:
+			Character->EternalWealth += RebirthEvent.Value;
+		break;
+		case 7:
+			Character->EternalAlacrity += RebirthEvent.Value;
+		break;
+		case 8:
+			Character->EternalKnowledge += RebirthEvent.Value;
 		break;
 	}
 

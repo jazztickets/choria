@@ -746,6 +746,12 @@ void _Battle::ServerEndBattle() {
 		if(Object->Character->IsAlive() && Cooldown > 0.0 && Zone)
 			Object->Character->BattleCooldown[Zone] = Cooldown;
 
+		// Boost xp/gold gain
+		if(!PVP) {
+			ExperienceEarned *= Object->Character->ExperienceMultiplier;
+			GoldEarned *= Object->Character->GoldMultiplier;
+		}
+
 		// Update stats
 		int CurrentLevel = Object->Character->Level;
 		Object->Character->UpdateExperience(ExperienceEarned);

@@ -43,7 +43,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
 
 	// Set up UI
-	int SpacingY = Font->MaxAbove + Font->MaxBelow + 1;
+	int SpacingY = Font->MaxAbove + Font->MaxBelow;
 	glm::vec2 Spacing((int)(SpacingY * 0.5f), 0);
 	glm::vec2 DrawPosition = Element->Bounds.Start;
 	DrawPosition.x += (int)(Element->Size.x/2 + SpacingY * 0.8f);
@@ -75,6 +75,42 @@ void _CharacterScreen::Render(double BlendFactor) {
 	if(HUD->Player->Character->Pierce != 0) {
 		Buffer << HUD->Player->Character->Pierce;
 		Font->DrawText("Pierce", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Experience
+	if(HUD->Player->Character->ExperienceMultiplier != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->ExperienceMultiplier * 100) << "%";
+		Font->DrawText("Experience Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Gold
+	if(HUD->Player->Character->GoldMultiplier != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->GoldMultiplier * 100) << "%";
+		Font->DrawText("Gold Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Max Health
+	if(HUD->Player->Character->MaxHealthMultiplier != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->MaxHealthMultiplier * 100) << "%";
+		Font->DrawText("Max Health", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Max Mana
+	if(HUD->Player->Character->MaxManaMultiplier != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->MaxManaMultiplier * 100) << "%";
+		Font->DrawText("Max Mana", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;

@@ -562,7 +562,14 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["nextbattle"] = Character->NextBattle;
 	StatsNode["rebirths"] = Character->Rebirths;
 	StatsNode["seed"] = Character->Seed;
-	StatsNode["rebirth_damage"] = Character->RebirthDamage;
+	StatsNode["eternal_strength"] = Character->EternalStrength;
+	StatsNode["eternal_guard"] = Character->EternalGuard;
+	StatsNode["eternal_fortitude"] = Character->EternalFortitude;
+	StatsNode["eternal_spirit"] = Character->EternalSpirit;
+	StatsNode["eternal_wisdom"] = Character->EternalWisdom;
+	StatsNode["eternal_wealth"] = Character->EternalWealth;
+	StatsNode["eternal_alacrity"] = Character->EternalAlacrity;
+	StatsNode["eternal_knowledge"] = Character->EternalKnowledge;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -681,7 +688,14 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->NextBattle = StatsNode["nextbattle"].asInt();
 	Character->Rebirths = StatsNode["rebirths"].asInt();
 	Character->Seed = StatsNode["seed"].asUInt();
-	Character->RebirthDamage = StatsNode["rebirth_damage"].asInt();
+	Character->EternalStrength = StatsNode["eternal_strength"].asInt();
+	Character->EternalGuard = StatsNode["eternal_guard"].asInt();
+	Character->EternalFortitude = StatsNode["eternal_fortitude"].asInt();
+	Character->EternalSpirit = StatsNode["eternal_spirit"].asInt();
+	Character->EternalWisdom = StatsNode["eternal_wisdom"].asInt();
+	Character->EternalWealth = StatsNode["eternal_wealth"].asInt();
+	Character->EternalAlacrity = StatsNode["eternal_alacrity"].asInt();
+	Character->EternalKnowledge = StatsNode["eternal_knowledge"].asInt();
 
 	if(!Character->Seed)
 		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
@@ -796,7 +810,14 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->GamesPlayed);
 	Data.Write<int>(Character->Bounty);
 	Data.Write<int>(Character->Rebirths);
-	Data.Write<int>(Character->RebirthDamage);
+	Data.Write<int>(Character->EternalStrength);
+	Data.Write<int>(Character->EternalGuard);
+	Data.Write<int>(Character->EternalFortitude);
+	Data.Write<int>(Character->EternalSpirit);
+	Data.Write<int>(Character->EternalWisdom);
+	Data.Write<int>(Character->EternalWealth);
+	Data.Write<int>(Character->EternalAlacrity);
+	Data.Write<int>(Character->EternalKnowledge);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -890,7 +911,14 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->GamesPlayed = Data.Read<int>();
 	Character->Bounty = Data.Read<int>();
 	Character->Rebirths = Data.Read<int>();
-	Character->RebirthDamage = Data.Read<int>();
+	Character->EternalStrength = Data.Read<int>();
+	Character->EternalGuard = Data.Read<int>();
+	Character->EternalFortitude = Data.Read<int>();
+	Character->EternalSpirit = Data.Read<int>();
+	Character->EternalWisdom = Data.Read<int>();
+	Character->EternalWealth = Data.Read<int>();
+	Character->EternalAlacrity = Data.Read<int>();
+	Character->EternalKnowledge = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -962,6 +990,31 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 
 // Update stats
 _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
+
+	// Rebirth
+	if(Server) {
+		if(StatChange.HasStat(StatType::REBIRTH)) {
+			if(StatChange.HasStat(StatType::MAXDAMAGE))
+				Server->QueueRebirth(this, 1, StatChange.Values[StatType::MAXDAMAGE].Integer);
+			else if(StatChange.HasStat(StatType::ARMOR))
+				Server->QueueRebirth(this, 2, StatChange.Values[StatType::ARMOR].Integer);
+			else if(StatChange.HasStat(StatType::HEALTH))
+				Server->QueueRebirth(this, 3, StatChange.Values[StatType::HEALTH].Integer);
+			else if(StatChange.HasStat(StatType::MANA))
+				Server->QueueRebirth(this, 4, StatChange.Values[StatType::MANA].Integer);
+			else if(StatChange.HasStat(StatType::EXPERIENCE))
+				Server->QueueRebirth(this, 5, StatChange.Values[StatType::EXPERIENCE].Integer);
+			else if(StatChange.HasStat(StatType::GOLD))
+				Server->QueueRebirth(this, 6, StatChange.Values[StatType::GOLD].Integer);
+			else if(StatChange.HasStat(StatType::BATTLESPEED))
+				Server->QueueRebirth(this, 7, StatChange.Values[StatType::BATTLESPEED].Integer);
+			else if(StatChange.HasStat(StatType::SKILLPOINT))
+				Server->QueueRebirth(this, 8, StatChange.Values[StatType::SKILLPOINT].Integer);
+
+			return nullptr;
+		}
+	}
+
 	_StatusEffect *StatusEffect = nullptr;
 
 	// Add buffs
@@ -1113,12 +1166,6 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		// Resurrect
 		if(StatChange.HasStat(StatType::RESURRECT))
 			Server->Resurrect(this, StatChange.Values[StatType::RESURRECT].Integer);
-
-		// Rebirth
-		if(StatChange.HasStat(StatType::REBIRTH)) {
-			if(StatChange.HasStat(StatType::MAXDAMAGE))
-				Server->QueueRebirth(this, 1, StatChange.Values[StatType::MAXDAMAGE].Integer);
-		}
 	}
 
 	return StatusEffect;

@@ -59,7 +59,14 @@ _Character::_Character(_Object *Object) :
 	GoldLost(0),
 	Rebirths(0),
 
-	RebirthDamage(0),
+	EternalStrength(0),
+	EternalGuard(0),
+	EternalFortitude(0),
+	EternalSpirit(0),
+	EternalWisdom(0),
+	EternalWealth(0),
+	EternalAlacrity(0),
+	EternalKnowledge(0),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -93,6 +100,10 @@ _Character::_Character(_Object *Object) :
 	MaxMana(0),
 	HealthRegen(0),
 	ManaRegen(0),
+	ExperienceMultiplier(1.0f),
+	GoldMultiplier(1.0f),
+	MaxHealthMultiplier(1.0f),
+	MaxManaMultiplier(1.0f),
 	ManaReductionRatio(0.0f),
 	HealthUpdateMultiplier(0.0f),
 	AttackPower(0.0f),
@@ -322,7 +333,14 @@ void _Character::CalculateStats() {
 	DropRate = BaseDropRate;
 	AllSkills = BaseAllSkills;
 
-	float AllDamage = RebirthDamage / 100.0f;
+	Object->Light = 0;
+	Invisible = 0;
+	Stunned = 0;
+	SummonLimit = 0;
+	Resistances.clear();
+
+	// Eternal Strength
+	float AllDamage = EternalStrength / 100.0f;
 	PhysicalPower = 1.0f + AllDamage;
 	FirePower = 1.0f + AllDamage;
 	ColdPower = 1.0f + AllDamage;
@@ -330,14 +348,34 @@ void _Character::CalculateStats() {
 	BleedPower = 1.0f + AllDamage;
 	PoisonPower = 1.0f + AllDamage;
 	PetPower = 1.0f + AllDamage;
-	HealPower = 1.0f;
-	ManaPower = 1.0f;
-	SummonLimit = 0;
-	Resistances.clear();
 
-	Object->Light = 0;
-	Invisible = 0;
-	Stunned = 0;
+	// Eternal Guard
+	if(EternalGuard) {
+		Armor += EternalGuard;
+		DamageBlock += EternalGuard;
+		for(int i = 3; i <= 7; i++)
+			Resistances[i] += EternalGuard;
+	}
+
+	// Eternal Fortitude
+	MaxHealthMultiplier = 1.0f + EternalFortitude / 100.0f;
+	HealPower = 1.0f + EternalFortitude / 100.0f;
+
+	// Eternal Spirit
+	MaxManaMultiplier = 1.0f + EternalSpirit / 100.0f;
+	ManaPower = 1.0f + EternalSpirit / 100.0f;
+
+	// Eternal Wisdom
+	ExperienceMultiplier = 1.0f + EternalWisdom / 100.0f;
+
+	// Eternal Wealth
+	GoldMultiplier = 1.0f + EternalWealth / 100.0f;
+
+	// Eternal Alacrity
+	BattleSpeed = 100 + EternalAlacrity;
+
+	// Eternal Knowledge
+	SkillPoints += EternalKnowledge;
 
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
@@ -375,9 +413,8 @@ void _Character::CalculateStats() {
 
 			// Handle all resist
 			if(Item->ResistanceTypeID == 1) {
-				for(int i = 3; i <= 7; i++) {
+				for(int i = 3; i <= 7; i++)
 					Resistances[i] += Item->GetResistance(Upgrades);
-				}
 			}
 			else
 				Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
@@ -450,6 +487,8 @@ void _Character::CalculateStats() {
 	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
 		MoveSpeed = PLAYER_MIN_MOVESPEED;
 
+	MaxHealth *= MaxHealthMultiplier;
+	MaxMana *= MaxManaMultiplier;
 	Health = std::min(Health, MaxHealth);
 	Mana = std::min(Mana, MaxMana);
 	if(HealthRegen > 0)
