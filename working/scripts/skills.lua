@@ -1745,5 +1745,5 @@ function Skill_Sanctuary.Use(self, Level, Duration, Source, Target, Result)
 end
 
 function Skill_Sanctuary.PlaySound(self, Level)
-	Audio.Play("rejuv0.ogg")
+	Audio.Play("sanctuary0.ogg")
 end
