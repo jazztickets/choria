@@ -125,7 +125,7 @@ function Skill_Sting.Proc(self, Roll, Level, Duration, Source, Target, Result)
 end
 
 function Skill_Sting.PlaySound(self, Level)
-	Audio.Play("sting" .. Random.GetInt(0, 2) .. ".ogg", 0.75)
+	Audio.Play("sting" .. Random.GetInt(0, 2) .. ".ogg", 0.65)
 end
 
 -- Ghost attack --
@@ -1692,7 +1692,7 @@ function Skill_Rupture.Use(self, Level, Duration, Source, Target, Result)
 end
 
 function Skill_Rupture.PlaySound(self, Level)
-	Audio.Play("gash0.ogg")
+	Audio.Play("rupture0.ogg")
 end
 
 -- Sanctuary --
