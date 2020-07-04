@@ -57,7 +57,7 @@ class _Item {
 	public:
 
 		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
-		void DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
+		void DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsSkill() const { return Type == ItemType::SKILL; }
 		bool IsConsumable() const { return Type == ItemType::CONSUMABLE; }

@@ -123,7 +123,7 @@ end
 Item_PoisonPotion = Base_Potion:New()
 
 function Item_PoisonPotion.GetInfo(self, Source, Item)
-	return "Poison a target for [c green]" .. math.floor(math.floor(Buff_Poisoned.Damage * Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Poison a target for [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)
@@ -199,7 +199,7 @@ end
 Item_PoisonKnives = Base_Attack:New()
 
 function Item_PoisonKnives.GetInfo(self, Source, Item)
-	return "Throw a poison-tipped knife at your enemy, causing [c green]" .. math.floor(math.floor(Buff_Poisoned.Damage * Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
+	return "Throw a poison-tipped knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_PoisonKnives.GetPierce(self, Source)
@@ -407,7 +407,7 @@ end
 Item_LavaSludge = { }
 
 function Item_LavaSludge.GetInfo(self, Source, Item)
-	return "Ignite a target for [c green]" .. math.floor(math.floor(Buff_Burning.Damage * Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
+	return "Ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
 end
 
 function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)

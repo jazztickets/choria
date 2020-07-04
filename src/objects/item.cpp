@@ -140,6 +140,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	int DrawLevel = Level;
 	bool IsLocked = false;
 	bool ShowLevel = false;
+	int Upgrades = Tooltip.InventorySlot.Upgrades;
 	if(IsSkill()) {
 
 		// Get skill level
@@ -166,18 +167,18 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	else {
 
 		// Draw upgrade level for items
-		if(Tooltip.InventorySlot.Upgrades) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.InventorySlot.Upgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		if(Upgrades) {
+			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Upgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 			DrawPosition.y += SpacingY;
 		}
 	}
 
 	// Draw description
-	DrawDescription(Player, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
+	DrawDescription(Player, DrawPosition, DrawLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
-		DrawDescription(Player, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(Player, DrawPosition, DrawLevel+1, 0, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -185,7 +186,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		CompareInventory = Player->Inventory->GetSlot(CompareSlot);
 
 	bool StatDrawn = false;
-	int Upgrades = Tooltip.InventorySlot.Upgrades;
 
 	// Damage
 	int DrawMinDamage = (int)GetMinDamage(Upgrades);
@@ -512,7 +512,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 }
 
 // Draw item description
-void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
+void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
 	_Scripting *Scripting = Object->Scripting;
 
 	// Check for scripting function
@@ -521,7 +521,7 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(Chance, DrawLevel, Duration);
+		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades);
 		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();

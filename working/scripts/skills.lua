@@ -654,7 +654,7 @@ function Skill_Ignite.GetBurnLevel(self, Source, Level)
 end
 
 function Skill_Ignite.GetDamage(self, Source, Level)
-	return Buff_Burning.Damage * self:GetBurnLevel(Source, Level) * self:GetDuration(Level)
+	return self:GetBurnLevel(Source, Level) * self:GetDuration(Level)
 end
 
 function Skill_Ignite.GetDamagePower(self, Source, Level)
@@ -1639,7 +1639,7 @@ function Skill_Rupture.GetTargetCount(self, Level)
 end
 
 function Skill_Rupture.GetDamage(self, Source, Level)
-	return Buff_Poisoned.Damage * self:GetLevel(Source, Level) * self:GetDuration(Level)
+	return self:GetLevel(Source, Level) * self:GetDuration(Level)
 end
 
 function Skill_Rupture.GetDamagePower(self, Source, Level)

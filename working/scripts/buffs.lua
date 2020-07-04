@@ -1,16 +1,14 @@
 -- Bleeding --
 
 Buff_Bleeding = {}
-Buff_Bleeding.Damage = 1
 Buff_Bleeding.DamageType = DamageType["Bleed"]
 
 function Buff_Bleeding.GetInfo(self, Level)
-	return "Slowly bleeding for [c red]" .. self.Damage * Level .. " [c white]damage"
+	return "Slowly bleeding for [c red]" .. Level .. " [c white]damage"
 end
 
 function Buff_Bleeding.Update(self, Level, Source, Change)
-	Damage = self.Damage * Level
-	Damage = Damage * Source.GetDamageReduction(self.DamageType)
+	Damage = Level * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(Damage, 0)
 
 	Update = ResolveManaReductionRatio(Source, Damage)
@@ -207,16 +205,14 @@ end
 
 Buff_Poisoned = {}
 Buff_Poisoned.HealthUpdateMultiplier = -0.5
-Buff_Poisoned.Damage = 1
 Buff_Poisoned.DamageType = DamageType["Poison"]
 
 function Buff_Poisoned.GetInfo(self, Level)
-	return "Healing reduced by [c red]" .. math.abs(math.floor(self.HealthUpdateMultiplier * 100)) .. "%[c white] and taking [c red]" .. self.Damage * Level .. " [c white]damage"
+	return "Healing reduced by [c red]" .. math.abs(math.floor(self.HealthUpdateMultiplier * 100)) .. "%[c white] and taking [c red]" .. Level .. " [c white]damage"
 end
 
 function Buff_Poisoned.Update(self, Level, Source, Change)
-	Damage = self.Damage * Level
-	Damage = Damage * Source.GetDamageReduction(self.DamageType)
+	Damage = Level * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(math.floor(Damage), 0)
 
 	Update = ResolveManaReductionRatio(Source, Damage)
@@ -235,16 +231,14 @@ end
 -- Burning --
 
 Buff_Burning = {}
-Buff_Burning.Damage = 1
 Buff_Burning.DamageType = DamageType["Fire"]
 
 function Buff_Burning.GetInfo(self, Level)
-	return "Burning for [c red]" .. self.Damage * Level .. " [c white]damage"
+	return "Burning for [c red]" .. Level .. " [c white]damage"
 end
 
 function Buff_Burning.Update(self, Level, Source, Change)
-	Damage = self.Damage * Level
-	Damage = Damage * Source.GetDamageReduction(self.DamageType)
+	Damage = Level * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(math.floor(Damage), 0)
 
 	Update = ResolveManaReductionRatio(Source, Damage)

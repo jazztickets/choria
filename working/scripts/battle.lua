@@ -286,7 +286,7 @@ function WeaponProc(Source, Target, Result, IsSpell)
 	end
 
 	-- Proc main weapon
-	Weapon.Script:Proc(Random.GetInt(1, 100), Weapon.Chance, Weapon.Level, Weapon.Duration, Source, Target, Result)
+	Weapon.Script:Proc(Random.GetInt(1, 100), Weapon, Source, Target, Result)
 
 	-- Check for off-hand
 	WeaponOffHand = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
@@ -295,7 +295,7 @@ function WeaponProc(Source, Target, Result, IsSpell)
 	end
 
 	-- Proc off-hand weapon
-	WeaponOffHand.Script:Proc(Random.GetInt(1, 100), WeaponOffHand.Chance, WeaponOffHand.Level, WeaponOffHand.Duration, Source, Target, Result)
+	WeaponOffHand.Script:Proc(Random.GetInt(1, 100), WeaponOffHand, Source, Target, Result)
 end
 
 -- Storage for battle instance data
