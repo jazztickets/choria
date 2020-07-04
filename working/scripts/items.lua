@@ -315,7 +315,7 @@ end
 Item_Fang = { }
 
 function Item_Fang.GetInfo(self, Source, Item)
-	return "Increase damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Increase attack damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
 function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
@@ -429,6 +429,45 @@ end
 
 function Item_LavaSludge.PlaySound(self, Level)
 	Audio.Play("flame0.ogg")
+end
+
+-- Bone --
+
+Item_Bone = { }
+
+function Item_Bone.GetInfo(self, Source, Item)
+	return "[c green]" .. Item.Level .. "%[c white] chance to stun for [c green]" .. Item.Duration .. "[c white] seconds when thrown at your enemy"
+end
+
+function Item_Bone.Use(self, Level, Duration, Source, Target, Result)
+	if Random.GetInt(1, 100) <= Level then
+		Result.Target.Buff = Buff_Stunned.Pointer
+		Result.Target.BuffLevel = 1
+		Result.Target.BuffDuration = Duration
+		return Result
+	end
+
+	return Result
+end
+
+function Item_Bone.PlaySound(self, Level)
+	Audio.Play("bash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Stinger --
+
+Item_Stinger = { }
+
+function Item_Stinger.GetInfo(self, Source, Item)
+	return "Increase attack power by [c_green]" .. Item.Level .. "%[c_white] for [c_green]" .. Item.Duration .. " [c_white]seconds"
+end
+
+function Item_Stinger.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Empowered.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+
+	return Result
 end
 
 -- Torch --
