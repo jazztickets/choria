@@ -35,7 +35,7 @@ build() {
 	builddir="$projectdir/build/mingw$bits"
 	mkdir -p "$builddir"
 	pushd "$builddir"
-	cmake -DCMAKE_TOOLCHAIN_FILE=../../cmake/mingw${bits}.cmake ../../
+	cmake -DDISABLE_EDITOR=${DISABLE_EDITOR} -DCMAKE_TOOLCHAIN_FILE=../../cmake/mingw${bits}.cmake ../../
 
 	# build
 	make -j`nproc`

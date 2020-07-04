@@ -17,6 +17,14 @@ if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 endif()
 
+# enable editor
+set("DISABLE_EDITOR=${DISABLE_EDITOR}")
+if(DISABLE_EDITOR)
+	add_definitions("-DENABLE_EDITOR=0")
+else()
+	add_definitions("-DENABLE_EDITOR=1")
+endif()
+
 # set default build type
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
