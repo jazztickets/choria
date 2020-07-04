@@ -65,11 +65,12 @@ end
 Buff_Slowed = Base_Buff:New()
 
 function Buff_Slowed.GetInfo(self, Level)
-	return "Battle speed reduced by [c green]" .. self:GetChange(Level) .. "%"
+	return "Speed reduced by [c green]" .. self:GetChange(Level) .. "%"
 end
 
 function Buff_Slowed.Stats(self, Level, Source, Change)
 	Change.BattleSpeed = -self:GetChange(Level)
+	Change.MoveSpeed = -self:GetChange(Level)
 
 	return Change
 end

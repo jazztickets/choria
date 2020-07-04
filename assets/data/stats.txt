@@ -693,6 +693,7 @@ INSERT INTO zone VALUES(38,'grave_boss',1,14400.0,0,0);
 INSERT INTO zone VALUES(39,'raj',1,1440.0,0,0);
 INSERT INTO zone VALUES(40,'skeletons_hornet_zombie_dusty',0,0.0,2,5);
 INSERT INTO zone VALUES(41,'city_boss',1,1440.0,0,0);
+INSERT INTO zone VALUES(42,'lava_cave',0,0.0,2,4);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -747,16 +748,16 @@ INSERT INTO zonedata VALUES(44,20,9,2,0);
 INSERT INTO zonedata VALUES(45,21,18,1,1);
 INSERT INTO zonedata VALUES(46,21,2,10,0);
 INSERT INTO zonedata VALUES(47,21,1,5,0);
-INSERT INTO zonedata VALUES(48,22,15,1,2);
-INSERT INTO zonedata VALUES(49,22,6,3,0);
-INSERT INTO zonedata VALUES(50,22,2,5,0);
+INSERT INTO zonedata VALUES(48,22,15,2,0);
+INSERT INTO zonedata VALUES(49,22,6,1,0);
+INSERT INTO zonedata VALUES(50,22,2,1,0);
 INSERT INTO zonedata VALUES(51,23,19,1,0);
 INSERT INTO zonedata VALUES(52,23,16,2,0);
 INSERT INTO zonedata VALUES(53,23,6,3,0);
 INSERT INTO zonedata VALUES(54,23,2,2,0);
-INSERT INTO zonedata VALUES(55,24,6,10,0);
+INSERT INTO zonedata VALUES(55,24,6,5,0);
 INSERT INTO zonedata VALUES(56,24,18,1,2);
-INSERT INTO zonedata VALUES(57,24,2,6,0);
+INSERT INTO zonedata VALUES(57,24,2,3,0);
 INSERT INTO zonedata VALUES(58,25,16,1,2);
 INSERT INTO zonedata VALUES(59,25,2,3,0);
 INSERT INTO zonedata VALUES(60,25,6,2,0);
@@ -813,6 +814,9 @@ INSERT INTO zonedata VALUES(110,40,22,2,0);
 INSERT INTO zonedata VALUES(111,40,12,3,0);
 INSERT INTO zonedata VALUES(112,41,30,3,0);
 INSERT INTO zonedata VALUES(113,41,21,2,0);
+INSERT INTO zonedata VALUES(114,42,26,1,1);
+INSERT INTO zonedata VALUES(115,42,16,4,0);
+INSERT INTO zonedata VALUES(116,42,15,2,1);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -959,7 +963,7 @@ INSERT INTO trader VALUES(24,'taunt',14,1);
 INSERT INTO trader VALUES(25,'battle_potion',151,1);
 INSERT INTO trader VALUES(26,'blade_dance',28,1);
 INSERT INTO trader VALUES(27,'dungeon_key',232,1);
-INSERT INTO trader VALUES(28,'invis_potion',110,1);
+INSERT INTO trader VALUES(28,'lucky_amulet',217,1);
 INSERT INTO trader VALUES(29,'magic_barrier',29,1);
 INSERT INTO trader VALUES(30,'ice_nova',30,1);
 INSERT INTO trader VALUES(31,'spider_sword',245,1);
@@ -1044,9 +1048,7 @@ INSERT INTO traderitem VALUES(77,26,10,1);
 INSERT INTO traderitem VALUES(78,26,23,1);
 INSERT INTO traderitem VALUES(79,26,8,1);
 INSERT INTO traderitem VALUES(80,27,233,5);
-INSERT INTO traderitem VALUES(81,28,108,1);
-INSERT INTO traderitem VALUES(82,28,109,1);
-INSERT INTO traderitem VALUES(83,28,146,1);
+INSERT INTO traderitem VALUES(81,28,140,1);
 INSERT INTO traderitem VALUES(84,29,206,1);
 INSERT INTO traderitem VALUES(85,29,135,1);
 INSERT INTO traderitem VALUES(86,30,19,1);
@@ -1588,7 +1590,7 @@ INSERT INTO item VALUES(189,8,0,0,0,0,8,'Stun Ring III','textures/items/ring.png
 INSERT INTO item VALUES(190,5,2,0,0,0,0,'Silver Edge','textures/items/short_sword.png','Proc_Haste',0,2400,1,20,20,3.0,1,180,250,0,0,0,0,0,0,0,0,10,0,0,0,15,0);
 INSERT INTO item VALUES(191,10,0,1,1,0,0,'Teleport Scroll','textures/items/scroll.png','Item_TeleportScroll',0,20,1,0,0,3.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(192,10,2,2,2,0,0,'Poison Knives','textures/items/poison_knives.png','Item_PoisonKnives',0,20,1,20,0,10.0,1,50,150,0,0,100,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(193,10,0,2,2,0,0,'Swamp Glob','textures/items/swamp_glob.png','Item_SwampGlob',0,35,1,30,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(193,10,0,8,3,0,0,'Swamp Glob','textures/items/swamp_glob.png','Item_SwampGlob',0,35,1,30,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(194,3,0,0,0,0,6,'Black Vest','textures/items/black_vest.png','',0,200,1,0,20,0.0,1,0,0,2,1,0,10,0,0,0,0,10,5,0,0,0,0);
 INSERT INTO item VALUES(195,3,0,0,0,0,0,'Iron Armor','textures/items/iron_armor.png','',0,250,1,0,20,0.0,1,0,0,15,4,0,0,0,0,0,0,-10,-10,0,0,0,0);
 INSERT INTO item VALUES(196,3,0,0,0,0,0,'Steel Armor','textures/items/steel_armor.png','',0,1000,1,0,20,0.0,1,0,0,18,8,0,0,0,0,0,0,-10,-10,0,0,0,0);
