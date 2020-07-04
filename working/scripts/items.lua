@@ -436,7 +436,7 @@ end
 Item_Bone = { }
 
 function Item_Bone.GetInfo(self, Source, Item)
-	return "[c green]" .. Item.Level .. "%[c white] chance to stun for [c green]" .. Item.Duration .. "[c white] seconds when thrown at your enemy"
+	return "Throw at your enemy for a [c green]" .. Item.Level .. "%[c white] chance to stun for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_Bone.Use(self, Level, Duration, Source, Target, Result)

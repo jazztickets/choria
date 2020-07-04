@@ -3,6 +3,9 @@ Script_Rejuv = { BaseHealth = 5, BaseMana = 5 }
 function Script_Rejuv.Activate(self, Level, Cooldown, Object, Change)
 	Change.Health = self.BaseHealth * Level
 	Change.Mana = self.BaseMana * Level
+	Change.Buff = Buff_Sanctuary.Pointer
+	Change.BuffLevel = 10
+	Change.BuffDuration = 10
 
 	return Change
 end
