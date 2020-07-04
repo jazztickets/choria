@@ -43,6 +43,17 @@ end
 
 Skill_CrabAttack = Base_Attack:New()
 
+function Skill_CrabAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buff_Bleeding.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 3
+		return true
+	end
+
+	return false
+end
+
 function Skill_CrabAttack.PlaySound(self, Level)
 	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
 end

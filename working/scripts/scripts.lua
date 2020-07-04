@@ -56,6 +56,7 @@ function Script_Slow.Activate(self, Level, Cooldown, Object, Change)
 	Change.Buff = Buff_Slowed.Pointer
 	Change.BuffLevel = Level
 	Change.BuffDuration = 5
+	Change.ClearBuff = Buff_Burning.Pointer
 
 	return Change
 end

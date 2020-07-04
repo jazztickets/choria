@@ -103,6 +103,7 @@ enum class StatType : int {
 	REBIRTH,
 	DIAGONAL_MOVEMENT,
 	MAP_CHANGE,
+	CLEAR_BUFF,
 	COUNT,
 };
 
@@ -179,6 +180,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "Rebirth",                { StatType::REBIRTH                , StatValueType::INTEGER } },
 	{ "DiagonalMovement",       { StatType::DIAGONAL_MOVEMENT      , StatValueType::BOOLEAN } },
 	{ "MapChange",              { StatType::MAP_CHANGE             , StatValueType::INTEGER } },
+	{ "ClearBuff",              { StatType::CLEAR_BUFF             , StatValueType::POINTER } },
 };
 
 union _Value {

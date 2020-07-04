@@ -1040,6 +1040,19 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->CalculateStats();
 	}
 
+	// Clear buff
+	if(Server && StatChange.HasStat(StatType::CLEAR_BUFF)) {
+		_Buff *ClearBuff = (_Buff *)StatChange.Values[StatType::CLEAR_BUFF].Pointer;
+
+		// Find existing buff
+		for(auto &ExistingEffect : Character->StatusEffects) {
+			if(ExistingEffect->Buff == ClearBuff) {
+				ExistingEffect->Duration = 0.0;
+				Server->UpdateBuff(this, ExistingEffect);
+			}
+		}
+	}
+
 	// Update gold
 	if(StatChange.HasStat(StatType::GOLD)) {
 		Character->UpdateGold(StatChange.Values[StatType::GOLD].Integer);

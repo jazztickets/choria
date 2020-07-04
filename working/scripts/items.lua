@@ -234,13 +234,14 @@ end
 Item_SlimyGlob = { }
 
 function Item_SlimyGlob.GetInfo(self, Source, Item)
-	return "Gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Purge bleeding and gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_BleedResist.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Bleeding.Pointer
 
 	return Result
 end
@@ -254,13 +255,14 @@ end
 Item_CrowFeather = { }
 
 function Item_CrowFeather.GetInfo(self, Source, Item)
-	return "Increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Purge slowness and increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
 function Item_CrowFeather.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Fast.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Slowed.Pointer
 
 	return Result
 end
@@ -387,13 +389,14 @@ end
 Item_SwampGlob = { }
 
 function Item_SwampGlob.GetInfo(self, Source, Item)
-	return "Slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Purge burning and slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Slowed.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Burning.Pointer
 
 	return Result
 end
@@ -407,17 +410,19 @@ end
 Item_LavaSludge = { }
 
 function Item_LavaSludge.GetInfo(self, Source, Item)
-	return "Ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
+	return "Purge weakness and ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
 end
 
 function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Burning.Pointer
 	Result.Target.BuffLevel = Level * Source.FirePower
 	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Weak.Pointer
 
 	Result.Source.Buff = Buff_Burning.Pointer
 	Result.Source.BuffLevel = math.max(1, math.floor(Level / 2))
 	Result.Source.BuffDuration = Duration
+	Result.Source.ClearBuff = Buff_Weak.Pointer
 
 	return Result
 end
