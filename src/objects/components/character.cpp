@@ -783,6 +783,10 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 	if(!StatusEffect)
 		return false;
 
+	// Reduce duration of stun with resist
+	if(StatusEffect->Buff->Name == "Stunned")
+		StatusEffect->Duration *= 1.0f - (Resistances[8] / 100.0f);
+
 	// Find existing buff
 	for(auto &ExistingEffect : StatusEffects) {
 
