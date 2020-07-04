@@ -216,6 +216,8 @@ INSERT INTO script VALUES(9,'Script_Boss',38,0.0);
 INSERT INTO script VALUES(10,'Script_Boss',39,0.0);
 INSERT INTO script VALUES(11,'Script_Fall',16,0.0);
 INSERT INTO script VALUES(12,'Script_Boss',41,0.0);
+INSERT INTO script VALUES(13,'Script_Slow',10,0.0);
+INSERT INTO script VALUES(14,'Script_Slow',30,0.0);
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),

@@ -15,6 +15,9 @@ function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
 	Update = ResolveManaReductionRatio(Object, Damage)
 	Change.Health = Update.Health
 	Change.Mana = Update.Mana
+	Change.Buff = Buff_Burning.Pointer
+	Change.BuffLevel = 20
+	Change.BuffDuration = 10
 
 	return Change
 end
@@ -45,4 +48,18 @@ end
 
 function Script_Fall.PlaySound(self, Level)
 	Audio.Play("crunch1.ogg")
+end
+
+Script_Slow = { }
+
+function Script_Slow.Activate(self, Level, Cooldown, Object, Change)
+	Change.Buff = Buff_Slowed.Pointer
+	Change.BuffLevel = Level
+	Change.BuffDuration = 5
+
+	return Change
+end
+
+function Script_Slow.PlaySound(self, Level)
+	Audio.Play("swamp0.ogg")
 end
