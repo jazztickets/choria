@@ -92,7 +92,6 @@ class _PlayState : public ae::_State {
 
 		// Game
 		const _Stats *Stats;
-		ae::_LogFile Log;
 		double Time;
 
 		// Graphics
