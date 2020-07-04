@@ -399,7 +399,7 @@ INSERT INTO vendor VALUES(14,'dungeon_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(16,'wym_gear',1.0,0.5);
 INSERT INTO vendor VALUES(17,'graveyard_skills',1.0,0.5500000000000000444);
-INSERT INTO vendor VALUES(18,'mountain_vendor',1.0,0.5);
+INSERT INTO vendor VALUES(18,'ancient_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(19,'hideout_shop',1.0,0.5);
 INSERT INTO vendor VALUES(20,'ruins_skills',1.0,0.5);
 INSERT INTO vendor VALUES(21,'library_vendor',1.0,0.5);
@@ -544,6 +544,7 @@ INSERT INTO vendoritem VALUES(155,14,43);
 INSERT INTO vendoritem VALUES(156,18,98);
 INSERT INTO vendoritem VALUES(157,20,5);
 INSERT INTO vendoritem VALUES(158,15,216);
+INSERT INTO vendoritem VALUES(159,18,253);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1667,7 +1668,7 @@ INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/
 INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key0.png','',0,5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(251,13,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','',0,150,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(252,13,0,0,0,0,0,'Ancient Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(253,11,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(253,11,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(254,10,0,1,1,0,0,'Eternal Strength','textures/items/rebirth_sword.png','Item_RebirthStrength',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(255,10,0,1,1,0,0,'Eternal Guard','textures/items/rebirth_shield.png','Item_RebirthGuard',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(256,10,0,1,1,0,0,'Eternal Fortitude','textures/items/rebirth_health.png','Item_RebirthFortitude',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1689,7 +1690,6 @@ CREATE TABLE IF NOT EXISTS "zonedrops" (
 "item_id" INTEGER REFERENCES item(id) ON DELETE CASCADE,
 "count" INTEGER DEFAULT(1)
 );
-INSERT INTO zonedrops VALUES(1,33,253,1);
 INSERT INTO zonedrops VALUES(2,38,250,1);
 INSERT INTO zonedrops VALUES(3,33,252,1);
 INSERT INTO zonedrops VALUES(4,41,239,1);
