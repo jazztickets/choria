@@ -146,7 +146,9 @@ void _Object::Update(double FrameTime) {
 
 		// Check turn timer
 		if(Character->Battle) {
-			if(!Character->Stunned)
+			if(Character->Stunned)
+				Fighter->TurnTimer += FrameTime * (1.0 / BATTLE_DEFAULTATTACKPERIOD) * BATTLE_STUNNED_BATTLESPEED / 100.0;
+			else
 				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->BattleSpeed / 100.0;
 		}
 		else
