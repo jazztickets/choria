@@ -42,6 +42,7 @@ enum MapRenderType {
 	MAP_RENDER_EVENTTYPE         = (1 << 6),
 	MAP_RENDER_EVENTDATA         = (1 << 7),
 	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
+	MAP_RENDER_NOBACKGROUND      = (1 << 9),
 };
 
 enum BrushModeType {
@@ -120,6 +121,7 @@ class _EditorState : public ae::_State {
 		std::string FilePath;
 		double Clock;
 		bool UseClockAmbientLight;
+		bool ShowBackgroundMap;
 
 		// Copy paste
 		bool DrawCopyBounds;

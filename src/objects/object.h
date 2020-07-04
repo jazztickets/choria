@@ -145,6 +145,7 @@ class _Object : public ae::_BaseObject {
 		_Scripting *Scripting;
 		_Server *Server;
 		ae::_Peer *Peer;
+		uint32_t QueuedMapChange;
 
 		// Movement
 		glm::ivec2 Position;

@@ -30,3 +30,19 @@ function Script_Boss.Activate(self, Level, Cooldown, Object, Change)
 
 	return Change
 end
+
+Script_Fall = { }
+
+function Script_Fall.Activate(self, Level, Cooldown, Object, Change)
+	Change.Health = -1000
+	Change.Buff = Buff_Bleeding.Pointer
+	Change.BuffLevel = 100
+	Change.BuffDuration = 10
+	Change.MapChange = Level
+
+	return Change
+end
+
+function Script_Fall.PlaySound(self, Level)
+	Audio.Play("crunch1.ogg")
+end

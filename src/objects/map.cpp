@@ -374,6 +374,11 @@ void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 			}
 		break;
 	}
+
+	if(Server && Object->QueuedMapChange) {
+		Server->SpawnPlayer(Object, Object->QueuedMapChange, _Map::EVENT_MAPENTRANCE);
+		Object->QueuedMapChange = 0;
+	}
 }
 
 // Check for next battle
@@ -550,7 +555,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	}
 
 	// Draw background map
-	if(BackgroundMap) {
+	if(!(RenderFlags & MAP_RENDER_NOBACKGROUND) && BackgroundMap) {
 		BackgroundMap->Clock = Clock;
 		BackgroundMap->SetAmbientLightByClock();
 		ae::Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight;

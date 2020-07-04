@@ -214,6 +214,8 @@ INSERT INTO script VALUES(7,'Script_Boss',23,0.0);
 INSERT INTO script VALUES(8,'Script_Boss',33,0.0);
 INSERT INTO script VALUES(9,'Script_Boss',38,0.0);
 INSERT INTO script VALUES(10,'Script_Boss',39,0.0);
+INSERT INTO script VALUES(11,'Script_Fall',16,0.0);
+INSERT INTO script VALUES(12,'Script_Boss',41,0.0);
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -424,7 +426,7 @@ INSERT INTO vendoritem VALUES(25,3,119);
 INSERT INTO vendoritem VALUES(26,4,120);
 INSERT INTO vendoritem VALUES(27,4,121);
 INSERT INTO vendoritem VALUES(28,1,10);
-INSERT INTO vendoritem VALUES(29,13,11);
+INSERT INTO vendoritem VALUES(29,19,11);
 INSERT INTO vendoritem VALUES(30,3,131);
 INSERT INTO vendoritem VALUES(31,4,122);
 INSERT INTO vendoritem VALUES(32,4,123);
@@ -449,14 +451,14 @@ INSERT INTO vendoritem VALUES(62,7,108);
 INSERT INTO vendoritem VALUES(63,7,109);
 INSERT INTO vendoritem VALUES(64,7,110);
 INSERT INTO vendoritem VALUES(65,7,191);
-INSERT INTO vendoritem VALUES(68,8,2);
-INSERT INTO vendoritem VALUES(69,8,12);
-INSERT INTO vendoritem VALUES(70,8,13);
-INSERT INTO vendoritem VALUES(72,8,16);
+INSERT INTO vendoritem VALUES(68,19,2);
+INSERT INTO vendoritem VALUES(69,19,12);
+INSERT INTO vendoritem VALUES(70,19,13);
+INSERT INTO vendoritem VALUES(72,19,16);
 INSERT INTO vendoritem VALUES(73,7,156);
 INSERT INTO vendoritem VALUES(74,9,149);
 INSERT INTO vendoritem VALUES(75,9,150);
-INSERT INTO vendoritem VALUES(76,9,190);
+INSERT INTO vendoritem VALUES(76,14,190);
 INSERT INTO vendoritem VALUES(77,9,154);
 INSERT INTO vendoritem VALUES(78,9,141);
 INSERT INTO vendoritem VALUES(80,8,4);
@@ -492,7 +494,6 @@ INSERT INTO vendoritem VALUES(111,11,155);
 INSERT INTO vendoritem VALUES(112,11,156);
 INSERT INTO vendoritem VALUES(113,8,23);
 INSERT INTO vendoritem VALUES(114,6,191);
-INSERT INTO vendoritem VALUES(115,11,216);
 INSERT INTO vendoritem VALUES(116,4,218);
 INSERT INTO vendoritem VALUES(117,2,220);
 INSERT INTO vendoritem VALUES(118,12,221);
@@ -525,7 +526,7 @@ INSERT INTO vendoritem VALUES(144,16,244);
 INSERT INTO vendoritem VALUES(145,15,247);
 INSERT INTO vendoritem VALUES(146,15,248);
 INSERT INTO vendoritem VALUES(147,15,191);
-INSERT INTO vendoritem VALUES(148,13,37);
+INSERT INTO vendoritem VALUES(148,8,37);
 INSERT INTO vendoritem VALUES(149,6,38);
 INSERT INTO vendoritem VALUES(150,17,17);
 INSERT INTO vendoritem VALUES(151,17,39);
@@ -688,6 +689,8 @@ INSERT INTO zone VALUES(36,'skeletonmage',0,0.0,2,3);
 INSERT INTO zone VALUES(37,'ghost_thief',0,0.0,3,6);
 INSERT INTO zone VALUES(38,'grave_boss',1,14400.0,0,0);
 INSERT INTO zone VALUES(39,'raj',1,1440.0,0,0);
+INSERT INTO zone VALUES(40,'skeletons_hornet_zombie_dusty',0,0.0,2,5);
+INSERT INTO zone VALUES(41,'city_boss',1,1440.0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -801,6 +804,13 @@ INSERT INTO zonedata VALUES(103,36,27,3,0);
 INSERT INTO zonedata VALUES(104,39,31,1,0);
 INSERT INTO zonedata VALUES(105,39,24,4,0);
 INSERT INTO zonedata VALUES(106,39,5,2,0);
+INSERT INTO zonedata VALUES(107,40,20,3,0);
+INSERT INTO zonedata VALUES(108,40,21,1,0);
+INSERT INTO zonedata VALUES(109,40,27,1,0);
+INSERT INTO zonedata VALUES(110,40,22,2,0);
+INSERT INTO zonedata VALUES(111,40,12,3,0);
+INSERT INTO zonedata VALUES(112,41,30,3,0);
+INSERT INTO zonedata VALUES(113,41,21,2,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -879,8 +889,8 @@ INSERT INTO map VALUES(13,'maps/choria_sandcave_bg.map.gz','textures/map/atlas0.
 INSERT INTO map VALUES(14,'maps/choria_slimecave1.map.gz','textures/map/atlas0.png','',0.0,0.2000000000000000111,0.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(15,'maps/choria_slimecave2.map.gz','textures/map/atlas0.png','',0.0,0.050000000000000002775,0.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(16,'maps/choria_ruins1.map.gz','textures/map/atlas0.png','',0.75,0.5500000000000000444,0.14999999999999999444,2,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(17,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(18,'maps/choria_graveyard.map.gz','textures/map/atlas0.png','',0.25,0.23000000000000000999,1.0,2,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(17,'maps/choria_ruins2.map.gz','textures/map/atlas0.png','',0.75,0.5500000000000000444,0.14999999999999999444,2,16,-48.000000000000000001,-83.999999999999999996,-15.0);
+INSERT INTO map VALUES(18,'maps/choria_graveyard.map.gz','textures/map/atlas0.png','howl.ogg',0.25,0.23000000000000000999,1.0,2,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(19,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(20,'maps/fem.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(21,'maps/fem_house_top.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,0,'',0.0,0.0,0.0);
@@ -942,11 +952,11 @@ INSERT INTO trader VALUES(19,'cold_ring',175,1);
 INSERT INTO trader VALUES(20,'fire_ring',172,1);
 INSERT INTO trader VALUES(21,'mythical_amulet',231,1);
 INSERT INTO trader VALUES(22,'hunt',24,1);
-INSERT INTO trader VALUES(23,'ruined_city_key',267,1);
+INSERT INTO trader VALUES(23,'city_key',267,1);
 INSERT INTO trader VALUES(24,'taunt',14,1);
 INSERT INTO trader VALUES(25,'battle_potion',151,1);
 INSERT INTO trader VALUES(26,'blade_dance',28,1);
-INSERT INTO trader VALUES(27,'bridge_key',239,1);
+INSERT INTO trader VALUES(27,'dungeon_key',232,1);
 INSERT INTO trader VALUES(28,'invis_potion',110,1);
 INSERT INTO trader VALUES(29,'magic_barrier',29,1);
 INSERT INTO trader VALUES(30,'ice_nova',30,1);
@@ -998,9 +1008,6 @@ INSERT INTO traderitem VALUES(32,14,156,10);
 INSERT INTO traderitem VALUES(33,6,125,10);
 INSERT INTO traderitem VALUES(34,6,211,1);
 INSERT INTO traderitem VALUES(35,15,126,1);
-INSERT INTO traderitem VALUES(36,15,139,1);
-INSERT INTO traderitem VALUES(37,15,140,1);
-INSERT INTO traderitem VALUES(38,15,161,1);
 INSERT INTO traderitem VALUES(39,10,145,1);
 INSERT INTO traderitem VALUES(40,10,5,1);
 INSERT INTO traderitem VALUES(41,10,127,2);
@@ -1020,7 +1027,7 @@ INSERT INTO traderitem VALUES(60,21,162,1);
 INSERT INTO traderitem VALUES(63,21,229,1);
 INSERT INTO traderitem VALUES(64,22,132,1);
 INSERT INTO traderitem VALUES(65,22,150,1);
-INSERT INTO traderitem VALUES(66,23,140,1);
+INSERT INTO traderitem VALUES(66,23,126,1);
 INSERT INTO traderitem VALUES(67,24,138,1);
 INSERT INTO traderitem VALUES(68,24,20,1);
 INSERT INTO traderitem VALUES(69,25,114,1);
@@ -1069,6 +1076,9 @@ INSERT INTO traderitem VALUES(111,46,241,1);
 INSERT INTO traderitem VALUES(112,46,233,20);
 INSERT INTO traderitem VALUES(113,46,31,1);
 INSERT INTO traderitem VALUES(114,46,214,1);
+INSERT INTO traderitem VALUES(115,23,139,1);
+INSERT INTO traderitem VALUES(116,23,140,1);
+INSERT INTO traderitem VALUES(117,23,161,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1629,7 +1639,7 @@ INSERT INTO item VALUES(242,14,2,0,0,0,0,'Moon Blade','textures/items/moon_blade
 INSERT INTO item VALUES(243,5,2,0,0,0,0,'Arcane Wand','textures/items/arcane_wand.png','Proc_Mana',0,7500,1,100,20,0.0,1,150,250,0,0,0,0,0,500,0,10,0,0,0,2,15,1);
 INSERT INTO item VALUES(244,6,2,0,0,0,0,'Greatsword','textures/items/greatsword.png','Proc_Empowered',0,25000,1,25,20,5.0,1,1400,2500,-10,0,0,0,0,0,0,0,-20,0,0,0,15,0);
 INSERT INTO item VALUES(245,5,2,0,0,0,0,'Spider Sword','textures/items/spider_sword.png','Proc_Slow',0,350,1,30,20,3.0,1,70,130,0,0,0,0,0,0,0,0,5,0,0,0,15,0);
-INSERT INTO item VALUES(246,5,6,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,20,5.0,1,110,180,0,0,0,0,0,0,0,0,5,0,0,0,15,0);
+INSERT INTO item VALUES(246,5,6,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,20,5.0,1,110,220,0,0,0,0,0,0,0,0,5,0,0,0,15,0);
 INSERT INTO item VALUES(247,10,0,1,3,0,0,'Glowing Salve','textures/items/glowing_salve.png','Item_HealingSalve',0,250,1,600,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(248,10,0,1,3,0,0,'Glowing Cider','textures/items/glowing_cider.png','Item_ManaCider',0,375,1,200,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1650,7 +1660,7 @@ INSERT INTO item VALUES(263,4,0,0,0,0,0,'Dimensional Slippers','textures/items/d
 INSERT INTO item VALUES(264,13,0,0,0,0,0,'Hideout Key','textures/items/key0.png','',0,100,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(265,14,2,0,0,0,7,'Bloodletter','textures/items/bloodletter.png','Proc_Bloodlet',0,2000,1,50,20,5.0,1,220,220,0,8,35,15,0,0,0,0,30,0,0,0,20,0);
 INSERT INTO item VALUES(266,5,3,0,0,0,3,'Flamuss','textures/items/flamuss.png','Proc_Ignite',0,18000,1,500,20,5.0,1,650,1200,0,0,0,20,0,0,0,0,0,0,0,0,35,0);
-INSERT INTO item VALUES(267,13,0,0,0,0,0,'Ruined City Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(267,13,0,0,0,0,0,'City Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -1660,6 +1670,7 @@ CREATE TABLE IF NOT EXISTS "zonedrops" (
 INSERT INTO zonedrops VALUES(1,33,253,1);
 INSERT INTO zonedrops VALUES(2,38,250,1);
 INSERT INTO zonedrops VALUES(3,33,252,1);
+INSERT INTO zonedrops VALUES(4,41,239,1);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

@@ -131,6 +131,7 @@ void _EditorState::Init() {
 	BrushMode = EDITOR_BRUSH_MODE_TILE;
 	ObjectType = 0;
 	ObjectData = 1;
+	ShowBackgroundMap = true;
 }
 
 // Shuts the state down
@@ -261,6 +262,9 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_N:
 				Framework.IgnoreNextInputEvent = true;
 				ToggleNewMap();
+			break;
+			case SDL_SCANCODE_M:
+				ShowBackgroundMap = !ShowBackgroundMap;
 			break;
 			case SDL_SCANCODE_R:
 				Framework.IgnoreNextInputEvent = true;
@@ -514,6 +518,9 @@ void _EditorState::Render(double BlendFactor) {
 		int RenderFilter = Filter | MAP_RENDER_BOUNDARY;
 		if(!UseClockAmbientLight)
 			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
+
+		if(!ShowBackgroundMap)
+			RenderFilter |= MAP_RENDER_NOBACKGROUND;
 		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
 	}
 

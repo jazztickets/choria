@@ -112,6 +112,7 @@ Hit Z to rotate through different zone colors
 Hit T/Shift-T to cycle the clock
 Hit Ctrl+T to toggle day/night ambient light
 Hit D to delete light under cursor
+Hit M to toggle background map
 
 -- Mouse --
 Use Left-mouse button to apply the current brush

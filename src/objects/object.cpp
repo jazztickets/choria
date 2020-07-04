@@ -66,6 +66,7 @@ _Object::_Object() :
 	Scripting(nullptr),
 	Server(nullptr),
 	Peer(nullptr),
+	QueuedMapChange(0),
 
 	Position(0, 0),
 	ServerPosition(0, 0),
@@ -1166,6 +1167,10 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		// Resurrect
 		if(StatChange.HasStat(StatType::RESURRECT))
 			Server->Resurrect(this, StatChange.Values[StatType::RESURRECT].Integer);
+
+		// Map Change
+		if(StatChange.HasStat(StatType::MAP_CHANGE))
+			QueuedMapChange = StatChange.Values[StatType::MAP_CHANGE].Integer;
 	}
 
 	return StatusEffect;
