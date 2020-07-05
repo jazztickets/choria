@@ -56,6 +56,10 @@ void RunCommandThread(_Server *Server) {
 		else if(Input == "b" || Input == "battles") {
 			DedicatedState.ShowBattles();
 		}
+		else if(Input.substr(0, 4) == "slap" && Input.size() > 5) {
+			ae::NetworkIDType PlayerID = std::stoi(Input.substr(5, std::string::npos));
+			Server->Slap(PlayerID, 25);
+		}
 		else {
 			std::cout << "Command not recognized" << std::endl;
 		}

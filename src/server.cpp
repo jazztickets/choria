@@ -1872,6 +1872,29 @@ void _Server::UpdateBuff(_Object *Player, _StatusEffect *StatusEffect) {
 		Network->SendPacket(Packet, Player->Peer);
 }
 
+// Slap a misbehaving player
+void _Server::Slap(ae::NetworkIDType PlayerID, int GoldAmount) {
+	_Object *Player = ObjectManager->GetObject(PlayerID);
+	if(!Player)
+		return;
+
+	// Penalty
+	_StatChange StatChange;
+	StatChange.Object = Player;
+	StatChange.Values[StatType::GOLD].Integer = -GoldAmount;
+	StatChange.Values[StatType::HEALTH].Integer = -Player->Character->Health / 2;
+	Player->UpdateStats(StatChange);
+
+	// Build packet
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+	StatChange.Serialize(Packet);
+	Network->SendPacket(Packet, Player->Peer);
+
+	// Shame them
+	BroadcastMessage(nullptr, Player->Name + " has been slapped for misbehaving!", "yellow");
+}
+
 // Send a message to the player
 void _Server::SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName) {
 	if(!ValidatePeer(Peer))

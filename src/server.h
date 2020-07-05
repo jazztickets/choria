@@ -93,6 +93,7 @@ class _Server {
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
 		void SetClock(double Clock);
 		void UpdateBuff(_Object *Player, _StatusEffect *StatusEffect);
+		void Slap(ae::NetworkIDType PlayerID, int GoldAmount);
 
 		// Packet handling
 		void HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer);
