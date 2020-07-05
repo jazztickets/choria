@@ -312,7 +312,6 @@ void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 			Object->Character->SpawnMapID = NetworkID;
 			Object->Character->SpawnPoint = Tile->Event.Data;
 		break;
-		case _Map::EVENT_MAPENTRANCE:
 		case _Map::EVENT_MAPCHANGE:
 			if(Server)
 				Server->SpawnPlayer(Object, (ae::NetworkIDType)Tile->Event.Data, _Map::EVENT_MAPENTRANCE);
