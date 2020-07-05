@@ -252,15 +252,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	// Drop rate
-	if(HUD->Player->Character->DropRate != 0) {
-		Buffer << HUD->Player->Character->DropRate;
-		Font->DrawText("Drop Rate", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
 	// Resistances
 	bool HasResist = false;
 	for(auto &Resistance : HUD->Player->Character->Resistances) {

@@ -96,7 +96,8 @@ class _Item {
 		float GetBattleSpeed(int Upgrades) const;
 		float GetMoveSpeed(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
-		float GetDropRate(int Upgrades) const;
+		float GetGoldBonus(int Upgrades) const;
+		float GetExpBonus(int Upgrades) const;
 		float GetAllSkills(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 
@@ -124,7 +125,8 @@ class _Item {
 		int ManaRegen;
 		int BattleSpeed;
 		int MoveSpeed;
-		int DropRate;
+		int GoldBonus;
+		int ExpBonus;
 		int AllSkills;
 		int Chance;
 		int SpellProc;

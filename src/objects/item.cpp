@@ -377,17 +377,33 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		StatDrawn = true;
 	}
 
-	// Drop rate
-	int DrawDropRate = (int)GetDropRate(Upgrades);
-	if(DrawDropRate != 0) {
+	// Gold bonus
+	int DrawGoldBonus = (int)GetGoldBonus(Upgrades);
+	if(DrawGoldBonus != 0) {
 		std::stringstream Buffer;
-		Buffer << (DrawDropRate < 0 ? "" : "+") << DrawDropRate;
+		Buffer << (DrawGoldBonus < 0 ? "" : "+") << DrawGoldBonus << "%";
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetDropRate(Upgrades), CompareInventory.Item->GetDropRate(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetGoldBonus(Upgrades), CompareInventory.Item->GetGoldBonus(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Drop Rate", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Gold Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
+	// Experience bonus
+	int DrawExpBonus = (int)GetExpBonus(Upgrades);
+	if(DrawExpBonus != 0) {
+		std::stringstream Buffer;
+		Buffer << (DrawExpBonus < 0 ? "" : "+") << DrawExpBonus << "%";
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetExpBonus(Upgrades), CompareInventory.Item->GetExpBonus(CompareInventory.Upgrades));
+
+		ae::Assets.Fonts["hud_medium"]->DrawText("Exp Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -873,9 +889,14 @@ float _Item::GetResistance(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::RESIST, Upgrades, Resistance);
 }
 
-// Get drop rate
-float _Item::GetDropRate(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::DROPRATE, Upgrades, DropRate);
+// Get gold bonus
+float _Item::GetGoldBonus(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::GOLD_BONUS, Upgrades, GoldBonus);
+}
+
+// Get experience bonus
+float _Item::GetExpBonus(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::EXP_BONUS, Upgrades, ExpBonus);
 }
 
 // Get + all skills

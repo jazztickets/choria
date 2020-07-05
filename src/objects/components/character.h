@@ -187,7 +187,6 @@ class _Character {
 		double BaseAttackPeriod;
 		int BaseEvasion;
 		int BaseHitChance;
-		int BaseDropRate;
 		int BaseAllSkills;
 
 		// Final attributes
@@ -223,7 +222,6 @@ class _Character {
 		int EquipmentBattleSpeed;
 		int Evasion;
 		int HitChance;
-		int DropRate;
 		int AllSkills;
 		int SummonLimit;
 		std::unordered_map<uint32_t, int> Resistances;

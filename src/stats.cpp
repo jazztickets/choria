@@ -260,7 +260,8 @@ void _Stats::LoadItems() {
 		Item->ManaRegen = Database->GetInt<int>("manaregen");
 		Item->BattleSpeed = Database->GetInt<int>("battlespeed");
 		Item->MoveSpeed = Database->GetInt<int>("movespeed");
-		Item->DropRate = Database->GetInt<int>("droprate");
+		Item->GoldBonus = Database->GetInt<int>("gold_bonus");
+		Item->ExpBonus = Database->GetInt<int>("exp_bonus");
 		Item->AllSkills = Database->GetInt<int>("allskills");
 		Item->Chance = Database->GetInt<int>("chance");
 		Item->SpellProc = Database->GetInt<int>("spellproc");
@@ -716,7 +717,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const {
+void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops) const {
 	if(MonsterID == 0)
 		return;
 
@@ -729,14 +730,7 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate,
 	uint32_t OddsSum = 0;
 	while(Database->FetchRow()) {
 		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
-		uint32_t Odds = 100 * Database->GetInt<uint32_t>("odds");
-
-		float Scale = 1.0f;
-		if(ItemID == 0)
-			Scale = BATTLE_NOTHINGDROP_SCALE;
-
-		// Improve odds of items
-		Odds *= 1.0f + DropRate / 100.0f * Scale;
+		uint32_t Odds = Database->GetInt<uint32_t>("odds");
 
 		OddsSum += Odds;
 		PossibleItemDrops.push_back(_ItemDrop(ItemID, OddsSum));

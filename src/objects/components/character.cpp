@@ -92,7 +92,6 @@ _Character::_Character(_Object *Object) :
 	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
 	BaseEvasion(0),
 	BaseHitChance(100),
-	BaseDropRate(0),
 	BaseAllSkills(0),
 
 	Health(1),
@@ -127,7 +126,6 @@ _Character::_Character(_Object *Object) :
 	EquipmentBattleSpeed(0),
 	Evasion(0),
 	HitChance(100),
-	DropRate(0),
 	AllSkills(0),
 	SummonLimit(0),
 
@@ -331,7 +329,6 @@ void _Character::CalculateStats() {
 	DamageBlock = BaseDamageBlock;
 	Pierce = BasePierce;
 	MoveSpeed = BaseMoveSpeed;
-	DropRate = BaseDropRate;
 	AllSkills = BaseAllSkills;
 
 	Object->Light = 0;
@@ -414,8 +411,9 @@ void _Character::CalculateStats() {
 			ManaRegen += Item->GetManaRegen(Upgrades);
 			BattleSpeed += Item->GetBattleSpeed(Upgrades);
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
-			DropRate += Item->GetDropRate(Upgrades);
 			AllSkills += Item->GetAllSkills(Upgrades);
+			GoldMultiplier += Item->GetGoldBonus(Upgrades) / 100.0f;
+			ExperienceMultiplier += Item->GetExpBonus(Upgrades) / 100.0f;
 
 			// Handle all resist
 			if(Item->ResistanceTypeID == 1) {
@@ -596,9 +594,6 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::MOVESPEED))
 		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
-
-	if(StatChange.HasStat(StatType::DROPRATE))
-		DropRate += StatChange.Values[StatType::DROPRATE].Integer;
 
 	if(StatChange.HasStat(StatType::INVISIBLE))
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;

@@ -656,10 +656,8 @@ void _Battle::ServerEndBattle() {
 
 		// Get list of objects that get rewards
 		std::list<_Object *> RewardObjects;
-		int DropRate = 0;
 		for(auto &Object : SideObjects[WinningSide]) {
 			if(Object->Character->IsAlive()) {
-				DropRate += Object->Character->DropRate;
 				RewardObjects.push_back(Object);
 			}
 		}
@@ -687,7 +685,7 @@ void _Battle::ServerEndBattle() {
 			if(ItemDrops.empty()) {
 				for(auto &Object : SideObjects[!WinningSide]) {
 					if(Object->IsMonster())
-						Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, DropRate, ItemDrops);
+						Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, ItemDrops);
 				}
 			}
 

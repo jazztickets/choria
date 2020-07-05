@@ -63,7 +63,6 @@ enum class StatType : int {
 	MOVESPEED,
 	STAMINA,
 	BATTLESPEED,
-	DROPRATE,
 	HITCHANCE,
 	EVASION,
 	STUNNED,
@@ -104,6 +103,8 @@ enum class StatType : int {
 	DIAGONAL_MOVEMENT,
 	MAP_CHANGE,
 	CLEAR_BUFF,
+	GOLD_BONUS,
+	EXP_BONUS,
 	COUNT,
 };
 
@@ -140,7 +141,6 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "MoveSpeed",              { StatType::MOVESPEED              , StatValueType::INTEGER } },
 	{ "Stamina",                { StatType::STAMINA                , StatValueType::FLOAT   } },
 	{ "BattleSpeed",            { StatType::BATTLESPEED            , StatValueType::INTEGER } },
-	{ "DropRate",               { StatType::DROPRATE               , StatValueType::INTEGER } },
 	{ "HitChance",              { StatType::HITCHANCE              , StatValueType::INTEGER } },
 	{ "Evasion",                { StatType::EVASION                , StatValueType::INTEGER } },
 	{ "Stunned",                { StatType::STUNNED                , StatValueType::BOOLEAN } },
@@ -181,6 +181,8 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "DiagonalMovement",       { StatType::DIAGONAL_MOVEMENT      , StatValueType::BOOLEAN } },
 	{ "MapChange",              { StatType::MAP_CHANGE             , StatValueType::INTEGER } },
 	{ "ClearBuff",              { StatType::CLEAR_BUFF             , StatValueType::POINTER } },
+	{ "GoldBonus",              { StatType::GOLD_BONUS             , StatValueType::INTEGER } },
+	{ "ExpBonus",               { StatType::EXP_BONUS              , StatValueType::INTEGER } },
 };
 
 union _Value {
