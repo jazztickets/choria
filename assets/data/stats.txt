@@ -1699,6 +1699,8 @@ CREATE TABLE IF NOT EXISTS "zonedrops" (
 INSERT INTO zonedrops VALUES(2,38,250,1);
 INSERT INTO zonedrops VALUES(3,33,252,1);
 INSERT INTO zonedrops VALUES(4,41,239,1);
+INSERT INTO zonedrops VALUES(5,38,237,5);
+INSERT INTO zonedrops VALUES(6,38,146,3);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

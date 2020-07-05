@@ -36,3 +36,4 @@ menu_button_bg0	0.07	0.07	0.11	1
 menu_button_bg1	0.09	0.09	0.14	1
 menu_window	0.05	0.05	0.09	1
 minigame_bg	0.12	0.06	0.03	1
+editor_edge	1	0	1	0.1

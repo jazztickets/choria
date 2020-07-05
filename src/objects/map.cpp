@@ -617,6 +617,13 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		ae::Graphics.DrawRectangle3D(glm::vec2(0), glm::vec2(Size), false);
 	}
 
+	// Draw boundary where map edge is almost visible
+	if((RenderFlags & MAP_RENDER_EDGE_BOUNDARY) && Size.x > 32 && Size.y > 20) {
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetColor(ae::Assets.Colors["editor_edge"]);
+		ae::Graphics.DrawRectangle3D(glm::vec2(16, 10), glm::vec2(Size.x - 16, Size.y - 10), false);
+	}
+
 	// Draw zone overlays
 	if(RenderFlags & MAP_RENDER_ZONE) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
@@ -652,13 +659,13 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 				// Draw PVP
 				if((RenderFlags & MAP_RENDER_PVP) && Tile->PVP)
-					ae::Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), ae::CENTER_MIDDLE, ae::Assets.Colors["red"], 1.0f / 64.0f);
+					ae::Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition) - glm::vec2(0, 0.25), ae::CENTER_MIDDLE, ae::Assets.Colors["red"], 1.0f / 64.0f);
 			}
 
 			// Draw event info
 			if(Tile->Event.Type > 0) {
 				std::string EventText = Stats->EventNames[Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
-				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 64.0f);
+				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition) - glm::vec2(0, -0.25), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 64.0f);
 			}
 		}
 	}
