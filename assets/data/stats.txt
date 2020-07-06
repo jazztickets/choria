@@ -639,6 +639,14 @@ INSERT INTO monsterdrop VALUES(71,30,0,80);
 INSERT INTO monsterdrop VALUES(72,30,237,20);
 INSERT INTO monsterdrop VALUES(73,31,264,1);
 INSERT INTO monsterdrop VALUES(74,32,0,1);
+INSERT INTO monsterdrop VALUES(75,35,0,80);
+INSERT INTO monsterdrop VALUES(76,35,146,10);
+INSERT INTO monsterdrop VALUES(77,35,248,10);
+INSERT INTO monsterdrop VALUES(78,33,0,80);
+INSERT INTO monsterdrop VALUES(79,33,115,20);
+INSERT INTO monsterdrop VALUES(80,34,0,80);
+INSERT INTO monsterdrop VALUES(81,34,233,10);
+INSERT INTO monsterdrop VALUES(82,34,240,10);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -720,9 +728,9 @@ INSERT INTO zone VALUES(38,'grave_boss',1,14400.0,0,0);
 INSERT INTO zone VALUES(39,'raj',1,1440.0,0,0);
 INSERT INTO zone VALUES(40,'skeletons_hornet_zombie_dusty',0,0.0,2,5);
 INSERT INTO zone VALUES(41,'city_boss',1,1440.0,0,0);
-INSERT INTO zone VALUES(42,'lava_cave',0,0.0,2,4);
+INSERT INTO zone VALUES(42,'lavaman_crimsonslime_venombat',0,0.0,2,4);
 INSERT INTO zone VALUES(43,'ghost_bat',0,0.0,1,2);
-INSERT INTO zone VALUES(44,'lava_mountain',0,0.0,2,4);
+INSERT INTO zone VALUES(44,'lavaspitter_lavaslime_skeletonmage',0,0.0,3,5);
 INSERT INTO zone VALUES(45,'jem',1,1440.0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
@@ -817,11 +825,11 @@ INSERT INTO zonedata VALUES(83,32,26,3,2);
 INSERT INTO zonedata VALUES(84,32,13,1,0);
 INSERT INTO zonedata VALUES(85,32,11,1,0);
 INSERT INTO zonedata VALUES(86,32,16,1,0);
-INSERT INTO zonedata VALUES(87,33,23,4,0);
-INSERT INTO zonedata VALUES(88,33,7,1,0);
-INSERT INTO zonedata VALUES(89,33,10,1,0);
-INSERT INTO zonedata VALUES(90,33,19,1,0);
-INSERT INTO zonedata VALUES(91,33,17,1,0);
+INSERT INTO zonedata VALUES(87,33,30,1,0);
+INSERT INTO zonedata VALUES(88,33,31,1,0);
+INSERT INTO zonedata VALUES(89,33,32,1,0);
+INSERT INTO zonedata VALUES(90,33,30,1,0);
+INSERT INTO zonedata VALUES(91,33,7,1,0);
 INSERT INTO zonedata VALUES(92,34,27,1,2);
 INSERT INTO zonedata VALUES(93,35,28,1,0);
 INSERT INTO zonedata VALUES(94,34,29,2,0);
@@ -850,6 +858,12 @@ INSERT INTO zonedata VALUES(116,42,15,2,1);
 INSERT INTO zonedata VALUES(117,43,11,2,0);
 INSERT INTO zonedata VALUES(118,43,5,1,0);
 INSERT INTO zonedata VALUES(119,45,32,1,0);
+INSERT INTO zonedata VALUES(120,44,34,2,0);
+INSERT INTO zonedata VALUES(121,44,30,1,2);
+INSERT INTO zonedata VALUES(122,44,36,3,0);
+INSERT INTO zonedata VALUES(123,33,10,1,0);
+INSERT INTO zonedata VALUES(124,33,19,1,0);
+INSERT INTO zonedata VALUES(125,33,17,1,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -877,10 +891,10 @@ INSERT INTO monster VALUES(7,1,'Bat Lord','textures/monsters/red_bat.png',50,100
 INSERT INTO monster VALUES(8,1,'Crab','textures/monsters/crab.png',7,10,250,0,20,50,20,5,4.0,1,30);
 INSERT INTO monster VALUES(9,1,'Water Crab','textures/monsters/water_crab.png',10,15,400,0,50,100,25,10,2.2200000000000001953,1,44);
 INSERT INTO monster VALUES(10,1,'King Krab','textures/monsters/king_krab.png',100,200,1500,0,100,200,35,20,2.0,3,26);
-INSERT INTO monster VALUES(11,1,'Ghost','textures/monsters/ghost.png',12,3,150,0,100,120,90,0,6.6600000000000001421,1,25);
+INSERT INTO monster VALUES(11,1,'Ghost','textures/monsters/ghost.png',12,3,150,0,100,120,90,0,7.0,1,25);
 INSERT INTO monster VALUES(12,1,'Zombie','textures/monsters/zombie.png',15,20,500,0,70,180,10,10,2.8500000000000000888,1,28);
 INSERT INTO monster VALUES(13,1,'Demon Crow','textures/monsters/demon_crow.png',20,15,225,0,140,220,2,5,1.8100000000000000532,1,24);
-INSERT INTO monster VALUES(14,1,'Apparition','textures/monsters/apparition.png',25,7,350,0,200,210,90,0,6.6600000000000001421,1,25);
+INSERT INTO monster VALUES(14,1,'Apparition','textures/monsters/apparition.png',25,7,350,0,200,210,90,0,7.0,1,25);
 INSERT INTO monster VALUES(15,1,'Venomous Bat','textures/monsters/venomous_bat.png',20,20,250,0,100,200,4,5,1.5300000000000000266,1,32);
 INSERT INTO monster VALUES(16,1,'Crimson Slime','textures/monsters/crimson_slime.png',30,30,800,0,120,250,6,5,2.8500000000000000888,1,35);
 INSERT INTO monster VALUES(17,1,'Dead Queen','textures/monsters/dead_queen.png',250,500,4000,1500,200,300,30,20,4.0,4,27);
@@ -899,6 +913,10 @@ INSERT INTO monster VALUES(29,1,'Aqua Slime','textures/monsters/aqua_slime.png',
 INSERT INTO monster VALUES(30,1,'Skeleton Mage','textures/monsters/skeleton_mage.png',100,100,1800,1000,100,150,3,0,4.0,9,42);
 INSERT INTO monster VALUES(31,1,'Raj','textures/monsters/raj.png',150,250,1750,0,100,200,5,5,1.8000000000000000444,10,43);
 INSERT INTO monster VALUES(32,1,'Jem','textures/monsters/jem.png',500,500,10000,0,200,350,0,0,2.25,11,45);
+INSERT INTO monster VALUES(33,1,'Forest Spider','textures/monsters/forest_spider.png',120,80,2400,0,150,225,5,0,2.0,1,21);
+INSERT INTO monster VALUES(34,1,'Lava Spitter','textures/monsters/lava_spitter.png',125,100,2800,0,175,275,5,0,1.8000000000000000444,1,41);
+INSERT INTO monster VALUES(35,1,'Lost One','textures/monsters/lost_one.png',100,60,1000,0,500,500,90,0,7.0,1,25);
+INSERT INTO monster VALUES(36,1,'Lava Slime','textures/monsters/lava_slime.png',120,125,3500,0,200,250,5,5,3.0,1,35);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -1750,6 +1768,7 @@ INSERT INTO zonedrops VALUES(4,41,239,1);
 INSERT INTO zonedrops VALUES(5,38,237,5);
 INSERT INTO zonedrops VALUES(6,38,146,3);
 INSERT INTO zonedrops VALUES(7,45,238,1);
+INSERT INTO zonedrops VALUES(8,45,162,1);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
