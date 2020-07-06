@@ -44,7 +44,6 @@ class _Buff {
 		std::string Script;
 		const ae::_Texture *Texture;
 		bool PauseDuringBattle;
-		bool RemoveIfLeave;
 
 	private:
 

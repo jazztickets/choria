@@ -961,9 +961,6 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 		}
 	}
 
-	// Clear buffs
-	RemoveObject->Character->ClearSummonBuffs();
-
 	// Remove objects
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;

@@ -666,14 +666,6 @@ float _Character::GetDamagePower(int DamageTypeID) {
 	return 1.0f;
 }
 
-// Remove summon status effects
-void _Character::ClearSummonBuffs() {
-	for(auto &StatusEffect : StatusEffects) {
-		if(StatusEffect->Buff->RemoveIfLeave)
-			StatusEffect->Duration = 0.0;
-	}
-}
-
 // Update counts on action bar
 void _Character::RefreshActionBarCount() {
 	SkillPointsOnActionBar = 0;

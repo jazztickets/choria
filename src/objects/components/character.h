@@ -96,7 +96,6 @@ class _Character {
 		void GenerateNextBattle();
 		int GenerateDamage();
 		float GetDamagePower(int DamageTypeID);
-		void ClearSummonBuffs();
 
 		// Actions
 		void RefreshActionBarCount();
