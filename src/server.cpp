@@ -1630,6 +1630,7 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Add player to battle
 	Battle->AddObject(Player, 0, true);
+	AddBattleSummons(Battle, 0, Player);
 
 	// Send battle to new player
 	ae::_Buffer Packet;
@@ -1962,6 +1963,69 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	Network->SendPacket(Packet, Receiver->Peer);
 }
 
+// Add summons to the battle from summon buffs
+void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer) {
+
+	// Get list of objects on a side
+	std::list<_Object *> ObjectList;
+	Battle->GetObjectList(Side, ObjectList);
+
+	// Iterate over all players in battle, collecting summons for each player
+	std::vector<_SummonCaptain> SummonCaptains;
+	for(auto &SummonOwner : ObjectList) {
+		if(JoinPlayer && SummonOwner != JoinPlayer)
+			continue;
+
+		// Collect all summons
+		_SummonCaptain SummonCaptain;
+		SummonCaptain.Summons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
+		SummonCaptain.Owner = SummonOwner;
+		SummonOwner->Character->GetSummonsFromBuffs(SummonCaptain.Summons);
+		std::shuffle(SummonCaptain.Summons.begin(), SummonCaptain.Summons.end(), ae::RandomGenerator);
+		SummonCaptains.push_back(SummonCaptain);
+	}
+
+	// Shuffle who goes first
+	std::shuffle(SummonCaptains.begin(), SummonCaptains.end(), ae::RandomGenerator);
+
+	// Get summons from summon buffs
+	int SlotsLeft = BATTLE_MAX_OBJECTS_PER_SIDE - ObjectList.size();
+	while(SlotsLeft > 0) {
+
+		// Add summons round-robin
+		int Added = 0;
+		for(size_t i = 0; i < SummonCaptains.size(); i++) {
+			_SummonCaptain &Captain = SummonCaptains[i];
+
+			// Check for any summons left in captain's pool
+			if(!Captain.Summons.size())
+				continue;
+
+			// Create object
+			_Object *Object = CreateSummon(Captain.Owner, Captain.Summons.back().first);
+			Battle->AddObject(Object, Captain.Owner->Fighter->BattleSide);
+
+			// Remove summon from pool and decrement owner's status effect level
+			_StatusEffect *StatusEffect = Captain.Summons.back().second;
+			StatusEffect->Level--;
+			if(StatusEffect->Level <= 0)
+				StatusEffect->Duration = 0.0;
+			else
+				StatusEffect->Duration = StatusEffect->MaxDuration;
+
+			Captain.Summons.pop_back();
+			Added++;
+			SlotsLeft--;
+			if(SlotsLeft <= 0)
+				break;
+		}
+
+		// No summons left to add
+		if(!Added)
+			break;
+	}
+}
+
 // Start a battle event
 void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
@@ -2060,55 +2124,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Difficulty += GAME_DIFFICULTY_PER_PLAYER;
 		}
 
-		// Iterate over all players in battle, collecting summons for each player
-		std::vector<_SummonCaptain> SummonCaptains;
-		for(auto &SummonOwner : Battle->Objects) {
-			_SummonCaptain SummonCaptain;
-			SummonCaptain.Summons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
-			SummonCaptain.Owner = SummonOwner;
-			SummonOwner->Character->GetSummonsFromBuffs(SummonCaptain.Summons);
-			std::shuffle(SummonCaptain.Summons.begin(), SummonCaptain.Summons.end(), ae::RandomGenerator);
-
-			SummonCaptains.push_back(SummonCaptain);
-		}
-
-		// Shuffle who goes first
-		std::shuffle(SummonCaptains.begin(), SummonCaptains.end(), ae::RandomGenerator);
-
-		// Get summons from summon buffs
-		int SlotsLeft = BATTLE_MAX_OBJECTS_PER_SIDE - Battle->Objects.size();
-		while(SlotsLeft > 0) {
-
-			// Add summons round-robin
-			int Added = 0;
-			for(size_t i = 0; i < SummonCaptains.size(); i++) {
-				_SummonCaptain &Captain = SummonCaptains[i];
-
-				// Check for any summons left in captain's pool
-				if(Captain.Summons.size()) {
-					_Object *Object = CreateSummon(Captain.Owner, Captain.Summons.back().first);
-					Battle->AddObject(Object, Captain.Owner->Fighter->BattleSide);
-
-					// Remove summon from pool and decrement owner's status effect level
-					_StatusEffect *StatusEffect = Captain.Summons.back().second;
-					StatusEffect->Level--;
-					if(StatusEffect->Level <= 0)
-						StatusEffect->Duration = 0.0;
-					else
-						StatusEffect->Duration = StatusEffect->MaxDuration;
-
-					Captain.Summons.pop_back();
-					Added++;
-					SlotsLeft--;
-					if(SlotsLeft <= 0)
-						break;
-				}
-			}
-
-			// No summons left to add
-			if(!Added)
-				break;
-		}
+		// Add summons
+		AddBattleSummons(Battle, 0);
 
 		// Set difficulty of battle
 		Battle->Difficulty[0] = 1.0;

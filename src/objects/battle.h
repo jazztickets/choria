@@ -77,6 +77,7 @@ class _Battle : public ae::_BaseObject {
 		void AddObject(_Object *Object, uint8_t Side, bool Join=false);
 		void RemoveObject(_Object *RemoveObject);
 		void GetSeparateObjectList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies);
+		void GetObjectList(int Side, std::list<_Object *> &SideObjects);
 		int GetPeerCount();
 
 		// Updates
@@ -127,7 +128,6 @@ class _Battle : public ae::_BaseObject {
 
 		void ChangeTarget(int Direction, bool SideDirection);
 
-		void GetObjectList(int Side, std::list<_Object *> &SideObjects);
 		void GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects);
 
 		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
