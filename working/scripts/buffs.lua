@@ -390,7 +390,7 @@ function Buff_SummonDemon.GetInfo(self, Level)
 		Plural = "s"
 	end
 
-	return "Summoning [c green]" .. Level .. "[c white] demon" .. Plural
+	return "Carrying [c green]" .. Level .. "[c white] demon" .. Plural
 end
 
 function Buff_SummonDemon.GetSummonSkill(self)
@@ -407,7 +407,7 @@ function Buff_SummonSkeleton.GetInfo(self, Level)
 		Plural = "s"
 	end
 
-	return "Summoning [c green]" .. Level .. "[c white] skeleton" .. Plural
+	return "Carrying [c green]" .. Level .. "[c white] skeleton" .. Plural
 end
 
 function Buff_SummonSkeleton.GetSummonSkill(self)
@@ -424,7 +424,7 @@ function Buff_SummonSkeletonPriest.GetInfo(self, Level)
 		Plural = "s"
 	end
 
-	return "Summoning [c green]" .. Level .. "[c white] skeleton priest" .. Plural
+	return "Carrying [c green]" .. Level .. "[c white] skeleton priest" .. Plural
 end
 
 function Buff_SummonSkeletonPriest.GetSummonSkill(self)

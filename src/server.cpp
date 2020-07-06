@@ -2018,119 +2018,119 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss, Cooldown);
 
 		// Fight if there are monsters
-		if(MonsterIDs.size()) {
+		if(!MonsterIDs.size())
+			return;
 
-			// Check for cooldown
-			if(BattleEvent.Object->Character->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->Character->BattleCooldown.end())
-				return;
+		// Check for cooldown
+		if(BattleEvent.Object->Character->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->Character->BattleCooldown.end())
+			return;
 
-			// Create a new battle instance
-			_Battle *Battle = BattleManager->Create();
-			Battle->Manager = ObjectManager;
-			Battle->Stats = Stats;
-			Battle->Server = this;
-			Battle->Boss = Boss;
-			Battle->Cooldown = Cooldown;
-			Battle->Zone = BattleEvent.Zone;
-			Battle->Scripting = Scripting;
-			Scripting->CreateBattle(Battle);
+		// Create a new battle instance
+		_Battle *Battle = BattleManager->Create();
+		Battle->Manager = ObjectManager;
+		Battle->Stats = Stats;
+		Battle->Server = this;
+		Battle->Boss = Boss;
+		Battle->Cooldown = Cooldown;
+		Battle->Zone = BattleEvent.Zone;
+		Battle->Scripting = Scripting;
+		Scripting->CreateBattle(Battle);
 
-			// Add player
-			Players.push_back(BattleEvent.Object);
+		// Add player
+		Players.push_back(BattleEvent.Object);
 
-			// Sort by network id
-			Players.sort(CompareObjects);
+		// Sort by network id
+		Players.sort(CompareObjects);
 
-			// Get difficulty
-			double Difficulty = 1.0;
-			if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
-				Scripting->PushReal(Save->Clock);
-				Scripting->MethodCall(1, 1);
-				Difficulty = Scripting->GetReal(1);
-				Scripting->FinishMethodCall();
-			}
-
-			// Add players to battle
-			Difficulty -= GAME_DIFFICULTY_PER_PLAYER;
-			for(auto &PartyPlayer : Players) {
-				Battle->AddObject(PartyPlayer, 0);
-
-				// Increase difficulty for each player
-				Difficulty += GAME_DIFFICULTY_PER_PLAYER;
-			}
-
-			// Iterate over all players in battle, collecting summons for each player
-			std::vector<_SummonCaptain> SummonCaptains;
-			for(auto &SummonOwner : Battle->Objects) {
-				_SummonCaptain SummonCaptain;
-				SummonCaptain.Summons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
-				SummonCaptain.Owner = SummonOwner;
-				SummonOwner->Character->GetSummonsFromBuffs(SummonCaptain.Summons);
-				std::shuffle(SummonCaptain.Summons.begin(), SummonCaptain.Summons.end(), ae::RandomGenerator);
-
-				SummonCaptains.push_back(SummonCaptain);
-			}
-
-			// Shuffle who goes first
-			std::shuffle(SummonCaptains.begin(), SummonCaptains.end(), ae::RandomGenerator);
-
-			// Get summons from summon buffs
-			int SlotsLeft = BATTLE_MAX_OBJECTS_PER_SIDE - Battle->Objects.size();
-			while(SlotsLeft > 0) {
-
-				// Add summons round-robin
-				int Added = 0;
-				for(size_t i = 0; i < SummonCaptains.size(); i++) {
-					_SummonCaptain &Captain = SummonCaptains[i];
-
-					// Check for any summons left in captain's pool
-					if(Captain.Summons.size()) {
-						_Object *Object = CreateSummon(Captain.Owner, Captain.Summons.back().first);
-						Battle->AddObject(Object, Captain.Owner->Fighter->BattleSide);
-
-						// Remove summon from pool and decrement owner's status effect level
-						_StatusEffect *StatusEffect = Captain.Summons.back().second;
-						StatusEffect->Level--;
-						if(StatusEffect->Level <= 0)
-							StatusEffect->Duration = 0.0;
-						else
-							StatusEffect->Duration = StatusEffect->MaxDuration;
-
-						Captain.Summons.pop_back();
-						Added++;
-						SlotsLeft--;
-						if(SlotsLeft <= 0)
-							break;
-					}
-				}
-
-				// No summons left to add
-				if(!Added)
-					break;
-			}
-
-			// Set difficulty of battle
-			Battle->Difficulty[0] = 1.0;
-			Battle->Difficulty[1] = Difficulty;
-
-			// Add monsters
-			for(auto &MonsterID : MonsterIDs) {
-				_Object *Object = ObjectManager->Create();
-				Object->Server = this;
-				Object->Scripting = Scripting;
-				Object->Monster->DatabaseID = MonsterID;
-				Object->Stats = Stats;
-				Stats->GetMonsterStats(MonsterID, Object, Difficulty);
-				Object->Character->CalculateStats();
-				Battle->AddObject(Object, 1);
-			}
-
-			// Send battle to players
-			ae::_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::BATTLE_START);
-			Battle->Serialize(Packet);
-			Battle->BroadcastPacket(Packet);
+		// Get difficulty
+		double Difficulty = 1.0;
+		if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
+			Scripting->PushReal(Save->Clock);
+			Scripting->MethodCall(1, 1);
+			Difficulty = Scripting->GetReal(1);
+			Scripting->FinishMethodCall();
 		}
+
+		// Add players to battle
+		Difficulty -= GAME_DIFFICULTY_PER_PLAYER;
+		for(auto &PartyPlayer : Players) {
+			Battle->AddObject(PartyPlayer, 0);
+
+			// Increase difficulty for each player
+			Difficulty += GAME_DIFFICULTY_PER_PLAYER;
+		}
+
+		// Iterate over all players in battle, collecting summons for each player
+		std::vector<_SummonCaptain> SummonCaptains;
+		for(auto &SummonOwner : Battle->Objects) {
+			_SummonCaptain SummonCaptain;
+			SummonCaptain.Summons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
+			SummonCaptain.Owner = SummonOwner;
+			SummonOwner->Character->GetSummonsFromBuffs(SummonCaptain.Summons);
+			std::shuffle(SummonCaptain.Summons.begin(), SummonCaptain.Summons.end(), ae::RandomGenerator);
+
+			SummonCaptains.push_back(SummonCaptain);
+		}
+
+		// Shuffle who goes first
+		std::shuffle(SummonCaptains.begin(), SummonCaptains.end(), ae::RandomGenerator);
+
+		// Get summons from summon buffs
+		int SlotsLeft = BATTLE_MAX_OBJECTS_PER_SIDE - Battle->Objects.size();
+		while(SlotsLeft > 0) {
+
+			// Add summons round-robin
+			int Added = 0;
+			for(size_t i = 0; i < SummonCaptains.size(); i++) {
+				_SummonCaptain &Captain = SummonCaptains[i];
+
+				// Check for any summons left in captain's pool
+				if(Captain.Summons.size()) {
+					_Object *Object = CreateSummon(Captain.Owner, Captain.Summons.back().first);
+					Battle->AddObject(Object, Captain.Owner->Fighter->BattleSide);
+
+					// Remove summon from pool and decrement owner's status effect level
+					_StatusEffect *StatusEffect = Captain.Summons.back().second;
+					StatusEffect->Level--;
+					if(StatusEffect->Level <= 0)
+						StatusEffect->Duration = 0.0;
+					else
+						StatusEffect->Duration = StatusEffect->MaxDuration;
+
+					Captain.Summons.pop_back();
+					Added++;
+					SlotsLeft--;
+					if(SlotsLeft <= 0)
+						break;
+				}
+			}
+
+			// No summons left to add
+			if(!Added)
+				break;
+		}
+
+		// Set difficulty of battle
+		Battle->Difficulty[0] = 1.0;
+		Battle->Difficulty[1] = Difficulty;
+
+		// Add monsters
+		for(auto &MonsterID : MonsterIDs) {
+			_Object *Object = ObjectManager->Create();
+			Object->Server = this;
+			Object->Scripting = Scripting;
+			Object->Monster->DatabaseID = MonsterID;
+			Object->Stats = Stats;
+			Stats->GetMonsterStats(MonsterID, Object, Difficulty);
+			Object->Character->CalculateStats();
+			Battle->AddObject(Object, 1);
+		}
+
+		// Send battle to players
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::BATTLE_START);
+		Battle->Serialize(Packet);
+		Battle->BroadcastPacket(Packet);
 	}
 }
 
