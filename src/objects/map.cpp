@@ -639,6 +639,9 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		}
 	}
 
+	if(RenderFlags & MAP_RENDER_MAP_VIEW)
+		return;
+
 	// Draw text overlay
 	for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {

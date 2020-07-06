@@ -44,6 +44,7 @@ enum MapRenderType {
 	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
 	MAP_RENDER_NOBACKGROUND      = (1 << 9),
 	MAP_RENDER_EDGE_BOUNDARY     = (1 << 10),
+	MAP_RENDER_MAP_VIEW          = (1 << 11),
 };
 
 enum BrushModeType {
@@ -123,6 +124,7 @@ class _EditorState : public ae::_State {
 		double Clock;
 		bool UseClockAmbientLight;
 		bool ShowBackgroundMap;
+		bool MapView;
 
 		// Copy paste
 		bool DrawCopyBounds;

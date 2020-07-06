@@ -132,6 +132,7 @@ void _EditorState::Init() {
 	ObjectType = 0;
 	ObjectData = 1;
 	ShowBackgroundMap = true;
+	MapView = false;
 }
 
 // Shuts the state down
@@ -287,6 +288,9 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			break;
 			case SDL_SCANCODE_D:
 				Map->DeleteStaticObject(WorldCursor);
+			break;
+			case SDL_SCANCODE_B:
+				MapView = !MapView;
 			break;
 			case SDL_SCANCODE_TAB:
 				Layer = !Layer;
@@ -521,11 +525,15 @@ void _EditorState::Render(double BlendFactor) {
 
 		if(!ShowBackgroundMap)
 			RenderFilter |= MAP_RENDER_NOBACKGROUND;
+
+		if(MapView)
+			RenderFilter = MAP_RENDER_MAP_VIEW | MAP_RENDER_EDITOR_AMBIENT;
+
 		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
 	}
 
 	// Draw tile brush size
-	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+	if(!MapView && BrushMode == EDITOR_BRUSH_MODE_TILE) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
