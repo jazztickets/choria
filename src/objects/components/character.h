@@ -139,6 +139,7 @@ class _Character {
 		int Invisible;
 		int Stunned;
 		bool DiagonalMovement;
+		bool LavaProtection;
 		bool Hardcore;
 		uint8_t Status;
 

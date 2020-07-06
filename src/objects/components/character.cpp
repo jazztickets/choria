@@ -47,6 +47,7 @@ _Character::_Character(_Object *Object) :
 	Invisible(0),
 	Stunned(0),
 	DiagonalMovement(false),
+	LavaProtection(false),
 	Hardcore(false),
 	Status(0),
 
@@ -334,6 +335,7 @@ void _Character::CalculateStats() {
 	Object->Light = 0;
 	Invisible = 0;
 	DiagonalMovement = false;
+	LavaProtection = false;
 	Stunned = 0;
 	SummonLimit = 0;
 	Resistances.clear();
@@ -603,6 +605,9 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::DIAGONAL_MOVEMENT))
 		DiagonalMovement = StatChange.Values[StatType::DIAGONAL_MOVEMENT].Integer;
+
+	if(StatChange.HasStat(StatType::LAVA_PROTECTION))
+		LavaProtection = StatChange.Values[StatType::LAVA_PROTECTION].Integer;
 }
 
 // Get percentage to next level

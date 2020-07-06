@@ -596,6 +596,20 @@ function Item_DiagonalMovement.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Lava Protection --
+
+Item_LavaProtection = { }
+
+function Item_LavaProtection.GetInfo(self, Source, Item)
+	return "[c yellow]Grants immunity to lava"
+end
+
+function Item_LavaProtection.Stats(self, Level, Object, Change)
+	Change.LavaProtection = 1
+
+	return Change
+end
+
 -- Rebirth --
 function RebirthText(UpgradeText, Skills, Items)
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, equipment, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. "\n\nYou will keep your starting skills, plus [c green]" .. Skills .. "[c white] of your highest skills and [c green]" .. Items .. "[c white] of your items in your trade stash\n[c yellow]All unlocks are kept"

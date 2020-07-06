@@ -13,6 +13,10 @@ end
 Script_Lava = { BaseHealth = -10 }
 
 function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
+	if Object.LavaProtection == 1 then
+		return Change
+	end
+
 	Damage = -self.BaseHealth * Level * Object.GetDamageReduction(DamageType["Fire"])
 
 	Update = ResolveManaReductionRatio(Object, Damage)

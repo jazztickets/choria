@@ -122,6 +122,7 @@ INSERT INTO stattype VALUES(59,'Clear Buff',1.0);
 INSERT INTO stattype VALUES(60,'Gold Bonus',1.0);
 INSERT INTO stattype VALUES(61,'Exp Bonus',1.0);
 INSERT INTO stattype VALUES(62,'Summon Buff',1.0);
+INSERT INTO stattype VALUES(63,'Lava Protection',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -1664,7 +1665,7 @@ INSERT INTO item VALUES(213,6,2,0,0,0,0,'Demon Stick','textures/items/demon_stic
 INSERT INTO item VALUES(214,8,0,0,0,0,0,'Warm Ring','textures/items/warm_ring.png','',0,800,1,0,50,0.0,1,0,0,0,0,0,0,35,0,3,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(215,10,0,2,2,0,0,'Fire Dust','textures/items/fire_dust.png','Item_FireDust',0,20,1,20,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(216,13,0,0,1,0,0,'Prisoner Key','textures/items/key1.png','',0,10000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
-INSERT INTO item VALUES(217,9,0,0,0,0,0,'Lucky Amulet','textures/items/amulet.png','',0,1000,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,'');
+INSERT INTO item VALUES(217,9,0,0,0,0,0,'Lucky Amulet','textures/items/amulet_gold.png','',0,1000,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,'');
 INSERT INTO item VALUES(218,7,0,0,0,0,0,'Gauntlet','textures/items/gauntlet.png','',0,35,1,0,10,0.0,1,0,0,0,3,2,0,0,0,0,0,10,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key2.png','',0,5,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(220,10,0,1,1,0,0,'Torch','textures/items/torch.png','Item_Torch',0,15,1,3,0,60.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
@@ -1718,6 +1719,7 @@ INSERT INTO item VALUES(267,13,0,0,0,0,0,'City Key','textures/items/key2.png',''
 INSERT INTO item VALUES(268,13,0,0,0,0,0,'Library Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(269,15,0,0,0,0,0,'World Map','textures/items/map.png','',0,100,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png');
 INSERT INTO item VALUES(270,10,3,4,2,0,0,'Firebomb','textures/items/firebomb.png','Item_Firebomb',0,25,1,50,0,5.0,1,100,250,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
+INSERT INTO item VALUES(271,4,0,0,0,0,3,'Firewalkers','textures/items/lava_boots.png','Item_LavaProtection',0,1500,1,0,50,0.0,1,0,0,3,10,0,25,0,0,0,0,0,-20,0,0,0,0,0,'');
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

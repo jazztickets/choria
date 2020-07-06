@@ -106,6 +106,7 @@ enum class StatType : int {
 	GOLD_BONUS,
 	EXP_BONUS,
 	SUMMON_BUFF,
+	LAVA_PROTECTION,
 	COUNT,
 };
 
@@ -185,6 +186,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "GoldBonus",              { StatType::GOLD_BONUS             , StatValueType::INTEGER } },
 	{ "ExpBonus",               { StatType::EXP_BONUS              , StatValueType::INTEGER } },
 	{ "SummonBuff",             { StatType::SUMMON_BUFF            , StatValueType::POINTER } },
+	{ "LavaProtection",         { StatType::LAVA_PROTECTION        , StatValueType::BOOLEAN } },
 };
 
 union _Value {
