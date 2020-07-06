@@ -1039,16 +1039,16 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 }
 
 // Returns target players appropriate for pvp
-void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, bool UsePVPZone) {
+void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players, bool UsePVPZone) {
 
 	// Attacker must be in PVP zone
-	if(UsePVPZone && !IsPVPZone(Player->Position))
+	if(UsePVPZone && !IsPVPZone(Attacker->Position))
 		return;
 
 	for(const auto &Object : Objects) {
 
 		// Skip self target
-		if(Object == Player)
+		if(Object == Attacker)
 			continue;
 
 		// Check for character
@@ -1068,11 +1068,11 @@ void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, b
 			continue;
 
 		// Can't attack same party member
-		if(Object->Character->PartyName != "" && Object->Character->PartyName == Player->Character->PartyName)
+		if(Object->Character->PartyName != "" && Object->Character->PartyName == Attacker->Character->PartyName)
 			continue;
 
 		// Check distance
-		glm::vec2 Delta = Object->Position - Player->Position;
+		glm::vec2 Delta = Object->Position - Attacker->Position;
 		if(glm::dot(Delta, Delta) <= BATTLE_PVP_DISTANCE)
 			Players.push_back(Object);
 	}

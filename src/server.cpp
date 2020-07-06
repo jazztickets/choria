@@ -2060,6 +2060,10 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Battle->AddObject(TargetPlayer, !BATTLE_PVP_ATTACKER_SIDE);
 		}
 
+		// Add summons
+		AddBattleSummons(Battle, 0);
+		AddBattleSummons(Battle, 1);
+
 		// Send battle to players
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_START);
