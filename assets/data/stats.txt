@@ -554,6 +554,7 @@ INSERT INTO vendoritem VALUES(158,15,216);
 INSERT INTO vendoritem VALUES(159,18,253);
 INSERT INTO vendoritem VALUES(160,18,99);
 INSERT INTO vendoritem VALUES(161,2,269);
+INSERT INTO vendoritem VALUES(162,21,219);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -964,7 +965,7 @@ INSERT INTO trader VALUES(1,'cellar_key',112,1);
 INSERT INTO trader VALUES(2,'soothing_salve',127,1);
 INSERT INTO trader VALUES(3,'health_ring',145,1);
 INSERT INTO trader VALUES(4,'magic_ring',158,1);
-INSERT INTO trader VALUES(5,'throwing_knives',133,5);
+INSERT INTO trader VALUES(5,'throwing_knives',133,10);
 INSERT INTO trader VALUES(6,'bleed_ring',184,1);
 INSERT INTO trader VALUES(7,'trolls_ring',138,1);
 INSERT INTO trader VALUES(8,'tower_key',137,1);
@@ -1007,6 +1008,7 @@ INSERT INTO trader VALUES(44,'dimensional_slippers',263,1);
 INSERT INTO trader VALUES(45,'bloodletter',265,1);
 INSERT INTO trader VALUES(46,'flamuss',266,1);
 INSERT INTO trader VALUES(47,'library_key',268,1);
+INSERT INTO trader VALUES(48,'firebomb',270,3);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1021,7 +1023,7 @@ INSERT INTO traderitem VALUES(5,3,211,1);
 INSERT INTO traderitem VALUES(7,4,128,2);
 INSERT INTO traderitem VALUES(8,4,211,1);
 INSERT INTO traderitem VALUES(11,5,118,1);
-INSERT INTO traderitem VALUES(12,5,114,1);
+INSERT INTO traderitem VALUES(12,5,114,2);
 INSERT INTO traderitem VALUES(16,7,127,3);
 INSERT INTO traderitem VALUES(17,7,145,1);
 INSERT INTO traderitem VALUES(18,7,125,2);
@@ -1112,6 +1114,9 @@ INSERT INTO traderitem VALUES(118,47,26,1);
 INSERT INTO traderitem VALUES(119,47,135,1);
 INSERT INTO traderitem VALUES(120,46,172,2);
 INSERT INTO traderitem VALUES(121,44,249,1);
+INSERT INTO traderitem VALUES(122,48,215,2);
+INSERT INTO traderitem VALUES(123,48,125,1);
+INSERT INTO traderitem VALUES(124,48,127,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1166,6 +1171,7 @@ INSERT INTO minigameitem VALUES(26,2,247,1);
 INSERT INTO minigameitem VALUES(27,2,248,1);
 INSERT INTO minigameitem VALUES(28,1,249,1);
 INSERT INTO minigameitem VALUES(29,1,118,1);
+INSERT INTO minigameitem VALUES(30,1,270,1);
 CREATE TABLE IF NOT EXISTS "build" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1303,7 +1309,7 @@ INSERT INTO builditem VALUES(10,5,107,1);
 INSERT INTO builditem VALUES(11,5,113,1);
 INSERT INTO builditem VALUES(12,1,108,3);
 INSERT INTO builditem VALUES(13,2,109,2);
-INSERT INTO builditem VALUES(14,3,108,2);
+INSERT INTO builditem VALUES(14,3,270,2);
 INSERT INTO builditem VALUES(15,3,109,2);
 INSERT INTO builditem VALUES(16,5,108,2);
 INSERT INTO builditem VALUES(17,4,133,5);
@@ -1374,7 +1380,7 @@ INSERT INTO buildactionbar VALUES(10,5,1,0);
 INSERT INTO buildactionbar VALUES(11,5,7,1);
 INSERT INTO buildactionbar VALUES(12,1,108,1);
 INSERT INTO buildactionbar VALUES(13,2,109,1);
-INSERT INTO buildactionbar VALUES(14,3,108,2);
+INSERT INTO buildactionbar VALUES(14,3,270,2);
 INSERT INTO buildactionbar VALUES(15,3,109,3);
 INSERT INTO buildactionbar VALUES(16,5,108,2);
 INSERT INTO buildactionbar VALUES(17,21,52,0);
@@ -1574,7 +1580,7 @@ INSERT INTO item VALUES(129,7,2,0,0,0,0,'Reinforced Buckler','textures/items/rei
 INSERT INTO item VALUES(130,6,2,0,0,0,0,'Battle Axe','textures/items/battleaxe.png','Proc_Blind',0,600,1,25,20,5.0,1,30,220,-2,0,0,0,0,0,0,0,-10,0,0,0,15,0,0,'');
 INSERT INTO item VALUES(131,14,2,0,0,0,0,'Stiletto','textures/items/stiletto.png','Proc_Bleed',0,250,1,30,20,4.0,1,50,50,0,3,20,0,0,0,0,0,20,0,0,0,20,0,0,'');
 INSERT INTO item VALUES(132,10,0,1,3,0,0,'Death Potion','textures/items/death_potion.png','Item_DeathPotion',0,300,1,100,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
-INSERT INTO item VALUES(133,10,2,2,2,0,0,'Throwing Knives','textures/items/throwing_knives.png','Item_ThrowingKnives',0,8,1,1,0,0.0,1,25,120,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,'');
+INSERT INTO item VALUES(133,10,2,2,2,0,0,'Throwing Knives','textures/items/throwing_knives.png','Item_ThrowingKnives',0,4,1,1,0,0.0,1,25,120,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(134,10,0,1,3,0,0,'Crab Legs','textures/items/crab_legs.png','Item_CrabLegs',0,20,1,10,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(135,7,0,0,0,0,0,'Wizard Book','textures/items/wizard_book.png','',0,320,1,0,50,0.0,1,0,0,0,3,0,0,25,50,0,2,0,0,0,0,0,0,1,'');
 INSERT INTO item VALUES(136,7,0,0,0,0,0,'Mage Book','textures/items/mage_book.png','',0,40,1,0,10,0.0,1,0,0,0,2,0,0,15,25,0,1,0,0,0,0,0,0,0,'');
@@ -1690,7 +1696,7 @@ INSERT INTO item VALUES(245,5,2,0,0,0,0,'Spider Sword','textures/items/spider_sw
 INSERT INTO item VALUES(246,5,6,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,50,5.0,1,110,220,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'');
 INSERT INTO item VALUES(247,10,0,1,3,0,0,'Glowing Salve','textures/items/glowing_salve.png','Item_HealingSalve',0,250,1,600,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(248,10,0,1,3,0,0,'Glowing Cider','textures/items/glowing_cider.png','Item_ManaCider',0,375,1,200,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
-INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
+INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key0.png','',0,5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(251,13,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','',0,150,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(252,13,0,0,0,0,0,'Ancient Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
@@ -1711,6 +1717,7 @@ INSERT INTO item VALUES(266,5,3,0,0,0,3,'Flamuss','textures/items/flamuss.png','
 INSERT INTO item VALUES(267,13,0,0,0,0,0,'City Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(268,13,0,0,0,0,0,'Library Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 INSERT INTO item VALUES(269,15,0,0,0,0,0,'World Map','textures/items/map.png','',0,100,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png');
+INSERT INTO item VALUES(270,10,3,4,2,0,0,'Firebomb','textures/items/firebomb.png','Item_Firebomb',0,25,1,50,0,5.0,1,100,250,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

@@ -180,6 +180,10 @@ function Item_ThrowingKnives.GetPierce(self, Source)
 	return self.Item.Pierce
 end
 
+function Item_ThrowingKnives.GetDamageType(self, Source)
+	return self.Item.DamageType
+end
+
 function Item_ThrowingKnives.GetInfo(self, Source, Item)
 	return "Throw a knife at your enemy"
 end
@@ -200,6 +204,10 @@ Item_PoisonKnives = Base_Attack:New()
 
 function Item_PoisonKnives.GetInfo(self, Source, Item)
 	return "Throw a poison-tipped knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Item_PoisonKnives.GetDamageType(self, Source)
+	return self.Item.DamageType
 end
 
 function Item_PoisonKnives.GetPierce(self, Source)
@@ -413,6 +421,10 @@ function Item_LavaSludge.GetInfo(self, Source, Item)
 	return "Purge weakness and ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
 end
 
+function Item_LavaSludge.GetDamageType(self, Source)
+	return self.Item.DamageType
+end
+
 function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Burning.Pointer
 	Result.Target.BuffLevel = Level * Source.FirePower
@@ -429,6 +441,40 @@ end
 
 function Item_LavaSludge.PlaySound(self, Level)
 	Audio.Play("flame0.ogg")
+end
+
+-- Firebomb --
+
+Item_Firebomb = Base_Attack:New()
+
+function Item_Firebomb.GenerateDamage(self, Level, Source)
+	return self.Item.GenerateDamage(Source.Pointer, 0)
+end
+
+function Item_Firebomb.GetDamageType(self, Source)
+	return self.Item.DamageType
+end
+
+function Item_Firebomb.GetTargetCount(self, Level)
+	return 3
+end
+
+function Item_Firebomb.GetInfo(self, Source, Item)
+	return "Toss an exploding potion at your enemies, dealing [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] burning damage over [c green]" .. Item.Duration .. " [c white]seconds"
+end
+
+function Item_Firebomb.Use(self, Level, Duration, Source, Target, Result)
+	Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buff_Burning.Pointer
+	Result.Target.BuffLevel = Level * Source.FirePower
+	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
+function Item_Firebomb.PlaySound(self, Level)
+	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Bone --

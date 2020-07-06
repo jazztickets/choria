@@ -129,6 +129,12 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(AltTexture == nullptr)
 			return;
 
+		// Restrict viewing
+		if(Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER) {
+			ae::Assets.Fonts["hud_small"]->DrawText("Purchase to view", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+			return;
+		}
+
 		// Get size
 		DrawPosition.y = TooltipElement->Size.y / 2 + WindowOffset.y;
 		glm::vec2 TextureSize = glm::vec2(AltTexture->Size) * (TooltipElement->Size.x / AltTexture->Size.x / ae::_Element::GetUIScale()) * 0.45f * ae::_Element::GetUIScale();
