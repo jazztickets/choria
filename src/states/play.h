@@ -168,6 +168,7 @@ class _PlayState : public ae::_State {
 		void HandleHUD(ae::_Buffer &Data);
 		void HandleMinigameSeed(ae::_Buffer &Data);
 		void HandleBuffUpdate(ae::_Buffer &Data);
+		void HandleStatusEffects(ae::_Buffer &Data);
 
 		_Object *CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID);
 

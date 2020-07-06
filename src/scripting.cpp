@@ -617,6 +617,12 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 
 	PushStatChange(&ActionResult->Target);
 	lua_setfield(LuaState, -2, "Target");
+
+	if(ActionResult->Summon.SummonBuff)
+		lua_pushlightuserdata(LuaState, (void *)ActionResult->Summon.SummonBuff);
+	else
+		lua_pushnil(LuaState);
+	lua_setfield(LuaState, -2, "SummonBuff");
 }
 
 // Push stat change struct onto stack
@@ -727,6 +733,12 @@ std::string _Scripting::GetString(int Index) {
 	return lua_tostring(LuaState, Index + CurrentTableIndex);
 }
 
+// Get return value as pointer
+void *_Scripting::GetPointer(int Index) {
+
+	return lua_touserdata(LuaState, Index + CurrentTableIndex);
+}
+
 // Get return value as action result, Index=-1 means top of stack, otherwise index of return value
 void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	if(Index != -1)
@@ -809,19 +821,24 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 	Summon.ID = (uint32_t)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
-	// Get ID
+	// Get Spell ID
 	lua_getfield(LuaState, -1, "SpellID");
 	Summon.SpellID = (uint32_t)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
+	// Get Summon Buff
+	lua_getfield(LuaState, -1, "SummonBuff");
+	Summon.SummonBuff = (const _Buff *)lua_touserdata(LuaState, -1);
+	lua_pop(LuaState, 1);
+
 	// Get Health
 	lua_getfield(LuaState, -1, "Health");
-	Summon.Health = (int)lua_tonumber(LuaState, -1);
+	Summon.Health = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	// Get Mana
 	lua_getfield(LuaState, -1, "Mana");
-	Summon.Mana = (int)lua_tonumber(LuaState, -1);
+	Summon.Mana = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	// Get Armor
@@ -831,18 +848,22 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 
 	// Get Limit
 	lua_getfield(LuaState, -1, "Limit");
-	Summon.Limit = (int)lua_tonumber(LuaState, -1);
+	Summon.Limit = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get Duration
+	lua_getfield(LuaState, -1, "Duration");
+	Summon.Duration = lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	// Get Damage
 	lua_getfield(LuaState, -1, "MinDamage");
-	Summon.MinDamage = (int)lua_tonumber(LuaState, -1);
+	Summon.MinDamage = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_getfield(LuaState, -1, "MaxDamage");
-	Summon.MaxDamage = (int)lua_tonumber(LuaState, -1);
+	Summon.MaxDamage = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
-
 }
 
 // Start a call to a lua class method, return table index

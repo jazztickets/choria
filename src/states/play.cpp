@@ -916,6 +916,9 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 		case PacketType::PLAYER_UPDATEBUFF:
 			HandleBuffUpdate(Data);
 		break;
+		case PacketType::PLAYER_STATUSEFFECTS:
+			HandleStatusEffects(Data);
+		break;
 		default:
 			Menu.HandlePacket(Data, Type);
 		break;
@@ -1683,6 +1686,22 @@ void _PlayState::HandleBuffUpdate(ae::_Buffer &Data) {
 			StatusEffect->Level = Level;
 			StatusEffect->Duration = Duration;
 		}
+	}
+}
+
+// Handle status effect list
+void _PlayState::HandleStatusEffects(ae::_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->UnserializeStatusEffects(Data);
+
+	// Create HUD elements
+	for(auto &StatusEffect : Player->Character->StatusEffects) {
+		if(Player->Fighter->BattleElement)
+			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Player->Fighter->BattleElement);
+
+		StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 	}
 }
 

@@ -21,8 +21,10 @@
 _Monster::_Monster(_Object *Object) :
 	Object(Object),
 	Owner(nullptr),
+	SummonBuff(nullptr),
 	DatabaseID(0),
 	SpellID(0),
+	Duration(0.0),
 	ExperienceGiven(0),
 	GoldGiven(0),
 	AI("") {

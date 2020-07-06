@@ -105,6 +105,7 @@ enum class StatType : int {
 	CLEAR_BUFF,
 	GOLD_BONUS,
 	EXP_BONUS,
+	SUMMON_BUFF,
 	COUNT,
 };
 
@@ -183,6 +184,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "ClearBuff",              { StatType::CLEAR_BUFF             , StatValueType::POINTER } },
 	{ "GoldBonus",              { StatType::GOLD_BONUS             , StatValueType::INTEGER } },
 	{ "ExpBonus",               { StatType::EXP_BONUS              , StatValueType::INTEGER } },
+	{ "SummonBuff",             { StatType::SUMMON_BUFF            , StatValueType::POINTER } },
 };
 
 union _Value {

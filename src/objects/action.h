@@ -20,6 +20,7 @@
 // Libraries
 #include <objects/statchange.h>
 #include <glm/vec2.hpp>
+#include <vector>
 #include <cstdint>
 
 // Forward Declarations
@@ -27,6 +28,7 @@ class _Stats;
 class _Object;
 class _Item;
 class _Buff;
+class _StatusEffect;
 struct _ActionResult;
 
 namespace ae {
@@ -57,16 +59,25 @@ enum class ScopeType : uint8_t {
 };
 
 struct _Summon {
-	_Summon() : ID(0), SpellID(0), Health(0), Mana(0), Armor(0), Limit(0), MinDamage(0), MaxDamage(0) { }
+	_Summon() : ID(0), SpellID(0), SummonBuff(nullptr), Duration(0.0), Health(0), Mana(0), Armor(0), Limit(0), MinDamage(0), MaxDamage(0) { }
 
 	uint32_t ID;
 	uint32_t SpellID;
+	const _Buff *SummonBuff;
+	double Duration;
 	int Health;
 	int Mana;
 	int Armor;
 	int Limit;
 	int MinDamage;
 	int MaxDamage;
+};
+
+struct _SummonCaptain {
+	_SummonCaptain() : Owner(nullptr) { }
+
+	_Object *Owner;
+	std::vector<std::pair<_Summon, _StatusEffect *>> Summons;
 };
 
 // Action

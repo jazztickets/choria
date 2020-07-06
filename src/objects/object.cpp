@@ -734,8 +734,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set actionbar
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
-		if(Slot < Character->ActionBar.size())
+		if(Slot < Character->ActionBar.size()) {
 			Character->ActionBar[Slot].Item = Stats->Items.at(ActionNode["id"].asUInt());
+			Character->ActionBar[Slot].ActionBarSlot = Slot;
+		}
 	}
 
 	// Set status effects
@@ -866,10 +868,14 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<double>(Fighter->TurnTimer);
 	Data.Write<uint8_t>(Fighter->BattleSide);
 
+	SerializeStatusEffects(Data);
+}
+
+// Serialize status effects
+void _Object::SerializeStatusEffects(ae::_Buffer &Data) {
 	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
-	for(auto &StatusEffect : Character->StatusEffects) {
+	for(auto &StatusEffect : Character->StatusEffects)
 		StatusEffect->Serialize(Data);
-	}
 }
 
 // Unserialize for ObjectCreate
@@ -982,6 +988,14 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Fighter->TurnTimer = Data.Read<double>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
 
+	UnserializeStatusEffects(Data);
+}
+
+// Unserialize status effects
+void _Object::UnserializeStatusEffects(ae::_Buffer &Data) {
+	if(!Character)
+		return;
+
 	Character->DeleteStatusEffects();
 	int StatusEffectCount = Data.Read<uint8_t>();
 	for(int i = 0; i < StatusEffectCount; i++) {
@@ -1023,7 +1037,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	// Add buffs
 	if(StatChange.HasStat(StatType::BUFF)) {
 		StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = (_Buff *)StatChange.Values[StatType::BUFF].Pointer;
+		StatusEffect->Buff = (const _Buff *)StatChange.Values[StatType::BUFF].Pointer;
 		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
 		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
 		StatusEffect->Source = Source;

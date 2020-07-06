@@ -1187,6 +1187,8 @@ Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 1
 Skill_DemonicConjuring.Limit = 1
 Skill_DemonicConjuring.LimitPerLevel = 0.1
+Skill_DemonicConjuring.Duration = 10
+Skill_DemonicConjuring.DurationPerLevel = 1
 Skill_DemonicConjuring.Monster = Monsters[23]
 
 function Skill_DemonicConjuring.GetInfo(self, Source, Item)
@@ -1202,6 +1204,8 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	Result.Summon.Health = self:GetHealth(Source, Level)
 	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
 	Result.Summon.Armor = self:GetArmor(Source, Level)
+	Result.Summon.SummonBuff = Buff_SummonDemon.Pointer
+	Result.Summon.Duration = self:GetDuration(Source, Level)
 
 	-- Limit monster summons to 1
 	if Source.MonsterID == 0 then
@@ -1236,6 +1240,8 @@ Skill_RaiseDead.SpecialChance = 25
 Skill_RaiseDead.SpecialPerLevel = 1
 Skill_RaiseDead.Limit = 2
 Skill_RaiseDead.LimitPerLevel = 0.2
+Skill_RaiseDead.Duration = 30
+Skill_RaiseDead.DurationPerLevel = 1
 Skill_RaiseDead.Monster = Monsters[20]
 Skill_RaiseDead.SpecialMonster = Monsters[21]
 
@@ -1269,9 +1275,23 @@ function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
 	Result.Summon.Armor = self:GetArmor(Source, Level)
 	Result.Summon.Limit = self:GetLimit(Source, Level)
-	if Random.GetInt(1, 100) <= self:GetSpecialChance(Source, Level) then
+	Result.Summon.Duration = self:GetDuration(Source, Level)
+	Result.Summon.SummonBuff = Buff_SummonSkeleton.Pointer
+
+	Roll = Random.GetInt(1, 100)
+	if Result.SummonBuff ~= nil then
+		Result.Summon.SummonBuff = Result.SummonBuff
+		if Result.SummonBuff == Buff_SummonSkeletonPriest.Pointer then
+			Roll = 1
+		else
+			Roll = 1000
+		end
+	end
+
+	if Roll <= self:GetSpecialChance(Source, Level) then
 		Result.Summon.ID = self.SpecialMonster.ID
 		Result.Summon.Mana = self:GetMana(Source, Level)
+		Result.Summon.SummonBuff = Buff_SummonSkeletonPriest.Pointer
 	end
 
 	Result.Target.Corpse = -1

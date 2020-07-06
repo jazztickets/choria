@@ -68,6 +68,7 @@ class _Scripting {
 		int GetBoolean(int Index);
 		double GetReal(int Index);
 		std::string GetString(int Index);
+		void *GetPointer(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 		void GetStatChange(int Index, _StatChange &StatChange);
 		void GetSummon(int Index, _Summon &Summon);

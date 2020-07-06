@@ -36,6 +36,7 @@ class _Object;
 class _Scripting;
 class _Item;
 class _StatusEffect;
+struct _Summon;
 
 namespace ae {
 	template<class T> class _Manager;
@@ -81,6 +82,7 @@ class _Server {
 		void JoinThread();
 		void StopServer(int Seconds=0);
 
+		_Object *CreateSummon(_Object *Source, const _Summon &Summon);
 		void Resurrect(_Object *Source, int Health);
 		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType);
 		void QueueRebirth(_Object *Object, int Type, int Value);

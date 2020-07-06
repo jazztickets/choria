@@ -160,6 +160,10 @@ Base_SummonSpell = {
 		return math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit)
 	end,
 
+	GetDuration = function(self, Source, Level)
+		return math.floor(self.Duration + (Level) * self.DurationPerLevel)
+	end,
+
 	GetDamage = function(self, Source, Level)
 		AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
 		return math.floor((self.BaseMinDamage + AddedDamage) * Source.PetPower), math.floor((self.BaseMaxDamage + AddedDamage) * Source.PetPower)
@@ -257,6 +261,9 @@ end
 
 -- Roll for proccing weapons
 function WeaponProc(Source, Target, Result, IsSpell)
+	if Target == nil then
+		return
+	end
 
 	-- Check for main weapon
 	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)

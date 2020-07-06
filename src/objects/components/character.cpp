@@ -666,6 +666,14 @@ float _Character::GetDamagePower(int DamageTypeID) {
 	return 1.0f;
 }
 
+// Remove summon status effects
+void _Character::ClearSummonBuffs() {
+	for(auto &StatusEffect : StatusEffects) {
+		if(StatusEffect->Buff->RemoveIfLeave)
+			StatusEffect->Duration = 0.0;
+	}
+}
+
 // Update counts on action bar
 void _Character::RefreshActionBarCount() {
 	SkillPointsOnActionBar = 0;
@@ -705,6 +713,44 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 	}
 
 	return false;
+}
+
+// Get a vector of summon structs from the character's list of status effects
+void _Character::GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffect *> > &Summons) {
+	for(auto &StatusEffect : StatusEffects) {
+
+		// See if the buff has a summon skill attached to it
+		_Item *SummonSkill = nullptr;
+		if(Object->Scripting->StartMethodCall(StatusEffect->Buff->Script, "GetSummonSkill")) {
+			Object->Scripting->MethodCall(0, 1);
+			SummonSkill = (_Item *)Object->Scripting->GetPointer(1);
+			Object->Scripting->FinishMethodCall();
+		}
+
+		// Check for skill
+		if(!SummonSkill)
+			continue;
+
+		// Find summon skill on action bar
+		for(auto &Action : ActionBar) {
+			if(Action.Item != SummonSkill)
+				continue;
+
+			// Get level of skill
+			_ActionResult ActionResult;
+			if(!GetActionFromActionBar(ActionResult.ActionUsed, Action.ActionBarSlot))
+				break;
+
+			// Get summon stats
+			ActionResult.Source.Object = Object;
+			ActionResult.Summon.SummonBuff = StatusEffect->Buff;
+			Action.Item->Use(Object->Scripting, ActionResult);
+			if(ActionResult.Summon.ID) {
+				for(int i = 0; i < StatusEffect->Level; i++)
+					Summons.push_back(std::pair<_Summon, _StatusEffect *>(ActionResult.Summon, StatusEffect));
+			}
+		}
+	}
 }
 
 // Return true if the object has the skill unlocked

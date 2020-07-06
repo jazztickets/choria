@@ -181,23 +181,8 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		// Create new summon if below limit
 		if(SideCount < BATTLE_MAX_OBJECTS_PER_SIDE && (int)ExistingSummons.size() < ActionResult.Summon.Limit) {
 
-			// Create monster
-			_Object *Object = SourceObject->Server->ObjectManager->Create();
-			Object->Server = SourceObject->Server;
-			Object->Scripting = SourceObject->Scripting;
-			Object->Monster->DatabaseID = ActionResult.Summon.ID;
-			Object->Stats = SourceObject->Stats;
-			Object->Monster->Owner = SourceObject;
-			Object->Monster->SpellID = ActionResult.Summon.SpellID;
-			SourceObject->Stats->GetMonsterStats(Object->Monster->DatabaseID, Object);
-
-			// Add stats from script
-			Object->Character->Health = Object->Character->BaseMaxHealth = ActionResult.Summon.Health;
-			Object->Character->Mana = Object->Character->BaseMaxMana = ActionResult.Summon.Mana;
-			Object->Character->BaseMinDamage = ActionResult.Summon.MinDamage;
-			Object->Character->BaseMaxDamage = ActionResult.Summon.MaxDamage;
-			Object->Character->BaseArmor = ActionResult.Summon.Armor;
-			Object->Character->CalculateStats();
+			// Create object
+			_Object *Object = SourceObject->Server->CreateSummon(SourceObject, ActionResult.Summon);
 
 			// Create packet for new object
 			ae::_Buffer Packet;

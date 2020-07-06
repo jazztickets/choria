@@ -51,6 +51,7 @@
 #include <SDL_keycode.h>
 #include <vector>
 #include <algorithm>
+#include <map>
 #include <iostream>
 #include <sstream>
 
@@ -708,7 +709,9 @@ void _Battle::ServerEndBattle() {
 		}
 	}
 
-	// Send data
+	// Build results
+	typedef std::pair<_Object *, const _Monster *> _SurvivedSummonKey;
+	std::map<_SurvivedSummonKey, _SurvivedSummon> SurvivedSummons;
 	for(auto &Object : Objects) {
 		Object->Controller->InputStates.clear();
 		Object->Fighter->PotentialAction.Unset();
@@ -764,6 +767,13 @@ void _Battle::ServerEndBattle() {
 			Object->Character->Mana = Object->Character->MaxMana;
 		}
 
+		// See if summon is alive, then add buff to owner
+		if(Object->Character->IsAlive() && Object->Monster->Owner && !Object->Monster->Owner->IsMonster() && Object->Monster->Owner->Character->IsAlive() && Object->Monster->SummonBuff) {
+			_SurvivedSummonKey Key(Object->Monster->Owner, Object->Monster);
+			SurvivedSummons[Key].Monster = Object->Monster;
+			SurvivedSummons[Key].Count++;
+		}
+
 		// Write results
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
@@ -806,6 +816,44 @@ void _Battle::ServerEndBattle() {
 			Server->Network->SendPacket(Packet, Object->Peer);
 			Server->SendHUD(Object->Peer);
 		}
+	}
+
+	// Send summon buffs to players
+	std::map<_Object *, int> PlayerUpdates;
+	for(const auto &SurvivedSummon : SurvivedSummons) {
+		_Object *Owner = SurvivedSummon.first.first;
+		const _Monster *Monster = SurvivedSummon.second.Monster;
+
+		PlayerUpdates[Owner] = 1;
+
+		// Add current level of summon buff to survived summon map
+		bool Existed = false;
+		for(const auto &StatusEffect : Owner->Character->StatusEffects) {
+			if(StatusEffect->Buff == Monster->SummonBuff) {
+				StatusEffect->Level += SurvivedSummon.second.Count;
+				Existed = true;
+			}
+		}
+
+		// Create buff if it didn't exist
+		if(!Existed) {
+
+			// Create buff
+			_StatChange Summons;
+			Summons.Object = Owner;
+			Summons.Values[StatType::BUFF].Pointer = (void *)Monster->SummonBuff;
+			Summons.Values[StatType::BUFFLEVEL].Integer = SurvivedSummon.second.Count;
+			Summons.Values[StatType::BUFFDURATION].Float = Monster->Duration;
+			Owner->UpdateStats(Summons, Owner);
+		}
+	}
+
+	// Synchronize status effects for each affected player
+	for(auto &Object : PlayerUpdates) {
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::PLAYER_STATUSEFFECTS);
+		Object.first->SerializeStatusEffects(Packet);
+		Server->Network->SendPacket(Packet, Object.first->Peer);
 	}
 
 	Deleted = true;
@@ -889,7 +937,7 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			++Iterator;
 	}
 
-	// Remove object from last target array and status effect's source object
+	// Remove object from last target array, status effect's source object and monster owners
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
 		if(!Object)
@@ -902,6 +950,9 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			}
 		}
 
+		if(Object->Monster && Object->Monster->Owner == RemoveObject)
+			Object->Monster->Owner = nullptr;
+
 		if(Object->Character) {
 			for(auto &StatusEffect : Object->Character->StatusEffects) {
 				if(RemoveObject == StatusEffect->Source)
@@ -909,6 +960,9 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			}
 		}
 	}
+
+	// Clear buffs
+	RemoveObject->Character->ClearSummonBuffs();
 
 	// Remove objects
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {

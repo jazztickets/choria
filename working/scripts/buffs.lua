@@ -379,3 +379,54 @@ function Buff_Sanctuary.Update(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Demons --
+
+Buff_SummonDemon = Base_Buff:New()
+
+function Buff_SummonDemon.GetInfo(self, Level)
+	Plural = ""
+	if Level ~= 1 then
+		Plural = "s"
+	end
+
+	return "Summoning [c green]" .. Level .. "[c white] demon" .. Plural
+end
+
+function Buff_SummonDemon.GetSummonSkill(self)
+	return Skill_DemonicConjuring.Item.Pointer
+end
+
+-- Skeletons --
+
+Buff_SummonSkeleton = Base_Buff:New()
+
+function Buff_SummonSkeleton.GetInfo(self, Level)
+	Plural = ""
+	if Level ~= 1 then
+		Plural = "s"
+	end
+
+	return "Summoning [c green]" .. Level .. "[c white] skeleton" .. Plural
+end
+
+function Buff_SummonSkeleton.GetSummonSkill(self)
+	return Skill_RaiseDead.Item.Pointer
+end
+
+-- Skeleton Priests --
+
+Buff_SummonSkeletonPriest = Base_Buff:New()
+
+function Buff_SummonSkeletonPriest.GetInfo(self, Level)
+	Plural = ""
+	if Level ~= 1 then
+		Plural = "s"
+	end
+
+	return "Summoning [c green]" .. Level .. "[c white] skeleton priest" .. Plural
+end
+
+function Buff_SummonSkeletonPriest.GetSummonSkill(self)
+	return Skill_RaiseDead.Item.Pointer
+end

@@ -88,9 +88,11 @@ class _Object : public ae::_BaseObject {
 		void SerializeUpdate(ae::_Buffer &Data);
 		void SerializeStats(ae::_Buffer &Data);
 		void SerializeBattle(ae::_Buffer &Data);
+		void SerializeStatusEffects(ae::_Buffer &Data);
 		void UnserializeCreate(ae::_Buffer &Data);
 		void UnserializeStats(ae::_Buffer &Data);
 		void UnserializeBattle(ae::_Buffer &Data, bool IsClient);
+		void UnserializeStatusEffects(ae::_Buffer &Data);
 		void SendPacket(ae::_Buffer &Packet);
 
 		// Stats

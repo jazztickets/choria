@@ -23,6 +23,7 @@
 
 // Forward Declarations
 class _Object;
+class _Buff;
 
 // Classes
 class _Monster {
@@ -36,8 +37,10 @@ class _Monster {
 
 		// Attributes
 		_Object *Owner;
+		const _Buff *SummonBuff;
 		uint32_t DatabaseID;
 		uint32_t SpellID;
+		double Duration;
 		int ExperienceGiven;
 		int GoldGiven;
 		std::string AI;

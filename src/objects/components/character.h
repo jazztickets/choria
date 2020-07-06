@@ -96,10 +96,12 @@ class _Character {
 		void GenerateNextBattle();
 		int GenerateDamage();
 		float GetDamagePower(int DamageTypeID);
+		void ClearSummonBuffs();
 
 		// Actions
 		void RefreshActionBarCount();
 		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
+		void GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffect *> > &Summons);
 
 		// Skills
 		bool HasLearned(const _Item *Skill) const;

@@ -27,6 +27,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
+#include <objects/components/fighter.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/map.h>
@@ -154,6 +155,32 @@ void _Server::StopServer(int Seconds) {
 	else {
 		StartDisconnect = true;
 	}
+}
+
+// Create a summon object
+_Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
+
+	// Create monster
+	_Object *Object = ObjectManager->Create();
+	Object->Server = this;
+	Object->Scripting = Scripting;
+	Object->Monster->DatabaseID = Summon.ID;
+	Object->Stats = Stats;
+	Object->Monster->Owner = Source;
+	Object->Monster->SummonBuff = Summon.SummonBuff;
+	Object->Monster->SpellID = Summon.SpellID;
+	Object->Monster->Duration = Summon.Duration;
+	Stats->GetMonsterStats(Object->Monster->DatabaseID, Object);
+
+	// Add stats from script
+	Object->Character->Health = Object->Character->BaseMaxHealth = Summon.Health;
+	Object->Character->Mana = Object->Character->BaseMaxMana = Summon.Mana;
+	Object->Character->BaseMinDamage = Summon.MinDamage;
+	Object->Character->BaseMaxDamage = Summon.MaxDamage;
+	Object->Character->BaseArmor = Summon.Armor;
+	Object->Character->CalculateStats();
+
+	return Object;
 }
 
 // Resurrect player in the world
@@ -1772,8 +1799,10 @@ void _Server::HandleActionBarChanged(ae::_Buffer &Data, ae::_Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Read skills
-	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++)
+	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
 		Player->Character->ActionBar[i].Unserialize(Data, Stats);
+		Player->Character->ActionBar[i].ActionBarSlot = i;
+	}
 
 	Player->Character->CalculateStats();
 }
@@ -2028,6 +2057,54 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 				// Increase difficulty for each player
 				Difficulty += GAME_DIFFICULTY_PER_PLAYER;
+			}
+
+			// Iterate over all players in battle, collecting summons for each player
+			std::vector<_SummonCaptain> SummonCaptains;
+			for(auto &SummonOwner : Battle->Objects) {
+				_SummonCaptain SummonCaptain;
+				SummonCaptain.Summons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
+				SummonCaptain.Owner = SummonOwner;
+				SummonOwner->Character->GetSummonsFromBuffs(SummonCaptain.Summons);
+				std::shuffle(SummonCaptain.Summons.begin(), SummonCaptain.Summons.end(), ae::RandomGenerator);
+
+				SummonCaptains.push_back(SummonCaptain);
+			}
+
+			// Shuffle who goes first
+			std::shuffle(SummonCaptains.begin(), SummonCaptains.end(), ae::RandomGenerator);
+
+			// Get summons from summon buffs
+			int SlotsLeft = BATTLE_MAX_OBJECTS_PER_SIDE - Battle->Objects.size();
+			while(SlotsLeft > 0) {
+
+				// Add summons round-robin
+				int Added = 0;
+				for(size_t i = 0; i < SummonCaptains.size(); i++) {
+					_SummonCaptain &Captain = SummonCaptains[i];
+
+					// Check for any summons left in captain's pool
+					if(Captain.Summons.size()) {
+						_Object *Object = CreateSummon(Captain.Owner, Captain.Summons.back().first);
+						Battle->AddObject(Object, Captain.Owner->Fighter->BattleSide);
+
+						// Remove summon from pool and decrement owner's status effect level
+						_StatusEffect *StatusEffect = Captain.Summons.back().second;
+						StatusEffect->Level--;
+						if(StatusEffect->Level <= 0)
+							StatusEffect->Duration = 0.0;
+
+						Captain.Summons.pop_back();
+						Added++;
+						SlotsLeft--;
+						if(SlotsLeft <= 0)
+							break;
+					}
+				}
+
+				// No summons left to add
+				if(!Added)
+					break;
 			}
 
 			// Set difficulty of battle

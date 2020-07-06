@@ -26,6 +26,7 @@
 // Forward Declarations
 class _Scripting;
 class _Server;
+class _Monster;
 class _StatusEffect;
 class _HUD;
 
@@ -55,6 +56,13 @@ struct _BattleResult {
 	int ExperiencePerCharacter;
 	int GoldPerCharacter;
 	bool Dead;
+};
+
+struct _SurvivedSummon {
+	_SurvivedSummon() : Monster(nullptr), Count(0) { }
+
+	const _Monster *Monster;
+	int Count;
 };
 
 // Classes
