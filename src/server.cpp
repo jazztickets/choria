@@ -2093,6 +2093,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 						StatusEffect->Level--;
 						if(StatusEffect->Level <= 0)
 							StatusEffect->Duration = 0.0;
+						else
+							StatusEffect->Duration = StatusEffect->MaxDuration;
 
 						Captain.Summons.pop_back();
 						Added++;
