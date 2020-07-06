@@ -325,3 +325,53 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 	-- Set skill
 	Object.SetAction(0)
 end
+
+AI_Jem = {}
+
+function AI_Jem.Update(self, Object, Enemies, Allies)
+
+	-- Heal
+	if Object.Health > 0 and Object.Health <= Object.MaxHealth * 0.75 then
+
+		-- Check if already healing
+		Healing = false
+		for i = 1, #Object.StatusEffects do
+			Effect = Object.StatusEffects[i]
+			if Effect.Buff == Buff_Healing then
+				Healing = true
+				break
+			end
+		end
+
+		-- See if target can be healed
+		if Healing == false then
+			Object.AddTarget(Object.Pointer)
+			if Object.SetAction(1) == true then
+				return
+			end
+
+			-- Clear targets if heal can't be used
+			Object.ClearTargets()
+		end
+	end
+
+	-- Chance to do special attack
+	if Random.GetInt(1, 3) == 1 then
+		for i = 1, #Enemies do
+			Object.AddTarget(Enemies[i].Pointer)
+		end
+
+		if Object.SetAction(2) == true then
+			return
+		end
+	end
+
+	-- Get random target
+	Target = Random.GetInt(1, #Enemies)
+
+	-- Set target
+	AI_AddTarget(Object, Enemies[Target], true)
+
+	-- Set skill
+	Object.SetAction(0)
+end

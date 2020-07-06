@@ -23,7 +23,7 @@ function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
 	Change.Health = Update.Health
 	Change.Mana = Update.Mana
 	Change.Buff = Buff_Burning.Pointer
-	Change.BuffLevel = 20
+	Change.BuffLevel = Level * 2
 	Change.BuffDuration = 10
 
 	return Change

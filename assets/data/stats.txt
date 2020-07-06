@@ -193,6 +193,7 @@ INSERT INTO ai VALUES(7,'AI_GoblinThief');
 INSERT INTO ai VALUES(8,'AI_LavaMan');
 INSERT INTO ai VALUES(9,'AI_SkeletonMage');
 INSERT INTO ai VALUES(10,'AI_Raj');
+INSERT INTO ai VALUES(11,'AI_Jem');
 CREATE TABLE IF NOT EXISTS "unlock" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None')
@@ -229,6 +230,8 @@ INSERT INTO script VALUES(12,'Script_Boss',41,0.0);
 INSERT INTO script VALUES(13,'Script_Slow',10,0.0);
 INSERT INTO script VALUES(14,'Script_Slow',30,0.0);
 INSERT INTO script VALUES(15,'Script_Fall',20,0.0);
+INSERT INTO script VALUES(16,'Script_Lava',100,0.0);
+INSERT INTO script VALUES(17,'Script_Boss',45,0.0);
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -368,7 +371,7 @@ INSERT INTO portrait VALUES(6,'textures/portraits/jone.png',6);
 INSERT INTO portrait VALUES(7,'textures/portraits/leb.png',10);
 INSERT INTO portrait VALUES(8,'textures/portraits/jas.png',7);
 INSERT INTO portrait VALUES(9,'textures/portraits/pete.png',8);
-INSERT INTO portrait VALUES(10,'textures/portraits/jem.png',9);
+INSERT INTO portrait VALUES(10,'textures/portraits/rog.png',9);
 CREATE TABLE IF NOT EXISTS "model" (
 	"id" INTEGER PRIMARY KEY,
 	"texture" TEXT
@@ -635,6 +638,7 @@ INSERT INTO monsterdrop VALUES(70,28,128,10);
 INSERT INTO monsterdrop VALUES(71,30,0,80);
 INSERT INTO monsterdrop VALUES(72,30,237,20);
 INSERT INTO monsterdrop VALUES(73,31,264,1);
+INSERT INTO monsterdrop VALUES(74,32,0,1);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -718,6 +722,8 @@ INSERT INTO zone VALUES(40,'skeletons_hornet_zombie_dusty',0,0.0,2,5);
 INSERT INTO zone VALUES(41,'city_boss',1,1440.0,0,0);
 INSERT INTO zone VALUES(42,'lava_cave',0,0.0,2,4);
 INSERT INTO zone VALUES(43,'ghost_bat',0,0.0,1,2);
+INSERT INTO zone VALUES(44,'lava_mountain',0,0.0,2,4);
+INSERT INTO zone VALUES(45,'jem',1,1440.0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -843,6 +849,7 @@ INSERT INTO zonedata VALUES(115,42,16,4,0);
 INSERT INTO zonedata VALUES(116,42,15,2,1);
 INSERT INTO zonedata VALUES(117,43,11,2,0);
 INSERT INTO zonedata VALUES(118,43,5,1,0);
+INSERT INTO zonedata VALUES(119,45,32,1,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -891,6 +898,7 @@ INSERT INTO monster VALUES(28,1,'The Drowned','textures/monsters/the_drowned.png
 INSERT INTO monster VALUES(29,1,'Aqua Slime','textures/monsters/aqua_slime.png',40,35,1200,0,100,180,0,0,2.5,1,35);
 INSERT INTO monster VALUES(30,1,'Skeleton Mage','textures/monsters/skeleton_mage.png',100,100,1800,1000,100,150,3,0,4.0,9,42);
 INSERT INTO monster VALUES(31,1,'Raj','textures/monsters/raj.png',150,250,1750,0,100,200,5,5,1.8000000000000000444,10,43);
+INSERT INTO monster VALUES(32,1,'Jem','textures/monsters/jem.png',500,500,10000,0,200,350,0,0,2.25,11,45);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -949,9 +957,9 @@ INSERT INTO map VALUES(41,'maps/choria_lighthouse1.map.gz','textures/map/atlas0.
 INSERT INTO map VALUES(42,'maps/choria_lighthouse2.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,43,-50.0,-50.0,-20.0);
 INSERT INTO map VALUES(43,'maps/choria_lighthouse2_bg.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(44,'maps/choria_goblincave.map.gz','textures/map/atlas0.png','',0.0,0.0,0.0,0,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(45,'maps/choria_mountain.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.14999999999999999444,0.14999999999999999444,0,0,0.0,0.0,0.0);
+INSERT INTO map VALUES(45,'maps/choria_ancient.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.14999999999999999444,0.14999999999999999444,0,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(46,'maps/choria_hideout.map.gz','textures/map/atlas0.png','',0.2000000000000000111,0.2000000000000000111,0.2000000000000000111,0,0,0.0,0.0,0.0);
-INSERT INTO map VALUES(47,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
+INSERT INTO map VALUES(47,'maps/choria_mountain.map.gz','textures/map/atlas0.png','',0.5,0.2000000000000000111,0.14999999999999999444,0,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(48,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(49,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(50,'maps/wym.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
@@ -1227,6 +1235,7 @@ INSERT INTO build VALUES(41,'Hornet','',0,1,0,0);
 INSERT INTO build VALUES(42,'Skeleton Mage','',0,4,0,0);
 INSERT INTO build VALUES(43,'Raj','',0,4,0,0);
 INSERT INTO build VALUES(44,'Water Crab','',0,1,0,0);
+INSERT INTO build VALUES(45,'Jem','',0,4,0,0);
 CREATE TABLE IF NOT EXISTS "buildskill" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1291,6 +1300,8 @@ INSERT INTO buildskill VALUES(57,43,28,10);
 INSERT INTO buildskill VALUES(58,44,61,20);
 INSERT INTO buildskill VALUES(59,10,1,1);
 INSERT INTO buildskill VALUES(60,10,39,2);
+INSERT INTO buildskill VALUES(61,45,10,20);
+INSERT INTO buildskill VALUES(62,45,11,20);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1363,6 +1374,9 @@ INSERT INTO builditem VALUES(63,10,103,1);
 INSERT INTO builditem VALUES(64,10,136,1);
 INSERT INTO builditem VALUES(65,10,104,1);
 INSERT INTO builditem VALUES(66,10,109,2);
+INSERT INTO builditem VALUES(67,45,247,5);
+INSERT INTO builditem VALUES(68,45,192,200);
+INSERT INTO builditem VALUES(69,45,150,2);
 CREATE TABLE IF NOT EXISTS "buildactionbar" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1438,6 +1452,10 @@ INSERT INTO buildactionbar VALUES(67,44,61,0);
 INSERT INTO buildactionbar VALUES(68,10,1,0);
 INSERT INTO buildactionbar VALUES(69,10,39,1);
 INSERT INTO buildactionbar VALUES(70,10,109,2);
+INSERT INTO buildactionbar VALUES(71,45,10,0);
+INSERT INTO buildactionbar VALUES(72,45,247,1);
+INSERT INTO buildactionbar VALUES(73,45,192,2);
+INSERT INTO buildactionbar VALUES(74,45,11,3);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,
@@ -1731,6 +1749,7 @@ INSERT INTO zonedrops VALUES(3,33,252,1);
 INSERT INTO zonedrops VALUES(4,41,239,1);
 INSERT INTO zonedrops VALUES(5,38,237,5);
 INSERT INTO zonedrops VALUES(6,38,146,3);
+INSERT INTO zonedrops VALUES(7,45,238,1);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

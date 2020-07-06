@@ -287,7 +287,14 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				Paste();
 			break;
 			case SDL_SCANCODE_D:
-				Map->DeleteStaticObject(WorldCursor);
+				if(ae::Input.ModKeyDown(KMOD_CTRL) && ae::Input.ModKeyDown(KMOD_ALT)) {
+					for(auto &Object : Map->StaticObjects)
+						delete Object;
+
+					Map->StaticObjects.clear();
+				}
+				else
+					Map->DeleteStaticObject(WorldCursor);
 			break;
 			case SDL_SCANCODE_B:
 				MapView = !MapView;
