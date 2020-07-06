@@ -125,6 +125,22 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
 	DrawPosition.y += LargeSpacingY;
 
+	if(Type == ItemType::MAP) {
+		if(AltTexture == nullptr)
+			return;
+
+		// Get size
+		DrawPosition.y = TooltipElement->Size.y / 2 + WindowOffset.y;
+		glm::vec2 TextureSize = glm::vec2(AltTexture->Size) * (TooltipElement->Size.x / AltTexture->Size.x / ae::_Element::GetUIScale()) * 0.45f * ae::_Element::GetUIScale();
+		ae::_Bounds Bounds(DrawPosition - TextureSize, DrawPosition + TextureSize);
+
+		// Draw image
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.DrawImage(Bounds, AltTexture, true);
+
+		return;
+	}
+
 	// Draw target text
 	if(TargetID != TargetType::NONE) {
 		DrawPosition.y -= 28 * ae::_Element::GetUIScale();

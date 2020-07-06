@@ -235,12 +235,14 @@ void _Stats::LoadItems() {
 			continue;
 
 		std::string TexturePath = Database->GetString("texture");
+		std::string AltTexturePath = Database->GetString("alt_texture");
 
 		_Item *Item = new _Item;
 		Item->Stats = this;
 		Item->ID = ItemID;
 		Item->Name = Database->GetString("name");
 		Item->Texture = ae::Assets.Textures[TexturePath];
+		Item->AltTexture = ae::Assets.Textures[AltTexturePath];
 		Item->Script = Database->GetString("script");
 		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
 		Item->Category = Database->GetInt<int>("category");
@@ -275,6 +277,8 @@ void _Stats::LoadItems() {
 
 		if(!Headless && Item->Texture == nullptr && TexturePath != "")
 			throw std::runtime_error("Can't find texture " + TexturePath);
+		if(!Headless && Item->AltTexture == nullptr && AltTexturePath != "")
+			throw std::runtime_error("Can't find texture " + AltTexturePath);
 
 		Items[Item->ID] = Item;
 	}

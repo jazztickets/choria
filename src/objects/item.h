@@ -49,6 +49,7 @@ enum class ItemType : uint32_t {
 	UNLOCKABLE,
 	KEY,
 	OFFHAND,
+	MAP,
 };
 
 // Classes
@@ -107,6 +108,7 @@ class _Item {
 		std::string Name;
 		std::string Script;
 		const ae::_Texture *Texture;
+		const ae::_Texture *AltTexture;
 		ItemType Type;
 		int Category;
 		int Level;

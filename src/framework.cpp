@@ -436,6 +436,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/items/");
 	ae::Assets.LoadTextureDirectory("textures/lights/");
 	ae::Assets.LoadTextureDirectory("textures/map/");
+	ae::Assets.LoadTextureDirectory("textures/map_nearest/", false, false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/menu/");
 	ae::Assets.LoadTextureDirectory("textures/minigames/");
 	ae::Assets.LoadTextureDirectory("textures/monsters/");
