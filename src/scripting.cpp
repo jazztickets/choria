@@ -435,6 +435,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushcclosure(LuaState, &ObjectUpdateBuff, 1);
 	lua_setfield(LuaState, -2, "UpdateBuff");
 
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectHasBuff, 1);
+	lua_setfield(LuaState, -2, "HasBuff");
+
 	lua_pushinteger(LuaState, Object->Character->Status);
 	lua_setfield(LuaState, -2, "Status");
 
@@ -1258,6 +1262,28 @@ int _Scripting::ObjectUpdateBuff(lua_State *LuaState) {
 	}
 
 	return 0;
+}
+
+// Determine if an object has a buff active
+int _Scripting::ObjectHasBuff(lua_State *LuaState) {
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	_Buff *Buff = (_Buff *)lua_touserdata(LuaState, 1);
+
+	if(!Object || !Buff)
+		return 0;
+
+	// Find buff in status effect list
+	bool Found = false;
+	for(auto &StatusEffect : Object->Character->StatusEffects) {
+		if(StatusEffect->Buff == Buff) {
+			Found = true;
+			break;
+		}
+	}
+
+	lua_pushboolean(LuaState, Found);
+
+	return 1;
 }
 
 // Generate a random damage value for an item

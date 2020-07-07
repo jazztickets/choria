@@ -109,6 +109,7 @@ class _Scripting {
 		static int ObjectCloseWindows(lua_State *LuaState);
 		static int ObjectVendorExchange(lua_State *LuaState);
 		static int ObjectUpdateBuff(lua_State *LuaState);
+		static int ObjectHasBuff(lua_State *LuaState);
 
 		static int ItemGenerateDamage(lua_State *LuaState);
 

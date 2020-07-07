@@ -14,6 +14,7 @@ Script_Lava = { BaseHealth = -10 }
 
 function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
 	if Object.LavaProtection == 1 then
+		Change.ClearBuff = Buff_Invis.Pointer
 		return Change
 	end
 
@@ -25,6 +26,11 @@ function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
 	Change.Buff = Buff_Burning.Pointer
 	Change.BuffLevel = Level * 2
 	Change.BuffDuration = 10
+	if Object.HasBuff(Buff_Healing.Pointer) then
+		Change.ClearBuff = Buff_Healing.Pointer
+	else
+		Change.ClearBuff = Buff_Invis.Pointer
+	end
 
 	return Change
 end
@@ -63,7 +69,11 @@ function Script_Slow.Activate(self, Level, Cooldown, Object, Change)
 	Change.Buff = Buff_Slowed.Pointer
 	Change.BuffLevel = Level
 	Change.BuffDuration = 5
-	Change.ClearBuff = Buff_Burning.Pointer
+	if Object.HasBuff(Buff_Burning.Pointer) then
+		Change.ClearBuff = Buff_Burning.Pointer
+	else
+		Change.ClearBuff = Buff_Invis.Pointer
+	end
 
 	return Change
 end

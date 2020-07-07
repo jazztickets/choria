@@ -220,7 +220,7 @@ Proc_Empowered.LevelPerLevel = 1
 Proc_Empowered.DurationPerLevel = 0.1
 
 function Proc_Empowered.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for a [c green]" .. self:GetLevel(Source, Item) .. "%[c white] damage buff for [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for a [c green]" .. self:GetLevel(Source, Item) .. "%[c white] attack damage buff for [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
 end
 
 -- Health --
