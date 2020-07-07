@@ -1671,7 +1671,7 @@ INSERT INTO item VALUES(128,10,0,1,3,0,0,'Arcane Cider','textures/items/arcane_c
 INSERT INTO item VALUES(129,7,2,0,0,0,0,'Reinforced Buckler','textures/items/reinforced_buckler.png','',0,200,1,0,20,0.0,1,20,60,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(130,6,2,0,0,0,0,'Battle Axe','textures/items/battleaxe.png','Proc_Blind',0,600,1,25,20,5.0,1,30,220,-2,0,0,0,0,0,0,0,-10,0,0,0,15,0,0,'',0);
 INSERT INTO item VALUES(131,14,2,0,0,0,0,'Stiletto','textures/items/stiletto.png','Proc_Bleed',0,250,1,30,20,4.0,1,50,50,0,3,20,0,0,0,0,0,20,0,0,0,20,0,0,'',0);
-INSERT INTO item VALUES(132,10,0,1,3,0,0,'Death Potion','textures/items/death_potion.png','Item_DeathPotion',0,300,1,100,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(132,10,0,1,3,0,0,'Death Potion','textures/items/death_potion.png','Item_DeathPotion',0,300,1,1000,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(133,10,2,2,2,0,0,'Throwing Knives','textures/items/throwing_knives.png','Item_ThrowingKnives',0,4,1,1,0,0.0,1,25,120,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(134,10,0,1,3,0,0,'Crab Legs','textures/items/crab_legs.png','Item_CrabLegs',0,20,1,10,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(135,7,0,0,0,0,0,'Wizard Book','textures/items/wizard_book.png','',0,320,1,0,50,0.0,1,0,0,0,3,0,0,25,50,0,2,0,0,0,0,0,0,1,'',0);
