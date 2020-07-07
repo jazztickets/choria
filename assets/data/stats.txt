@@ -611,8 +611,8 @@ INSERT INTO monsterdrop VALUES(23,9,0,80);
 INSERT INTO monsterdrop VALUES(24,9,134,19);
 INSERT INTO monsterdrop VALUES(25,9,129,1);
 INSERT INTO monsterdrop VALUES(26,11,0,80);
-INSERT INTO monsterdrop VALUES(27,11,146,19);
-INSERT INTO monsterdrop VALUES(28,11,110,1);
+INSERT INTO monsterdrop VALUES(27,11,146,17);
+INSERT INTO monsterdrop VALUES(28,11,110,3);
 INSERT INTO monsterdrop VALUES(29,10,139,1);
 INSERT INTO monsterdrop VALUES(30,12,0,80);
 INSERT INTO monsterdrop VALUES(31,12,127,19);
@@ -621,8 +621,8 @@ INSERT INTO monsterdrop VALUES(33,13,0,80);
 INSERT INTO monsterdrop VALUES(34,13,114,19);
 INSERT INTO monsterdrop VALUES(35,13,132,1);
 INSERT INTO monsterdrop VALUES(36,14,0,80);
-INSERT INTO monsterdrop VALUES(37,14,146,19);
-INSERT INTO monsterdrop VALUES(38,14,155,1);
+INSERT INTO monsterdrop VALUES(37,14,146,15);
+INSERT INTO monsterdrop VALUES(38,14,155,5);
 INSERT INTO monsterdrop VALUES(39,15,0,80);
 INSERT INTO monsterdrop VALUES(40,15,124,10);
 INSERT INTO monsterdrop VALUES(41,15,156,10);
@@ -1057,6 +1057,8 @@ INSERT INTO trader VALUES(45,'bloodletter',265,1);
 INSERT INTO trader VALUES(46,'flamuss',266,1);
 INSERT INTO trader VALUES(47,'library_key',268,1);
 INSERT INTO trader VALUES(48,'firebomb',270,3);
+INSERT INTO trader VALUES(49,'lava_boots',271,1);
+INSERT INTO trader VALUES(50,'evasion',11,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1104,8 +1106,8 @@ INSERT INTO traderitem VALUES(56,19,211,1);
 INSERT INTO traderitem VALUES(57,20,224,1);
 INSERT INTO traderitem VALUES(58,20,215,5);
 INSERT INTO traderitem VALUES(59,20,211,1);
-INSERT INTO traderitem VALUES(60,21,162,1);
-INSERT INTO traderitem VALUES(63,21,229,1);
+INSERT INTO traderitem VALUES(60,21,226,1);
+INSERT INTO traderitem VALUES(63,21,227,1);
 INSERT INTO traderitem VALUES(64,22,132,1);
 INSERT INTO traderitem VALUES(65,22,150,1);
 INSERT INTO traderitem VALUES(66,23,126,1);
@@ -1165,6 +1167,12 @@ INSERT INTO traderitem VALUES(121,44,249,1);
 INSERT INTO traderitem VALUES(122,48,215,2);
 INSERT INTO traderitem VALUES(123,48,125,1);
 INSERT INTO traderitem VALUES(124,48,127,1);
+INSERT INTO traderitem VALUES(125,21,228,1);
+INSERT INTO traderitem VALUES(126,21,229,1);
+INSERT INTO traderitem VALUES(127,49,200,1);
+INSERT INTO traderitem VALUES(128,49,233,10);
+INSERT INTO traderitem VALUES(129,50,155,5);
+INSERT INTO traderitem VALUES(130,50,116,5);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1198,7 +1206,6 @@ INSERT INTO minigameitem VALUES(5,1,191,1);
 INSERT INTO minigameitem VALUES(6,1,125,1);
 INSERT INTO minigameitem VALUES(7,1,110,1);
 INSERT INTO minigameitem VALUES(8,1,134,1);
-INSERT INTO minigameitem VALUES(9,1,219,1);
 INSERT INTO minigameitem VALUES(10,1,115,1);
 INSERT INTO minigameitem VALUES(11,1,215,1);
 INSERT INTO minigameitem VALUES(12,1,133,5);
@@ -1660,7 +1667,7 @@ INSERT INTO item VALUES(151,10,0,1,1,0,0,'Battle Potion','textures/items/death_p
 INSERT INTO item VALUES(152,2,0,0,0,0,0,'Mage Hat','textures/items/mage_hat.png','',0,25,1,0,10,0.0,1,0,0,1,0,0,0,15,30,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(153,2,0,0,0,0,0,'Wizard Hat','textures/items/wizard_hat.png','',0,100,1,0,50,0.0,1,0,0,2,0,0,0,30,60,0,1,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(154,6,2,0,0,0,0,'Claymore','textures/items/claymore.png','Proc_Empowered',0,2000,1,20,20,5.0,1,150,430,-5,0,0,0,0,0,0,0,-10,0,0,0,15,0,0,'',0);
-INSERT INTO item VALUES(155,10,0,1,1,0,0,'Ghostly Potion','textures/items/invis_potion.png','Item_InvisPotion',0,150,1,30,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(155,10,0,1,1,0,0,'Ghostly Potion','textures/items/ghostly_potion.png','Item_InvisPotion',0,150,1,30,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(156,10,0,8,3,0,0,'Poison','textures/items/poison.png','Item_PoisonPotion',0,25,1,10,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(157,3,0,0,0,0,7,'Reinforced Jerkin','textures/items/reinforced_jerkin.png','',0,300,1,0,20,0.0,1,0,0,8,2,0,10,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(158,8,0,0,0,0,0,'Magic Ring','textures/items/ring.png','',0,150,1,0,50,0.0,1,0,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,'',0);
@@ -1724,7 +1731,7 @@ INSERT INTO item VALUES(215,10,0,2,2,0,0,'Fire Dust','textures/items/fire_dust.p
 INSERT INTO item VALUES(216,13,0,0,1,0,0,'Prisoner Key','textures/items/key1.png','',0,10000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(217,9,0,0,0,0,0,'Lucky Amulet','textures/items/amulet_gold.png','',0,1000,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,'',0);
 INSERT INTO item VALUES(218,7,0,0,0,0,0,'Gauntlet','textures/items/gauntlet.png','',0,35,1,0,10,0.0,1,0,0,0,3,2,0,0,0,0,0,10,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key2.png','',0,5,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key2.png','',0,150,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(220,10,0,1,1,0,0,'Torch','textures/items/torch.png','Item_Torch',0,15,1,3,0,60.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(221,11,0,0,0,0,0,'Game Token','textures/items/token.png','',0,10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/medium_torch.png','Item_Torch',0,35,1,5,0,120.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
@@ -1775,7 +1782,7 @@ INSERT INTO item VALUES(266,5,3,0,0,0,3,'Flamuss','textures/items/flamuss.png','
 INSERT INTO item VALUES(267,13,0,0,0,0,0,'City Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(268,13,0,0,0,0,0,'Library Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(269,15,0,0,0,0,0,'World Map','textures/items/map.png','',0,100,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png',0);
-INSERT INTO item VALUES(270,10,3,4,2,0,0,'Firebomb','textures/items/firebomb.png','Item_Firebomb',0,25,1,50,0,5.0,1,100,250,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(270,10,3,4,2,0,0,'Firebomb','textures/items/firebomb.png','Item_Firebomb',0,25,1,50,0,5.0,1,75,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(271,4,0,0,0,0,3,'Lava Boots','textures/items/lava_boots.png','Item_LavaProtection',0,1500,1,0,50,0.0,1,0,0,3,10,0,25,0,0,0,0,0,-20,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(272,13,0,0,0,0,0,'Secret Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(273,8,0,0,0,0,4,'Elusive One','textures/items/ghostly_ring.png','Item_ElusiveRing',0,10000,1,0,5,0.0,1,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,'',20);
