@@ -225,6 +225,11 @@ INSERT INTO unlock VALUES(6,'Skill Point 2');
 INSERT INTO unlock VALUES(7,'Skill Point 3');
 INSERT INTO unlock VALUES(8,'Skill Point 4');
 INSERT INTO unlock VALUES(9,'Skill Point 5');
+INSERT INTO unlock VALUES(10,'Skill Point 6');
+INSERT INTO unlock VALUES(11,'Skill Point 7');
+INSERT INTO unlock VALUES(12,'Skill Point 8');
+INSERT INTO unlock VALUES(13,'Skill Point 9');
+INSERT INTO unlock VALUES(14,'Skill Point 10');
 CREATE TABLE IF NOT EXISTS "script" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -572,7 +577,7 @@ INSERT INTO vendoritem VALUES(154,17,21);
 INSERT INTO vendoritem VALUES(155,14,43);
 INSERT INTO vendoritem VALUES(156,15,98);
 INSERT INTO vendoritem VALUES(157,20,5);
-INSERT INTO vendoritem VALUES(158,15,216);
+INSERT INTO vendoritem VALUES(158,22,216);
 INSERT INTO vendoritem VALUES(159,18,253);
 INSERT INTO vendoritem VALUES(160,18,99);
 INSERT INTO vendoritem VALUES(161,2,269);
@@ -1740,8 +1745,8 @@ INSERT INTO item VALUES(225,10,0,1,1,0,0,'Dark Potion','textures/items/dark_poti
 INSERT INTO item VALUES(226,12,0,0,1,5,0,'Skill Point I','textures/items/skillpoint1.png','Item_SkillPoint',0,250,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(227,12,0,0,1,6,0,'Skill Point II','textures/items/skillpoint1.png','Item_SkillPoint',0,500,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(228,12,0,0,1,7,0,'Skill Point III','textures/items/skillpoint1.png','Item_SkillPoint',0,1000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(229,12,0,0,1,8,0,'Skill Point IV','textures/items/skillpoint1.png','Item_SkillPoint',0,2000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(230,12,0,0,1,9,0,'Skill Point V','textures/items/skillpoint2.png','Item_SkillPoint',0,4000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(229,12,0,0,1,8,0,'Skill Point IV','textures/items/skillpoint1.png','Item_SkillPoint',0,2500,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(230,12,0,0,1,9,0,'Skill Point V','textures/items/skillpoint2.png','Item_SkillPoint',0,5000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(231,9,0,0,0,0,0,'Mythical Amulet','textures/items/amulet_blue.png','',0,2000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,'',0);
 INSERT INTO item VALUES(232,13,0,0,1,0,0,'Dungeon Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(233,10,0,2,2,0,0,'Lava Sludge','textures/items/lava_sludge.png','Item_LavaSludge',0,100,1,60,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
@@ -1780,11 +1785,16 @@ INSERT INTO item VALUES(265,14,2,0,0,0,7,'Bloodletter','textures/items/bloodlett
 INSERT INTO item VALUES(266,5,3,0,0,0,3,'Flamuss','textures/items/flamuss.png','Proc_Ignite',0,18000,1,500,50,5.0,1,650,1200,0,0,0,20,0,0,0,0,0,0,0,0,35,0,0,'',0);
 INSERT INTO item VALUES(267,13,0,0,0,0,0,'City Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(268,13,0,0,0,0,0,'Library Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(269,15,0,0,0,0,0,'World Map','textures/items/map.png','',0,100,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png',0);
+INSERT INTO item VALUES(269,15,0,0,0,0,0,'World Map','textures/items/map.png','',0,100,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png',0);
 INSERT INTO item VALUES(270,10,3,4,2,0,0,'Firebomb','textures/items/firebomb.png','Item_Firebomb',0,25,1,50,0,5.0,1,75,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(271,4,0,0,0,0,3,'Lava Boots','textures/items/lava_boots.png','Item_LavaProtection',0,1500,1,0,50,0.0,1,0,0,3,10,0,25,0,0,0,0,0,-20,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(272,13,0,0,0,0,0,'Secret Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(273,8,0,0,0,0,4,'Elusive One','textures/items/ghostly_ring.png','Item_ElusiveRing',0,10000,1,0,5,0.0,1,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,'',20);
+INSERT INTO item VALUES(273,8,0,0,0,0,4,'Elusive One','textures/items/ghostly_ring.png','Item_ElusiveRing',0,40000,1,0,5,0.0,1,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,'',20);
+INSERT INTO item VALUES(274,12,0,0,1,10,0,'Skill Point VI','textures/items/skillpoint2.png','Item_SkillPoint',0,10000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(275,12,0,0,1,11,0,'Skill Point VII','textures/items/skillpoint2.png','Item_SkillPoint',0,25000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(276,12,0,0,1,12,0,'Skill Point VIII','textures/items/skillpoint3.png','Item_SkillPoint',0,50000,0,3,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(277,12,0,0,1,13,0,'Skill Point IX','textures/items/skillpoint3.png','Item_SkillPoint',0,100000,0,3,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(278,12,0,0,1,14,0,'Skill Point X','textures/items/skillpoint4.png','Item_SkillPoint',0,250000,0,4,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

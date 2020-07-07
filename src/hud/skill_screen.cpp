@@ -195,21 +195,36 @@ void _SkillScreen::Render(double BlendFactor) {
 	if(HUD->Player->Character->GetSkillPointsAvailable() != 1)
 		Text += "s";
 
-	glm::vec2 DrawPosition = glm::vec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 42);
+	// Show more info when holding alt
+	int SkillPointsUnlocked = HUD->Player->Character->SkillPointsUnlocked;
+	int EternalKnowledge = HUD->Player->Character->EternalKnowledge;
+	if(ae::Input.ModKeyDown(KMOD_ALT)) {
+		std::string SubText;
+		if(SkillPointsUnlocked)
+			SubText = std::to_string(SkillPointsUnlocked) + " unlocked";
+
+		if(EternalKnowledge) {
+			if(SubText != "")
+				SubText += ", ";
+			SubText += std::to_string(EternalKnowledge) + " eternal knowledge";
+		}
+
+		if(SubText != "")
+			Text += " (" + SubText + ")";
+	}
+
+	glm::vec2 DrawPosition = glm::vec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 42 * ae::_Element::GetUIScale());
 	ae::Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE);
 
 	// Show skill points unused
 	int SkillPointsUnused = HUD->Player->Character->SkillPointsUsed - HUD->Player->Character->SkillPointsOnActionBar;
 	if(SkillPointsUnused > 0) {
-		DrawPosition.y += 30;
-
 		Text = std::to_string(SkillPointsUnused) + " skill point";
 		if(SkillPointsUnused != 1)
 			Text += "s";
 
 		Text += " unused";
-
-		ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+		ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition + glm::vec2(0, 30) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 	}
 }
 
