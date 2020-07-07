@@ -168,6 +168,10 @@ function Item_SkillPoint.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+function Item_SkillPoint.PlaySound(self, Level)
+	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
+end
+
 -- Throwing Knives --
 
 Item_ThrowingKnives = Base_Attack:New()
