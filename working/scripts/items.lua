@@ -596,6 +596,20 @@ function Item_DiagonalMovement.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Elusive Ring --
+
+Item_ElusiveRing = { }
+
+function Item_ElusiveRing.GetInfo(self, Source, Item)
+	return "[c yellow]Allows for diagonal movement"
+end
+
+function Item_ElusiveRing.Stats(self, Level, Object, Change)
+	Change.DiagonalMovement = 1
+
+	return Change
+end
+
 -- Lava Protection --
 
 Item_LavaProtection = { }
