@@ -211,6 +211,7 @@ INSERT INTO ai VALUES(8,'AI_LavaMan');
 INSERT INTO ai VALUES(9,'AI_SkeletonMage');
 INSERT INTO ai VALUES(10,'AI_Raj');
 INSERT INTO ai VALUES(11,'AI_Jem');
+INSERT INTO ai VALUES(12,'AI_LavaSpitter');
 CREATE TABLE IF NOT EXISTS "unlock" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None')
@@ -762,6 +763,7 @@ INSERT INTO zone VALUES(43,'ghost_bat',0,0.0,1,2);
 INSERT INTO zone VALUES(44,'lavaspitter_lavaslime_skeletonmage',0,0.0,3,5);
 INSERT INTO zone VALUES(45,'jem',1,14400.0,0,0);
 INSERT INTO zone VALUES(46,'zog',1,9999998.9999999999998,0,0);
+INSERT INTO zone VALUES(47,'forestspider_aquaslime_skeletonmage',0,0.0,2,5);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
@@ -894,6 +896,10 @@ INSERT INTO zonedata VALUES(122,44,36,3,0);
 INSERT INTO zonedata VALUES(123,33,10,1,0);
 INSERT INTO zonedata VALUES(124,33,19,1,0);
 INSERT INTO zonedata VALUES(125,33,17,1,0);
+INSERT INTO zonedata VALUES(126,47,33,3,0);
+INSERT INTO zonedata VALUES(127,47,29,2,0);
+INSERT INTO zonedata VALUES(128,47,35,2,0);
+INSERT INTO zonedata VALUES(129,47,30,1,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -944,7 +950,7 @@ INSERT INTO monster VALUES(30,1,'Skeleton Mage','textures/monsters/skeleton_mage
 INSERT INTO monster VALUES(31,1,'Raj','textures/monsters/raj.png',150,250,1750,0,100,200,5,5,1.8000000000000000444,10,43);
 INSERT INTO monster VALUES(32,1,'Jem','textures/monsters/jem.png',500,500,10000,0,200,350,0,0,2.25,11,45);
 INSERT INTO monster VALUES(33,1,'Forest Spider','textures/monsters/forest_spider.png',120,80,2400,0,150,225,5,0,2.0,1,21);
-INSERT INTO monster VALUES(34,1,'Lava Spitter','textures/monsters/lava_spitter.png',125,100,2800,0,175,275,5,0,1.8000000000000000444,1,41);
+INSERT INTO monster VALUES(34,1,'Lava Spitter','textures/monsters/lava_spitter.png',125,100,2800,0,175,275,5,0,1.8000000000000000444,12,46);
 INSERT INTO monster VALUES(35,1,'Lost One','textures/monsters/lost_one.png',100,60,1000,0,500,500,90,0,7.0,1,25);
 INSERT INTO monster VALUES(36,1,'Lava Slime','textures/monsters/lava_slime.png',120,125,3500,0,200,250,5,5,3.0,1,35);
 CREATE TABLE IF NOT EXISTS "map" (
@@ -1294,6 +1300,7 @@ INSERT INTO build VALUES(42,'Skeleton Mage','',0,4,0,0);
 INSERT INTO build VALUES(43,'Raj','',0,4,0,0);
 INSERT INTO build VALUES(44,'Water Crab','',0,1,0,0);
 INSERT INTO build VALUES(45,'Jem','',0,4,0,0);
+INSERT INTO build VALUES(46,'Lava Spitter','',0,4,0,0);
 CREATE TABLE IF NOT EXISTS "buildskill" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1360,6 +1367,8 @@ INSERT INTO buildskill VALUES(59,10,1,1);
 INSERT INTO buildskill VALUES(60,10,39,2);
 INSERT INTO buildskill VALUES(61,45,10,20);
 INSERT INTO buildskill VALUES(62,45,11,20);
+INSERT INTO buildskill VALUES(63,46,66,15);
+INSERT INTO buildskill VALUES(64,46,31,20);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1435,6 +1444,9 @@ INSERT INTO builditem VALUES(66,10,109,2);
 INSERT INTO builditem VALUES(67,45,247,5);
 INSERT INTO builditem VALUES(68,45,192,200);
 INSERT INTO builditem VALUES(69,45,150,2);
+INSERT INTO builditem VALUES(70,46,233,10);
+INSERT INTO builditem VALUES(71,46,173,1);
+INSERT INTO builditem VALUES(72,46,235,1);
 CREATE TABLE IF NOT EXISTS "buildactionbar" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1514,6 +1526,9 @@ INSERT INTO buildactionbar VALUES(71,45,10,0);
 INSERT INTO buildactionbar VALUES(72,45,247,1);
 INSERT INTO buildactionbar VALUES(73,45,192,2);
 INSERT INTO buildactionbar VALUES(74,45,11,3);
+INSERT INTO buildactionbar VALUES(75,46,66,0);
+INSERT INTO buildactionbar VALUES(76,46,233,1);
+INSERT INTO buildactionbar VALUES(77,46,31,3);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,

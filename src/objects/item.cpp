@@ -529,9 +529,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			}
 		break;
 		case ItemType::UNLOCKABLE: {
-			if(!Player->Character->HasUnlocked(this) && Tooltip.Window == _HUD::WINDOW_INVENTORY)
+			bool Unlocked = Player->Character->HasUnlocked(this);
+			if(!Unlocked && Tooltip.Window == _HUD::WINDOW_INVENTORY)
 				HelpTextList.push_back("Right-click to unlock");
-			else {
+			else if(Unlocked) {
 				InfoText = "Already unlocked";
 				InfoColor = ae::Assets.Colors["red"];
 			}

@@ -235,6 +235,27 @@ function AI_LavaMan.Update(self, Object, Enemies, Allies)
 	AI_AddTarget(Object, Enemies[Target], true)
 end
 
+AI_LavaSpitter = {}
+
+function AI_LavaSpitter.Update(self, Object, Enemies, Allies)
+
+	-- Chance to do special attack
+	if Random.GetInt(1, 5) == 1 then
+		CanUse = Object.SetAction(1)
+		if CanUse == false then
+			Object.SetAction(0)
+		end
+	else
+		Object.SetAction(0)
+	end
+
+	-- Get random target
+	Target = Random.GetInt(1, #Enemies)
+
+	-- Set target
+	AI_AddTarget(Object, Enemies[Target], true)
+end
+
 AI_SkeletonMage = {}
 
 function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
