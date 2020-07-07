@@ -463,7 +463,6 @@ INSERT INTO vendoritem VALUES(25,3,119);
 INSERT INTO vendoritem VALUES(26,4,120);
 INSERT INTO vendoritem VALUES(27,4,121);
 INSERT INTO vendoritem VALUES(28,1,10);
-INSERT INTO vendoritem VALUES(29,19,11);
 INSERT INTO vendoritem VALUES(30,3,131);
 INSERT INTO vendoritem VALUES(31,4,122);
 INSERT INTO vendoritem VALUES(32,10,123);
@@ -1539,7 +1538,7 @@ CREATE TABLE IF NOT EXISTS "item" (
 , "allskills" INTEGER DEFAULT(0), "alt_texture" TEXT, "evasion" INTEGER DEFAULT(0));
 INSERT INTO item VALUES(0,0,0,0,0,0,0,'None','','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(1,1,2,2,2,0,0,'Attack','textures/skills/attack.png','Skill_Attack',2,50,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(2,1,0,1,2,0,0,'Flee','textures/skills/flee.png','Skill_Flee',4,100,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(2,1,0,1,2,0,0,'Flee','textures/skills/flee.png','Skill_Flee',4,75,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(3,1,5,2,2,0,0,'Spark','textures/skills/spark.png','Skill_Spark',3,150,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(4,1,0,3,3,0,0,'Heal','textures/skills/heal.png','Skill_Heal',3,350,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(5,1,0,0,0,0,0,'Toughness','textures/skills/toughness.png','Skill_Toughness',1,500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);

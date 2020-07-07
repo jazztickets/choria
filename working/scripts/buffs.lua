@@ -206,7 +206,7 @@ end
 -- Parry --
 
 Buff_Parry = Base_Buff:New()
-Buff_Parry.DamageReduction = 0.5
+Buff_Parry.DamageReduction = 1
 Buff_Parry.StaminaGain = 0.2
 
 function Buff_Parry.GetInfo(self, Level)
@@ -215,7 +215,7 @@ end
 
 function Buff_Parry.OnHit(self, Object, Level, Duration, Change)
 	Change.BuffSound = self.ID
-	Change.Damage = math.floor(Change.Damage * self.DamageReduction)
+	Change.Damage = math.max(math.floor(Change.Damage * (1.0 - (Level / 100.0))), 0)
 	Change.Stamina = self.StaminaGain
 end
 

@@ -1057,21 +1057,27 @@ end
 
 Skill_Parry = {}
 Skill_Parry.StaminaGain = Buff_Parry.StaminaGain
-Skill_Parry.DamageReduction = Buff_Parry.DamageReduction
 Skill_Parry.Duration = 0.5
 Skill_Parry.DurationPerLevel = 0.2
+Skill_Parry.DamageReduction = 50
+Skill_Parry.DamageReductionPerLevel = 2
+Skill_Parry.MaxDamageReduction = 95
 
 function Skill_Parry.GetDuration(self, Level)
 	return self.Duration + self.DurationPerLevel * Level
 end
 
+function Skill_Parry.GetDamageReduction(self, Level)
+	return math.min(self.DamageReduction + self.DamageReductionPerLevel * (Level - 1), self.MaxDamageReduction)
+end
+
 function Skill_Parry.GetInfo(self, Source, Item)
-	return "Block [c green]" .. math.floor(self.DamageReduction * 100) .. "% [c white]attack damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
+	return "Block [c green]" .. self:GetDamageReduction(Item.Level) .. "% [c white]attack damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
 end
 
 function Skill_Parry.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Parry.Pointer
-	Result.Target.BuffLevel = 1
+	Result.Target.BuffLevel = self:GetDamageReduction(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
 	return Result
