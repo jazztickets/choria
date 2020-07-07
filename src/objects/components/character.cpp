@@ -413,6 +413,7 @@ void _Character::CalculateStats() {
 			ManaRegen += Item->GetManaRegen(Upgrades);
 			BattleSpeed += Item->GetBattleSpeed(Upgrades);
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
+			Evasion += Item->GetEvasion(Upgrades);
 			AllSkills += Item->GetAllSkills(Upgrades);
 			GoldMultiplier += Item->GetGoldBonus(Upgrades) / 100.0f;
 			ExperienceMultiplier += Item->GetExpBonus(Upgrades) / 100.0f;

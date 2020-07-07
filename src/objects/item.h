@@ -96,6 +96,7 @@ class _Item {
 		float GetManaRegen(int Upgrades) const;
 		float GetBattleSpeed(int Upgrades) const;
 		float GetMoveSpeed(int Upgrades) const;
+		float GetEvasion(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
 		float GetGoldBonus(int Upgrades) const;
 		float GetExpBonus(int Upgrades) const;
@@ -127,6 +128,7 @@ class _Item {
 		int ManaRegen;
 		int BattleSpeed;
 		int MoveSpeed;
+		int Evasion;
 		int GoldBonus;
 		int ExpBonus;
 		int AllSkills;

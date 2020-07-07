@@ -262,6 +262,7 @@ void _Stats::LoadItems() {
 		Item->ManaRegen = Database->GetInt<int>("manaregen");
 		Item->BattleSpeed = Database->GetInt<int>("battlespeed");
 		Item->MoveSpeed = Database->GetInt<int>("movespeed");
+		Item->Evasion = Database->GetInt<int>("evasion");
 		Item->GoldBonus = Database->GetInt<int>("gold_bonus");
 		Item->ExpBonus = Database->GetInt<int>("exp_bonus");
 		Item->AllSkills = Database->GetInt<int>("allskills");

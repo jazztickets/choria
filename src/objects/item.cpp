@@ -367,6 +367,22 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		StatDrawn = true;
 	}
 
+	// Evasion
+	int DrawEvasion = (int)GetEvasion(Upgrades);
+	if(DrawEvasion != 0) {
+		std::stringstream Buffer;
+		Buffer << (DrawEvasion < 0 ? "" : "+") << DrawEvasion << "%";
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetEvasion(Upgrades), CompareInventory.Item->GetEvasion(CompareInventory.Upgrades));
+
+		ae::Assets.Fonts["hud_medium"]->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
 	// Health regen
 	int DrawHealthRegen = (int)GetHealthRegen(Upgrades);
 	if(DrawHealthRegen != 0) {
@@ -904,6 +920,11 @@ float _Item::GetBattleSpeed(int Upgrades) const {
 // Get move speed
 float _Item::GetMoveSpeed(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MOVESPEED, Upgrades, MoveSpeed);
+}
+
+// Get evasion
+float _Item::GetEvasion(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::EVASION, Upgrades, Evasion);
 }
 
 // Get resistance
