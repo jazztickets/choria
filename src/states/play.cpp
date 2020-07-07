@@ -765,6 +765,8 @@ void _PlayState::PlayCoinSound() {
 
 // Play death sound
 void _PlayState::PlayDeathSound() {
+	ae::Audio.StopMusic();
+
 	std::stringstream Buffer;
 	Buffer << "death" << ae::GetRandomInt(0, 2) << ".ogg";
 	ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
@@ -1124,6 +1126,7 @@ void _PlayState::HandlePlayerPosition(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
+	ae::Audio.PlayMusic(ae::Assets.Music[Map->Music]);
 	Player->Position = Data.Read<glm::ivec2>();
 	Player->Controller->WaitForServer = false;
 	Player->Character->TeleportTime = -1;

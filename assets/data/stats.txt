@@ -982,8 +982,8 @@ INSERT INTO map VALUES(12,'maps/choria_sandcave.map.gz','textures/map/atlas0.png
 INSERT INTO map VALUES(13,'maps/choria_sandcave_bg.map.gz','textures/map/atlas0.png','',0.10000000000000000555,0.10000000000000000555,0.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(14,'maps/choria_slimecave1.map.gz','textures/map/atlas0.png','',0.0,0.2000000000000000111,0.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(15,'maps/choria_slimecave2.map.gz','textures/map/atlas0.png','',0.0,0.050000000000000002775,0.0,0,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(16,'maps/choria_ruins1.map.gz','textures/map/atlas0.png','',0.75,0.5500000000000000444,0.14999999999999999444,2,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(17,'maps/choria_ruins2.map.gz','textures/map/atlas0.png','',0.75,0.5500000000000000444,0.14999999999999999444,2,16,-48.000000000000000001,-83.999999999999999996,-15.0);
+INSERT INTO map VALUES(16,'maps/choria_ruins1.map.gz','textures/map/atlas0.png','ruins.ogg',0.75,0.5500000000000000444,0.14999999999999999444,2,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(17,'maps/choria_ruins2.map.gz','textures/map/atlas0.png','ruins.ogg',0.75,0.5500000000000000444,0.14999999999999999444,2,16,-48.000000000000000001,-83.999999999999999996,-15.0);
 INSERT INTO map VALUES(18,'maps/choria_graveyard.map.gz','textures/map/atlas0.png','howl.ogg',0.25,0.23000000000000000999,1.0,2,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(19,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(20,'maps/fem.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
@@ -996,10 +996,10 @@ INSERT INTO map VALUES(26,'maps/fem_tower5.map.gz','textures/map/atlas0.png','qu
 INSERT INTO map VALUES(27,'maps/fem_tower4_bg.map.gz','textures/map/atlas0.png','tower.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(28,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(29,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(30,'maps/san.map.gz','textures/map/atlas0.png','town.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(31,'maps/san_shop.map.gz','textures/map/atlas0.png','town.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(32,'maps/san_weapon.map.gz','textures/map/atlas0.png','town.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(33,'maps/san_armor.map.gz','textures/map/atlas0.png','town.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(30,'maps/san.map.gz','textures/map/atlas0.png','jung.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(31,'maps/san_shop.map.gz','textures/map/atlas0.png','jung.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(32,'maps/san_weapon.map.gz','textures/map/atlas0.png','jung.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(33,'maps/san_armor.map.gz','textures/map/atlas0.png','jung.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(34,'maps/san_dungeon.map.gz','textures/map/atlas0.png','cellar.ogg',0.020000000000000000416,0.010000000000000000208,0.010000000000000000208,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(35,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(36,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
