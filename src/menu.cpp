@@ -42,6 +42,8 @@
 #include <SDL_timer.h>
 #include <SDL_keycode.h>
 #include <SDL_mouse.h>
+#include <SDL_clipboard.h>
+#include <SDL_stdinc.h>
 #include <sstream>
 #include <iomanip>
 
@@ -1098,6 +1100,13 @@ bool _Menu::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			}
 		} break;
 		case STATE_BROWSE: {
+			if(SDL_HasClipboardText() && ae::Input.ModKeyDown(KMOD_CTRL) && KeyEvent.Scancode == SDL_SCANCODE_V) {
+				char *PastedText = SDL_GetClipboardText();
+				ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
+				Host->Text = PastedText;
+				Host->Text.resize(Host->MaxLength);
+				SDL_free(PastedText);
+			}
 			ValidateConnect();
 		} break;
 		case STATE_KEYBINDINGS: {
