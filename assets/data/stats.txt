@@ -544,10 +544,6 @@ INSERT INTO vendoritem VALUES(121,5,225);
 INSERT INTO vendoritem VALUES(122,14,8);
 INSERT INTO vendoritem VALUES(123,6,26);
 INSERT INTO vendoritem VALUES(124,1,226);
-INSERT INTO vendoritem VALUES(125,6,227);
-INSERT INTO vendoritem VALUES(126,8,228);
-INSERT INTO vendoritem VALUES(127,11,230);
-INSERT INTO vendoritem VALUES(128,13,229);
 INSERT INTO vendoritem VALUES(129,21,27);
 INSERT INTO vendoritem VALUES(130,14,191);
 INSERT INTO vendoritem VALUES(131,14,97);
@@ -583,6 +579,15 @@ INSERT INTO vendoritem VALUES(160,18,99);
 INSERT INTO vendoritem VALUES(161,2,269);
 INSERT INTO vendoritem VALUES(162,21,219);
 INSERT INTO vendoritem VALUES(163,22,273);
+INSERT INTO vendoritem VALUES(164,8,227);
+INSERT INTO vendoritem VALUES(165,14,228);
+INSERT INTO vendoritem VALUES(166,19,229);
+INSERT INTO vendoritem VALUES(167,13,230);
+INSERT INTO vendoritem VALUES(168,11,274);
+INSERT INTO vendoritem VALUES(169,21,275);
+INSERT INTO vendoritem VALUES(170,15,276);
+INSERT INTO vendoritem VALUES(171,22,277);
+INSERT INTO vendoritem VALUES(172,18,278);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1063,6 +1068,7 @@ INSERT INTO trader VALUES(47,'library_key',268,1);
 INSERT INTO trader VALUES(48,'firebomb',270,3);
 INSERT INTO trader VALUES(49,'lava_boots',271,1);
 INSERT INTO trader VALUES(50,'evasion',11,1);
+INSERT INTO trader VALUES(51,'large_torch',223,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1177,6 +1183,8 @@ INSERT INTO traderitem VALUES(127,49,200,1);
 INSERT INTO traderitem VALUES(128,49,233,10);
 INSERT INTO traderitem VALUES(129,50,155,5);
 INSERT INTO traderitem VALUES(130,50,116,5);
+INSERT INTO traderitem VALUES(131,51,101,1);
+INSERT INTO traderitem VALUES(132,51,233,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1615,7 +1623,7 @@ INSERT INTO item VALUES(70,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0
 INSERT INTO item VALUES(96,12,0,0,1,1,0,'Action Slot I','textures/items/actionslot1.png','Item_ActionSlot',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(97,12,0,0,1,2,0,'Action Slot II','textures/items/actionslot2.png','Item_ActionSlot',0,5000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(98,12,0,0,1,3,0,'Action Slot III','textures/items/actionslot3.png','Item_ActionSlot',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(99,12,0,0,1,4,0,'Action Slot IV','textures/items/actionslot4.png','Item_ActionSlot',0,250000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(99,12,0,0,1,4,0,'Action Slot IV','textures/items/actionslot4.png','Item_ActionSlot',0,500000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(100,5,2,0,0,0,0,'Short Sword','textures/items/short_sword.png','Proc_Haste',0,25,1,20,10,3.0,1,20,40,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0);
 INSERT INTO item VALUES(101,5,2,0,0,0,0,'Stick','textures/items/stick.png','Proc_Mana',0,5,1,10,10,0.0,1,10,20,0,0,0,0,0,20,0,1,0,0,0,0,15,1,0,'',0);
 INSERT INTO item VALUES(102,5,2,0,0,0,0,'Mace','textures/items/mace.png','Proc_Stun',0,20,1,1,10,1.5,1,10,50,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0);
