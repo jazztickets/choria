@@ -38,6 +38,7 @@
 #include <packet.h>
 #include <stats.h>
 #include <constants.h>
+#include <version.h>
 #include <config.h>
 #include <SDL_timer.h>
 #include <enet/enet.h>
@@ -344,6 +345,7 @@ void _Server::HandleConnect(ae::_NetworkEvent &Event) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VERSION);
 	Packet.WriteString(GAME_VERSION);
+	Packet.Write<int>(BUILD_NUMBER);
 	Network->SendPacket(Packet, Event.Peer);
 }
 

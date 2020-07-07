@@ -1541,8 +1541,9 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 	switch(Type) {
 		case PacketType::VERSION: {
 			std::string Version(Buffer.ReadString());
+			int BuildNumber = Buffer.Read<int>();
 			BadGameVersion = false;
-			if(Version != GAME_VERSION) {
+			if(Version != GAME_VERSION || (BuildNumber > 0 && BuildNumber != BUILD_NUMBER)) {
 				BadGameVersion = true;
 				PlayState.Network->Disconnect();
 			}
