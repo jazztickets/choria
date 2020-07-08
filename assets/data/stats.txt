@@ -263,13 +263,13 @@ CREATE TABLE IF NOT EXISTS "event" (
 	"shortname" TEXT
 );
 INSERT INTO event VALUES(0,'None',' ');
-INSERT INTO event VALUES(1,'Spawn','S');
+INSERT INTO event VALUES(1,'Spawn','SP');
 INSERT INTO event VALUES(2,'Map Entrance','ME');
 INSERT INTO event VALUES(3,'Map Change','M');
 INSERT INTO event VALUES(4,'Vendor','V');
 INSERT INTO event VALUES(5,'Trader','T');
 INSERT INTO event VALUES(6,'Key','K');
-INSERT INTO event VALUES(7,'Script','SC');
+INSERT INTO event VALUES(7,'Script','S');
 INSERT INTO event VALUES(8,'Portal','P');
 INSERT INTO event VALUES(9,'Jump','J');
 INSERT INTO event VALUES(10,'Black Smith','B');
@@ -1202,12 +1202,13 @@ INSERT INTO traderitem VALUES(132,51,233,1);
 INSERT INTO traderitem VALUES(133,21,230,1);
 INSERT INTO traderitem VALUES(134,21,274,1);
 INSERT INTO traderitem VALUES(135,52,269,1);
-INSERT INTO traderitem VALUES(136,52,134,5);
+INSERT INTO traderitem VALUES(136,52,191,2);
 INSERT INTO traderitem VALUES(137,52,114,5);
 INSERT INTO traderitem VALUES(138,52,215,2);
 INSERT INTO traderitem VALUES(139,53,126,1);
-INSERT INTO traderitem VALUES(140,54,134,10);
+INSERT INTO traderitem VALUES(140,54,134,5);
 INSERT INTO traderitem VALUES(141,54,222,3);
+INSERT INTO traderitem VALUES(142,54,191,2);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
