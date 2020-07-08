@@ -490,7 +490,9 @@ void _Character::CalculateStats() {
 	// Physical resist comes solely from armor
 	Resistances[2] = (int)(ArmorResist * 100);
 
-	// Cap speed
+	// Cap stats
+	if(Evasion > GAME_MAX_EVASION)
+		Evasion = GAME_MAX_EVASION;
 	if(BattleSpeed < BATTLE_MIN_SPEED)
 		BattleSpeed = BATTLE_MIN_SPEED;
 	if(MoveSpeed < PLAYER_MIN_MOVESPEED)

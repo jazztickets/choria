@@ -1751,6 +1751,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		bool Adjust = Data.ReadBit();
 		int Change = Data.Read<int>();
 		Player->Character->Gold = Adjust ? Player->Character->Gold + Change : Change;
+		Player->Character->GoldLost = 0;
 		SendHUD(Peer);
 	}
 	else if(Command == "map") {

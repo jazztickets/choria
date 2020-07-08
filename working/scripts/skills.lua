@@ -974,14 +974,16 @@ Skill_Flee.BaseChance = 22
 Skill_Flee.ChancePerLevel = 6
 Skill_Flee.Duration = 5
 
-function Skill_Flee.GetChance(self, Level)
+function Skill_Flee.CanUse(self, Level, Source, Target)
+	return not Source.BossBattle
+end
 
+function Skill_Flee.GetChance(self, Level)
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 
 function Skill_Flee.GetInfo(self, Source, Item)
-
-	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from combat\nCauses [c yellow]fatigue [c white]for [c green]" .. self.Duration .. " [c white]seconds"
+	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from combat\nCauses [c yellow]fatigue [c white]for [c green]" .. self.Duration .. " [c white]seconds\n\n[c yellow]Unusable in boss battles"
 end
 
 function Skill_Flee.ApplyCost(self, Source, Level, Result)

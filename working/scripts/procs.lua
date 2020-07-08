@@ -14,7 +14,12 @@ Base_Proc = {
 	end,
 
 	GetLevel = function(self, Source, Item)
-		return math.floor(Item.Level + Item.Upgrades * self.LevelPerLevel)
+		Level = math.floor(Item.Level + Item.Upgrades * self.LevelPerLevel)
+		if self.MaxLevel ~= nil then
+			Level = math.min(Level, self.MaxLevel)
+		end
+
+		return Level
 	end,
 
 	GetDuration = function(self, Item)
@@ -68,6 +73,7 @@ Base_Proc = {
 
 	Buff = nil,
 	OnSelf = false,
+	MaxLevel = nil,
 	ChancePerLevel = 0,
 	LevelPerLevel = 0,
 	DurationPerLevel = 0
@@ -108,6 +114,7 @@ Proc_Slow.Buff = Buff_Slowed
 Proc_Slow.ChancePerLevel = 1
 Proc_Slow.LevelPerLevel = 1
 Proc_Slow.DurationPerLevel = 0.1
+Proc_Slow.MaxLevel = 75
 
 function Proc_Slow.GetInfo(self, Source, Item)
 	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance to slow target by [c green]" .. self:GetLevel(Source, Item) .. "%[c white] for [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
@@ -221,6 +228,19 @@ Proc_Empowered.DurationPerLevel = 0.1
 
 function Proc_Empowered.GetInfo(self, Source, Item)
 	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for a [c green]" .. self:GetLevel(Source, Item) .. "%[c white] attack damage buff for [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+end
+
+-- Sanctuary --
+
+Proc_Sanctuary = Base_Proc:New()
+Proc_Sanctuary.Buff = Buff_Sanctuary
+Proc_Sanctuary.OnSelf = true
+Proc_Sanctuary.ChancePerLevel = 1
+Proc_Sanctuary.LevelPerLevel = 1
+Proc_Sanctuary.DurationPerLevel = 0.1
+
+function Proc_Sanctuary.GetInfo(self, Source, Item)
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for a level [c green]" .. self:GetLevel(Source, Item) .. "[c white] [c yellow]sanctuary[c white] buff for [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
 end
 
 -- Health --

@@ -451,6 +451,12 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Fighter->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
 
+	if(Object->Character->Battle)
+		lua_pushboolean(LuaState, Object->Character->Battle->Boss);
+	else
+		lua_pushboolean(LuaState, false);
+	lua_setfield(LuaState, -2, "BossBattle");
+
 	lua_pushinteger(LuaState, Object->Monster->DatabaseID);
 	lua_setfield(LuaState, -2, "MonsterID");
 

@@ -965,7 +965,7 @@ template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Va
 		return Value;
 
 	if(Value < 0)
-		return std::min(0.0f, Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value)));
+		return std::min(0.0f, Value + (T)(GAME_NEGATIVE_UPGRADE_SCALE * GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value)));
 	else
 		return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
 }
