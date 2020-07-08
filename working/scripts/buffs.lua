@@ -299,6 +299,21 @@ function Buff_Weak.Stats(self, Level, Source, Change)
 	return Change
 end
 
+-- Flayed  --
+
+Buff_Flayed = Base_Buff:New()
+
+function Buff_Flayed.GetInfo(self, Level)
+	return "Resistances reduced by [c green]" .. Level .. "%"
+end
+
+function Buff_Flayed.Stats(self, Level, Source, Change)
+	Change.ResistType = DamageType["All"]
+	Change.Resist = -Level
+
+	return Change
+end
+
 -- Light  --
 
 Buff_Light = Base_Buff:New()

@@ -596,6 +596,7 @@ INSERT INTO vendoritem VALUES(174,21,284);
 INSERT INTO vendoritem VALUES(175,7,282);
 INSERT INTO vendoritem VALUES(176,20,285);
 INSERT INTO vendoritem VALUES(177,22,290);
+INSERT INTO vendoritem VALUES(178,17,45);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -716,6 +717,7 @@ INSERT INTO buff VALUES(22,'Sanctuary','Buff_Sanctuary','textures/buffs/sanctuar
 INSERT INTO buff VALUES(23,'Demons','Buff_SummonDemon','textures/buffs/summon_demon.png',1);
 INSERT INTO buff VALUES(24,'Skeletons','Buff_SummonSkeleton','textures/buffs/summon_skeleton.png',1);
 INSERT INTO buff VALUES(25,'Skeleton Priests','Buff_SummonSkeletonPriest','textures/buffs/summon_skeleton_priest.png',1);
+INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1405,7 +1407,7 @@ INSERT INTO buildskill VALUES(56,43,51,1);
 INSERT INTO buildskill VALUES(57,43,28,10);
 INSERT INTO buildskill VALUES(58,44,61,20);
 INSERT INTO buildskill VALUES(59,10,1,1);
-INSERT INTO buildskill VALUES(60,10,39,2);
+INSERT INTO buildskill VALUES(60,10,39,1);
 INSERT INTO buildskill VALUES(61,45,10,20);
 INSERT INTO buildskill VALUES(62,45,11,20);
 INSERT INTO buildskill VALUES(63,46,66,15);
@@ -1415,6 +1417,7 @@ INSERT INTO buildskill VALUES(66,47,9,200);
 INSERT INTO buildskill VALUES(67,47,30,200);
 INSERT INTO buildskill VALUES(68,47,41,200);
 INSERT INTO buildskill VALUES(69,47,22,20);
+INSERT INTO buildskill VALUES(70,10,45,1);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1567,7 +1570,7 @@ INSERT INTO buildactionbar VALUES(65,43,51,0);
 INSERT INTO buildactionbar VALUES(66,43,28,1);
 INSERT INTO buildactionbar VALUES(67,44,61,0);
 INSERT INTO buildactionbar VALUES(68,10,1,0);
-INSERT INTO buildactionbar VALUES(69,10,39,1);
+INSERT INTO buildactionbar VALUES(69,10,45,1);
 INSERT INTO buildactionbar VALUES(71,45,10,0);
 INSERT INTO buildactionbar VALUES(72,45,247,1);
 INSERT INTO buildactionbar VALUES(73,45,192,2);
@@ -1575,12 +1578,13 @@ INSERT INTO buildactionbar VALUES(74,45,11,3);
 INSERT INTO buildactionbar VALUES(75,46,66,0);
 INSERT INTO buildactionbar VALUES(76,46,233,1);
 INSERT INTO buildactionbar VALUES(77,46,31,3);
-INSERT INTO buildactionbar VALUES(78,10,237,2);
+INSERT INTO buildactionbar VALUES(78,10,39,2);
 INSERT INTO buildactionbar VALUES(79,47,51,0);
 INSERT INTO buildactionbar VALUES(80,47,9,1);
 INSERT INTO buildactionbar VALUES(81,47,30,2);
 INSERT INTO buildactionbar VALUES(82,47,41,3);
 INSERT INTO buildactionbar VALUES(83,47,22,4);
+INSERT INTO buildactionbar VALUES(84,10,237,3);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,
@@ -1627,7 +1631,7 @@ INSERT INTO item VALUES(7,1,0,2,2,0,0,'Shield Bash','textures/skills/shield_bash
 INSERT INTO item VALUES(8,1,0,6,2,0,0,'Whirlwind','textures/skills/whirlwind.png','Skill_Whirlwind',2,2000,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(9,1,3,4,2,0,0,'Fire Blast','textures/skills/fireblast.png','Skill_FireBlast',3,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(10,1,2,2,2,0,0,'Gash','textures/skills/gash.png','Skill_Gash',2,250,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(11,1,0,0,0,0,0,'Evasion','textures/skills/evasion.png','Skill_Evasion',1,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(11,1,0,0,0,0,0,'0','textures/skills/evasion.png','Skill_Evasion',1,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(12,1,0,2,2,0,0,'Pickpocket','textures/skills/pickpocket.png','Skill_Pickpocket',4,400,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(13,1,0,1,2,0,0,'Parry','textures/skills/parry.png','Skill_Parry',4,325,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(14,1,0,4,2,0,0,'Taunt','textures/skills/taunt.png','Skill_Taunt',4,800,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
@@ -1660,8 +1664,8 @@ INSERT INTO item VALUES(40,1,0,0,0,0,0,'Pet Mastery','textures/skills/pet_master
 INSERT INTO item VALUES(41,1,5,4,2,0,0,'Chain Lightning','textures/skills/chain_lightning.png','Skill_ChainLightning',3,750,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(42,1,6,9,2,0,0,'Rupture','textures/skills/rupture.png','Skill_Rupture',3,1150,0,0,10,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(43,1,0,5,3,0,0,'Sanctuary','textures/skills/sanctuary.png','Skill_Sanctuary',3,1800,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(44,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(45,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(44,1,0,4,2,0,0,'Flay','textures/skills/flay.png','Skill_Flay',3,2500,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(45,1,6,2,2,0,0,'Poison Touch','textures/skills/poison_touch.png','Skill_PoisonTouch',3,225,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(46,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(47,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(48,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
@@ -1837,7 +1841,7 @@ INSERT INTO item VALUES(242,14,2,0,0,0,0,'Moon Blade','textures/items/moon_blade
 INSERT INTO item VALUES(243,5,2,0,0,0,0,'Arcane Wand','textures/items/arcane_wand.png','Proc_Mana',0,7500,1,100,50,0.0,1,150,250,0,0,0,0,0,500,0,10,0,0,0,0,15,1,2,'',0);
 INSERT INTO item VALUES(244,6,2,0,0,0,0,'Greatsword','textures/items/greatsword.png','Proc_Empowered',0,25000,1,25,50,5.0,1,1400,2500,-10,0,0,0,0,0,0,0,-20,-5,0,0,15,0,0,'',0);
 INSERT INTO item VALUES(245,5,2,0,0,0,0,'Spider Sword','textures/items/spider_sword.png','Proc_Slow',0,350,1,30,20,3.0,1,70,130,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0);
-INSERT INTO item VALUES(246,5,6,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,50,5.0,1,110,220,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0);
+INSERT INTO item VALUES(246,5,6,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,50,10.0,1,110,220,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0);
 INSERT INTO item VALUES(247,10,0,1,3,0,0,'Glowing Salve','textures/items/glowing_salve.png','Item_HealingSalve',0,250,1,600,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(248,10,0,1,3,0,0,'Glowing Cider','textures/items/glowing_cider.png','Item_ManaCider',0,375,1,200,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);

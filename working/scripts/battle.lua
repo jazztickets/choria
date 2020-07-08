@@ -54,6 +54,8 @@ Base_Spell = {
 	ManaCostBase = 0,
 	DamageBase = 0,
 	DamagePerLevel = 0,
+	Duration = 0,
+	DurationPerLevel = 0,
 	CostPerLevel = 0,
 
 	New = function(self, Object)
@@ -65,6 +67,10 @@ Base_Spell = {
 
 	GetDamage = function(self, Source, Level)
 		return math.floor((self.DamageBase + Level * self.DamagePerLevel) * self:GetDamagePower(Source, Level))
+	end,
+
+	GetDuration = function(self, Level)
+		return math.floor(self.Duration + self.DurationPerLevel * (Level - 1))
 	end,
 
 	GetDamagePower = function(self, Source, Level)

@@ -587,8 +587,15 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::STUNNED))
 		Stunned = StatChange.Values[StatType::STUNNED].Integer;
 
-	if(StatChange.HasStat(StatType::RESISTTYPE))
-		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Integer;
+	if(StatChange.HasStat(StatType::RESISTTYPE) && StatChange.HasStat(StatType::RESIST)) {
+		uint32_t ResistType = (uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer;
+		if(ResistType == 1) {
+			for(int i = 3; i <= 7; i++)
+				Resistances[i] += StatChange.Values[StatType::RESIST].Integer;
+		}
+		else
+			Resistances[ResistType] += StatChange.Values[StatType::RESIST].Integer;
+	}
 
 	if(StatChange.HasStat(StatType::MINDAMAGE))
 		MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;

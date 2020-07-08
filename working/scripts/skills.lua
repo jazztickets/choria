@@ -489,10 +489,6 @@ function Skill_Rejuvenation.GetLevel(self, Source, Level)
 	return math.floor(10 * Level * Source.HealPower)
 end
 
-function Skill_Rejuvenation.GetDuration(self, Level)
-	return self.Duration
-end
-
 function Skill_Rejuvenation.GetInfo(self, Source, Item)
 	return "Heal [c green]" .. self:GetHeal(Source, Item.Level) .. " [c white]HP [c white]over [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
@@ -587,7 +583,7 @@ function Skill_Spark.GetDamagePower(self, Source, Level)
 end
 
 function Skill_Spark.GetInfo(self, Source, Item)
-	return "Shock a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Shock a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] lightning damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Spark.PlaySound(self, Level)
@@ -608,12 +604,8 @@ function Skill_Icicle.GetDamagePower(self, Source, Level)
 	return Source.ColdPower
 end
 
-function Skill_Icicle.GetDuration(self, Level)
-	return math.floor(self.Duration + self.DurationPerLevel * (Level - 1))
-end
-
 function Skill_Icicle.GetInfo(self, Source, Item)
-	return "Pierce a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage\nSlows for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Pierce a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage\nSlows for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -626,6 +618,45 @@ end
 
 function Skill_Icicle.PlaySound(self, Level)
 	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg", 0.65)
+end
+
+-- Poison Touch --
+
+Skill_PoisonTouch = Base_Spell:New()
+Skill_PoisonTouch.PoisonLevelPerLevel = 15
+Skill_PoisonTouch.PoisonLevel = 20 - Skill_PoisonTouch.PoisonLevelPerLevel
+Skill_PoisonTouch.CostPerLevel = 10
+Skill_PoisonTouch.ManaCostBase = 25 - Skill_PoisonTouch.CostPerLevel
+Skill_PoisonTouch.DurationPerLevel = 0
+Skill_PoisonTouch.Duration = 10
+
+function Skill_PoisonTouch.GetPoisonLevel(self, Source, Level)
+	return math.floor((self.PoisonLevel + self.PoisonLevelPerLevel * Level) * self:GetDamagePower(Source, Level))
+end
+
+function Skill_PoisonTouch.GetDamage(self, Source, Level)
+	return self:GetPoisonLevel(Source, Level) * self:GetDuration(Level)
+end
+
+function Skill_PoisonTouch.GetDamagePower(self, Source, Level)
+	return Source.PoisonPower
+end
+
+function Skill_PoisonTouch.GetInfo(self, Source, Item)
+	return "Spread disease to an enemy, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Poisoned.Pointer
+	Result.Target.BuffLevel = self:GetPoisonLevel(Source, Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
+
+	return Result
+end
+
+function Skill_PoisonTouch.PlaySound(self, Level)
+	Audio.Play("enfeeble0.ogg", 0.35)
 end
 
 -- Fire Blast --
@@ -647,7 +678,7 @@ function Skill_FireBlast.GetDamagePower(self, Source, Level)
 end
 
 function Skill_FireBlast.GetInfo(self, Source, Item)
-	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with fire for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self, Level)
@@ -660,8 +691,7 @@ Skill_Ignite = Base_Spell:New()
 Skill_Ignite.BurnLevel = 30
 Skill_Ignite.BurnLevelPerLevel = 9
 Skill_Ignite.CostPerLevel = 10
-Skill_Ignite.DurationPerLevel = 0
-Skill_Ignite.Duration = 6 - Skill_Ignite.DurationPerLevel
+Skill_Ignite.Duration = 6
 Skill_Ignite.ManaCostBase = 30 - Skill_Ignite.CostPerLevel
 
 function Skill_Ignite.GetBurnLevel(self, Source, Level)
@@ -676,12 +706,8 @@ function Skill_Ignite.GetDamagePower(self, Source, Level)
 	return Source.FirePower
 end
 
-function Skill_Ignite.GetDuration(self, Level)
-	return math.floor(self.Duration + self.DurationPerLevel * Level)
-end
-
 function Skill_Ignite.GetInfo(self, Source, Item)
-	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Ignite.Use(self, Level, Duration, Source, Target, Result)
@@ -1323,7 +1349,7 @@ Skill_Enfeeble.MaxPercent = 75
 Skill_Enfeeble.PercentPerLevel = 4
 Skill_Enfeeble.BasePercent = 25 - Skill_Enfeeble.PercentPerLevel
 Skill_Enfeeble.DurationPerLevel = 0.4
-Skill_Enfeeble.Duration = 5 - Skill_Enfeeble.DurationPerLevel
+Skill_Enfeeble.Duration = 5
 Skill_Enfeeble.CostPerLevel = 10
 Skill_Enfeeble.ManaCostBase = 10 - Skill_Enfeeble.CostPerLevel
 Skill_Enfeeble.BaseTargets = 1
@@ -1331,10 +1357,6 @@ Skill_Enfeeble.TargetsPerLevel = 0.2
 
 function Skill_Enfeeble.GetPercent(self, Level)
 	return math.min(math.floor(self.BasePercent + self.PercentPerLevel * Level), self.MaxPercent)
-end
-
-function Skill_Enfeeble.GetDuration(self, Level)
-	return math.floor(self.Duration + self.DurationPerLevel * Level)
 end
 
 function Skill_Enfeeble.GetTargetCount(self, Level)
@@ -1362,6 +1384,49 @@ end
 
 function Skill_Enfeeble.PlaySound(self, Level)
 	Audio.Play("enfeeble0.ogg")
+end
+
+-- Flay --
+
+Skill_Flay = Base_Spell:New()
+Skill_Flay.PercentPerLevel = 4
+Skill_Flay.BasePercent = 25 - Skill_Flay.PercentPerLevel
+Skill_Flay.Duration = 4
+Skill_Flay.DurationPerLevel = 0.2
+Skill_Flay.CostPerLevel = 20
+Skill_Flay.ManaCostBase = 50 - Skill_Flay.CostPerLevel
+Skill_Flay.BaseTargets = 1
+Skill_Flay.TargetsPerLevel = 0.2
+
+function Skill_Flay.GetPercent(self, Level)
+	return math.floor(self.BasePercent + self.PercentPerLevel * Level)
+end
+
+function Skill_Flay.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+end
+
+function Skill_Flay.GetInfo(self, Source, Item)
+	Count = self:GetTargetCount(Item.Level)
+	Plural = ""
+	if Count ~= 1 then
+		Plural = "s"
+	end
+
+	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Flay.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Flayed.Pointer
+	Result.Target.BuffLevel = self:GetPercent(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
+
+	return Result
+end
+
+function Skill_Flay.PlaySound(self, Level)
+	Audio.Play("swamp0.ogg")
 end
 
 -- Cleave --
@@ -1429,18 +1494,12 @@ end
 -- Light --
 
 Skill_Light = Base_Spell:New()
-Skill_Light.Duration = 15
+Skill_Light.Duration = 20
 Skill_Light.DurationPerLevel = 5
 Skill_Light.CostPerLevel = 5
 Skill_Light.ManaCostBase = 50 - Skill_Light.CostPerLevel
 
-function Skill_Light.GetDuration(self, Level)
-
-	return self.Duration + self.DurationPerLevel * Level
-end
-
 function Skill_Light.GetInfo(self, Source, Item)
-
 	return "Emit magic light for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
@@ -1460,13 +1519,8 @@ end
 
 Skill_Portal = Base_Spell:New()
 Skill_Portal.Duration = 3
-Skill_Portal.DurationPerLevel = 0
 Skill_Portal.CostPerLevel = -10
 Skill_Portal.ManaCostBase = 200 - Skill_Portal.CostPerLevel
-
-function Skill_Portal.GetDuration(self, Level)
-	return math.max(self.Duration + self.DurationPerLevel * (Level - 1), 0.5)
-end
 
 function Skill_Portal.GetInfo(self, Source, Item)
 	return "Teleport home after [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
@@ -1551,21 +1605,17 @@ Skill_MagicBarrier.BlockPerLevel = 40
 Skill_MagicBarrier.Duration = 10
 Skill_MagicBarrier.DurationPerLevel = 1
 
-function Skill_MagicBarrier.GetLevel(self, Level)
-	return self.BaseBlock + self.BlockPerLevel * (Level - 1)
-end
-
-function Skill_MagicBarrier.GetDuration(self, Level)
-	return self.Duration + self.DurationPerLevel * (Level - 1)
+function Skill_MagicBarrier.GetLevel(self, Source, Level)
+	return math.floor((self.BaseBlock + self.BlockPerLevel * (Level - 1)) * Source.ManaPower)
 end
 
 function Skill_MagicBarrier.GetInfo(self, Source, Item)
-	return "Create a magic shield around an ally that blocks [c green]" .. self:GetLevel(Item.Level) .. "[c white] attack damage before breaking\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Create a magic shield around an ally that blocks [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage before breaking\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Shielded.Pointer
-	Result.Target.BuffLevel = self:GetLevel(Level)
+	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 	WeaponProc(Source, Target, Result, true)
 
@@ -1585,7 +1635,7 @@ Skill_IceNova.CostPerLevel = 10
 Skill_IceNova.ManaCostBase = 80 - Skill_IceNova.CostPerLevel
 Skill_IceNova.BaseTargets = 3
 Skill_IceNova.TargetsPerLevel = 0.2
-Skill_IceNova.Duration = 3
+Skill_IceNova.Duration = 3.2
 Skill_IceNova.DurationPerLevel = 0.2
 
 function Skill_IceNova.GetTargetCount(self, Level)
@@ -1596,12 +1646,8 @@ function Skill_IceNova.GetDamagePower(self, Source, Level)
 	return Source.ColdPower
 end
 
-function Skill_IceNova.GetDuration(self, Level)
-	return math.floor(self.Duration + self.DurationPerLevel * Level)
-end
-
 function Skill_IceNova.GetInfo(self, Source, Item)
-	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage that slows for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage that slows for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_IceNova.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1674,7 +1720,7 @@ Skill_Rupture.CostPerLevel = 15
 Skill_Rupture.ManaCostBase = 90 - Skill_Rupture.CostPerLevel
 Skill_Rupture.BaseTargets = 3
 Skill_Rupture.TargetsPerLevel = 0.2
-Skill_Rupture.Duration = 5
+Skill_Rupture.Duration = 10
 Skill_Rupture.DurationPerLevel = 0
 
 function Skill_Rupture.GetTargetCount(self, Level)
@@ -1691,14 +1737,6 @@ end
 
 function Skill_Rupture.GetLevel(self, Source, Level)
 	return math.floor((self.Level + self.LevelPerLevel * Level) * self:GetDamagePower(Source, Level))
-end
-
-function Skill_Rupture.GetDuration(self, Level)
-	return self.Duration + self.DurationPerLevel * (Level - 1)
-end
-
-function Skill_Rupture.GetChance(self, Level)
-	return math.floor(self.Chance + self.ChancePerLevel * (Level - 1))
 end
 
 function Skill_Rupture.CanTarget(self, Source, Target, Alive)
@@ -1768,10 +1806,6 @@ end
 
 function Skill_Sanctuary.GetLevel(self, Source, Level)
 	return math.floor((self.Level + self.LevelPerLevel * (Level - 1)) * Source.HealPower)
-end
-
-function Skill_Sanctuary.GetDuration(self, Level)
-	return self.Duration + self.DurationPerLevel * (Level - 1)
 end
 
 function Skill_Sanctuary.GetInfo(self, Source, Item)
