@@ -4,6 +4,10 @@
 
 Skill_MonsterAttack = Base_Attack:New()
 
+function Skill_MonsterAttack.PlaySound(self, Level)
+	Audio.Play("bash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Crow attack --
 
 Skill_CrowAttack = Base_Attack:New()
@@ -992,7 +996,7 @@ function Skill_Flee.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	if Roll <= self:GetChance(Level) then
 		Result.Target.Flee = true
 		Result.Target.Buff = Buff_Slowed.Pointer
-		Result.Target.BuffLevel = 70
+		Result.Target.BuffLevel = 35
 		Result.Target.BuffDuration = self.Duration
 		return true
 	end

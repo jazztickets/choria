@@ -421,7 +421,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 	// Get text size
 	ae::_Font *SmallFont = ae::Assets.Fonts["hud_small"];
-	float TextOffsetY = (SmallFont->MaxAbove - SmallFont->MaxBelow) / 2 + 2;
+	ae::_Font *TinyFont = ae::Assets.Fonts["hud_tiny"];
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
@@ -432,8 +432,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_full"]->Texture);
 
 	// Draw health text
+	ae::_Font *HealthFont = SmallFont;
+	if(Character->MaxHealth > 9999)
+		HealthFont = TinyFont;
+	int TextOffsetY = (HealthFont->MaxAbove - HealthFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
+
 	Buffer << ae::Round(Character->Health) << " / " << ae::Round(Character->MaxHealth);
-	SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
+	HealthFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
 	// Draw mana
@@ -455,8 +460,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_full"]->Texture);
 
 		// Draw mana text
+		ae::_Font *ManaFont = SmallFont;
+		if(Character->MaxHealth > 9999)
+			ManaFont = TinyFont;
+		int TextOffsetY = (ManaFont->MaxAbove - ManaFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
 		Buffer << ae::Round(Character->Mana) << " / " << ae::Round(Character->MaxMana);
-		SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
+		ManaFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
 

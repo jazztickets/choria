@@ -212,6 +212,7 @@ INSERT INTO ai VALUES(9,'AI_SkeletonMage');
 INSERT INTO ai VALUES(10,'AI_Raj');
 INSERT INTO ai VALUES(11,'AI_Jem');
 INSERT INTO ai VALUES(12,'AI_LavaSpitter');
+INSERT INTO ai VALUES(13,'AI_Zog');
 CREATE TABLE IF NOT EXISTS "unlock" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None')
@@ -900,6 +901,8 @@ INSERT INTO zonedata VALUES(126,47,33,3,0);
 INSERT INTO zonedata VALUES(127,47,29,2,0);
 INSERT INTO zonedata VALUES(128,47,35,2,0);
 INSERT INTO zonedata VALUES(129,47,30,1,0);
+INSERT INTO zonedata VALUES(130,46,37,7,0);
+INSERT INTO zonedata VALUES(131,46,38,1,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"level" INTEGER DEFAULT(1),
@@ -953,6 +956,8 @@ INSERT INTO monster VALUES(33,1,'Forest Spider','textures/monsters/forest_spider
 INSERT INTO monster VALUES(34,1,'Lava Spitter','textures/monsters/lava_spitter.png',125,100,2800,0,175,275,5,0,1.8000000000000000444,12,46);
 INSERT INTO monster VALUES(35,1,'Lost One','textures/monsters/lost_one.png',100,60,1000,0,500,500,90,0,7.0,1,25);
 INSERT INTO monster VALUES(36,1,'Lava Slime','textures/monsters/lava_slime.png',120,125,3500,0,200,250,5,5,3.0,1,35);
+INSERT INTO monster VALUES(37,1,'The Elite','textures/monsters/the_elite.png',10000,10000,50000,0,5000,10000,100,1000,10.0,1,20);
+INSERT INTO monster VALUES(38,1,'Zog','textures/monsters/zog.png',1000000,50000,999999,999999,10000,20000,100,4000,5.0,13,47);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -1300,6 +1305,7 @@ INSERT INTO build VALUES(43,'Raj','',0,4,0,0);
 INSERT INTO build VALUES(44,'Water Crab','',0,1,0,0);
 INSERT INTO build VALUES(45,'Jem','',0,4,0,0);
 INSERT INTO build VALUES(46,'Lava Spitter','',0,4,0,0);
+INSERT INTO build VALUES(47,'Zog','',0,8,0,0);
 CREATE TABLE IF NOT EXISTS "buildskill" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1368,6 +1374,11 @@ INSERT INTO buildskill VALUES(61,45,10,20);
 INSERT INTO buildskill VALUES(62,45,11,20);
 INSERT INTO buildskill VALUES(63,46,66,15);
 INSERT INTO buildskill VALUES(64,46,31,20);
+INSERT INTO buildskill VALUES(65,47,51,1);
+INSERT INTO buildskill VALUES(66,47,9,200);
+INSERT INTO buildskill VALUES(67,47,30,200);
+INSERT INTO buildskill VALUES(68,47,41,200);
+INSERT INTO buildskill VALUES(69,47,22,20);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1528,6 +1539,11 @@ INSERT INTO buildactionbar VALUES(75,46,66,0);
 INSERT INTO buildactionbar VALUES(76,46,233,1);
 INSERT INTO buildactionbar VALUES(77,46,31,3);
 INSERT INTO buildactionbar VALUES(78,10,237,2);
+INSERT INTO buildactionbar VALUES(79,47,51,0);
+INSERT INTO buildactionbar VALUES(80,47,9,1);
+INSERT INTO buildactionbar VALUES(81,47,30,2);
+INSERT INTO buildactionbar VALUES(82,47,41,3);
+INSERT INTO buildactionbar VALUES(83,47,22,4);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,
@@ -1830,6 +1846,7 @@ INSERT INTO zonedrops VALUES(5,38,237,5);
 INSERT INTO zonedrops VALUES(6,38,146,3);
 INSERT INTO zonedrops VALUES(7,45,238,1);
 INSERT INTO zonedrops VALUES(8,45,162,1);
+INSERT INTO zonedrops VALUES(9,46,262,1);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

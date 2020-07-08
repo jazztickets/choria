@@ -396,3 +396,28 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 	-- Set skill
 	Object.SetAction(0)
 end
+
+AI_Zog = {}
+
+function AI_Zog.Update(self, Object, Enemies, Allies)
+
+	-- Chance to do special attack
+	if Random.GetInt(1, 3) == 1 then
+		for i = 1, #Enemies do
+			Object.AddTarget(Enemies[i].Pointer)
+		end
+
+		if Object.SetAction(Random.GetInt(1, 4)) == true then
+			return
+		end
+	end
+
+	-- Get random target
+	Target = Random.GetInt(1, #Enemies)
+
+	-- Set target
+	AI_AddTarget(Object, Enemies[Target], true)
+
+	-- Set skill
+	Object.SetAction(0)
+end
