@@ -148,6 +148,10 @@ function Item_ActionSlot.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+function Item_ActionSlot.PlaySound(self, Level)
+	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
+end
+
 -- Skill Point --
 
 Item_SkillPoint = { }
