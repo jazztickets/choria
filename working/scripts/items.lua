@@ -646,6 +646,10 @@ function Item_RebirthStrength.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+function Item_RebirthStrength.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
+end
+
 Item_RebirthGuard = { Value = 5 }
 
 function Item_RebirthGuard.GetInfo(self, Source, Item)
@@ -657,6 +661,10 @@ function Item_RebirthGuard.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Armor = self.Value
 
 	return Result
+end
+
+function Item_RebirthGuard.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
 end
 
 Item_RebirthFortitude = { Value = 10 }
@@ -672,6 +680,10 @@ function Item_RebirthFortitude.Use(self, Level, Duration, Source, Target, Result
 	return Result
 end
 
+function Item_RebirthFortitude.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
+end
+
 Item_RebirthSpirit = { Value = 10 }
 
 function Item_RebirthSpirit.GetInfo(self, Source, Item)
@@ -683,6 +695,10 @@ function Item_RebirthSpirit.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Mana = self.Value
 
 	return Result
+end
+
+function Item_RebirthSpirit.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
 end
 
 Item_RebirthWisdom = { Value = 10 }
@@ -698,6 +714,10 @@ function Item_RebirthWisdom.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+function Item_RebirthWisdom.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
+end
+
 Item_RebirthWealth = { Value = 10 }
 
 function Item_RebirthWealth.GetInfo(self, Source, Item)
@@ -709,6 +729,10 @@ function Item_RebirthWealth.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Gold = self.Value
 
 	return Result
+end
+
+function Item_RebirthWealth.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
 end
 
 Item_RebirthAlacrity = { Value = 5 }
@@ -724,6 +748,10 @@ function Item_RebirthAlacrity.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+function Item_RebirthAlacrity.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
+end
+
 Item_RebirthKnowledge = { Value = 1 }
 
 function Item_RebirthKnowledge.GetInfo(self, Source, Item)
@@ -735,4 +763,8 @@ function Item_RebirthKnowledge.Use(self, Level, Duration, Source, Target, Result
 	Result.Target.SkillPoint = self.Value
 
 	return Result
+end
+
+function Item_RebirthKnowledge.PlaySound(self, Level)
+	Audio.Play("rebirth.ogg")
 end
