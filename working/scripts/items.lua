@@ -636,7 +636,22 @@ function Item_LavaProtection.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Pain Ring --
+
+Item_PainRing = { }
+
+function Item_PainRing.GetInfo(self, Source, Item)
+	return "[c gray]Quit hurting yourself"
+end
+
+function Item_PainRing.Stats(self, Level, Object, Change)
+	Change.Difficulty = 100
+
+	return Change
+end
+
 -- Rebirth --
+
 function RebirthText(UpgradeText, Skills, Items)
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, equipment, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. "\n\nYou will keep your starting skills, plus [c green]" .. Skills .. "[c white] of your highest skills and [c green]" .. Items .. "[c white] of your items in your trade stash\n[c yellow]All unlocks are kept"
 end

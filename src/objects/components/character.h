@@ -226,6 +226,7 @@ class _Character {
 		int HitChance;
 		int AllSkills;
 		int SummonLimit;
+		int Difficulty;
 		std::unordered_map<uint32_t, int> Resistances;
 
 		// Status effects

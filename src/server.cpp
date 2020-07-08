@@ -2128,6 +2128,9 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 			// Increase difficulty for each player
 			Difficulty += GAME_DIFFICULTY_PER_PLAYER;
+
+			// Increase by each player's difficulty stat
+			Difficulty += (PartyPlayer->Character->Difficulty - 100) / 100.0f;
 		}
 
 		// Add summons

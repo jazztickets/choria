@@ -441,7 +441,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		HealthFont = TinyFont;
 	int TextOffsetY = (HealthFont->MaxAbove - HealthFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
 
-	Buffer << ae::Round(Character->Health) << " / " << ae::Round(Character->MaxHealth);
+	Buffer << Character->Health << " / " << Character->MaxHealth;
 	HealthFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
@@ -468,7 +468,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		if(Character->MaxHealth > 9999)
 			ManaFont = TinyFont;
 		int TextOffsetY = (ManaFont->MaxAbove - ManaFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
-		Buffer << ae::Round(Character->Mana) << " / " << ae::Round(Character->MaxMana);
+		Buffer << Character->Mana << " / " << Character->MaxMana;
 		ManaFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}

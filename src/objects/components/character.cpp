@@ -129,6 +129,7 @@ _Character::_Character(_Object *Object) :
 	HitChance(100),
 	AllSkills(0),
 	SummonLimit(0),
+	Difficulty(0),
 
 	SkillPoints(0),
 	SkillPointsUnlocked(0),
@@ -338,6 +339,7 @@ void _Character::CalculateStats() {
 	LavaProtection = false;
 	Stunned = 0;
 	SummonLimit = 0;
+	Difficulty = 100;
 	Resistances.clear();
 
 	// Eternal Strength
@@ -609,6 +611,9 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::LAVA_PROTECTION))
 		LavaProtection = StatChange.Values[StatType::LAVA_PROTECTION].Integer;
+
+	if(StatChange.HasStat(StatType::DIFFICULTY))
+		Difficulty += StatChange.Values[StatType::DIFFICULTY].Integer;
 }
 
 // Get percentage to next level
