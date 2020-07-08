@@ -1,5 +1,4 @@
 
-
 -- Wrapper function for Object.AddTarget that handles taunted state
 function AI_AddTarget(Source, Target, AffectedByTaunt)
 
