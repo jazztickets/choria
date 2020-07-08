@@ -377,13 +377,14 @@ end
 Item_Fang = { }
 
 function Item_Fang.GetInfo(self, Source, Item)
-	return "Increase attack damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Purge poison and increase attack damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
 function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Mighty.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+	Result.Source.ClearBuff = Buff_Poisoned.Pointer
 
 	return Result
 end
