@@ -134,6 +134,52 @@ function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+-- Bright Potion --
+
+Item_BrightPotion = Base_Potion:New()
+
+function Item_BrightPotion.GetInfo(self, Source, Item)
+	return "Turn the world to daylight"
+end
+
+function Item_BrightPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Clock = Level
+
+	return Result
+end
+
+-- Dark Potion --
+
+Item_DarkPotion = Base_Potion:New()
+
+function Item_DarkPotion.GetInfo(self, Source, Item)
+	return "Turn the world to darkness"
+end
+
+function Item_DarkPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Clock = Level
+
+	return Result
+end
+
+-- Respec Potion --
+
+Item_RespecPotion = Base_Potion:New()
+
+function Item_RespecPotion.GetInfo(self, Source, Item)
+	return "Reset your spent skill points\n[c yellow]Action bar skills are set to level 1"
+end
+
+function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Respec = 1
+
+	return Result
+end
+
+function Item_RespecPotion.PlaySound(self, Level)
+	Audio.Play("thud0.ogg")
+end
+
 -- Action Slot --
 
 Item_ActionSlot = { }
@@ -546,48 +592,6 @@ end
 
 function Item_Torch.PlaySound(self, Level)
 	Audio.Play("flame0.ogg")
-end
-
--- Bright Potion --
-
-Item_BrightPotion = { }
-
-function Item_BrightPotion.GetInfo(self, Source, Item)
-	return "Turn the world to daylight"
-end
-
-function Item_BrightPotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Clock = Level
-
-	return Result
-end
-
--- Dark Potion --
-
-Item_DarkPotion = { }
-
-function Item_DarkPotion.GetInfo(self, Source, Item)
-	return "Turn the world to darkness"
-end
-
-function Item_DarkPotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Clock = Level
-
-	return Result
-end
-
--- Respec Potion --
-
-Item_RespecPotion = { }
-
-function Item_RespecPotion.GetInfo(self, Source, Item)
-	return "Reset your spent skill points\n[c yellow]Action bar skills are set to level 1"
-end
-
-function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Respec = 1
-
-	return Result
 end
 
 -- Diagonal --
