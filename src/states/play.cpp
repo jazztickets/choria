@@ -514,11 +514,12 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 				// Search database for keyword
 				ae::_Database *Database = PlayState.Stats->Database;
 				try {
-					Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
+					std::string Field = Table == "map" ? "file" : "name";
+					Database->PrepareQuery("SELECT id, " + Field + " FROM " + Table + " WHERE " + Field + " like @search");
 					Database->BindString(1, Search);
 					while(Database->FetchRow()) {
 						int ID = Database->GetInt<int>("id");
-						std::string Name = Database->GetString("name");
+						std::string Name = Database->GetString(Field);
 
 						// Add messages
 						std::stringstream Buffer;

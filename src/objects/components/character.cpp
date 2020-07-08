@@ -179,9 +179,9 @@ void _Character::Update(double FrameTime) {
 			StatChange.Object = Object;
 
 			// Update regen
-			if(Health < MaxHealth && HealthRegen != 0)
+			if((Health < MaxHealth && HealthRegen != 0) || HealthRegen < 0)
 				StatChange.Values[StatType::HEALTH].Integer = HealthRegen;
-			if(Mana < MaxMana && ManaRegen != 0)
+			if((Mana < MaxMana && ManaRegen != 0) || ManaRegen < 0)
 				StatChange.Values[StatType::MANA].Integer = ManaRegen;
 
 			// Update object

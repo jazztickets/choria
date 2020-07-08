@@ -650,6 +650,20 @@ function Item_PainRing.Stats(self, Level, Object, Change)
 	return Change
 end
 
+-- Hunger Ring --
+
+Item_HungerRing = { }
+
+function Item_HungerRing.GetInfo(self, Source, Item)
+	return "[c yellow]Increase attack power by 100%"
+end
+
+function Item_HungerRing.Stats(self, Level, Object, Change)
+	Change.AttackPower = 1
+
+	return Change
+end
+
 -- Rebirth --
 
 function RebirthText(UpgradeText, Skills, Items)
