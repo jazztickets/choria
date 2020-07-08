@@ -504,7 +504,7 @@ INSERT INTO vendoritem VALUES(75,9,150);
 INSERT INTO vendoritem VALUES(76,14,190);
 INSERT INTO vendoritem VALUES(77,9,154);
 INSERT INTO vendoritem VALUES(78,9,141);
-INSERT INTO vendoritem VALUES(80,8,4);
+INSERT INTO vendoritem VALUES(80,21,4);
 INSERT INTO vendoritem VALUES(81,4,204);
 INSERT INTO vendoritem VALUES(82,10,195);
 INSERT INTO vendoritem VALUES(83,10,199);
@@ -590,6 +590,9 @@ INSERT INTO vendoritem VALUES(169,21,275);
 INSERT INTO vendoritem VALUES(170,15,276);
 INSERT INTO vendoritem VALUES(171,22,277);
 INSERT INTO vendoritem VALUES(172,18,278);
+INSERT INTO vendoritem VALUES(173,15,283);
+INSERT INTO vendoritem VALUES(174,21,284);
+INSERT INTO vendoritem VALUES(175,7,282);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1080,6 +1083,9 @@ INSERT INTO trader VALUES(48,'firebomb',270,3);
 INSERT INTO trader VALUES(49,'lava_boots',271,1);
 INSERT INTO trader VALUES(50,'evasion',11,1);
 INSERT INTO trader VALUES(51,'large_torch',223,1);
+INSERT INTO trader VALUES(52,'better_map',279,1);
+INSERT INTO trader VALUES(53,'raj_map',280,1);
+INSERT INTO trader VALUES(54,'krab_map',281,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1195,6 +1201,13 @@ INSERT INTO traderitem VALUES(131,51,101,1);
 INSERT INTO traderitem VALUES(132,51,233,1);
 INSERT INTO traderitem VALUES(133,21,230,1);
 INSERT INTO traderitem VALUES(134,21,274,1);
+INSERT INTO traderitem VALUES(135,52,269,1);
+INSERT INTO traderitem VALUES(136,52,134,5);
+INSERT INTO traderitem VALUES(137,52,114,5);
+INSERT INTO traderitem VALUES(138,52,215,2);
+INSERT INTO traderitem VALUES(139,53,126,1);
+INSERT INTO traderitem VALUES(140,54,134,10);
+INSERT INTO traderitem VALUES(141,54,222,3);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1823,7 +1836,7 @@ INSERT INTO item VALUES(265,14,2,0,0,0,7,'Bloodletter','textures/items/bloodlett
 INSERT INTO item VALUES(266,5,3,0,0,0,3,'Flamuss','textures/items/flamuss.png','Proc_Ignite',0,18000,1,500,50,5.0,1,650,1200,0,0,0,20,0,0,0,0,0,0,0,0,35,0,0,'',0);
 INSERT INTO item VALUES(267,13,0,0,0,0,0,'City Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(268,13,0,0,0,0,0,'Library Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(269,15,0,0,0,0,0,'World Map','textures/items/map.png','',0,100,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png',0);
+INSERT INTO item VALUES(269,15,0,0,0,0,0,'Torn Map','textures/items/map.png','',0,100,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png',0);
 INSERT INTO item VALUES(270,10,3,4,2,0,0,'Firebomb','textures/items/firebomb.png','Item_Firebomb',0,25,1,50,0,5.0,1,75,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(271,4,0,0,0,0,3,'Lava Boots','textures/items/lava_boots.png','Item_LavaProtection',0,1500,1,0,50,0.0,1,0,0,3,10,0,25,0,0,0,0,0,-20,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(272,13,0,0,0,0,0,'Secret Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
@@ -1833,6 +1846,12 @@ INSERT INTO item VALUES(275,12,0,0,1,11,0,'Skill Point VII','textures/items/skil
 INSERT INTO item VALUES(276,12,0,0,1,12,0,'Skill Point VIII','textures/items/skillpoint3.png','Item_SkillPoint',0,50000,0,3,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(277,12,0,0,1,13,0,'Skill Point IX','textures/items/skillpoint3.png','Item_SkillPoint',0,100000,0,3,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(278,12,0,0,1,14,0,'Skill Point X','textures/items/skillpoint4.png','Item_SkillPoint',0,250000,0,4,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(279,15,0,0,0,0,0,'Better Map','textures/items/map.png','',0,200,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria_better.png',0);
+INSERT INTO item VALUES(280,15,0,0,0,0,0,'Raj''s Hiding Place','textures/items/map.png','',0,250,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/gob.png',0);
+INSERT INTO item VALUES(281,15,0,0,0,0,0,'Sandy Map','textures/items/map.png','',0,150,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/krab.png',0);
+INSERT INTO item VALUES(282,15,0,0,0,0,0,'Slimy Map','textures/items/map.png','',0,350,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/slime.png',0);
+INSERT INTO item VALUES(283,15,0,0,0,0,0,'Garden Map','textures/items/map.png','',0,1000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/gardens.png',0);
+INSERT INTO item VALUES(284,15,0,0,0,0,0,'City Map','textures/items/map.png','',0,500,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/city.png',0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

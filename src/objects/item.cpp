@@ -130,7 +130,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			return;
 
 		// Restrict viewing
-		if(Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER) {
+		if(Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER || Tooltip.Window == _HUD::WINDOW_TRADETHEIRS) {
 			ae::Assets.Fonts["hud_small"]->DrawText("Purchase to view", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 			return;
 		}
@@ -142,6 +142,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		// Draw image
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.DrawImage(Bounds, AltTexture, true);
 
 		return;
