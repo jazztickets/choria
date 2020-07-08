@@ -365,8 +365,12 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	}
 
 	// Draw name
-	if(!Character->Invisible || SameParty)
-		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(Prefix + NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
+	if(!Character->Invisible || SameParty) {
+		float UIScale = 1.0f;
+		if(ae::_Element::GetUIScale() > 1)
+			UIScale = ae::_Element::GetUIScale();
+		ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(Prefix + NameText, NamePosition + glm::vec2(0, OffsetY), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x / UIScale);
+	}
 }
 
 // Renders the object during a battle
