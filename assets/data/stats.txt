@@ -525,7 +525,7 @@ INSERT INTO vendoritem VALUES(92,19,194);
 INSERT INTO vendoritem VALUES(93,19,205);
 INSERT INTO vendoritem VALUES(94,19,197);
 INSERT INTO vendoritem VALUES(95,21,210);
-INSERT INTO vendoritem VALUES(96,21,135);
+INSERT INTO vendoritem VALUES(96,6,135);
 INSERT INTO vendoritem VALUES(97,10,129);
 INSERT INTO vendoritem VALUES(98,16,208);
 INSERT INTO vendoritem VALUES(99,11,206);
@@ -766,7 +766,7 @@ INSERT INTO zone VALUES(34,'hornet_aquaslime',0,0.0,2,3);
 INSERT INTO zone VALUES(35,'drowned_hornet_aquaslime',0,0.0,2,4);
 INSERT INTO zone VALUES(36,'skeletonmage',0,0.0,2,3);
 INSERT INTO zone VALUES(37,'ghost_thief',0,0.0,3,6);
-INSERT INTO zone VALUES(38,'grave_boss',1,14400.0,0,0);
+INSERT INTO zone VALUES(38,'grave_boss',1,1440.0,0,0);
 INSERT INTO zone VALUES(39,'raj',1,1440.0,0,0);
 INSERT INTO zone VALUES(40,'skeletons_hornet_zombie_dusty',0,0.0,2,5);
 INSERT INTO zone VALUES(41,'city_boss',1,1440.0,0,0);
@@ -965,7 +965,7 @@ INSERT INTO monster VALUES(27,1,'Hornet','textures/monsters/hornet.png',60,50,18
 INSERT INTO monster VALUES(28,1,'The Drowned','textures/monsters/the_drowned.png',70,75,2000,0,150,200,10,5,2.8500000000000000888,1,28);
 INSERT INTO monster VALUES(29,1,'Aqua Slime','textures/monsters/aqua_slime.png',40,35,1200,0,100,180,0,0,2.5,1,35);
 INSERT INTO monster VALUES(30,1,'Skeleton Mage','textures/monsters/skeleton_mage.png',100,100,1800,1500,100,150,3,0,4.0,9,42);
-INSERT INTO monster VALUES(31,1,'Raj','textures/monsters/raj.png',150,250,1750,0,100,200,5,5,1.8000000000000000444,10,43);
+INSERT INTO monster VALUES(31,1,'Raj','textures/monsters/raj.png',150,250,1750,0,75,175,5,5,1.8000000000000000444,10,43);
 INSERT INTO monster VALUES(32,1,'Jem','textures/monsters/jem.png',500,500,10000,0,200,350,0,0,2.25,11,45);
 INSERT INTO monster VALUES(33,1,'Forest Spider','textures/monsters/forest_spider.png',120,80,2400,0,150,225,5,0,2.0,1,21);
 INSERT INTO monster VALUES(34,1,'Lava Spitter','textures/monsters/lava_spitter.png',125,100,2800,0,175,275,5,0,1.8000000000000000444,12,46);
@@ -1231,11 +1231,11 @@ INSERT INTO traderitem VALUES(143,55,132,1);
 INSERT INTO traderitem VALUES(144,55,265,1);
 INSERT INTO traderitem VALUES(145,55,285,1);
 INSERT INTO traderitem VALUES(146,56,279,1);
-INSERT INTO traderitem VALUES(147,56,280,1);
-INSERT INTO traderitem VALUES(148,56,281,1);
-INSERT INTO traderitem VALUES(149,56,282,1);
-INSERT INTO traderitem VALUES(150,56,284,1);
-INSERT INTO traderitem VALUES(151,56,283,1);
+INSERT INTO traderitem VALUES(147,56,291,1);
+INSERT INTO traderitem VALUES(148,56,280,1);
+INSERT INTO traderitem VALUES(149,56,281,1);
+INSERT INTO traderitem VALUES(150,56,282,1);
+INSERT INTO traderitem VALUES(151,56,284,1);
 INSERT INTO traderitem VALUES(152,57,244,1);
 INSERT INTO traderitem VALUES(153,57,286,1);
 INSERT INTO traderitem VALUES(154,57,30,1);
@@ -1249,6 +1249,7 @@ INSERT INTO traderitem VALUES(161,60,211,1);
 INSERT INTO traderitem VALUES(162,60,147,1);
 INSERT INTO traderitem VALUES(163,60,151,10);
 INSERT INTO traderitem VALUES(164,55,225,1);
+INSERT INTO traderitem VALUES(165,56,283,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1303,6 +1304,7 @@ INSERT INTO minigameitem VALUES(27,2,248,1);
 INSERT INTO minigameitem VALUES(28,1,249,1);
 INSERT INTO minigameitem VALUES(29,1,118,1);
 INSERT INTO minigameitem VALUES(30,1,270,1);
+INSERT INTO minigameitem VALUES(31,1,291,1);
 CREATE TABLE IF NOT EXISTS "build" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1924,6 +1926,7 @@ INSERT INTO item VALUES(287,9,0,0,0,0,0,'Silver Amulet','textures/items/amulet.p
 INSERT INTO item VALUES(288,6,4,0,0,0,4,'Icebrand','textures/items/icebrand.png','Proc_Slow',0,35000,1,50,50,3.0,1,2000,3500,-20,0,0,25,0,0,0,0,-30,-20,0,0,15,0,0,'',0);
 INSERT INTO item VALUES(289,6,2,0,0,0,1,'Mystic Staff','textures/items/mystic_staff.png','Proc_Sanctuary',0,15000,1,10,50,5.0,1,1100,1500,0,25,0,5,0,0,0,0,20,5,0,0,15,0,0,'',15);
 INSERT INTO item VALUES(290,5,5,0,0,0,5,'Shining Star','textures/items/shining_star.png','Proc_Stun',0,15000,1,1,50,3.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,5,15,0,0,'',0);
+INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/yard.png',0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

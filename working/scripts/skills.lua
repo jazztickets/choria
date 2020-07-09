@@ -1307,7 +1307,7 @@ Skill_RaiseDead.Limit = 2
 Skill_RaiseDead.LimitPerLevel = 0.2
 Skill_RaiseDead.SkillLevel = 1
 Skill_RaiseDead.SkillLevelPerLevel = 0.5
-Skill_RaiseDead.Duration = 60
+Skill_RaiseDead.Duration = 30
 Skill_RaiseDead.DurationPerLevel = 1
 Skill_RaiseDead.Monster = Monsters[20]
 Skill_RaiseDead.SpecialMonster = Monsters[21]
@@ -1360,6 +1360,7 @@ function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 		Result.Summon.ID = self.SpecialMonster.ID
 		Result.Summon.Mana = self:GetMana(Source, Level)
 		Result.Summon.SummonBuff = Buff_SummonSkeletonPriest.Pointer
+		Result.Summon.Duration = Result.Summon.Duration * 2
 	end
 
 	Result.Target.Corpse = -1

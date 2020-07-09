@@ -1030,7 +1030,20 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 		if(Object == Player)
 			continue;
 
-		if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Character->Battle && !Object->Character->Battle->PVP && Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
+		if(!Object->Character->IsAlive())
+			continue;
+
+		if(!Object->Character->Battle)
+			continue;
+
+		if(Object->Character->Battle->PVP)
+			continue;
+
+		glm::vec2 Delta = Object->Position - Player->Position;
+		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
+			continue;
+
+		if(Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
 			if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
 				return Object->Character->Battle;
 			else
