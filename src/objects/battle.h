@@ -43,8 +43,10 @@ struct _BattleResult {
 		JoinedCount(0),
 		TotalExperienceGiven(0),
 		TotalGoldGiven(0),
+		TotalGoldStolen(0),
 		ExperiencePerCharacter(0),
 		GoldPerCharacter(0),
+		GoldStolenPerCharacter(0),
 		Dead(true) { }
 
 	int AliveCount;
@@ -53,8 +55,10 @@ struct _BattleResult {
 	int JoinedCount;
 	int TotalExperienceGiven;
 	int TotalGoldGiven;
+	int TotalGoldStolen;
 	int ExperiencePerCharacter;
 	int GoldPerCharacter;
+	int GoldStolenPerCharacter;
 	bool Dead;
 };
 

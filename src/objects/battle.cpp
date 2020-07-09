@@ -611,10 +611,11 @@ void _Battle::ServerEndBattle() {
 			SideStats[Side].TotalExperienceGiven += Object->Monster->ExperienceGiven;
 
 			// Calculate gold based on monster or player
+			SideStats[Side].TotalGoldStolen += Object->Fighter->GoldStolen;
 			if(Object->IsMonster())
-				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven + Object->Fighter->GoldStolen;
+				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven;
 			else
-				SideStats[Side].TotalGoldGiven += Object->Character->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * BountyEarned + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Character->Bounty + (int)(Object->Character->Gold * BountyEarned + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
@@ -636,7 +637,7 @@ void _Battle::ServerEndBattle() {
 		// Divide up rewards
 		for(int Side = 0; Side < 2; Side++) {
 			int OtherSide = !Side;
-			int DivideCount = SideStats[Side].AliveCount;
+			int DivideCount = SideStats[Side].AliveCount - (1 + SideStats[Side].MonsterCount) / 2;
 			if(DivideCount <= 0)
 				continue;
 
@@ -650,6 +651,7 @@ void _Battle::ServerEndBattle() {
 			// Divide gold up
 			if(SideStats[OtherSide].TotalGoldGiven > 0) {
 				SideStats[Side].GoldPerCharacter = SideStats[OtherSide].TotalGoldGiven / DivideCount;
+				SideStats[Side].GoldStolenPerCharacter = SideStats[OtherSide].TotalGoldStolen / DivideCount;
 				if(SideStats[Side].GoldPerCharacter <= 0)
 					SideStats[Side].GoldPerCharacter = 1;
 			}
@@ -658,9 +660,8 @@ void _Battle::ServerEndBattle() {
 		// Get list of objects that get rewards
 		std::list<_Object *> RewardObjects;
 		for(auto &Object : SideObjects[WinningSide]) {
-			if(Object->Character->IsAlive()) {
+			if(Object->Character->IsAlive())
 				RewardObjects.push_back(Object);
-			}
 		}
 
 		// Check for reward recipients
@@ -720,15 +721,19 @@ void _Battle::ServerEndBattle() {
 		// Get rewards
 		int ExperienceEarned = 0;
 		int GoldEarned = 0;
-		if(!Object->Character->IsAlive()) {
-			if(PVP)
-				Object->ApplyDeathPenalty(BountyEarned, Object->Character->Bounty);
-			else
-				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
-		}
-		else {
+		if(Object->Character->IsAlive()) {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerCharacter;
 			GoldEarned = SideStats[WinningSide].GoldPerCharacter;
+
+			// Boost xp/gold gain
+			if(!PVP) {
+				ExperienceEarned *= Object->Character->ExperienceMultiplier;
+				GoldEarned *= Object->Character->GoldMultiplier;
+			}
+
+			// Handle pickpocket
+			GoldEarned += SideStats[WinningSide].GoldStolenPerCharacter;
+
 			Object->Character->PlayerKills += SideStats[!WinningSide].PlayerCount;
 			Object->Character->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP && Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
@@ -742,16 +747,16 @@ void _Battle::ServerEndBattle() {
 				}
 			}
 		}
+		else {
+			if(PVP)
+				Object->ApplyDeathPenalty(BountyEarned, Object->Character->Bounty);
+			else
+				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
+		}
 
 		// Start cooldown timer
 		if(Object->Character->IsAlive() && Cooldown > 0.0 && Zone)
 			Object->Character->BattleCooldown[Zone] = Cooldown;
-
-		// Boost xp/gold gain
-		if(!PVP) {
-			ExperienceEarned *= Object->Character->ExperienceMultiplier;
-			GoldEarned *= Object->Character->GoldMultiplier;
-		}
 
 		// Update stats
 		int CurrentLevel = Object->Character->Level;
@@ -944,6 +949,9 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			continue;
 
 		if(Object->Fighter) {
+			//int GoldEarned = -Object->Fighter->GoldStolenLoss;
+			//Object->Fighter->GoldStolenGain = Object->Fighter->GoldStolenLoss = 0;
+			//Object->Character->UpdateGold(GoldEarned);
 			for(int i = 0; i < 2; i++) {
 				if(Object->Fighter->LastTarget[i] == RemoveObject)
 					Object->Fighter->LastTarget[i] = nullptr;

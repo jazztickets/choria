@@ -266,7 +266,6 @@ void _Character::UpdateMana(int Value) {
 
 // Update gold amount
 void _Character::UpdateGold(int Value) {
-
 	Gold += Value;
 	if(Gold > PLAYER_MAX_GOLD)
 		Gold = PLAYER_MAX_GOLD;
@@ -274,7 +273,6 @@ void _Character::UpdateGold(int Value) {
 
 // Update experience
 void _Character::UpdateExperience(int Value) {
-
 	Experience += Value;
 	if(Experience < 0)
 		Experience = 0;

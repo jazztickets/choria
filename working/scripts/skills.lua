@@ -336,12 +336,18 @@ Skill_Gash.IncreasePerLevel = 6
 Skill_Gash.BleedingLevel = 10
 
 function Skill_Gash.CanUse(self, Level, Source, Target)
-	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-	if Weapon == nil then
-		return false
+	OffHandCount = 0
+	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if WeaponMain ~= nil and WeaponMain.Type == ITEM_OFFHAND then
+		OffHandCount = OffHandCount + 1
 	end
 
-	return Weapon.Type == ITEM_OFFHAND
+	WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if WeaponOff ~= nil and WeaponOff.Type == ITEM_OFFHAND then
+		OffHandCount = OffHandCount + 1
+	end
+
+	return OffHandCount > 0
 end
 
 function Skill_Gash.GetChance(self, Level)
@@ -358,7 +364,7 @@ function Skill_Gash.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Slice your enemy\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires an off-hand weapon"
+	return "Slice your enemy\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires at least one off-hand weapon"
 end
 
 function Skill_Gash.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -544,7 +550,7 @@ end
 Skill_Resurrect = Base_Spell:New()
 Skill_Resurrect.HealBase = -50
 Skill_Resurrect.HealPerLevel = 60
-Skill_Resurrect.CostPerLevel = 40
+Skill_Resurrect.CostPerLevel = 20
 Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
 function Skill_Resurrect.GetHeal(self, Source, Level)
@@ -629,10 +635,10 @@ end
 -- Poison Touch --
 
 Skill_PoisonTouch = Base_Spell:New()
-Skill_PoisonTouch.PoisonLevelPerLevel = 15
-Skill_PoisonTouch.PoisonLevel = 20 - Skill_PoisonTouch.PoisonLevelPerLevel
-Skill_PoisonTouch.CostPerLevel = 10
-Skill_PoisonTouch.ManaCostBase = 25 - Skill_PoisonTouch.CostPerLevel
+Skill_PoisonTouch.PoisonLevelPerLevel = 6
+Skill_PoisonTouch.PoisonLevel = 10 - Skill_PoisonTouch.PoisonLevelPerLevel
+Skill_PoisonTouch.CostPerLevel = 5
+Skill_PoisonTouch.ManaCostBase = 20 - Skill_PoisonTouch.CostPerLevel
 Skill_PoisonTouch.DurationPerLevel = 0
 Skill_PoisonTouch.Duration = 10
 
@@ -1002,26 +1008,31 @@ end
 -- Flee --
 
 Skill_Flee = {}
-Skill_Flee.BaseChance = 22
+Skill_Flee.BaseChance = 28
 Skill_Flee.ChancePerLevel = 6
 Skill_Flee.Duration = 5
+Skill_Flee.DurationPerLevel = -0.2
 
 function Skill_Flee.CanUse(self, Level, Source, Target)
 	return not Source.BossBattle
 end
 
 function Skill_Flee.GetChance(self, Level)
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
+end
+
+function Skill_Flee.GetDuration(self, Level)
+	return math.max(self.Duration + self.DurationPerLevel * (Level - 1), 1)
 end
 
 function Skill_Flee.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from combat\nCauses [c yellow]fatigue [c white]for [c green]" .. self.Duration .. " [c white]seconds\n\n[c yellow]Unusable in boss battles"
+	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from combat\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c yellow]Unusable in boss battles"
 end
 
 function Skill_Flee.ApplyCost(self, Source, Level, Result)
 	Result.Source.Buff = Buff_Slowed.Pointer
 	Result.Source.BuffLevel = 30
-	Result.Source.BuffDuration = self.Duration
+	Result.Source.BuffDuration = self:GetDuration(Level)
 
 	return Result
 end
@@ -1061,16 +1072,25 @@ end
 
 function Skill_Pickpocket.GetInfo(self, Source, Item)
 
-	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to steal gold from an enemy"
+	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to steal [c green]50%][c white] gold from a monster or [c green]10%[c white] from a player"
 end
 
 function Skill_Pickpocket.Proc(self, Roll, Level, Duration, Source, Target, Result)
 
 	if Roll <= self:GetChance(Level) then
-		HalfGold = math.ceil(Target.Gold / 2)
-		if HalfGold <= Target.Gold then
-			Result.Target.Gold = -HalfGold
-			Result.Source.GoldStolen = HalfGold
+		GoldAvailable = Target.Gold
+		if Target.MonsterID > 0 then
+			GoldAmount = math.ceil(GoldAvailable / 2)
+		else
+			GoldAmount = math.ceil(GoldAvailable / 10)
+		end
+
+		if GoldAmount <= Target.Gold then
+			Result.Target.Gold = -GoldAmount
+			Result.Source.GoldStolen = GoldAmount
+		else
+			Result.Target.Gold = 0
+			Result.Source.GoldStolen = 0
 		end
 
 		return true
@@ -1085,10 +1105,6 @@ function Skill_Pickpocket.Use(self, Level, Duration, Source, Target, Result)
 	self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 
 	return Result
-end
-
-function Skill_Pickpocket.PlaySound(self, Level)
-	--Audio.Play("coin" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Parry --
@@ -1187,16 +1203,21 @@ function Skill_Backstab.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Item.Level) * 100) .. "% [c white]damage to stunned enemies\n[c " .. TextColor .. "]Requires a one-handed weapon"
+	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Item.Level) * 100) .. "% [c white]damage to stunned enemies\n[c " .. TextColor .. "]Can only use off-hand weapons"
 end
 
 function Skill_Backstab.CanUse(self, Level, Source, Target)
-	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-	if Weapon == nil then
+	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if WeaponMain == nil then
+		WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+		if WeaponOff ~= nil and WeaponOff.Type == ITEM_OFFHAND then
+			return true
+		end
+
 		return false
 	end
 
-	return Weapon.Type == ITEM_ONEHANDED_WEAPON
+	return WeaponMain.Type == ITEM_OFFHAND
 end
 
 function Skill_Backstab.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1221,7 +1242,7 @@ end
 
 Skill_DemonicConjuring = Base_SummonSpell:New()
 Skill_DemonicConjuring.CostPerLevel = 10
-Skill_DemonicConjuring.ManaCostBase = 20 - Skill_DemonicConjuring.CostPerLevel
+Skill_DemonicConjuring.ManaCostBase = 25 - Skill_DemonicConjuring.CostPerLevel
 Skill_DemonicConjuring.BaseHealth = 100
 Skill_DemonicConjuring.BaseMinDamage = 10
 Skill_DemonicConjuring.BaseMaxDamage = 20
@@ -1269,8 +1290,8 @@ end
 -- Raise Dead --
 
 Skill_RaiseDead = Base_SummonSpell:New()
-Skill_RaiseDead.CostPerLevel = 5
-Skill_RaiseDead.ManaCostBase = 10 - Skill_RaiseDead.CostPerLevel
+Skill_RaiseDead.CostPerLevel = 10
+Skill_RaiseDead.ManaCostBase = 15 - Skill_RaiseDead.CostPerLevel
 Skill_RaiseDead.BaseHealth = 50
 Skill_RaiseDead.BaseMana = 100
 Skill_RaiseDead.BaseMinDamage = 10
@@ -1572,12 +1593,17 @@ Skill_BladeDance.DamageBase = 40
 Skill_BladeDance.DamagePerLevel = 1
 
 function Skill_BladeDance.CanUse(self, Level, Source, Target)
-	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-	if Weapon == nil then
+	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if WeaponMain == nil then
 		return false
 	end
 
-	return Weapon.Type == ITEM_OFFHAND
+	WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if WeaponOff == nil then
+		return false
+	end
+
+	return WeaponOff.Type == ITEM_OFFHAND
 end
 
 function Skill_BladeDance.GetDamage(self, Level)
@@ -1602,7 +1628,7 @@ function Skill_BladeDance.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires an off-hand weapon"
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires dual-wielding weapons"
 end
 
 function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
