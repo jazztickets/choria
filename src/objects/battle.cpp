@@ -637,7 +637,7 @@ void _Battle::ServerEndBattle() {
 		// Divide up rewards
 		for(int Side = 0; Side < 2; Side++) {
 			int OtherSide = !Side;
-			int DivideCount = SideStats[Side].AliveCount - (1 + SideStats[Side].MonsterCount) / 2;
+			int DivideCount = SideStats[Side].AliveCount - SideStats[Side].MonsterCount + SideStats[Side].MonsterCount / BATTLE_SUMMON_PLAYER_DIVISOR;
 			if(DivideCount <= 0)
 				continue;
 
