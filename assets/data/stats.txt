@@ -472,7 +472,7 @@ INSERT INTO vendoritem VALUES(24,3,118);
 INSERT INTO vendoritem VALUES(25,3,119);
 INSERT INTO vendoritem VALUES(26,4,120);
 INSERT INTO vendoritem VALUES(27,4,121);
-INSERT INTO vendoritem VALUES(28,1,10);
+INSERT INTO vendoritem VALUES(28,19,10);
 INSERT INTO vendoritem VALUES(30,3,131);
 INSERT INTO vendoritem VALUES(31,4,122);
 INSERT INTO vendoritem VALUES(32,10,123);
@@ -596,7 +596,6 @@ INSERT INTO vendoritem VALUES(172,18,278);
 INSERT INTO vendoritem VALUES(173,15,283);
 INSERT INTO vendoritem VALUES(174,21,284);
 INSERT INTO vendoritem VALUES(175,7,282);
-INSERT INTO vendoritem VALUES(176,20,285);
 INSERT INTO vendoritem VALUES(177,22,290);
 INSERT INTO vendoritem VALUES(178,17,45);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
@@ -1097,6 +1096,8 @@ INSERT INTO trader VALUES(55,'hunger_ring',286,1);
 INSERT INTO trader VALUES(56,'silver_amulet',287,1);
 INSERT INTO trader VALUES(57,'icebrand',288,1);
 INSERT INTO trader VALUES(58,'mystic_staff',289,1);
+INSERT INTO trader VALUES(59,'flay',44,1);
+INSERT INTO trader VALUES(60,'pain_ring',285,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1235,6 +1236,12 @@ INSERT INTO traderitem VALUES(154,57,30,1);
 INSERT INTO traderitem VALUES(155,58,111,1);
 INSERT INTO traderitem VALUES(156,58,43,1);
 INSERT INTO traderitem VALUES(157,58,273,1);
+INSERT INTO traderitem VALUES(158,59,14,1);
+INSERT INTO traderitem VALUES(159,59,22,1);
+INSERT INTO traderitem VALUES(160,59,265,1);
+INSERT INTO traderitem VALUES(161,60,211,1);
+INSERT INTO traderitem VALUES(162,60,147,1);
+INSERT INTO traderitem VALUES(163,60,151,10);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1888,7 +1895,7 @@ INSERT INTO item VALUES(281,15,0,0,0,0,0,'Sandy Map','textures/items/map.png',''
 INSERT INTO item VALUES(282,15,0,0,0,0,0,'Slimy Map','textures/items/map.png','',0,350,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/slime.png',0);
 INSERT INTO item VALUES(283,15,0,0,0,0,0,'Garden Map','textures/items/map.png','',0,1000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/gardens.png',0);
 INSERT INTO item VALUES(284,15,0,0,0,0,0,'City Map','textures/items/map.png','',0,500,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/city.png',0);
-INSERT INTO item VALUES(285,8,0,0,0,0,0,'Uncomfortable Ring','textures/items/pain_ring.png','Item_PainRing',0,999,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(285,8,0,0,0,0,0,'Uncomfortable Ring','textures/items/pain_ring.png','Item_PainRing',0,100,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(286,8,0,0,0,0,0,'Hungering Ring','textures/items/hunger_ring.png','Item_HungerRing',0,500,1,0,0,0.0,1,0,0,0,0,0,0,0,0,-50,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(287,9,0,0,0,0,0,'Silver Amulet','textures/items/amulet.png','',0,1000,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,'',0);
 INSERT INTO item VALUES(288,6,4,0,0,0,4,'Icebrand','textures/items/icebrand.png','Proc_Slow',0,35000,1,50,50,3.0,1,2000,3500,-20,0,0,25,0,0,0,0,-30,-20,0,0,15,0,0,'',0);
