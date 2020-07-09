@@ -864,6 +864,11 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 	Summon.Limit = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
+	// Get Skill Level
+	lua_getfield(LuaState, -1, "SkillLevel");
+	Summon.SkillLevel = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
 	// Get Duration
 	lua_getfield(LuaState, -1, "Duration");
 	Summon.Duration = lua_tonumber(LuaState, -1);

@@ -124,6 +124,8 @@ Base_Spell = {
 Base_SummonSpell = {
 	ManaCostBase = 0,
 	CostPerLevel = 0,
+	SkillLevel = 0,
+	SkillLevelPerLevel = 0,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -164,6 +166,10 @@ Base_SummonSpell = {
 
 	GetLimit = function(self, Source, Level)
 		return math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit)
+	end,
+
+	GetSkillLevel = function(self, Source, Level)
+		return math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower)
 	end,
 
 	GetDuration = function(self, Source, Level)
