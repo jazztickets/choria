@@ -296,7 +296,7 @@ end
 Item_SlimyGlob = { }
 
 function Item_SlimyGlob.GetInfo(self, Source, Item)
-	return "Purge bleeding and gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Purge [c yellow]bleeding[c white] and gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result)
@@ -317,7 +317,7 @@ end
 Item_CrowFeather = { }
 
 function Item_CrowFeather.GetInfo(self, Source, Item)
-	return "Purge slowness and increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Purge [c yellow]slowness[c white] and increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
 function Item_CrowFeather.Use(self, Level, Duration, Source, Target, Result)
@@ -377,7 +377,7 @@ end
 Item_Fang = { }
 
 function Item_Fang.GetInfo(self, Source, Item)
-	return "Purge poison and increase attack damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Purge [c yellow]poison[c white] and increase attack damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
 function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
@@ -418,13 +418,14 @@ end
 Item_CrabLegs = { }
 
 function Item_CrabLegs.GetInfo(self, Source, Item)
-	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Purge [c yellow]flayed[c white] and gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Hardened.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Flayed.Pointer
 
 	return Result
 end
@@ -452,7 +453,7 @@ end
 Item_SwampGlob = { }
 
 function Item_SwampGlob.GetInfo(self, Source, Item)
-	return "Purge burning and slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Purge [c yellow]burning[c white] and slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result)
@@ -473,7 +474,7 @@ end
 Item_LavaSludge = { }
 
 function Item_LavaSludge.GetInfo(self, Source, Item)
-	return "Purge weakness and ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
+	return "Purge [c yellow]weakness[c white] and ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
 end
 
 function Item_LavaSludge.GetDamageType(self, Source)
