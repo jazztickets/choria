@@ -662,7 +662,7 @@ function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
 end
 
 function Skill_PoisonTouch.PlaySound(self, Level)
-	Audio.Play("enfeeble0.ogg", 0.35)
+	Audio.Play("touch0.ogg", 0.55)
 end
 
 -- Fire Blast --
