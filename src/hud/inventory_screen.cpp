@@ -151,7 +151,7 @@ void _InventoryScreen::DrawBag(BagType Type) {
 			HUD->DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false, Slot->Upgrades);
 
 			// Draw upgrade count if using blacksmith or holding alt
-			if(!Slot->Item->IsSkill() && (Slot->Item->MaxLevel && (ae::Input.ModKeyDown(KMOD_ALT) || HUD->Player->Character->Blacksmith))) {
+			if(!Slot->Item->IsSkill() && (Slot->Item->MaxLevel && (Type == BagType::EQUIPMENT || ae::Input.ModKeyDown(KMOD_ALT) || HUD->Player->Character->Blacksmith))) {
 				glm::vec4 Color = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
 				if(HUD->Player->Character->Blacksmith) {
 					if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= HUD->Player->Character->Blacksmith->Level)
