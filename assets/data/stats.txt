@@ -394,10 +394,11 @@ INSERT INTO portrait VALUES(3,'textures/portraits/bim.png',2);
 INSERT INTO portrait VALUES(4,'textures/portraits/sib.png',5);
 INSERT INTO portrait VALUES(5,'textures/portraits/biff.png',4);
 INSERT INTO portrait VALUES(6,'textures/portraits/jone.png',6);
-INSERT INTO portrait VALUES(7,'textures/portraits/leb.png',10);
+INSERT INTO portrait VALUES(7,'textures/portraits/leb.png',11);
 INSERT INTO portrait VALUES(8,'textures/portraits/jas.png',7);
 INSERT INTO portrait VALUES(9,'textures/portraits/pete.png',8);
 INSERT INTO portrait VALUES(10,'textures/portraits/rog.png',9);
+INSERT INTO portrait VALUES(11,'textures/portraits/darg.png',10);
 CREATE TABLE IF NOT EXISTS "model" (
 	"id" INTEGER PRIMARY KEY,
 	"texture" TEXT
@@ -413,6 +414,7 @@ INSERT INTO model VALUES(7,'textures/models/beggar.png');
 INSERT INTO model VALUES(8,'textures/models/hunter.png');
 INSERT INTO model VALUES(9,'textures/models/gambler.png');
 INSERT INTO model VALUES(10,'textures/models/necromancer.png');
+INSERT INTO model VALUES(11,'textures/models/barbarian.png');
 CREATE TABLE IF NOT EXISTS "vendor" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1303,11 +1305,11 @@ INSERT INTO build VALUES(3,'Cleric','textures/builds/cleric.png',3,4,1,2);
 INSERT INTO build VALUES(4,'Thief','textures/builds/thief.png',4,4,1,5);
 INSERT INTO build VALUES(5,'Paladin','textures/builds/paladin.png',5,4,1,4);
 INSERT INTO build VALUES(6,'Warlock','textures/builds/warlock.png',6,4,1,6);
-INSERT INTO build VALUES(7,'Beggar','textures/builds/beggar.png',7,4,1,10);
+INSERT INTO build VALUES(7,'Beggar','textures/builds/beggar.png',7,4,1,11);
 INSERT INTO build VALUES(8,'Hunter','textures/builds/hunter.png',8,4,1,7);
 INSERT INTO build VALUES(9,'Gambler','textures/builds/gambler.png',9,4,1,8);
 INSERT INTO build VALUES(10,'Necromancer','textures/builds/necromancer.png',10,4,1,9);
-INSERT INTO build VALUES(11,'','',0,4,0,0);
+INSERT INTO build VALUES(11,'Barbarian','textures/builds/barbarian.png',11,4,1,10);
 INSERT INTO build VALUES(12,'','',0,4,0,0);
 INSERT INTO build VALUES(13,'','',0,4,0,0);
 INSERT INTO build VALUES(14,'','',0,4,0,0);
@@ -1418,6 +1420,8 @@ INSERT INTO buildskill VALUES(67,47,30,200);
 INSERT INTO buildskill VALUES(68,47,41,200);
 INSERT INTO buildskill VALUES(69,47,22,20);
 INSERT INTO buildskill VALUES(70,10,45,1);
+INSERT INTO buildskill VALUES(71,11,23,1);
+INSERT INTO buildskill VALUES(72,11,35,2);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1497,6 +1501,8 @@ INSERT INTO builditem VALUES(71,46,173,1);
 INSERT INTO builditem VALUES(72,46,235,1);
 INSERT INTO builditem VALUES(73,10,237,1);
 INSERT INTO builditem VALUES(74,47,168,1);
+INSERT INTO builditem VALUES(75,11,117,1);
+INSERT INTO builditem VALUES(76,11,160,1);
 CREATE TABLE IF NOT EXISTS "buildactionbar" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1585,6 +1591,8 @@ INSERT INTO buildactionbar VALUES(81,47,30,2);
 INSERT INTO buildactionbar VALUES(82,47,41,3);
 INSERT INTO buildactionbar VALUES(83,47,22,4);
 INSERT INTO buildactionbar VALUES(84,10,237,3);
+INSERT INTO buildactionbar VALUES(85,11,23,0);
+INSERT INTO buildactionbar VALUES(86,11,35,3);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,

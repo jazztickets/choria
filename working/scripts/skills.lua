@@ -385,8 +385,12 @@ Skill_ShieldBash.ChancePerLevel = 4
 Skill_ShieldBash.Duration = 2
 
 function Skill_ShieldBash.GetInfo(self, Source, Item)
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source, nil) then
+		TextColor = "red"
+	end
 
-	return "Bash your enemy with a shield\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Bash your enemy with a shield\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self.Duration .. " [c white]seconds\n[c " .. TextColor .. "]Requires a shield"
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
@@ -399,14 +403,16 @@ function Skill_ShieldBash.GenerateDamage(self, Level, Source)
 end
 
 function Skill_ShieldBash.GetChance(self, Level)
-
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, self.MaxPercent)
 end
 
 function Skill_ShieldBash.CanUse(self, Level, Source, Target)
 	Shield = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if Shield == nil then
+		return false
+	end
 
-	return Shield ~= nil
+	return Shield.Type == ITEM_SHIELD
 end
 
 function Skill_ShieldBash.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1437,6 +1443,20 @@ Skill_Cleave.DamagePerLevel = 1
 Skill_Cleave.BaseTargets = 3
 Skill_Cleave.TargetsPerLevel = 0.2
 
+function Skill_Cleave.CanUse(self, Level, Source, Target)
+	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if WeaponMain == nil then
+		return false
+	end
+
+	WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if WeaponOff == nil then
+		return WeaponMain.Type ~= ITEM_OFFHAND
+	end
+
+	return WeaponMain.Type ~= ITEM_OFFHAND and WeaponOff.Type ~= ITEM_OFFHAND
+end
+
 function Skill_Cleave.GetDamage(self, Level)
 	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
 end
@@ -1450,7 +1470,12 @@ function Skill_Cleave.GetTargetCount(self, Level)
 end
 
 function Skill_Cleave.GetInfo(self, Source, Item)
-	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage"
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source, nil) then
+		TextColor = "red"
+	end
+
+	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\n[c " .. TextColor .. "]Cannot use with off-hand weapons"
 end
 
 function Skill_Cleave.PlaySound(self, Level)
