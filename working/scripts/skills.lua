@@ -649,7 +649,7 @@ function Skill_PoisonTouch.GetDamagePower(self, Source, Level)
 end
 
 function Skill_PoisonTouch.GetInfo(self, Source, Item)
-	return "Spread disease to an enemy, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Infuse venom into your enemy, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
@@ -662,7 +662,7 @@ function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
 end
 
 function Skill_PoisonTouch.PlaySound(self, Level)
-	Audio.Play("touch0.ogg", 0.55)
+	Audio.Play("touch0.ogg")
 end
 
 -- Fire Blast --
