@@ -435,6 +435,7 @@ void _Menu::PlayCharacter(size_t Slot) {
 
 	ae::Audio.StopMusic();
 	PlayState.HUD->Reset();
+	PlayState.HUD->ResetChat();
 }
 
 // Send login info

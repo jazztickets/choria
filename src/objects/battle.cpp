@@ -660,7 +660,7 @@ void _Battle::ServerEndBattle() {
 		// Get list of objects that get rewards
 		std::list<_Object *> RewardObjects;
 		for(auto &Object : SideObjects[WinningSide]) {
-			if(Object->Character->IsAlive())
+			if(Object->Character->IsAlive() && !Object->IsMonster())
 				RewardObjects.push_back(Object);
 		}
 

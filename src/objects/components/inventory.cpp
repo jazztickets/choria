@@ -468,7 +468,7 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots) {
 
 	// Bags to search through
-	std::vector<BagType> SearchsBags({ BagType::INVENTORY, BagType::EQUIPMENT });
+	std::vector<BagType> SearchsBags({ BagType::INVENTORY });
 
 	// Find a slot for the reward
 	_Slot RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);

@@ -144,11 +144,14 @@ void _HUD::Reset() {
 
 	CloseWindows(false);
 	SkillScreen->ClearSkills();
-
-	SetMessage("");
-	ChatHistory.clear();
-	SentHistory.clear();
 	RecentItems.clear();
+}
+
+// Reset chat history and messages
+void _HUD::ResetChat() {
+	PlayState.HUD->ChatHistory.clear();
+	PlayState.HUD->SentHistory.clear();
+	PlayState.HUD->SetMessage("");
 }
 
 // Handle the enter key

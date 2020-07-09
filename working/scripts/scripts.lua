@@ -79,5 +79,5 @@ function Script_Slow.Activate(self, Level, Cooldown, Object, Change)
 end
 
 function Script_Slow.PlaySound(self, Level)
-	Audio.Play("swamp0.ogg")
+	Audio.Play("swamp0.ogg", 0.5)
 end

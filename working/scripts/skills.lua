@@ -1252,7 +1252,7 @@ Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 1
 Skill_DemonicConjuring.Limit = 1
 Skill_DemonicConjuring.LimitPerLevel = 0.1
-Skill_DemonicConjuring.Duration = 10
+Skill_DemonicConjuring.Duration = 30
 Skill_DemonicConjuring.DurationPerLevel = 1
 Skill_DemonicConjuring.Monster = Monsters[23]
 
@@ -1307,7 +1307,7 @@ Skill_RaiseDead.Limit = 2
 Skill_RaiseDead.LimitPerLevel = 0.2
 Skill_RaiseDead.SkillLevel = 1
 Skill_RaiseDead.SkillLevelPerLevel = 0.5
-Skill_RaiseDead.Duration = 30
+Skill_RaiseDead.Duration = 60
 Skill_RaiseDead.DurationPerLevel = 1
 Skill_RaiseDead.Monster = Monsters[20]
 Skill_RaiseDead.SpecialMonster = Monsters[21]

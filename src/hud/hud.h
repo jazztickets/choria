@@ -123,6 +123,7 @@ class _HUD {
 		~_HUD();
 
 		void Reset();
+		void ResetChat();
 
 		// Updates
 		void HandleEnter();
