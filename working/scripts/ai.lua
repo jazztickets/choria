@@ -293,10 +293,10 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 
 	-- Cast spell
 	Roll = Random.GetInt(1, 10)
-	if Roll < 3 then
+	if Roll < 5 then
 
 		-- Ice nova
-		CanCast = Object.SetAction(3)
+		CanCast = Object.SetAction(2)
 		if CanCast == true then
 			for i = 1, #Enemies do
 				Object.AddTarget(Enemies[i].Pointer)
@@ -306,8 +306,8 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 		end
 	else
 
-		-- Enfeeble
-		CanCast = Object.SetAction(2)
+		-- Enfeeble or Flay
+		CanCast = Object.SetAction(Random.GetInt(3, 4))
 		if CanCast == true then
 			Target = Random.GetInt(1, #Enemies)
 			AI_AddTarget(Object, Enemies[Target], false)
