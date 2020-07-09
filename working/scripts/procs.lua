@@ -83,9 +83,18 @@ Base_Proc = {
 
 Proc_Stun = Base_Proc:New()
 Proc_Stun.Buff = Buff_Stunned
+Proc_Stun.MaxChance = 75
 Proc_Stun.ChancePerLevel = 1
 Proc_Stun.LevelPerLevel = 0
-Proc_Stun.DurationPerLevel = 0.1
+Proc_Stun.DurationPerLevel = 0.05
+
+function Proc_Stun.GetChance(self, Item)
+	return math.min(math.floor(Item.Chance + Item.Upgrades * self.ChancePerLevel), self.MaxChance)
+end
+
+function Proc_Stun.GetDuration(self, Item)
+	return Item.Duration + math.floor(10 * Item.Upgrades * self.DurationPerLevel) / 10
+end
 
 function Proc_Stun.GetInfo(self, Source, Item)
 	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item) .. "[c white] seconds"

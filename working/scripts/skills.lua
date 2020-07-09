@@ -388,7 +388,22 @@ Skill_ShieldBash = Base_Attack:New()
 Skill_ShieldBash.MaxPercent = 75
 Skill_ShieldBash.BaseChance = 23
 Skill_ShieldBash.ChancePerLevel = 4
-Skill_ShieldBash.Duration = 2
+Skill_ShieldBash.Duration = 2.1
+Skill_ShieldBash.DurationPerLevel = 0.1
+Skill_ShieldBash.DamageBase = 100
+Skill_ShieldBash.DamagePerLevel = 10
+
+function Skill_ShieldBash.GetDamage(self, Level)
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
+end
+
+function Skill_ShieldBash.GetDuration(self, Level)
+	return math.floor(self.Duration + self.DurationPerLevel * (Level - 1))
+end
+
+function Skill_ShieldBash.GetChance(self, Level)
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, self.MaxPercent)
+end
 
 function Skill_ShieldBash.GetInfo(self, Source, Item)
 	TextColor = "yellow"
@@ -396,7 +411,7 @@ function Skill_ShieldBash.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Bash your enemy with a shield\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self.Duration .. " [c white]seconds\n[c " .. TextColor .. "]Requires a shield"
+	return "Bash your enemy with a shield for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]shield damage with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c " .. TextColor .. "]Requires a shield"
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
@@ -405,11 +420,7 @@ function Skill_ShieldBash.GenerateDamage(self, Level, Source)
 		return 0
 	end
 
-	return Shield.GenerateDamage(Source.Pointer, Shield.Upgrades)
-end
-
-function Skill_ShieldBash.GetChance(self, Level)
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, self.MaxPercent)
+	return math.floor(Shield.GenerateDamage(Source.Pointer, Shield.Upgrades) * (self:GetDamage(Level) / 100))
 end
 
 function Skill_ShieldBash.CanUse(self, Level, Source, Target)
@@ -425,7 +436,7 @@ function Skill_ShieldBash.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	if Roll <= self:GetChance(Level) then
 		Result.Target.Buff = Buff_Stunned.Pointer
 		Result.Target.BuffLevel = 1
-		Result.Target.BuffDuration = self.Duration
+		Result.Target.BuffDuration = self:GetDuration(Level)
 		return true
 	end
 
