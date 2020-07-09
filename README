@@ -29,10 +29,10 @@ pthreads
 sudo apt install git cmake build-essential libsdl2-dev libsdl2-image-dev libopenal-dev libvorbis-dev liblua5.3-dev libfreetype6-dev libglm-dev libsqlite3-dev libjsoncpp-dev libtinyxml2-dev
 
 -- Cloning --
-git clone https://github.com/jazztickets/choria.git --recurse-submodules
+git clone --branch 2015 --single-branch https://github.com/jazztickets/choria.git --recurse-submodule choria2015
 
 -- Building and running --
-cd choria
+cd choria2015
 mkdir build
 cd build
 cmake ..
@@ -113,6 +113,7 @@ Hit T/Shift-T to cycle the clock
 Hit Ctrl+T to toggle day/night ambient light
 Hit D to delete light under cursor
 Hit M to toggle background map
+Hit H to toggle text overlay
 
 -- Mouse --
 Use Left-mouse button to apply the current brush

@@ -296,7 +296,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				else
 					Map->DeleteStaticObject(WorldCursor);
 			break;
-			case SDL_SCANCODE_B:
+			case SDL_SCANCODE_H:
 				MapView = !MapView;
 			break;
 			case SDL_SCANCODE_TAB:
@@ -527,14 +527,15 @@ void _EditorState::Render(double BlendFactor) {
 	// Render map
 	if(Map) {
 		int RenderFilter = Filter | MAP_RENDER_BOUNDARY | MAP_RENDER_EDGE_BOUNDARY;
-		if(!UseClockAmbientLight)
-			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
 
 		if(!ShowBackgroundMap)
 			RenderFilter |= MAP_RENDER_NOBACKGROUND;
 
 		if(MapView)
-			RenderFilter = MAP_RENDER_MAP_VIEW | MAP_RENDER_EDITOR_AMBIENT;
+			RenderFilter = MAP_RENDER_MAP_VIEW;
+
+		if(!UseClockAmbientLight)
+			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
 
 		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
 	}
