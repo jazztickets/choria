@@ -601,6 +601,7 @@ INSERT INTO vendoritem VALUES(174,21,284);
 INSERT INTO vendoritem VALUES(175,7,282);
 INSERT INTO vendoritem VALUES(177,22,290);
 INSERT INTO vendoritem VALUES(178,17,45);
+INSERT INTO vendoritem VALUES(179,18,292);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1273,7 +1274,8 @@ INSERT INTO enchanter VALUES(1,'Apprentice Enchanter',10);
 INSERT INTO enchanter VALUES(2,'Journeyman Enchanter',15);
 INSERT INTO enchanter VALUES(3,'Skilled Enchanter',20);
 INSERT INTO enchanter VALUES(4,'Master Enchanter',30);
-INSERT INTO enchanter VALUES(5,'Old Enchanter',50);
+INSERT INTO enchanter VALUES(5,'Ancient Enchanter',40);
+INSERT INTO enchanter VALUES(6,'Timeless Enchanter',50);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1283,7 +1285,8 @@ INSERT INTO blacksmith VALUES(1,'Apprentice Blacksmith',5);
 INSERT INTO blacksmith VALUES(2,'Journeyman Blacksmith',10);
 INSERT INTO blacksmith VALUES(3,'Skilled Blacksmith',15);
 INSERT INTO blacksmith VALUES(4,'Master Blacksmith',20);
-INSERT INTO blacksmith VALUES(5,'Old Blacksmith',50);
+INSERT INTO blacksmith VALUES(5,'Ancient Blacksmith',35);
+INSERT INTO blacksmith VALUES(6,'Timeless Blacksmith',50);
 CREATE TABLE IF NOT EXISTS "minigame" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1911,7 +1914,7 @@ INSERT INTO item VALUES(248,10,0,1,3,0,0,'Glowing Cider','textures/items/glowing
 INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/purple_potion.png','Item_RespecPotion',0,10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(251,13,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(252,13,0,0,0,0,0,'Ancient Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(252,13,0,0,0,0,0,'Secret Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(253,11,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(254,10,0,1,1,0,0,'Eternal Strength','textures/items/rebirth_sword.png','Item_RebirthStrength',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(255,10,0,1,1,0,0,'Eternal Guard','textures/items/rebirth_shield.png','Item_RebirthGuard',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
@@ -1921,7 +1924,7 @@ INSERT INTO item VALUES(258,10,0,1,1,0,0,'Eternal Wisdom','textures/items/rebirt
 INSERT INTO item VALUES(259,10,0,1,1,0,0,'Eternal Wealth','textures/items/rebirth_gold.png','Item_RebirthWealth',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(260,10,0,1,1,0,0,'Eternal Alacrity','textures/items/rebirth_speed.png','Item_RebirthAlacrity',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(261,10,0,1,1,0,0,'Eternal Knowledge','textures/items/rebirth_book.png','Item_RebirthKnowledge',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(262,13,0,0,0,0,0,'Old Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(262,13,0,0,0,0,0,'Timeless Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(263,4,0,0,0,0,0,'Dimensional Slippers','textures/items/dimensional_slippers.png','Item_DiagonalMovement',0,500,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(264,13,0,0,0,0,0,'Hideout Key','textures/items/key0.png','',0,250,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(265,14,2,0,0,0,7,'Bloodletter','textures/items/bloodletter.png','Proc_Bloodlet',0,2000,1,50,50,5.0,1,220,220,0,8,35,15,0,0,0,0,30,0,0,0,20,0,0,'',0);
@@ -1931,7 +1934,7 @@ INSERT INTO item VALUES(268,13,0,0,0,0,0,'Library Key','textures/items/key0.png'
 INSERT INTO item VALUES(269,15,0,0,0,0,0,'Torn Map','textures/items/map.png','',0,100,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png',0);
 INSERT INTO item VALUES(270,10,3,4,2,0,0,'Firebomb','textures/items/firebomb.png','Item_Firebomb',0,25,1,50,0,5.0,1,75,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(271,4,0,0,0,0,3,'Lava Boots','textures/items/lava_boots.png','Item_LavaProtection',0,1500,1,0,50,0.0,1,0,0,3,10,0,25,0,0,0,0,0,-20,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(272,13,0,0,0,0,0,'Secret Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(272,13,0,0,0,0,0,'Garden Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(273,8,0,0,0,0,4,'Elusive One','textures/items/ghostly_ring.png','Item_ElusiveRing',0,40000,1,0,5,0.0,1,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0,'',20);
 INSERT INTO item VALUES(274,12,0,0,1,10,0,'Skill Point VI','textures/items/skillpoint2.png','Item_SkillPoint',0,10000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(275,12,0,0,1,11,0,'Skill Point VII','textures/items/skillpoint2.png','Item_SkillPoint',0,25000,0,2,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
@@ -1951,6 +1954,7 @@ INSERT INTO item VALUES(288,6,4,0,0,0,4,'Icebrand','textures/items/icebrand.png'
 INSERT INTO item VALUES(289,6,2,0,0,0,1,'Mystic Staff','textures/items/mystic_staff.png','Proc_Sanctuary',0,15000,1,10,50,5.0,1,1100,1500,0,25,0,5,0,0,0,0,20,5,0,0,15,0,0,'',15);
 INSERT INTO item VALUES(290,5,5,0,0,0,5,'Shining Star','textures/items/shining_star.png','Proc_Stun',0,15000,1,1,50,3.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,5,15,0,0,'',0);
 INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/yard.png',0);
+INSERT INTO item VALUES(292,13,0,0,0,0,0,'Ancient Key','textures/items/key1.png','',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

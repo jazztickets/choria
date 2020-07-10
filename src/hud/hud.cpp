@@ -889,7 +889,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 		PlayState.Network->Disconnect();
 	else {
 		Menu.ShowExitWarning = Player->Character->Battle;
-		Menu.ShowRespawn = !Player->Character->IsAlive() && !Player->Character->Hardcore;
+		Menu.ShowRespawn = !Player->Character->Battle && !Player->Character->IsAlive() && !Player->Character->Hardcore;
 		Menu.InitInGame();
 	}
 }

@@ -293,8 +293,11 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 
 					Map->StaticObjects.clear();
 				}
-				else
-					Map->DeleteStaticObject(WorldCursor);
+				else {
+					glm::vec2 MousePosition;
+					Camera->ConvertScreenToWorld(ae::Input.GetMouse(), MousePosition);
+					Map->DeleteStaticObject(MousePosition);
+				}
 			break;
 			case SDL_SCANCODE_H:
 				MapView = !MapView;
@@ -402,9 +405,9 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				CloseWindows();
 			}
 		}
+		else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
 
-		// Place object
-		if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+			// Place light
 			_Object *Object = new _Object;
 			Object->Position = WorldCursor;
 			Object->Light = ObjectData;
@@ -541,18 +544,25 @@ void _EditorState::Render(double BlendFactor) {
 	}
 
 	// Draw tile brush size
-	if(!MapView && BrushMode == EDITOR_BRUSH_MODE_TILE) {
+	if(!MapView) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
+		if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+			ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
-		// Draw copy tool boundaries
-		if(DrawCopyBounds) {
-			ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
+			// Draw copy tool boundaries
+			if(DrawCopyBounds) {
+				ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
 
-			glm::ivec2 Start, End;
-			GetDrawBounds(Start, End);
-			ae::Graphics.DrawRectangle(Start, End + 1, true);
+				glm::ivec2 Start, End;
+				GetDrawBounds(Start, End);
+				ae::Graphics.DrawRectangle(Start, End + 1, true);
+			}
+		}
+		else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+			for(const auto &Object : Map->StaticObjects) {
+				ae::Graphics.DrawCircle(glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0), Stats->Lights.at(Object->Light).Radius);
+			}
 		}
 	}
 
