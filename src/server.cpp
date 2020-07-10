@@ -2174,13 +2174,23 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Scripting->FinishMethodCall();
 		}
 
+		// Get difficulty increase
+		double DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER;
+		if(Boss) {
+			DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER_BOSS;
+
+			// Adjust for single player
+			if(Players.size() == 1)
+				Difficulty -= DifficultyAdjust;
+		}
+
 		// Add players to battle
-		Difficulty -= GAME_DIFFICULTY_PER_PLAYER;
+		Difficulty -= DifficultyAdjust;
 		for(auto &PartyPlayer : Players) {
 			Battle->AddObject(PartyPlayer, 0);
 
 			// Increase difficulty for each player
-			Difficulty += GAME_DIFFICULTY_PER_PLAYER;
+			Difficulty += DifficultyAdjust;
 
 			// Increase by each player's difficulty stat
 			Difficulty += (PartyPlayer->Character->Difficulty - 100) / 100.0f;
