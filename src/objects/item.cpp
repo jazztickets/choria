@@ -184,8 +184,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			if(SkillIterator != Player->Character->Skills.end()) {
 				PlayerMaxSkillLevel = Player->Character->MaxSkillLevels[ID];
 				DrawLevel = SkillIterator->second;
-				if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0)
+				if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0) {
 					DrawLevel += Player->Character->AllSkills;
+					DrawLevel = std::min(DrawLevel, PlayerMaxSkillLevel);
+				}
 			}
 			else
 				IsLocked = true;
@@ -610,17 +612,18 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 		if(ShowLevel) {
 			std::string Text = "Level " + std::to_string(DrawLevel);
 			glm::vec4 Color = ae::Assets.Colors["gray"];
-			if(DrawLevel == PlayerMaxSkillLevel) {
-				Text = "Max " + Text;
-					Color = ae::Assets.Colors["red"];
-			}
-			else if(EnchanterMaxLevel && DrawLevel > EnchanterMaxLevel) {
+			if(EnchanterMaxLevel && (DrawLevel > EnchanterMaxLevel || EnchanterMaxLevel > MaxLevel)) {
 				Text = "I can't upgrade this";
 				Color = ae::Assets.Colors["red"];
 			}
+			else if(DrawLevel == PlayerMaxSkillLevel) {
+				Text = "Max " + Text;
+				Color = ae::Assets.Colors["red"];
+			}
 			else if(!EnchanterMaxLevel && DrawLevel >= PlayerMaxSkillLevel) {
-				if(MaxLevel == 1 || DrawLevel > MaxLevel)
+				if(DrawLevel > MaxLevel)
 					return;
+
 				Text = "Enchanter required for level " + std::to_string(DrawLevel);
 				Color = ae::Assets.Colors["red"];
 			}
@@ -668,6 +671,8 @@ int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTa
 				auto SkillIterator = Object->Character->Skills.find(ID);
 				if(SkillIterator != Object->Character->Skills.end()) {
 					SkillLevel = SkillIterator->second + Object->Character->AllSkills;
+					if(Object->Character->MaxSkillLevels.find(ID) != Object->Character->MaxSkillLevels.end())
+						SkillLevel = std::min(SkillLevel, Object->Character->MaxSkillLevels.at(ID));
 				}
 
 				Scripting->PushInt(SkillLevel);

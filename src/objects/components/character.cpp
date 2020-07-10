@@ -720,8 +720,11 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 		// Determine if item is a skill, then look at object's skill levels
 		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item)) {
 			ReturnAction.Level = Skills[ReturnAction.Item->ID];
-			if(ReturnAction.Level > 0)
+			if(ReturnAction.Level > 0) {
 				ReturnAction.Level += AllSkills;
+				if(MaxSkillLevels.find(ReturnAction.Item->ID) != MaxSkillLevels.end())
+					ReturnAction.Level = std::min(ReturnAction.Level, MaxSkillLevels.at(ReturnAction.Item->ID));
+			}
 		}
 		else
 			ReturnAction.Level = ReturnAction.Item->Level;
