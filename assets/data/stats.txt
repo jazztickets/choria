@@ -705,33 +705,33 @@ CREATE TABLE IF NOT EXISTS "buff" (
 	"script" TEXT,
 	"texture" TEXT,
 	"pause" INTEGER DEFAULT(0)
-);
-INSERT INTO buff VALUES(1,'Bleeding','Buff_Bleeding','textures/buffs/bleeding.png',0);
-INSERT INTO buff VALUES(2,'Healing','Buff_Healing','textures/buffs/healing.png',0);
-INSERT INTO buff VALUES(3,'Mana','Buff_Mana','textures/buffs/mana.png',0);
-INSERT INTO buff VALUES(4,'Invisible','Buff_Invis','textures/buffs/invis.png',0);
-INSERT INTO buff VALUES(5,'Slowed','Buff_Slowed','textures/buffs/slowed.png',0);
-INSERT INTO buff VALUES(6,'Stunned','Buff_Stunned','textures/buffs/stunned.png',0);
-INSERT INTO buff VALUES(7,'Hasted','Buff_Hasted','textures/buffs/hasted.png',0);
-INSERT INTO buff VALUES(8,'Blinded','Buff_Blinded','textures/buffs/blinded.png',0);
-INSERT INTO buff VALUES(9,'Hardened','Buff_Hardened','textures/buffs/hardened.png',0);
-INSERT INTO buff VALUES(10,'Parry','Buff_Parry','textures/buffs/parry.png',0);
-INSERT INTO buff VALUES(11,'Poisoned','Buff_Poisoned','textures/buffs/poisoned.png',0);
-INSERT INTO buff VALUES(12,'Burning','Buff_Burning','textures/buffs/burning.png',0);
-INSERT INTO buff VALUES(13,'Bleed Resist','Buff_BleedResist','textures/buffs/bleed_resist.png',0);
-INSERT INTO buff VALUES(14,'Fast','Buff_Fast','textures/buffs/fast.png',1);
-INSERT INTO buff VALUES(15,'Mighty','Buff_Mighty','textures/buffs/mighty.png',0);
-INSERT INTO buff VALUES(16,'Evasion','Buff_Evasion','textures/buffs/evasion.png',0);
-INSERT INTO buff VALUES(17,'Weak','Buff_Weak','textures/buffs/weak.png',0);
-INSERT INTO buff VALUES(18,'Light','Buff_Light','textures/buffs/light.png',1);
-INSERT INTO buff VALUES(19,'Taunted','Buff_Taunted','textures/buffs/taunted.png',0);
-INSERT INTO buff VALUES(20,'Shielded','Buff_Shielded','textures/buffs/shielded.png',0);
-INSERT INTO buff VALUES(21,'Empowered','Buff_Empowered','textures/buffs/empowered.png',0);
-INSERT INTO buff VALUES(22,'Sanctuary','Buff_Sanctuary','textures/buffs/sanctuary.png',0);
-INSERT INTO buff VALUES(23,'Demons','Buff_SummonDemon','textures/buffs/summon_demon.png',1);
-INSERT INTO buff VALUES(24,'Skeletons','Buff_SummonSkeleton','textures/buffs/summon_skeleton.png',1);
-INSERT INTO buff VALUES(25,'Skeleton Priests','Buff_SummonSkeletonPriest','textures/buffs/summon_skeleton_priest.png',1);
-INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0);
+, show_level INTEGER DEFAULT(0));
+INSERT INTO buff VALUES(1,'Bleeding','Buff_Bleeding','textures/buffs/bleeding.png',0,0);
+INSERT INTO buff VALUES(2,'Healing','Buff_Healing','textures/buffs/healing.png',0,0);
+INSERT INTO buff VALUES(3,'Mana','Buff_Mana','textures/buffs/mana.png',0,0);
+INSERT INTO buff VALUES(4,'Invisible','Buff_Invis','textures/buffs/invis.png',0,0);
+INSERT INTO buff VALUES(5,'Slowed','Buff_Slowed','textures/buffs/slowed.png',0,0);
+INSERT INTO buff VALUES(6,'Stunned','Buff_Stunned','textures/buffs/stunned.png',0,0);
+INSERT INTO buff VALUES(7,'Hasted','Buff_Hasted','textures/buffs/hasted.png',0,0);
+INSERT INTO buff VALUES(8,'Blinded','Buff_Blinded','textures/buffs/blinded.png',0,0);
+INSERT INTO buff VALUES(9,'Hardened','Buff_Hardened','textures/buffs/hardened.png',0,0);
+INSERT INTO buff VALUES(10,'Parry','Buff_Parry','textures/buffs/parry.png',0,0);
+INSERT INTO buff VALUES(11,'Poisoned','Buff_Poisoned','textures/buffs/poisoned.png',0,0);
+INSERT INTO buff VALUES(12,'Burning','Buff_Burning','textures/buffs/burning.png',0,0);
+INSERT INTO buff VALUES(13,'Bleed Resist','Buff_BleedResist','textures/buffs/bleed_resist.png',0,0);
+INSERT INTO buff VALUES(14,'Fast','Buff_Fast','textures/buffs/fast.png',1,0);
+INSERT INTO buff VALUES(15,'Mighty','Buff_Mighty','textures/buffs/mighty.png',0,0);
+INSERT INTO buff VALUES(16,'Evasion','Buff_Evasion','textures/buffs/evasion.png',0,0);
+INSERT INTO buff VALUES(17,'Weak','Buff_Weak','textures/buffs/weak.png',0,0);
+INSERT INTO buff VALUES(18,'Light','Buff_Light','textures/buffs/light.png',1,0);
+INSERT INTO buff VALUES(19,'Taunted','Buff_Taunted','textures/buffs/taunted.png',0,0);
+INSERT INTO buff VALUES(20,'Shielded','Buff_Shielded','textures/buffs/shielded.png',0,1);
+INSERT INTO buff VALUES(21,'Empowered','Buff_Empowered','textures/buffs/empowered.png',0,0);
+INSERT INTO buff VALUES(22,'Sanctuary','Buff_Sanctuary','textures/buffs/sanctuary.png',0,0);
+INSERT INTO buff VALUES(23,'Demons','Buff_SummonDemon','textures/buffs/summon_demon.png',1,1);
+INSERT INTO buff VALUES(24,'Skeletons','Buff_SummonSkeleton','textures/buffs/summon_skeleton.png',1,1);
+INSERT INTO buff VALUES(25,'Skeleton Priests','Buff_SummonSkeletonPriest','textures/buffs/summon_skeleton_priest.png',1,1);
+INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0,0);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1773,7 +1773,7 @@ INSERT INTO item VALUES(106,7,2,0,0,0,0,'Buckler','textures/items/buckler.png','
 INSERT INTO item VALUES(107,7,2,0,0,0,0,'Bronze Shield','textures/items/bronze_shield.png','',0,100,1,0,10,0.0,1,20,50,0,10,0,0,0,0,0,0,-10,-5,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(108,10,0,1,3,0,0,'Healing Salve','textures/items/healing_salve.png','Item_HealingSalve',0,5,1,30,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(109,10,0,1,3,0,0,'Mana Cider','textures/items/mana_cider.png','Item_ManaCider',0,10,1,10,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(110,10,0,1,1,0,0,'Invisibility Potion','textures/items/invis_potion.png','Item_InvisPotion',0,40,1,15,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(110,10,0,1,1,0,0,'Invisibility Potion','textures/items/invis_potion.png','Item_InvisPotion',0,40,1,0,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(111,6,2,0,0,0,0,'Quarter Staff','textures/items/quarter_staff.png','Proc_Harden',0,35,1,10,10,5.0,1,20,50,0,5,0,0,0,0,0,0,10,0,0,0,15,0,0,'',2);
 INSERT INTO item VALUES(112,13,0,0,1,0,0,'Cellar Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(113,3,0,0,0,0,8,'Bronze Armor','textures/items/bronze_armor.png','',0,250,1,0,10,0.0,1,0,0,10,2,0,5,0,0,0,0,-5,-5,0,0,0,0,0,'',0);
@@ -1818,7 +1818,7 @@ INSERT INTO item VALUES(151,10,0,1,1,0,0,'Battle Potion','textures/items/death_p
 INSERT INTO item VALUES(152,2,0,0,0,0,0,'Mage Hat','textures/items/mage_hat.png','',0,25,1,0,10,0.0,1,0,0,1,0,0,0,15,30,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(153,2,0,0,0,0,0,'Wizard Hat','textures/items/wizard_hat.png','',0,100,1,0,50,0.0,1,0,0,2,0,0,0,30,60,0,1,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(154,6,2,0,0,0,0,'Claymore','textures/items/claymore.png','Proc_Empowered',0,2000,1,20,20,5.0,1,225,600,-5,0,0,0,0,0,0,0,-10,0,0,0,15,0,0,'',0);
-INSERT INTO item VALUES(155,10,0,1,1,0,0,'Ghostly Potion','textures/items/ghostly_potion.png','Item_InvisPotion',0,150,1,30,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(155,10,0,1,1,0,0,'Ghostly Potion','textures/items/ghostly_potion.png','Item_InvisPotion',0,150,1,0,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(156,10,0,8,3,0,0,'Poison','textures/items/poison.png','Item_PoisonPotion',0,25,1,10,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(157,3,0,0,0,0,7,'Reinforced Jerkin','textures/items/reinforced_jerkin.png','',0,300,1,0,20,0.0,1,0,0,8,2,0,10,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(158,8,0,0,0,0,0,'Magic Ring','textures/items/ring.png','',0,150,1,0,50,0.0,1,0,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,'',0);

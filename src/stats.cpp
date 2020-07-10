@@ -156,6 +156,7 @@ void _Stats::LoadBuffs() {
 		Buff->Script = Database->GetString("script");
 		Buff->Texture = ae::Assets.Textures[Database->GetString("texture")];
 		Buff->PauseDuringBattle = Database->GetInt<int>("pause");
+		Buff->ShowLevel = Database->GetInt<int>("show_level");
 		Buffs[Buff->ID] = Buff;
 	}
 	Database->CloseQuery();

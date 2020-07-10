@@ -21,9 +21,11 @@
 #include <ae/buffer.h>
 #include <ae/assets.h>
 #include <ae/font.h>
+#include <ae/input.h>
 #include <ae/graphics.h>
 #include <constants.h>
 #include <stats.h>
+#include <SDL_keycode.h>
 #include <stdexcept>
 #include <sstream>
 
@@ -105,4 +107,8 @@ void _StatusEffect::Render(ae::_Element *Element, const glm::vec4 &Color) {
 	// Draw dark percentage bg
 	float OverlayHeight = (Duration / MaxDuration) * (Element->Bounds.End.y - Element->Bounds.Start.y);
 	ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, OverlayHeight), Element->Bounds.End, true);
+
+	// Draw level
+	if(Level && (Buff->ShowLevel || ae::Input.ModKeyDown(KMOD_ALT)))
+		ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Level), glm::ivec2(Element->Bounds.Start.x + 2 * ae::_Element::GetUIScale(), Element->Bounds.End.y - 3 * ae::_Element::GetUIScale()), ae::LEFT_BASELINE, ae::Assets.Colors["white"]);
 }

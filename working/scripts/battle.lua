@@ -126,6 +126,7 @@ Base_SummonSpell = {
 	CostPerLevel = 0,
 	SkillLevel = 0,
 	SkillLevelPerLevel = 0,
+	SkillLevelPower = 0.75,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -169,7 +170,7 @@ Base_SummonSpell = {
 	end,
 
 	GetSkillLevel = function(self, Source, Level)
-		return math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower)
+		return math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower * self.SkillLevelPower)
 	end,
 
 	GetDuration = function(self, Source, Level)
