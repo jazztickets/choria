@@ -161,7 +161,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Get level of item or skill
 	int DrawLevel = Level;
-	int MaxLevel = 0;
+	int PlayerMaxSkillLevel = 0;
 	int EnchanterMaxLevel = 0;
 	bool IsLocked = false;
 	bool ShowLevel = false;
@@ -182,7 +182,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			// Get skill level
 			auto SkillIterator = Player->Character->Skills.find(ID);
 			if(SkillIterator != Player->Character->Skills.end()) {
-				MaxLevel = Player->Character->MaxSkillLevels[ID];
+				PlayerMaxSkillLevel = Player->Character->MaxSkillLevels[ID];
 				DrawLevel = SkillIterator->second;
 				if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0)
 					DrawLevel += Player->Character->AllSkills;
@@ -212,11 +212,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Draw description
-	DrawDescription(Player, DrawPosition, DrawLevel, MaxLevel, EnchanterMaxLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
+	DrawDescription(Player, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
-		DrawDescription(Player, DrawPosition, DrawLevel+1, MaxLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(Player, DrawPosition, DrawLevel+1, PlayerMaxSkillLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -592,7 +592,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 }
 
 // Draw item description
-void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int MaxLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
+void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int PlayerMaxSkillLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
 	_Scripting *Scripting = Object->Scripting;
 
 	// Check for scripting function
@@ -610,7 +610,7 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 		if(ShowLevel) {
 			std::string Text = "Level " + std::to_string(DrawLevel);
 			glm::vec4 Color = ae::Assets.Colors["gray"];
-			if(DrawLevel == MaxLevel) {
+			if(DrawLevel == PlayerMaxSkillLevel) {
 				Text = "Max " + Text;
 					Color = ae::Assets.Colors["red"];
 			}
@@ -618,7 +618,9 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 				Text = "I can't upgrade this";
 				Color = ae::Assets.Colors["red"];
 			}
-			else if(!EnchanterMaxLevel && DrawLevel >= MaxLevel) {
+			else if(!EnchanterMaxLevel && DrawLevel >= PlayerMaxSkillLevel) {
+				if(MaxLevel == 1)
+					return;
 				Text = "Enchanter required for level " + std::to_string(DrawLevel);
 				Color = ae::Assets.Colors["red"];
 			}
