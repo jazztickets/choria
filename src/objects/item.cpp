@@ -612,11 +612,14 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 			glm::vec4 Color = ae::Assets.Colors["gray"];
 			if(DrawLevel == MaxLevel) {
 				Text = "Max " + Text;
-				if(DrawLevel == MaxLevel)
 					Color = ae::Assets.Colors["red"];
 			}
 			else if(EnchanterMaxLevel && DrawLevel > EnchanterMaxLevel) {
 				Text = "I can't upgrade this";
+				Color = ae::Assets.Colors["red"];
+			}
+			else if(!EnchanterMaxLevel && DrawLevel >= MaxLevel) {
+				Text = "Enchanter required for level " + std::to_string(DrawLevel);
 				Color = ae::Assets.Colors["red"];
 			}
 			ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, Color);

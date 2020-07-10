@@ -622,14 +622,14 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	Data["skills"] = SkillsNode;
 
 	// Write max skill levels
-	Json::Value MaxSkillLevelNodes;
+	Json::Value MaxSkillLevelsNode;
 	for(auto &MaxSkillLevel : Character->MaxSkillLevels) {
 		Json::Value MaxSkillLevelNode;
 		MaxSkillLevelNode["id"] = MaxSkillLevel.first;
 		MaxSkillLevelNode["level"] = MaxSkillLevel.second;
-		MaxSkillLevelNodes.append(MaxSkillLevelNode);
+		MaxSkillLevelsNode.append(MaxSkillLevelNode);
 	}
-	Data["max_skill_levels"] = MaxSkillLevelNodes;
+	Data["max_skill_levels"] = MaxSkillLevelsNode;
 
 	// Write action bar
 	Json::Value ActionBarNode;
