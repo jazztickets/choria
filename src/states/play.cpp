@@ -1544,8 +1544,10 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 					}
 				}
 
-				if(SkillUnlocked)
+				if(SkillUnlocked) {
 					Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+					Player->Character->MaxSkillLevels[ActionResult.ActionUsed.Item->ID] = GAME_DEFAULT_MAX_SKILL_LEVEL;
+				}
 
 				if(ItemUnlocked)
 					Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;

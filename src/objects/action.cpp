@@ -80,7 +80,6 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 		// Apply skill cost
 		if(ItemUsed->IsSkill() && Source->Character->HasLearned(ItemUsed) && InventorySlot == -1) {
-
 			ItemUsed->ApplyCost(Source->Scripting, ActionResult);
 		}
 		// Apply item cost
@@ -92,7 +91,10 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 			Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 			DecrementItem = true;
 			if(ItemUsed->IsSkill()) {
+
+				// Learn skill
 				Source->Character->Skills[ItemUsed->ID] = 0;
+				Source->Character->MaxSkillLevels[ItemUsed->ID] = GAME_DEFAULT_MAX_SKILL_LEVEL;
 				SkillUnlocked = true;
 			}
 			else if(ItemUsed->IsUnlockable()) {

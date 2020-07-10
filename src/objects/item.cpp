@@ -766,7 +766,7 @@ int _Item::GetUpgradePrice(int Level) const {
 
 // Get enchant price
 int _Item::GetEnchantPrice(int Level) {
-	return (int)(std::ceil((Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1) * GAME_BASE_ENCHANT_COST));
+	return std::max(0, (int)(std::ceil((Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1) * GAME_BASE_ENCHANT_COST)));
 }
 
 // Return true if the item can be used

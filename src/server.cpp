@@ -1295,6 +1295,10 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Player->Character->Skills.find(SkillID) == Player->Character->Skills.end())
 		return;
 
+	// Validate
+	if(Player->Character->MaxSkillLevels.find(SkillID) == Player->Character->MaxSkillLevels.end())
+		Player->Character->MaxSkillLevels[SkillID] = GAME_DEFAULT_MAX_SKILL_LEVEL;
+
 	// Get upgrade price
 	int MaxSkillLevel = Player->Character->MaxSkillLevels.at(SkillID);
 	int Price = _Item::GetEnchantPrice(MaxSkillLevel);
@@ -2226,6 +2230,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	// Save old info
 	_Bag OldTradeBag = Player->Inventory->GetBag(BagType::TRADE);
 	std::unordered_map<uint32_t, int> OldSkills = Character->Skills;
+	std::unordered_map<uint32_t, int> OldMaxSkillLevels = Character->MaxSkillLevels;
 
 	// Reset character
 	int OldActionBarSize = Character->ActionBar.size();
@@ -2233,6 +2238,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->ActionBar.resize(OldActionBarSize);
 	Player->Inventory->Bags = Build->Inventory->GetBags();
 	Character->Skills = Build->Character->Skills;
+	Character->MaxSkillLevels.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 	Character->Gold = 0;
 	Character->Experience = 0;
@@ -2304,6 +2310,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	int SkillCount = _RebirthEvent::GetSaveCount(Character->Rebirths + 1);
 	for(const auto &Skill : Skills) {
 		Character->Skills[Skill.ID] = 0;
+		Character->MaxSkillLevels[Skill.ID] = OldMaxSkillLevels[Skill.ID];
 
 		SkillCount--;
 		if(SkillCount <= 0)

@@ -201,9 +201,9 @@ void _EnchanterScreen::RefreshBuyButtons() {
 		if(ChildElement->Name == "label_max_skill_levels_level") {
 			uint32_t SkillID = (uint32_t)ChildElement->Index;
 			int DrawLevel = HUD->Player->Character->MaxSkillLevels[SkillID];
-			glm::vec4 LevelColor = glm::vec4(1.0f);
+			glm::vec4 LevelColor = DrawLevel >= Enchanter->Level ? ae::Assets.Colors["red"] : glm::vec4(1.0f);
 
-			ChildElement->Text = std::to_string(DrawLevel) + "/" + std::to_string(Enchanter->Level);
+			ChildElement->Text = std::to_string(DrawLevel);
 			ChildElement->Color = LevelColor;
 		}
 		else if(ChildElement->Name == "button_max_skill_levels_buy") {
