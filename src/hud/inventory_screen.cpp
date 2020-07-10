@@ -201,7 +201,7 @@ void _InventoryScreen::DrawKeys() {
 
 			// Update position
 			Row++;
-			if(Row >= 14) {
+			if(Row >= 18) {
 				Column++;
 				Row = 0;
 			}
