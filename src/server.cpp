@@ -1301,7 +1301,7 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Get upgrade price
 	int MaxSkillLevel = Player->Character->MaxSkillLevels.at(SkillID);
-	int Price = _Item::GetEnchantPrice(MaxSkillLevel);
+	int Price = _Item::GetEnchantCost(MaxSkillLevel);
 
 	// Check gold
 	if(Price > Player->Character->Gold)
@@ -1564,7 +1564,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	// Get upgrade price
-	int Price = InventorySlot.Item->GetUpgradePrice(InventorySlot.Upgrades+1);
+	int Price = InventorySlot.Item->GetUpgradeCost(InventorySlot.Upgrades+1);
 
 	// Check gold
 	if(Price > Player->Character->Gold)
@@ -2310,12 +2310,16 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	int SkillCount = _RebirthEvent::GetSaveCount(Character->Rebirths + 1);
 	for(const auto &Skill : Skills) {
 		Character->Skills[Skill.ID] = 0;
-		Character->MaxSkillLevels[Skill.ID] = OldMaxSkillLevels[Skill.ID];
 
 		SkillCount--;
 		if(SkillCount <= 0)
 			break;
 	}
+
+	// Keep max skill levels for all skills kept
+	for(const auto &Skill : Character->Skills)
+		Character->MaxSkillLevels[Skill.first] = OldMaxSkillLevels[Skill.first];
+
 	Character->CalculateStats();
 
 	// Spawn player

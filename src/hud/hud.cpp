@@ -550,7 +550,7 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_SKILLS:
 			case WINDOW_ENCHANTER: {
 				Tooltip.InventorySlot.Item = PlayState.Stats->Items.at((uint32_t)Tooltip.Slot.Index);
-				Tooltip.Cost = _Item::GetEnchantPrice(Player->Character->MaxSkillLevels[Tooltip.Slot.Index]);
+				Tooltip.Cost = _Item::GetEnchantCost(Player->Character->MaxSkillLevels[Tooltip.Slot.Index]);
 			} break;
 			case WINDOW_ACTIONBAR: {
 				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())

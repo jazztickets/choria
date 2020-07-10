@@ -2,29 +2,29 @@ choria 0.5.1 -
 - Added several new areas to explore
 - Added 3 new starting builds
 - Added 4 new bosses
+- Added 10 new monsters
 - Added 21 new skills
 - Added 60+ new items
-- Added 10 new monsters
+- Added 10+ different procs to weapons
+- Added 4 new songs
 - Added passive mastery skills
 - Added skill point unlocks
-- Added 10+ different procs to weapons
 - Added off-hand weapons and dual wielding
 - Added map items
-- Added 4 new songs
-- Added enchanter for increase max skill levels
-- Learned skills now have a max level of 5
+- Added enchanter for increasing max skill levels
+- Newly learned skills start with a max level of 5
 - Summons are now stored in buffs outside of battle
 - Direction of party members now show on current map
 - Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle
 - Skills are now sorted by category
 - Added password hashing to server
-- Resurrect spell can be cast in the world now
+- Resurrect spell can now be cast in the world
 - Various items can now purge debuffs
 - Torches now pause during battle
 - Trader items now only search through inventory bag
 - Fixed inventory bugs
 - Fixed crash with fleeing enemies
-- Host field can be pasted on connect screen
+- Host field can be pasted on the connect screen
 - Many balance and map updates
 
 choria 0.5.0 - 2019-09-27

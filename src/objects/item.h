@@ -57,7 +57,7 @@ class _Item {
 
 	public:
 
-		static int GetEnchantPrice(int Level);
+		static int GetEnchantCost(int Level);
 
 		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
 		void DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int PlayerMaxLevelSkill, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const;
@@ -76,7 +76,7 @@ class _Item {
 		void GetEquipmentSlot(_Slot &Slot) const;
 
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
-		int GetUpgradePrice(int Level) const;
+		int GetUpgradeCost(int Level) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		bool CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target, bool ForceTargetAlive=false) const;

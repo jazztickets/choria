@@ -95,7 +95,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 			UpgradeButton->SetEnabled(true);
 
 			// Get cost
-			int Cost = Item->GetUpgradePrice(InventorySlot.Upgrades+1);
+			int Cost = Item->GetUpgradeCost(InventorySlot.Upgrades+1);
 
 			// Update cost label
 			std::stringstream Buffer;

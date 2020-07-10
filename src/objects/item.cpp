@@ -619,7 +619,7 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 				Color = ae::Assets.Colors["red"];
 			}
 			else if(!EnchanterMaxLevel && DrawLevel >= PlayerMaxSkillLevel) {
-				if(MaxLevel == 1)
+				if(MaxLevel == 1 || DrawLevel > MaxLevel)
 					return;
 				Text = "Enchanter required for level " + std::to_string(DrawLevel);
 				Color = ae::Assets.Colors["red"];
@@ -744,7 +744,7 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) 
 	// Add some value for upgrades
 	if(Level) {
 		for(int i = 1; i <= Level; i++)
-			Price += GetUpgradePrice(i) * Percent;
+			Price += GetUpgradeCost(i) * Percent;
 	}
 
 	// Cap
@@ -756,17 +756,18 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) 
 	return Price;
 }
 
-// Get upgrade price
-int _Item::GetUpgradePrice(int Level) const {
+// Get upgrade cost
+int _Item::GetUpgradeCost(int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
 	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_BASE_UPGRADE_COST));
 }
 
-// Get enchant price
-int _Item::GetEnchantPrice(int Level) {
-	return std::max(0, (int)(std::ceil((Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1) * GAME_BASE_ENCHANT_COST)));
+// Get enchant cost
+int _Item::GetEnchantCost(int Level) {
+	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1;
+	return std::max(0, (int)(std::ceil(Index * (GAME_BASE_ENCHANT_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
 }
 
 // Return true if the item can be used

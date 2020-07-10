@@ -198,21 +198,21 @@ void _EnchanterScreen::RefreshBuyButtons() {
 
 	// Loop through buttons
 	for(auto &ChildElement : Element->Children) {
+		uint32_t SkillID = (uint32_t)ChildElement->Index;
+		const _Item *Skill = HUD->Player->Stats->Items.at(SkillID);
 		if(ChildElement->Name == "label_max_skill_levels_level") {
-			uint32_t SkillID = (uint32_t)ChildElement->Index;
 			int DrawLevel = HUD->Player->Character->MaxSkillLevels[SkillID];
-			glm::vec4 LevelColor = DrawLevel >= Enchanter->Level ? ae::Assets.Colors["red"] : glm::vec4(1.0f);
+			glm::vec4 LevelColor = (DrawLevel >= Enchanter->Level || DrawLevel == Skill->MaxLevel) ? ae::Assets.Colors["red"] : glm::vec4(1.0f);
 
 			ChildElement->Text = std::to_string(DrawLevel);
 			ChildElement->Color = LevelColor;
 		}
 		else if(ChildElement->Name == "button_max_skill_levels_buy") {
-			uint32_t SkillID = (uint32_t)ChildElement->Index;
 			int CurrentLevel = HUD->Player->Character->MaxSkillLevels[SkillID];
-			int Cost = _Item::GetEnchantPrice(CurrentLevel);
+			int Cost = _Item::GetEnchantCost(CurrentLevel);
 
 			// Set button state
-			if(CurrentLevel >= HUD->Player->Stats->Items.at(SkillID)->MaxLevel || CurrentLevel >= Enchanter->Level || Cost > HUD->Player->Character->Gold)
+			if(CurrentLevel >=Skill->MaxLevel || CurrentLevel >= Enchanter->Level || Cost > HUD->Player->Character->Gold)
 				ChildElement->SetEnabled(false);
 			else
 				ChildElement->SetEnabled(true);
