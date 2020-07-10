@@ -35,6 +35,7 @@ struct _Vendor;
 struct _Trader;
 struct _MinigameType;
 struct _Blacksmith;
+struct _Enchanter;
 
 // Structures
 struct _Unlock {
@@ -106,6 +107,8 @@ class _Character {
 		bool HasLearned(const _Item *Skill) const;
 		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
+		void AdjustMaxSkillLevel(uint32_t SkillID, int Amount);
+		void InitializeSkillLevels();
 
 		// UI
 		bool CanTrade() const;
@@ -237,6 +240,7 @@ class _Character {
 
 		// Skills
 		std::unordered_map<uint32_t, int> Skills;
+		std::unordered_map<uint32_t, int> MaxSkillLevels;
 		int SkillPoints;
 		int SkillPointsUnlocked;
 		int SkillPointsUsed;
@@ -249,6 +253,7 @@ class _Character {
 		const _Vendor *Vendor;
 		const _Trader *Trader;
 		const _Blacksmith *Blacksmith;
+		const _Enchanter *Enchanter;
 		const _MinigameType *Minigame;
 		uint32_t Seed;
 

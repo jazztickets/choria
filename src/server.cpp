@@ -441,6 +441,9 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case PacketType::SKILLS_SKILLADJUST:
 			HandleSkillAdjust(Data, Peer);
 		break;
+		case PacketType::ENCHANTER_BUY:
+			HandleEnchanterBuy(Data, Peer);
+		break;
 		case PacketType::TRADE_REQUEST:
 			HandleTradeRequest(Data, Peer);
 		break;
@@ -1275,6 +1278,47 @@ void _Server::HandleSkillAdjust(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Update values
 	Player->Character->AdjustSkillLevel(SkillID, Amount);
+	Player->Character->CalculateStats();
+}
+
+// Handle purchase from enchanter
+void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Process packet
+	uint32_t SkillID = Data.Read<uint32_t>();
+
+	// Check for skill unlocked
+	if(Player->Character->Skills.find(SkillID) == Player->Character->Skills.end())
+		return;
+
+	// Get upgrade price
+	int MaxSkillLevel = Player->Character->MaxSkillLevels.at(SkillID);
+	int Price = _Item::GetEnchantPrice(MaxSkillLevel);
+
+	// Check gold
+	if(Price > Player->Character->Gold)
+		return;
+
+	// Update gold
+	{
+		_StatChange StatChange;
+		StatChange.Object = Player;
+		StatChange.Values[StatType::GOLD].Integer = -Price;
+		Player->UpdateStats(StatChange);
+
+		// Build packet
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+		StatChange.Serialize(Packet);
+		Network->SendPacket(Packet, Player->Peer);
+	}
+
+	// Update values
+	Player->Character->AdjustMaxSkillLevel(SkillID, 1);
 	Player->Character->CalculateStats();
 }
 
@@ -2196,6 +2240,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->Vendor = nullptr;
 	Character->Trader = nullptr;
 	Character->Blacksmith = nullptr;
+	Character->Enchanter = nullptr;
 	Character->Minigame = nullptr;
 	Character->TradePlayer = nullptr;
 	Character->TradeGold = 0;

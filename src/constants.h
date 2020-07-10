@@ -111,9 +111,11 @@ const  int          GAME_MAX_EVASION                =  90;
 const  double       GAME_DIFFICULTY_PER_PLAYER      =  0.1;
 const  float        GAME_UPGRADE_COST_MULTIPLIER    =  0.25f;
 const  int          GAME_BASE_UPGRADE_COST          =  5;
+const  int          GAME_BASE_ENCHANT_COST          =  25;
 const  float        GAME_UPGRADE_AMOUNT             =  0.25f;
 const  float        GAME_NEGATIVE_UPGRADE_SCALE     =  0.25f;
 const  int          GAME_TRADING_LEVEL              =  3;
+const  int          GAME_DEFAULT_MAX_SKILL_LEVEL    =  5;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory

@@ -33,6 +33,7 @@
 #include <hud/trade_screen.h>
 #include <hud/trader_screen.h>
 #include <hud/blacksmith_screen.h>
+#include <hud/enchanter_screen.h>
 #include <hud/skill_screen.h>
 #include <ae/manager.h>
 #include <ae/clientnetwork.h>
@@ -1174,6 +1175,11 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 			Player->Controller->WaitForServer = false;
 			HUD->BlacksmithScreen->Init();
 		break;
+		case _Map::EVENT_ENCHANTER:
+			Player->Character->Enchanter = &Stats->Enchanters.at(EventData);
+			Player->Controller->WaitForServer = false;
+			HUD->EnchanterScreen->Init();
+		break;
 		case _Map::EVENT_MINIGAME:
 			Player->Character->Minigame = &Stats->Minigames.at(EventData);
 			Player->Controller->WaitForServer = false;
@@ -1647,6 +1653,8 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	double Clock = Data.Read<double>();
 
 	Player->Character->CalculateStats();
+	if(HUD)
+		HUD->Refresh();
 
 	if(Map)
 		Map->Clock = Clock;

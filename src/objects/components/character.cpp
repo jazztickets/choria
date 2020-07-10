@@ -139,6 +139,7 @@ _Character::_Character(_Object *Object) :
 	Vendor(nullptr),
 	Trader(nullptr),
 	Blacksmith(nullptr),
+	Enchanter(nullptr),
 	Minigame(nullptr),
 	Seed(0),
 
@@ -294,6 +295,8 @@ void _Character::UpdateStatus() {
 		Status = STATUS_TRADER;
 	else if(Blacksmith)
 		Status = STATUS_BLACKSMITH;
+	else if(Enchanter)
+		Status = STATUS_SKILLS;
 	else if(Minigame)
 		Status = STATUS_MINIGAME;
 	else if(InventoryOpen)
@@ -427,6 +430,10 @@ void _Character::CalculateStats() {
 				Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
 		}
 	}
+
+	// Set max skill levels if necessary
+	if(CalcLevelStats)
+		InitializeSkillLevels();
 
 	// Calculate skills points used
 	SkillPointsUsed = 0;
@@ -650,6 +657,9 @@ bool _Character::AcceptingMoveInput() {
 	if(Blacksmith)
 		return false;
 
+	if(Enchanter)
+		return false;
+
 	if(Minigame)
 		return false;
 
@@ -812,6 +822,40 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	}
 }
 
+// Increase max skill
+void _Character::AdjustMaxSkillLevel(uint32_t SkillID, int Amount) {
+
+	// Get skill from database
+	const _Item *Skill = Object->Stats->Items.at(SkillID);
+	if(Skill == nullptr)
+		return;
+
+	// Check for skill unlocked
+	if(Skills.find(SkillID) == Skills.end())
+		return;
+
+	// Set max skill if absent
+	if(MaxSkillLevels.find(SkillID) == MaxSkillLevels.end())
+		MaxSkillLevels[SkillID] = GAME_DEFAULT_MAX_SKILL_LEVEL;
+
+	MaxSkillLevels[SkillID] += Amount;
+}
+
+// Initialize max skill levels based on learned skills
+void _Character::InitializeSkillLevels() {
+
+	// Populate max skill levels map and cap current skill levels
+	for(auto &Skill : Skills) {
+		auto MaxSkillLevelIterator = MaxSkillLevels.find(Skill.first);
+		if(MaxSkillLevelIterator != MaxSkillLevels.end()) {
+			Skill.second = std::min(MaxSkillLevelIterator->second, Skill.second);
+		}
+		else {
+			MaxSkillLevels[Skill.first] = std::min(GAME_DEFAULT_MAX_SKILL_LEVEL, Object->Stats->Items.at(Skill.first)->MaxLevel);
+		}
+	}
+}
+
 // Determine if character has unlocked trading
 bool _Character::CanTrade() const {
 	return Object->ModelID == 7 || Level >= GAME_TRADING_LEVEL;
@@ -825,6 +869,7 @@ void _Character::ResetUIState() {
 	Vendor = nullptr;
 	Trader = nullptr;
 	Blacksmith = nullptr;
+	Enchanter = nullptr;
 	Minigame = nullptr;
 	TeleportTime = -1.0;
 }

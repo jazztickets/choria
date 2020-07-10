@@ -321,6 +321,7 @@ void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 		case _Map::EVENT_VENDOR:
 		case _Map::EVENT_TRADER:
 		case _Map::EVENT_BLACKSMITH:
+		case _Map::EVENT_ENCHANTER:
 		case _Map::EVENT_MINIGAME: {
 			if(Server)
 				StartEvent(Object, Tile->Event);
@@ -484,6 +485,11 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 			case _Map::EVENT_BLACKSMITH:
 				Object->Character->Blacksmith = &Server->Stats->Blacksmiths.at(Event.Data);
 				if(!Object->Character->Blacksmith->ID)
+					return;
+			break;
+			case _Map::EVENT_ENCHANTER:
+				Object->Character->Enchanter = &Server->Stats->Enchanters.at(Event.Data);
+				if(!Object->Character->Enchanter->ID)
 					return;
 			break;
 			case _Map::EVENT_MINIGAME: {

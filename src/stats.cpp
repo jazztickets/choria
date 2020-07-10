@@ -48,6 +48,7 @@ _Stats::_Stats(bool Headless) :
 	LoadVendors();
 	LoadTraders();
 	LoadBlacksmiths();
+	LoadEnchanters();
 	LoadMinigames();
 	LoadModels();
 	LoadBuilds();
@@ -367,6 +368,25 @@ void _Stats::LoadBlacksmiths() {
 	}
 	Database->CloseQuery();
 }
+
+// Loads enchanter data
+void _Stats::LoadEnchanters() {
+	Enchanters.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM enchanter");
+
+	// Get data
+	_Enchanter Enchanter;
+	while(Database->FetchRow()) {
+		Enchanter.ID = Database->GetInt<uint32_t>("id");
+		Enchanter.Name = Database->GetString("name");
+		Enchanter.Level = Database->GetInt<int>("level");
+		Enchanters[Enchanter.ID] = Enchanter;
+	}
+	Database->CloseQuery();
+}
+
 
 // Load minigames
 void _Stats::LoadMinigames() {

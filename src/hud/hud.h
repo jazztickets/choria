@@ -34,6 +34,7 @@ class _VendorScreen;
 class _TradeScreen;
 class _TraderScreen;
 class _BlacksmithScreen;
+class _EnchanterScreen;
 class _SkillScreen;
 class _Object;
 class _Item;
@@ -97,6 +98,7 @@ class _HUD {
 	friend class _TradeScreen;
 	friend class _TraderScreen;
 	friend class _BlacksmithScreen;
+	friend class _EnchanterScreen;
 	friend class _SkillScreen;
 
 	public:
@@ -117,6 +119,7 @@ class _HUD {
 			WINDOW_MINIGAME,
 			WINDOW_INVENTORY_TABS,
 			WINDOW_KEYS,
+			WINDOW_ENCHANTER,
 		};
 
 		_HUD();
@@ -129,6 +132,7 @@ class _HUD {
 		void HandleEnter();
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent);
 		void Update(double FrameTime);
+		void Refresh();
 
 		// Render
 		void Render(_Map *Map, double BlendFactor, double Time);
@@ -190,6 +194,7 @@ class _HUD {
 		_TradeScreen *TradeScreen;
 		_TraderScreen *TraderScreen;
 		_BlacksmithScreen *BlacksmithScreen;
+		_EnchanterScreen *EnchanterScreen;
 		_SkillScreen *SkillScreen;
 
 		// Minigames

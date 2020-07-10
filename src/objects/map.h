@@ -90,6 +90,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 			EVENT_JUMP,
 			EVENT_BLACKSMITH,
 			EVENT_MINIGAME,
+			EVENT_ENCHANTER,
 			EVENT_COUNT
 		};
 

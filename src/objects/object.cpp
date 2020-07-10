@@ -621,6 +621,16 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	}
 	Data["skills"] = SkillsNode;
 
+	// Write max skill levels
+	Json::Value MaxSkillLevelNodes;
+	for(auto &MaxSkillLevel : Character->MaxSkillLevels) {
+		Json::Value MaxSkillLevelNode;
+		MaxSkillLevelNode["id"] = MaxSkillLevel.first;
+		MaxSkillLevelNode["level"] = MaxSkillLevel.second;
+		MaxSkillLevelNodes.append(MaxSkillLevelNode);
+	}
+	Data["max_skill_levels"] = MaxSkillLevelNodes;
+
 	// Write action bar
 	Json::Value ActionBarNode;
 	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
@@ -744,6 +754,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		Character->Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->Items.at(ItemID)->MaxLevel);
 	}
 
+	// Set max skill levels
+	for(const Json::Value &MaxSkillLevelNode : Data["max_skill_levels"]) {
+		uint32_t ItemID = MaxSkillLevelNode["id"].asUInt();
+		Character->MaxSkillLevels[ItemID] = std::min(MaxSkillLevelNode["level"].asInt(), Stats->Items.at(ItemID)->MaxLevel);
+	}
+
 	// Set actionbar
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
@@ -843,6 +859,13 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	// Write skills
 	Data.Write<uint32_t>((uint32_t)Character->Skills.size());
 	for(const auto &Skill : Character->Skills) {
+		Data.Write<uint32_t>(Skill.first);
+		Data.Write<int>(Skill.second);
+	}
+
+	// Write max skill levels
+	Data.Write<uint32_t>((uint32_t)Character->MaxSkillLevels.size());
+	for(const auto &Skill : Character->MaxSkillLevels) {
 		Data.Write<uint32_t>(Skill.first);
 		Data.Write<int>(Skill.second);
 	}
@@ -953,6 +976,14 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 		uint32_t SkillID = Data.Read<uint32_t>();
 		int Points = Data.Read<int>();
 		Character->Skills[SkillID] = Points;
+	}
+
+	// Read max skill levels
+	uint32_t MaxSkillLevelCount = Data.Read<uint32_t>();
+	for(uint32_t i = 0; i < MaxSkillLevelCount; i++) {
+		uint32_t SkillID = Data.Read<uint32_t>();
+		int Level = Data.Read<int>();
+		Character->MaxSkillLevels[SkillID] = Level;
 	}
 
 	// Read action bar

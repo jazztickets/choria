@@ -90,7 +90,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		Size.y += LargeSpacingY;
 
 	// Remove extra size
-	if(IsSkill() && Tooltip.Window != _HUD::WINDOW_SKILLS)
+	if(IsSkill() && Tooltip.Window != _HUD::WINDOW_SKILLS && Tooltip.Window != _HUD::WINDOW_ENCHANTER)
 		Size.y -= INVENTORY_TOOLTIP_HEIGHT_EXTRA;
 
 	// Position window
@@ -161,20 +161,35 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Get level of item or skill
 	int DrawLevel = Level;
+	int MaxLevel = 0;
+	int EnchanterMaxLevel = 0;
 	bool IsLocked = false;
 	bool ShowLevel = false;
 	int Upgrades = Tooltip.InventorySlot.Upgrades;
 	if(IsSkill()) {
 
-		// Get skill level
-		auto SkillIterator = Player->Character->Skills.find(ID);
-		if(SkillIterator != Player->Character->Skills.end()) {
-			DrawLevel = SkillIterator->second;
-			if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0)
-				DrawLevel += Player->Character->AllSkills;
+		// Get max skill level
+		if(Tooltip.Window == _HUD::WINDOW_ENCHANTER) {
+			auto MaxSkillLevelIterator = Player->Character->MaxSkillLevels.find(ID);
+			if(MaxSkillLevelIterator != Player->Character->MaxSkillLevels.end()) {
+				DrawLevel = MaxSkillLevelIterator->second + 1;
+				if(Player->Character->Enchanter)
+					EnchanterMaxLevel = Player->Character->Enchanter->Level;
+			}
 		}
-		else
-			IsLocked = true;
+		else {
+
+			// Get skill level
+			auto SkillIterator = Player->Character->Skills.find(ID);
+			if(SkillIterator != Player->Character->Skills.end()) {
+				MaxLevel = Player->Character->MaxSkillLevels[ID];
+				DrawLevel = SkillIterator->second;
+				if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0)
+					DrawLevel += Player->Character->AllSkills;
+			}
+			else
+				IsLocked = true;
+		}
 
 		// For skills set minimum of level 1
 		DrawLevel = std::max(DrawLevel, 1);
@@ -184,7 +199,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			DrawLevel = 1;
 
 		// Determine whether to show level
-		if(Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
+		if(Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ENCHANTER || Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
 			ShowLevel = true;
 	}
 	else {
@@ -197,11 +212,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Draw description
-	DrawDescription(Player, DrawPosition, DrawLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
+	DrawDescription(Player, DrawPosition, DrawLevel, MaxLevel, EnchanterMaxLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
-		DrawDescription(Player, DrawPosition, DrawLevel+1, 0, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(Player, DrawPosition, DrawLevel+1, MaxLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -484,6 +499,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		}
 	}
 
+	if(Tooltip.Window == _HUD::WINDOW_ENCHANTER) {
+		std::stringstream Buffer;
+		Buffer << "Upgrade for " << Tooltip.Cost << " gold";
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
+		DrawPosition.y += SpacingY;
+	}
+
 	// Tradable
 	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
 		ae::Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
@@ -517,6 +539,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
 				if(Scope == ScopeType::NONE)
 					HelpTextList.push_back("Passive skills must be equipped");
+			}
+			else if(Tooltip.Window == _HUD::WINDOW_ENCHANTER) {
 			}
 			else {
 				if(IsLocked) {
@@ -568,7 +592,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 }
 
 // Draw item description
-void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
+void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int MaxLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
 	_Scripting *Scripting = Object->Scripting;
 
 	// Check for scripting function
@@ -584,7 +608,18 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 
 		// Draw level text
 		if(ShowLevel) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+			std::string Text = "Level " + std::to_string(DrawLevel);
+			glm::vec4 Color = ae::Assets.Colors["gray"];
+			if(DrawLevel == MaxLevel) {
+				Text = "Max " + Text;
+				if(DrawLevel == MaxLevel)
+					Color = ae::Assets.Colors["red"];
+			}
+			else if(EnchanterMaxLevel && DrawLevel > EnchanterMaxLevel) {
+				Text = "I can't upgrade this";
+				Color = ae::Assets.Colors["red"];
+			}
+			ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, Color);
 			DrawPosition.y += SpacingY;
 		}
 
@@ -722,6 +757,11 @@ int _Item::GetUpgradePrice(int Level) const {
 		return 0;
 
 	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_BASE_UPGRADE_COST));
+}
+
+// Get enchant price
+int _Item::GetEnchantPrice(int Level) {
+	return (int)(std::ceil((Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1) * GAME_BASE_ENCHANT_COST));
 }
 
 // Return true if the item can be used

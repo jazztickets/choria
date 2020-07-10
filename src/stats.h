@@ -124,6 +124,12 @@ struct _Blacksmith {
 	int Level;
 };
 
+struct _Enchanter {
+	uint32_t ID;
+	std::string Name;
+	int Level;
+};
+
 struct _MinigameItem {
 	const _Item *Item;
 	int Count;
@@ -186,6 +192,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
 		std::unordered_map<uint32_t, _Blacksmith> Blacksmiths;
+		std::unordered_map<uint32_t, _Enchanter> Enchanters;
 		std::unordered_map<uint32_t, _MinigameType> Minigames;
 		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, _Model> Models;
@@ -216,6 +223,7 @@ class _Stats {
 		void LoadVendors();
 		void LoadTraders();
 		void LoadBlacksmiths();
+		void LoadEnchanters();
 		void LoadMinigames();
 		void LoadModels();
 		void LoadBuilds();

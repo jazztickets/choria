@@ -22,6 +22,7 @@
 #include <hud/trade_screen.h>
 #include <hud/trader_screen.h>
 #include <hud/blacksmith_screen.h>
+#include <hud/enchanter_screen.h>
 #include <hud/skill_screen.h>
 #include <objects/object.h>
 #include <objects/item.h>
@@ -121,6 +122,7 @@ _HUD::_HUD() {
 	TradeScreen = new _TradeScreen(this, ae::Assets.Elements["element_trade"]);
 	TraderScreen = new _TraderScreen(this, ae::Assets.Elements["element_trader"]);
 	BlacksmithScreen = new _BlacksmithScreen(this, ae::Assets.Elements["element_blacksmith"]);
+	EnchanterScreen = new _EnchanterScreen(this, ae::Assets.Elements["element_enchanter"]);
 	SkillScreen = new _SkillScreen(this, ae::Assets.Elements["element_skills"]);
 }
 
@@ -134,6 +136,7 @@ _HUD::~_HUD() {
 	delete TradeScreen;
 	delete TraderScreen;
 	delete BlacksmithScreen;
+	delete EnchanterScreen;
 	delete SkillScreen;
 }
 
@@ -144,6 +147,7 @@ void _HUD::Reset() {
 
 	CloseWindows(false);
 	SkillScreen->ClearSkills();
+	EnchanterScreen->ClearSkills();
 	RecentItems.clear();
 }
 
@@ -322,6 +326,17 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			}
 			else if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_minus") {
 				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Index, -(1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT)));
+			}
+		}
+		// Check enchanter buy
+		else if(EnchanterScreen->Element->GetClickedElement()) {
+			if(EnchanterScreen->Element->GetClickedElement()->Name == "button_max_skill_levels_buy") {
+				uint32_t SkillID = (uint32_t)EnchanterScreen->Element->GetClickedElement()->Index;
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::ENCHANTER_BUY);
+				Packet.Write<uint32_t>(SkillID);
+				PlayState.Network->SendPacket(Packet);
+				Player->Character->AdjustMaxSkillLevel(SkillID, 1);
 			}
 		}
 		// Accept trader button
@@ -532,8 +547,10 @@ void _HUD::Update(double FrameTime) {
 						Tooltip.InventorySlot.Upgrades++;
 				}
 			} break;
-			case WINDOW_SKILLS: {
+			case WINDOW_SKILLS:
+			case WINDOW_ENCHANTER: {
 				Tooltip.InventorySlot.Item = PlayState.Stats->Items.at((uint32_t)Tooltip.Slot.Index);
+				Tooltip.Cost = _Item::GetEnchantPrice(Player->Character->MaxSkillLevels[Tooltip.Slot.Index]);
 			} break;
 			case WINDOW_ACTIONBAR: {
 				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())
@@ -629,6 +646,12 @@ void _HUD::Update(double FrameTime) {
 	Message.Time += FrameTime;
 }
 
+// Refresh various screens
+void _HUD::Refresh() {
+	SkillScreen->RefreshSkillButtons(!ae::Input.ModKeyDown(KMOD_ALT));
+	EnchanterScreen->RefreshBuyButtons();
+}
+
 // Draws the HUD elements
 void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	if(!Player)
@@ -718,6 +741,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		TradeScreen->Render(BlendFactor);
 		TraderScreen->Render(BlendFactor);
 		BlacksmithScreen->Render(BlendFactor);
+		EnchanterScreen->Render(BlendFactor);
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
 		ae::Assets.Elements["label_hud_pvp"]->Render();
@@ -1003,6 +1027,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	bool WasOpen = false;
 	WasOpen |= InventoryScreen->Close();
 	WasOpen |= BlacksmithScreen->Close();
+	WasOpen |= EnchanterScreen->Close();
 	WasOpen |= SkillScreen->Close();
 	WasOpen |= VendorScreen->Close();
 	WasOpen |= TraderScreen->Close();
@@ -1523,6 +1548,9 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		if(StatChangeUI.Change != 0)
 			PlayState.PlayCoinSound();
 	}
+
+	// Update screens
+	Refresh();
 }
 
 // Remove all battle stat changes

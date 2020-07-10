@@ -258,14 +258,14 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 			if(ShowBonusPoints)
 				ChildElement->Text = std::to_string(DrawLevel);
 			else
-				ChildElement->Text = std::to_string(DrawLevel) + "/" + std::to_string(HUD->Player->Stats->Items.at(SkillID)->MaxLevel);
+				ChildElement->Text = std::to_string(DrawLevel) + "/" + std::to_string(HUD->Player->Character->MaxSkillLevels[SkillID]);
 			ChildElement->Color = LevelColor;
 		}
 		else if(ChildElement->Name == "button_skills_plus") {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)ChildElement->Index;
-			if(SkillPointsRemaining <= 0 || HUD->Player->Character->Skills[SkillID] >= HUD->Player->Stats->Items.at(SkillID)->MaxLevel)
+			if(SkillPointsRemaining <= 0 || HUD->Player->Character->Skills[SkillID] >= HUD->Player->Character->MaxSkillLevels[SkillID])
 				ChildElement->SetActive(false);
 			else
 				ChildElement->SetActive(true);
@@ -281,7 +281,6 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 		}
 	}
 }
-
 
 // Adjust skill level
 void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount) {

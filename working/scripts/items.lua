@@ -176,10 +176,6 @@ function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_RespecPotion.PlaySound(self, Level)
-	Audio.Play("thud0.ogg")
-end
-
 -- Action Slot --
 
 Item_ActionSlot = { }
