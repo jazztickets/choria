@@ -867,6 +867,9 @@ void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PV
 	BattleEvent.PVP = PVP;
 	BattleEvent.BountyEarned = BountyEarned;
 	BattleEvent.BountyClaimed = BountyClaimed;
+	BattleEvent.Side = BATTLE_PVP_VICTIM_SIDE;
+	if(BountyEarned > 0)
+		BattleEvent.Side = BATTLE_PVP_ATTACKER_SIDE;
 
 	BattleEvents.push_back(BattleEvent);
 }
@@ -2110,9 +2113,9 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Difficulty[1] = 1.0;
 
 		// Add players to battle
-		Battle->AddObject(BattleEvent.Object, BATTLE_PVP_ATTACKER_SIDE);
+		Battle->AddObject(BattleEvent.Object, BattleEvent.Side);
 		for(auto &TargetPlayer : Players) {
-			Battle->AddObject(TargetPlayer, !BATTLE_PVP_ATTACKER_SIDE);
+			Battle->AddObject(TargetPlayer, !BattleEvent.Side);
 		}
 
 		// Add summons

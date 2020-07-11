@@ -43,6 +43,7 @@ struct _BattleResult {
 		JoinedCount(0),
 		TotalExperienceGiven(0),
 		TotalGoldGiven(0),
+		TotalBounty(0),
 		TotalGoldStolen(0),
 		ExperiencePerCharacter(0),
 		GoldPerCharacter(0),
@@ -55,6 +56,7 @@ struct _BattleResult {
 	int JoinedCount;
 	int TotalExperienceGiven;
 	int TotalGoldGiven;
+	int TotalBounty;
 	int TotalGoldStolen;
 	int ExperiencePerCharacter;
 	int GoldPerCharacter;

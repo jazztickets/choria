@@ -612,6 +612,7 @@ void _Battle::ServerEndBattle() {
 
 			// Calculate gold based on monster or player
 			SideStats[Side].TotalGoldStolen += Object->Fighter->GoldStolen;
+			SideStats[Side].TotalBounty += Object->Character->Bounty;
 			if(Object->IsMonster())
 				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven;
 			else
@@ -748,8 +749,30 @@ void _Battle::ServerEndBattle() {
 			}
 		}
 		else {
-			if(PVP)
-				Object->ApplyDeathPenalty(true, BountyEarned, Object->Character->Bounty);
+			if(PVP) {
+
+				// Fugitive was bounty hunted, apply regular death penalty
+				float AttackPenalty = BountyEarned;
+				if(BountyEarned == 0.0)
+					AttackPenalty = PLAYER_DEATH_GOLD_PENALTY;
+
+				// Both sides died
+				if(WinningSide == -1) {
+
+					// Victim applies penalty first, then gets bounty share
+					if(Object->Fighter->BattleSide == BATTLE_PVP_VICTIM_SIDE) {
+						Object->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
+						GoldEarned = SideStats[BATTLE_PVP_ATTACKER_SIDE].TotalBounty / SideStats[BATTLE_PVP_VICTIM_SIDE].PlayerCount;
+					}
+					// Attacker loses contract
+					else {
+						Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Bounty);
+					}
+				}
+				else {
+					Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Bounty);
+				}
+			}
 			else
 				Object->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
 		}

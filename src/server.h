@@ -52,6 +52,7 @@ struct _BattleEvent {
 	float BountyEarned;
 	float BountyClaimed;
 	int PVP;
+	int Side;
 	bool Scripted;
 };
 
