@@ -94,6 +94,7 @@ class _Object : public ae::_BaseObject {
 		void UnserializeBattle(ae::_Buffer &Data, bool IsClient);
 		void UnserializeStatusEffects(ae::_Buffer &Data);
 		void SendPacket(ae::_Buffer &Packet);
+		void SendActionClear();
 
 		// Stats
 		bool IsMonster() const;

@@ -241,7 +241,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	if(ClientPlayer->Fighter->PotentialAction.IsSet() && Action != ClientPlayer->Fighter->PotentialAction)
 		ChangingAction = true;
 
-	// Choose an action to use
+	// Action has been chosen, select target
 	if(!ClientPlayer->Fighter->PotentialAction.IsSet() || ChangingAction) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = ClientPlayer;
@@ -289,7 +289,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		else
 			ClientPlayer->Fighter->PotentialAction.Unset();
 	}
-	// Apply action
+	// Confirm action
 	else if(ClientPlayer->Character->Targets.size()) {
 
 		// Update HUD
@@ -311,8 +311,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		}
 
 		// Remember target
-		if(ClientPlayer->Character->Targets.size())
-			ClientPlayer->Fighter->LastTarget[ClientPlayer->Character->Targets.front()->Fighter->BattleSide] = ClientPlayer->Character->Targets.front();
+		ClientPlayer->Fighter->LastTarget[ClientPlayer->Character->Targets.front()->Fighter->BattleSide] = ClientPlayer->Character->Targets.front();
 
 		// Notify server
 		ae::_Buffer Packet;

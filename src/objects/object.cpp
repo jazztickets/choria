@@ -168,12 +168,7 @@ void _Object::Update(double FrameTime) {
 					SendPacket(Packet);
 				}
 				else {
-
-					// Can't use action so send an action clear packet
-					ae::_Buffer FailPacket;
-					FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
-					FailPacket.Write<ae::NetworkIDType>(NetworkID);
-					SendPacket(FailPacket);
+					SendActionClear();
 				}
 
 				Character->Action.Unset();
@@ -1522,6 +1517,17 @@ void _Object::SendPacket(ae::_Buffer &Packet) {
 		Character->Battle->BroadcastPacket(Packet);
 	else if(Peer)
 		Server->Network->SendPacket(Packet, Peer);
+}
+
+// Send action clear packet to client
+void _Object::SendActionClear() {
+	if(!Server)
+		return;
+
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::ACTION_CLEAR);
+	Packet.Write<ae::NetworkIDType>(NetworkID);
+	SendPacket(Packet);
 }
 
 // Check if object is a monster
