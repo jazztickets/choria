@@ -1117,6 +1117,7 @@ INSERT INTO trader VALUES(58,'mystic_staff',289,1);
 INSERT INTO trader VALUES(59,'flay',44,1);
 INSERT INTO trader VALUES(60,'pain_ring',285,1);
 INSERT INTO trader VALUES(61,'poison',156,1);
+INSERT INTO trader VALUES(62,'witch_key',293,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1266,6 +1267,8 @@ INSERT INTO traderitem VALUES(165,56,283,1);
 INSERT INTO traderitem VALUES(166,61,124,1);
 INSERT INTO traderitem VALUES(167,61,115,1);
 INSERT INTO traderitem VALUES(168,61,108,1);
+INSERT INTO traderitem VALUES(169,62,221,10);
+INSERT INTO traderitem VALUES(170,62,237,5);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1957,6 +1960,7 @@ INSERT INTO item VALUES(289,6,2,0,0,0,1,'Mystic Staff','textures/items/mystic_st
 INSERT INTO item VALUES(290,5,5,0,0,0,5,'Shining Star','textures/items/shining_star.png','Proc_Stun',0,15000,1,1,50,3.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,5,15,0,0,'',0);
 INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','',0,20,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/yard.png',0);
 INSERT INTO item VALUES(292,13,0,0,0,0,0,'Ancient Key','textures/items/key1.png','',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','',0,25,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

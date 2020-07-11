@@ -772,7 +772,7 @@ int _Item::GetUpgradeCost(int Level) const {
 // Get enchant cost
 int _Item::GetEnchantCost(int Level) {
 	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1;
-	return std::max(0, (int)(std::ceil(Index * (GAME_BASE_ENCHANT_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
+	return std::max(0, (int)(std::ceil(Index * (GAME_ENCHANT_BASE_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
 }
 
 // Return true if the item can be used
