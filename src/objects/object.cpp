@@ -1146,7 +1146,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		if(!Character->Battle) {
 
 			// Apply penalty
-			ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
+			ApplyDeathPenalty(false, PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 	}
 
@@ -1355,7 +1355,7 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 }
 
 // Update death count and gold loss
-void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
+void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
 	int OldBounty = Character->Bounty;
 
@@ -1376,7 +1376,11 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 		}
 
 		if(Peer) {
-			Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), "red");
+			std::string Text = "You died ";
+			if(InBattle)
+				Text += "in battle ";
+
+			Server->SendMessage(Peer, std::string(Text + "and lost " + std::to_string(GoldPenalty) + " gold"), "red");
 			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Deaths << " )" << std::endl;
 		}
 	}

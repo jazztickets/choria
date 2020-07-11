@@ -749,9 +749,9 @@ void _Battle::ServerEndBattle() {
 		}
 		else {
 			if(PVP)
-				Object->ApplyDeathPenalty(BountyEarned, Object->Character->Bounty);
+				Object->ApplyDeathPenalty(true, BountyEarned, Object->Character->Bounty);
 			else
-				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
+				Object->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 
 		// Start cooldown timer

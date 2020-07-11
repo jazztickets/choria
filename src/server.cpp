@@ -1710,7 +1710,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		// Penalize player for leaving battle
 		if(Player->Character->Battle) {
-			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
+			Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
 			Player->Character->Health = 0;
 			Player->Character->Mana = Player->Character->MaxMana / 2;
 			Player->Character->LoadMapID = 0;
