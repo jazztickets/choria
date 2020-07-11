@@ -528,7 +528,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		case ItemType::ARMOR:
 		case ItemType::BOOTS:
 		case ItemType::SHIELD:
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY)
+			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to equip");
 		break;
 		case ItemType::CONSUMABLE:
@@ -550,7 +550,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			}
 			else {
 				if(IsLocked) {
-					if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
+					if(Tooltip.Window == _HUD::WINDOW_INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
 						HelpTextList.push_back("Right-click to learn");
 				}
 				else {
@@ -561,7 +561,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		break;
 		case ItemType::UNLOCKABLE: {
 			bool Unlocked = Player->Character->HasUnlocked(this);
-			if(!Unlocked && Tooltip.Window == _HUD::WINDOW_INVENTORY)
+			if(!Unlocked && Tooltip.Window == _HUD::WINDOW_INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to unlock");
 			else if(Unlocked) {
 				InfoText = "Already unlocked";
@@ -573,7 +573,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				InfoText = "Already in keychain";
 				InfoColor = ae::Assets.Colors["red"];
 			}
-			else if(Tooltip.Window == _HUD::WINDOW_INVENTORY) {
+			else if(Tooltip.Window == _HUD::WINDOW_INVENTORY && !(Player->Character->Vendor && Config.RightClickSell)) {
 				HelpTextList.push_back("Right-click to add to keychain");
 			}
 		} break;
