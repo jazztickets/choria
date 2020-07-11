@@ -14,6 +14,9 @@ type gawk >/dev/null 2>&1 || {
 
 # get path to log file
 log="$HOME/.local/share/choria2015/log/server.log"
+if [ -n "$1" ]; then
+	log="$1"
+fi
 
 # make temp directory
 mkdir -p gold
