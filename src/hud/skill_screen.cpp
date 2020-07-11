@@ -263,7 +263,8 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 				ChildElement->Text = std::to_string(DrawLevel);
 			else
 				ChildElement->Text = std::to_string(DrawLevel) + "/" + std::to_string(HUD->Player->Character->MaxSkillLevels[SkillID]);
-			ChildElement->Color = LevelColor;
+
+			ChildElement->Color = DrawLevel > 0 ? LevelColor : ae::Assets.Colors["gray"];
 		}
 		else if(ChildElement->Name == "button_skills_plus") {
 
