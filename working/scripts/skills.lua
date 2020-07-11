@@ -1329,6 +1329,10 @@ function Skill_RaiseDead.GetSpecialChance(self, Source, Level)
 end
 
 function Skill_RaiseDead.CanTarget(self, Source, Target, Alive)
+	if Target == nil then
+		return false
+	end
+
 	return Target.Corpse > 0 and Target.Health == 0
 end
 
@@ -1809,6 +1813,10 @@ function Skill_Rupture.GetLevel(self, Source, Level)
 end
 
 function Skill_Rupture.CanTarget(self, Source, Target, Alive)
+	if Target == nil then
+		return false
+	end
+
 	if Alive == true then
 		return Target.Health > 0
 	else
