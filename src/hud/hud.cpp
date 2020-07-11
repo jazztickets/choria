@@ -214,7 +214,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 					// Use an item
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
+						if(ae::Input.ModKeyDown(KMOD_SHIFT) || (Config.RightClickSell && Player->Character->Vendor)) {
 							VendorScreen->SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_CTRL));
 						}
 						else {
@@ -230,14 +230,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						if(Tooltip.Window == WINDOW_VENDOR) {
-							if(ae::Input.ModKeyDown(KMOD_SHIFT))
-								VendorScreen->BuyItem(&Tooltip);
-							else
-								VendorScreen->BuyItem(&Tooltip);
-						}
-						else if((Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) && ae::Input.ModKeyDown(KMOD_SHIFT))
-							VendorScreen->SellItem(&Tooltip, 1);
+						if(Tooltip.Window == WINDOW_VENDOR)
+							VendorScreen->BuyItem(&Tooltip);
 					}
 				break;
 				case WINDOW_ACTIONBAR:

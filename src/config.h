@@ -45,6 +45,7 @@ class _Config {
 		// Gameplay
 		double TimeScale;
 		double AutoSavePeriod;
+		bool RightClickSell;
 
 		// Graphics
 		glm::ivec2 WindowSize;

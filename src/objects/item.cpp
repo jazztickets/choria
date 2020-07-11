@@ -32,6 +32,7 @@
 #include <stats.h>
 #include <constants.h>
 #include <stats.h>
+#include <config.h>
 #include <scripting.h>
 #include <sstream>
 #include <iomanip>
@@ -497,7 +498,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			Buffer << "Sell for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
-			HelpTextList.push_back("Shift+Right-click to sell");
+			if(Config.RightClickSell)
+				HelpTextList.push_back("Right-click to sell");
+			else
+				HelpTextList.push_back("Shift+Right-click to sell");
 		}
 	}
 
@@ -528,7 +532,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				HelpTextList.push_back("Right-click to equip");
 		break;
 		case ItemType::CONSUMABLE:
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && CheckScope(ScopeType::WORLD))
+			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && CheckScope(ScopeType::WORLD) && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to use");
 			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
 				HelpTextList.push_back("Left-click to use");
