@@ -592,10 +592,16 @@ void _Battle::ServerEndBattle() {
 		for(auto &Object : SideObjects[Side]) {
 
 			// Keep track of players
-			if(!Object->IsMonster())
+			if(!Object->IsMonster()) {
+				if(Object->Character->IsAlive())
+					SideStats[Side].AlivePlayerCount++;
 				SideStats[Side].PlayerCount++;
-			else
+			}
+			else {
+				if(Object->Character->IsAlive())
+					SideStats[Side].AliveMonsterCount++;
 				SideStats[Side].MonsterCount++;
+			}
 
 			if(Object->Fighter->JoinedBattle)
 				SideStats[Side].JoinedCount++;
@@ -637,20 +643,23 @@ void _Battle::ServerEndBattle() {
 		// Divide up rewards
 		for(int Side = 0; Side < 2; Side++) {
 			int OtherSide = !Side;
-			int DivideCount = SideStats[Side].AliveCount - SideStats[Side].MonsterCount + SideStats[Side].MonsterCount / BATTLE_SUMMON_PLAYER_DIVISOR;
+			int DivideCount = SideStats[Side].AlivePlayerCount;
 			if(DivideCount <= 0)
 				continue;
 
+			// Determine share that goes to summons
+			float SummonShareMultiplier = 1.0f - SideStats[Side].AliveMonsterCount * BATTLE_SUMMON_SHARE_PERCENT / 100.0f;
+
 			// Divide experience up
 			if(SideStats[OtherSide].TotalExperienceGiven > 0) {
-				SideStats[Side].ExperiencePerCharacter = SideStats[OtherSide].TotalExperienceGiven / DivideCount;
+				SideStats[Side].ExperiencePerCharacter = SummonShareMultiplier * SideStats[OtherSide].TotalExperienceGiven / DivideCount;
 				if(SideStats[Side].ExperiencePerCharacter <= 0)
 					SideStats[Side].ExperiencePerCharacter = 1;
 			}
 
 			// Divide gold up
 			if(SideStats[OtherSide].TotalGoldGiven > 0) {
-				SideStats[Side].GoldPerCharacter = SideStats[OtherSide].TotalGoldGiven / DivideCount;
+				SideStats[Side].GoldPerCharacter = SummonShareMultiplier * SideStats[OtherSide].TotalGoldGiven / DivideCount;
 				SideStats[Side].GoldStolenPerCharacter = SideStats[OtherSide].TotalGoldStolen / DivideCount;
 				if(SideStats[Side].GoldPerCharacter <= 0)
 					SideStats[Side].GoldPerCharacter = 1;

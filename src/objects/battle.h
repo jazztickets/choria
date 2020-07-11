@@ -39,6 +39,8 @@ struct _BattleResult {
 	_BattleResult() :
 		AliveCount(0),
 		PlayerCount(0),
+		AlivePlayerCount(0),
+		AliveMonsterCount(0),
 		MonsterCount(0),
 		JoinedCount(0),
 		TotalExperienceGiven(0),
@@ -52,6 +54,8 @@ struct _BattleResult {
 
 	int AliveCount;
 	int PlayerCount;
+	int AlivePlayerCount;
+	int AliveMonsterCount;
 	int MonsterCount;
 	int JoinedCount;
 	int TotalExperienceGiven;
