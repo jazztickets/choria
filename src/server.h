@@ -171,7 +171,7 @@ class _Server {
 		_Object *CreateBot();
 		bool ValidatePeer(ae::_Peer *Peer);
 		bool CheckAccountUse(ae::_Peer *Peer);
-		void AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer=nullptr);
+		void AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer=nullptr, bool Join=false);
 		void StartBattle(_BattleEvent &BattleEvent);
 		void StartRebirth(_RebirthEvent &RebirthEvent);
 

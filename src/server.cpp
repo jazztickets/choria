@@ -1687,7 +1687,8 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Add player to battle
 	Battle->AddObject(Player, 0, true);
-	AddBattleSummons(Battle, 0, Player);
+	AddBattleSummons(Battle, 0, Player, true);
+	Battle->BroadcastStatusEffects(Player);
 
 	// Send battle to new player
 	ae::_Buffer Packet;
@@ -2022,7 +2023,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 }
 
 // Add summons to the battle from summon buffs
-void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer) {
+void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer, bool Join) {
 
 	// Get list of objects on a side
 	std::list<_Object *> ObjectList;
@@ -2061,7 +2062,17 @@ void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer) {
 
 			// Create object
 			_Object *Object = CreateSummon(Captain.Owner, Captain.Summons.back().first);
-			Battle->AddObject(Object, Captain.Owner->Fighter->BattleSide);
+
+			// If joining battle, broadcast create
+			if(Join) {
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
+				Object->SerializeCreate(Packet);
+				Battle->BroadcastPacket(Packet);
+			}
+
+			// Add object to battle
+			Battle->AddObject(Object, Captain.Owner->Fighter->BattleSide, Join);
 
 			// Remove summon from pool and decrement owner's status effect level
 			_StatusEffect *StatusEffect = Captain.Summons.back().second;

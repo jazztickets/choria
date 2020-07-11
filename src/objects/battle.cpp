@@ -879,6 +879,7 @@ void _Battle::ServerEndBattle() {
 	for(auto &Object : PlayerUpdates) {
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::PLAYER_STATUSEFFECTS);
+		Packet.Write<ae::NetworkIDType>(Object.first->NetworkID);
 		Object.first->SerializeStatusEffects(Packet);
 		Server->Network->SendPacket(Packet, Object.first->Peer);
 	}
@@ -971,9 +972,6 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			continue;
 
 		if(Object->Fighter) {
-			//int GoldEarned = -Object->Fighter->GoldStolenLoss;
-			//Object->Fighter->GoldStolenGain = Object->Fighter->GoldStolenLoss = 0;
-			//Object->Character->UpdateGold(GoldEarned);
 			for(int i = 0; i < 2; i++) {
 				if(Object->Fighter->LastTarget[i] == RemoveObject)
 					Object->Fighter->LastTarget[i] = nullptr;
@@ -1087,6 +1085,21 @@ void _Battle::BroadcastPacket(ae::_Buffer &Data) {
 	for(auto &Object : Objects) {
 		if(!Object->Deleted && Object->Peer) {
 			Server->Network->SendPacket(Data, Object->Peer);
+		}
+	}
+}
+
+// Broadcast an object's current list of status effects
+void _Battle::BroadcastStatusEffects(_Object *UpdatedObject) {
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::PLAYER_STATUSEFFECTS);
+	Packet.Write<ae::NetworkIDType>(UpdatedObject->NetworkID);
+	UpdatedObject->SerializeStatusEffects(Packet);
+
+	// Send packet to all players
+	for(auto &Object : Objects) {
+		if(UpdatedObject != Object && !Object->Deleted && Object->Peer) {
+			Server->Network->SendPacket(Packet, Object->Peer);
 		}
 	}
 }

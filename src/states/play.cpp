@@ -1708,12 +1708,19 @@ void _PlayState::HandleStatusEffects(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->UnserializeStatusEffects(Data);
+	// Get object
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
+	_Object *Object = ObjectManager->GetObject(NetworkID);
+	if(!Object)
+		return;
+
+	// Build list of status effects
+	Object->UnserializeStatusEffects(Data);
 
 	// Create HUD elements
-	for(auto &StatusEffect : Player->Character->StatusEffects) {
-		if(Player->Fighter->BattleElement)
-			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Player->Fighter->BattleElement);
+	for(auto &StatusEffect : Object->Character->StatusEffects) {
+		if(Object->Fighter->BattleElement)
+			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Object->Fighter->BattleElement);
 
 		StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 	}

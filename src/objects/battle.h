@@ -94,6 +94,7 @@ class _Battle : public ae::_BaseObject {
 		void Serialize(ae::_Buffer &Data);
 		void Unserialize(ae::_Buffer &Data, _HUD *HUD);
 		void BroadcastPacket(ae::_Buffer &Data);
+		void BroadcastStatusEffects(_Object *UpdatedObject);
 
 		// Setup
 		void ServerEndBattle();
