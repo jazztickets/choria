@@ -2190,13 +2190,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 		// Get difficulty increase
 		double DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER;
-		if(Boss) {
+		if(Boss)
 			DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER_BOSS;
-
-			// Adjust for single player
-			if(Players.size() == 1)
-				Difficulty -= DifficultyAdjust;
-		}
 
 		// Add players to battle
 		Difficulty -= DifficultyAdjust;

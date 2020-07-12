@@ -385,13 +385,19 @@ end
 -- Shield Bash --
 
 Skill_ShieldBash = Base_Attack:New()
-Skill_ShieldBash.MaxPercent = 75
-Skill_ShieldBash.BaseChance = 23
-Skill_ShieldBash.ChancePerLevel = 4
-Skill_ShieldBash.Duration = 2.1
-Skill_ShieldBash.DurationPerLevel = 0.1
+Skill_ShieldBash.Duration = 2.0
+Skill_ShieldBash.DurationPerLevel = 0.05
 Skill_ShieldBash.DamageBase = 100
 Skill_ShieldBash.DamagePerLevel = 10
+Skill_ShieldBash.FatigueDuration = 2
+Skill_ShieldBash.FatigueDurationPerLevel = -0.05
+Skill_ShieldBash.Constant = 15
+Skill_ShieldBash.BasePercent = 21
+Skill_ShieldBash.Multiplier = 79
+
+function Skill_ShieldBash.GetChance(self, Level)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
+end
 
 function Skill_ShieldBash.GetDamage(self, Level)
 	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
@@ -401,8 +407,8 @@ function Skill_ShieldBash.GetDuration(self, Level)
 	return math.floor(self.Duration + self.DurationPerLevel * (Level - 1))
 end
 
-function Skill_ShieldBash.GetChance(self, Level)
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, self.MaxPercent)
+function Skill_ShieldBash.GetFatigueDuration(self, Level)
+	return math.max(self.FatigueDuration + self.FatigueDurationPerLevel * (Level - 1), 0.5)
 end
 
 function Skill_ShieldBash.GetInfo(self, Source, Item)
@@ -411,7 +417,7 @@ function Skill_ShieldBash.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Bash your enemy with a shield for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]shield damage with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c " .. TextColor .. "]Requires a shield"
+	return "Bash your enemy with a shield for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]shield damage with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds. Causes [c yellow]fatigue [c white]for [c green]" .. self:GetFatigueDuration(Item.Level) .." [c white]seconds\n[c " .. TextColor .. "]Requires a shield"
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
@@ -430,6 +436,14 @@ function Skill_ShieldBash.CanUse(self, Level, Source, Target)
 	end
 
 	return Shield.Type == ITEM_SHIELD
+end
+
+function Skill_ShieldBash.ApplyCost(self, Source, Level, Result)
+	Result.Source.Buff = Buff_Slowed.Pointer
+	Result.Source.BuffLevel = 20
+	Result.Source.BuffDuration = self:GetFatigueDuration(Level)
+
+	return Result
 end
 
 function Skill_ShieldBash.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -559,8 +573,8 @@ end
 -- Resurrect --
 
 Skill_Resurrect = Base_Spell:New()
-Skill_Resurrect.HealBase = -50
-Skill_Resurrect.HealPerLevel = 60
+Skill_Resurrect.HealBase = 0
+Skill_Resurrect.HealPerLevel = 25
 Skill_Resurrect.CostPerLevel = 20
 Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
@@ -1039,21 +1053,26 @@ end
 -- Flee --
 
 Skill_Flee = {}
-Skill_Flee.BaseChance = 28
-Skill_Flee.ChancePerLevel = 6
 Skill_Flee.Duration = 5
-Skill_Flee.DurationPerLevel = -0.2
+Skill_Flee.DurationPerLevel = -0.1
+Skill_Flee.Constant = 30
+Skill_Flee.BasePercent = 32
+Skill_Flee.Multiplier = 100
+
+function Skill_Flee.GetChance(self, Level)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
+end
 
 function Skill_Flee.CanUse(self, Level, Source, Target)
 	return not Source.BossBattle
 end
 
 function Skill_Flee.GetChance(self, Level)
-	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_Flee.GetDuration(self, Level)
-	return math.max(self.Duration + self.DurationPerLevel * (Level - 1), 1)
+	return math.max(self.Duration + self.DurationPerLevel * (Level - 1), 0.5)
 end
 
 function Skill_Flee.GetInfo(self, Source, Item)
@@ -1093,16 +1112,15 @@ end
 -- Pickpocket --
 
 Skill_Pickpocket = {}
-Skill_Pickpocket.BaseChance = 23
-Skill_Pickpocket.ChancePerLevel = 4
+Skill_Pickpocket.Constant = 30
+Skill_Pickpocket.BasePercent = 23
+Skill_Pickpocket.Multiplier = 84
 
 function Skill_Pickpocket.GetChance(self, Level)
-
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_Pickpocket.GetInfo(self, Source, Item)
-
 	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to steal [c green]50%][c white] gold from a monster or [c green]10%[c white] from a player"
 end
 
@@ -1143,17 +1161,21 @@ end
 Skill_Parry = {}
 Skill_Parry.StaminaGain = Buff_Parry.StaminaGain
 Skill_Parry.Duration = 0.5
-Skill_Parry.DurationPerLevel = 0.2
-Skill_Parry.DamageReduction = 50
-Skill_Parry.DamageReductionPerLevel = 2
-Skill_Parry.MaxDamageReduction = 95
+Skill_Parry.DurationPerLevel = 0.1
+Skill_Parry.Constant = 30
+Skill_Parry.BasePercent = 48
+Skill_Parry.Multiplier = 80
+
+function Skill_Pickpocket.GetChance(self, Level)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
+end
 
 function Skill_Parry.GetDuration(self, Level)
 	return self.Duration + self.DurationPerLevel * Level
 end
 
 function Skill_Parry.GetDamageReduction(self, Level)
-	return math.min(self.DamageReduction + self.DamageReductionPerLevel * (Level - 1), self.MaxDamageReduction)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_Parry.GetInfo(self, Source, Item)
@@ -1175,7 +1197,7 @@ Skill_Taunt.Armor = 10
 Skill_Taunt.ArmorPerLevel = 2
 Skill_Taunt.FatigueDuration = 5
 Skill_Taunt.Duration = 3.4
-Skill_Taunt.DurationPerLevel = 0.2
+Skill_Taunt.DurationPerLevel = 0.1
 Skill_Taunt.BaseTargets = 1
 Skill_Taunt.TargetsPerLevel = 0.2
 
@@ -1465,7 +1487,7 @@ Skill_Flay.DurationPerLevel = 0.2
 Skill_Flay.CostPerLevel = 20
 Skill_Flay.ManaCostBase = 50 - Skill_Flay.CostPerLevel
 Skill_Flay.BaseTargets = 1
-Skill_Flay.TargetsPerLevel = 0.2
+Skill_Flay.TargetsPerLevel = 0.1
 
 function Skill_Flay.GetPercent(self, Level)
 	return math.floor(self.BasePercent + self.PercentPerLevel * Level)
@@ -1549,12 +1571,13 @@ end
 -- Hunt --
 
 Skill_Hunt = Base_Attack:New()
-Skill_Hunt.GoldBase = 10
-Skill_Hunt.GoldPerLevel = 2
 Skill_Hunt.MaxGold = 100
+Skill_Hunt.Constant = 15
+Skill_Hunt.BasePercent = 7
+Skill_Hunt.Multiplier = 50
 
 function Skill_Hunt.GetGold(self, Level)
-	return math.min(math.floor(Skill_Hunt.GoldBase + Skill_Hunt.GoldPerLevel * (Level - 1)), self.MaxGold)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_Hunt.GetInfo(self, Source, Item)

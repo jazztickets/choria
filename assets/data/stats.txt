@@ -1388,7 +1388,7 @@ INSERT INTO build VALUES(29,'Fireant','',0,1,0,0);
 INSERT INTO build VALUES(30,'Crab','',0,1,0,0);
 INSERT INTO build VALUES(31,'Mud Man','',0,1,0,0);
 INSERT INTO build VALUES(32,'Venomous Bat','',0,1,0,0);
-INSERT INTO build VALUES(33,'Slime Prince','',0,3,0,0);
+INSERT INTO build VALUES(33,'Slime Prince','',0,8,0,0);
 INSERT INTO build VALUES(34,'Skeleton Priest','',0,2,0,0);
 INSERT INTO build VALUES(35,'Slime','',0,1,0,0);
 INSERT INTO build VALUES(36,'Skeleton','',0,1,0,0);
@@ -1485,6 +1485,7 @@ INSERT INTO buildskill VALUES(75,12,19,1);
 INSERT INTO buildskill VALUES(76,12,26,1);
 INSERT INTO buildskill VALUES(77,12,29,1);
 INSERT INTO buildskill VALUES(78,12,38,0);
+INSERT INTO buildskill VALUES(79,33,36,50);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1667,6 +1668,7 @@ INSERT INTO buildactionbar VALUES(89,12,19,0);
 INSERT INTO buildactionbar VALUES(90,12,29,1);
 INSERT INTO buildactionbar VALUES(91,12,26,2);
 INSERT INTO buildactionbar VALUES(92,12,109,3);
+INSERT INTO buildactionbar VALUES(93,33,36,3);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,
@@ -1740,7 +1742,7 @@ INSERT INTO item VALUES(34,1,0,0,0,0,0,'Bleed Mastery','textures/skills/bleed_ma
 INSERT INTO item VALUES(35,1,0,0,0,0,0,'Physical Mastery','textures/skills/physical_mastery.png','Skill_PhysicalMastery',1,1500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(36,1,0,0,0,0,0,'Heal Mastery','textures/skills/heal_mastery.png','Skill_HealMastery',1,1500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(37,1,0,0,0,0,0,'Poison Mastery','textures/skills/poison_mastery.png','Skill_PoisonMastery',1,1500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(38,1,0,1,1,0,0,'Portal','textures/skills/portal.png','Skill_Portal',3,450,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(38,1,0,1,1,0,0,'Portal','textures/skills/portal.png','Skill_Portal',3,450,0,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(39,1,0,2,2,0,0,'Raise Dead','textures/skills/raise_dead.png','Skill_RaiseDead',3,300,0,0,50,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(40,1,0,0,0,0,0,'Pet Mastery','textures/skills/pet_mastery.png','Skill_PetMastery',1,1500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(41,1,5,4,2,0,0,'Chain Lightning','textures/skills/chain_lightning.png','Skill_ChainLightning',3,750,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
