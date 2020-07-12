@@ -354,6 +354,10 @@ function Skill_Gash.GetChance(self, Level)
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 
+function Skill_Gash.GetBleedDamage(self, Source, Level)
+	return self.Duration * self:GetBleedLevel(Source, Level)
+end
+
 function Skill_Gash.GetBleedLevel(self, Source, Level)
 	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1)) * Source.BleedPower)
 end
@@ -364,7 +368,7 @@ function Skill_Gash.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Slice your enemy\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires at least one off-hand weapon"
+	return "Slice your enemy with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires at least one off-hand weapon"
 end
 
 function Skill_Gash.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1652,8 +1656,8 @@ Skill_BladeDance = Base_Attack:New()
 Skill_BladeDance.BaseChance = 25
 Skill_BladeDance.ChancePerLevel = 0
 Skill_BladeDance.Duration = 5
-Skill_BladeDance.IncreasePerLevel = 6
-Skill_BladeDance.BleedingLevel = 10
+Skill_BladeDance.IncreasePerLevel = 5
+Skill_BladeDance.BleedingLevel = 5
 Skill_BladeDance.BaseTargets = 2
 Skill_BladeDance.TargetsPerLevel = 0.1
 Skill_BladeDance.DamageBase = 40
@@ -1681,6 +1685,10 @@ function Skill_BladeDance.GetChance(self, Level)
 	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
 end
 
+function Skill_BladeDance.GetBleedDamage(self, Source, Level)
+	return self.Duration * self:GetBleedLevel(Source, Level)
+end
+
 function Skill_BladeDance.GetBleedLevel(self, Source, Level)
 	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1)) * Source.BleedPower)
 end
@@ -1695,7 +1703,7 @@ function Skill_BladeDance.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Source, Item.Level) .. " [c yellow]bleeding\n[c " .. TextColor .. "]Requires dual-wielding weapons"
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires dual-wielding weapons"
 end
 
 function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
