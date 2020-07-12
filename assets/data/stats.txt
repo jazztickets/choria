@@ -214,6 +214,7 @@ INSERT INTO ai VALUES(10,'AI_Raj');
 INSERT INTO ai VALUES(11,'AI_Jem');
 INSERT INTO ai VALUES(12,'AI_LavaSpitter');
 INSERT INTO ai VALUES(13,'AI_Zog');
+INSERT INTO ai VALUES(14,'AI_Attract');
 CREATE TABLE IF NOT EXISTS "unlock" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None')
@@ -596,13 +597,13 @@ INSERT INTO vendoritem VALUES(171,22,277);
 INSERT INTO vendoritem VALUES(172,18,278);
 INSERT INTO vendoritem VALUES(173,15,283);
 INSERT INTO vendoritem VALUES(174,21,284);
-INSERT INTO vendoritem VALUES(175,7,282);
 INSERT INTO vendoritem VALUES(177,22,290);
 INSERT INTO vendoritem VALUES(178,17,45);
 INSERT INTO vendoritem VALUES(179,18,292);
 INSERT INTO vendoritem VALUES(180,11,270);
 INSERT INTO vendoritem VALUES(181,20,37);
 INSERT INTO vendoritem VALUES(182,11,222);
+INSERT INTO vendoritem VALUES(183,20,46);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -727,6 +728,7 @@ INSERT INTO buff VALUES(23,'Demons','Buff_SummonDemon','textures/buffs/summon_de
 INSERT INTO buff VALUES(24,'Skeletons','Buff_SummonSkeleton','textures/buffs/summon_skeleton.png',1,1);
 INSERT INTO buff VALUES(25,'Skeleton Priests','Buff_SummonSkeletonPriest','textures/buffs/summon_skeleton_priest.png',1,1);
 INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0,0);
+INSERT INTO buff VALUES(27,'Fractured','Buff_Fractured','textures/buffs/fractured.png',0,1);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -962,10 +964,10 @@ INSERT INTO monster VALUES(16,1,'Crimson Slime','textures/monsters/crimson_slime
 INSERT INTO monster VALUES(17,1,'Dead Queen','textures/monsters/dead_queen.png',250,500,4000,1500,200,300,30,20,4.0,4,27);
 INSERT INTO monster VALUES(18,1,'Mud Man','textures/monsters/mud_man.png',20,30,600,0,40,120,8,5,2.8500000000000000888,1,31);
 INSERT INTO monster VALUES(19,1,'Slime Prince','textures/monsters/slime_prince.png',175,300,3000,4000,100,350,25,30,2.5,5,33);
-INSERT INTO monster VALUES(20,1,'Skeleton','textures/monsters/skeleton.png',30,25,650,0,100,150,5,10,2.0,1,36);
+INSERT INTO monster VALUES(20,1,'Skeleton','textures/monsters/skeleton.png',30,25,650,0,100,150,5,10,2.0,14,36);
 INSERT INTO monster VALUES(21,1,'Skeleton Priest','textures/monsters/skeleton_priest.png',35,30,750,600,50,100,3,0,2.6600000000000001421,6,34);
 INSERT INTO monster VALUES(22,1,'Dusty Ant','textures/monsters/dusty_ant.png',40,40,1000,0,125,175,25,15,2.0,2,29);
-INSERT INTO monster VALUES(23,1,'Demon','textures/monsters/demon.png',40,35,1200,0,100,225,10,0,2.0,1,37);
+INSERT INTO monster VALUES(23,1,'Demon','textures/monsters/demon.png',40,35,1200,0,100,225,10,0,2.0,14,37);
 INSERT INTO monster VALUES(24,1,'Goblin','textures/monsters/goblin.png',6,5,175,0,20,40,2,0,2.0,1,38);
 INSERT INTO monster VALUES(25,1,'Goblin Thief','textures/monsters/goblin_thief.png',15,200,300,0,50,100,5,5,1.6000000000000000888,7,39);
 INSERT INTO monster VALUES(26,1,'Lava Man','textures/monsters/lava_man.png',50,50,1250,0,125,200,10,5,2.0,8,40);
@@ -1753,7 +1755,7 @@ INSERT INTO item VALUES(42,1,6,9,2,0,0,'Rupture','textures/skills/rupture.png','
 INSERT INTO item VALUES(43,1,0,5,3,0,0,'Sanctuary','textures/skills/sanctuary.png','Skill_Sanctuary',3,1800,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(44,1,0,4,2,0,0,'Flay','textures/skills/flay.png','Skill_Flay',3,2500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(45,1,6,2,2,0,0,'Poison Touch','textures/skills/poison_touch.png','Skill_PoisonTouch',3,225,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
-INSERT INTO item VALUES(46,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(46,1,0,2,2,0,0,'Fracture','textures/skills/fracture.png','Skill_Fracture',3,650,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(47,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(48,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(49,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);

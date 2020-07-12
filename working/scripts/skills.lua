@@ -1486,10 +1486,10 @@ end
 Skill_Flay = Base_Spell:New()
 Skill_Flay.PercentPerLevel = 4
 Skill_Flay.BasePercent = 25 - Skill_Flay.PercentPerLevel
-Skill_Flay.Duration = 4
+Skill_Flay.Duration = 5
 Skill_Flay.DurationPerLevel = 0.2
-Skill_Flay.CostPerLevel = 20
-Skill_Flay.ManaCostBase = 50 - Skill_Flay.CostPerLevel
+Skill_Flay.CostPerLevel = 10
+Skill_Flay.ManaCostBase = 20 - Skill_Flay.CostPerLevel
 Skill_Flay.BaseTargets = 1
 Skill_Flay.TargetsPerLevel = 0.1
 
@@ -1522,6 +1522,37 @@ end
 
 function Skill_Flay.PlaySound(self, Level)
 	Audio.Play("swamp0.ogg")
+end
+
+-- Fracture --
+
+Skill_Fracture = Base_Spell:New()
+Skill_Fracture.Duration = 5
+Skill_Fracture.DurationPerLevel = 0.2
+Skill_Fracture.CostPerLevel = 5
+Skill_Fracture.ManaCostBase = 40 - Skill_Fracture.CostPerLevel
+Skill_Fracture.Armor = 5
+Skill_Fracture.ArmorPerLevel = 1
+
+function Skill_Fracture.GetReduction(self, Level)
+	return math.floor(self.Armor + self.ArmorPerLevel * (Level - 1))
+end
+
+function Skill_Fracture.GetInfo(self, Source, Item)
+	return "Decimate target's defenses, reducing their armor by [c green]" .. self:GetReduction(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
+end
+
+function Skill_Fracture.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Fractured.Pointer
+	Result.Target.BuffLevel = self:GetReduction(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
+
+	return Result
+end
+
+function Skill_Fracture.PlaySound(self, Level)
+	Audio.Play("enfeeble0.ogg")
 end
 
 -- Cleave --

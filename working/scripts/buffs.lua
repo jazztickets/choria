@@ -314,6 +314,20 @@ function Buff_Flayed.Stats(self, Level, Source, Change)
 	return Change
 end
 
+-- Fractured  --
+
+Buff_Fractured = Base_Buff:New()
+
+function Buff_Fractured.GetInfo(self, Level)
+	return "Armor reduced by [c green]" .. Level
+end
+
+function Buff_Fractured.Stats(self, Level, Source, Change)
+	Change.Armor = -Level
+
+	return Change
+end
+
 -- Light  --
 
 Buff_Light = Base_Buff:New()

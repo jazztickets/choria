@@ -21,12 +21,49 @@ function AI_AddTarget(Source, Target, AffectedByTaunt)
 	Source.AddTarget(Target.Pointer)
 end
 
+function AI_FindAttractant(Buff, Enemies)
+
+	-- Find enemy with attractant
+	AttractIndex = 0
+	for i = 1, #Enemies do
+		for j = 1, #Enemies[i].StatusEffects do
+			if Enemies[i].StatusEffects[j].Buff == Buff then
+				return i
+			end
+		end
+	end
+
+	return 0
+end
+
 AI_Dumb = {}
 
 function AI_Dumb.Update(self, Object, Enemies, Allies)
 
 	-- Get random target
 	Target = Random.GetInt(1, #Enemies)
+
+	-- Set target
+	AI_AddTarget(Object, Enemies[Target], true)
+
+	-- Set skill
+	Object.SetAction(0)
+end
+
+AI_Attract = {}
+
+function AI_Attract.Update(self, Object, Enemies, Allies)
+
+	-- Find enemy with debuff
+	AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
+
+	-- Target enemy with debuff
+	if AttractIndex > 0 then
+		Target = AttractIndex
+	else
+		-- Get random target
+		Target = Random.GetInt(1, #Enemies)
+	end
 
 	-- Set target
 	AI_AddTarget(Object, Enemies[Target], true)
@@ -177,8 +214,16 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 		end
 	end
 
-	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	-- Find enemy with debuff
+	AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
+
+	-- Target enemy with debuff
+	if AttractIndex > 0 then
+		Target = AttractIndex
+	else
+		-- Get random target
+		Target = Random.GetInt(1, #Enemies)
+	end
 
 	-- Set target
 	AI_AddTarget(Object, Enemies[Target], true)
