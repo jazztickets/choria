@@ -252,6 +252,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Difficulty
+	if(HUD->Player->Character->Difficulty != 100) {
+		Buffer << HUD->Player->Character->Difficulty << "%";
+		Font->DrawText("Difficulty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Resistances
 	bool HasResist = false;
 	for(auto &Resistance : HUD->Player->Character->Resistances) {

@@ -166,6 +166,7 @@ class _Character {
 		int EternalWealth;
 		int EternalAlacrity;
 		int EternalKnowledge;
+		int EternalPain;
 
 		// Levels
 		bool CalcLevelStats;

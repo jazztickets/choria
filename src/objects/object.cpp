@@ -581,6 +581,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["eternal_wealth"] = Character->EternalWealth;
 	StatsNode["eternal_alacrity"] = Character->EternalAlacrity;
 	StatsNode["eternal_knowledge"] = Character->EternalKnowledge;
+	StatsNode["eternal_pain"] = Character->EternalPain;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -717,6 +718,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->EternalWealth = StatsNode["eternal_wealth"].asInt();
 	Character->EternalAlacrity = StatsNode["eternal_alacrity"].asInt();
 	Character->EternalKnowledge = StatsNode["eternal_knowledge"].asInt();
+	Character->EternalPain = StatsNode["eternal_pain"].asInt();
 
 	if(!Character->Seed)
 		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
@@ -847,6 +849,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->EternalWealth);
 	Data.Write<int>(Character->EternalAlacrity);
 	Data.Write<int>(Character->EternalKnowledge);
+	Data.Write<int>(Character->EternalPain);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -959,6 +962,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->EternalWealth = Data.Read<int>();
 	Character->EternalAlacrity = Data.Read<int>();
 	Character->EternalKnowledge = Data.Read<int>();
+	Character->EternalPain = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1066,6 +1070,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 				Server->QueueRebirth(this, 7, StatChange.Values[StatType::BATTLESPEED].Integer);
 			else if(StatChange.HasStat(StatType::SKILLPOINT))
 				Server->QueueRebirth(this, 8, StatChange.Values[StatType::SKILLPOINT].Integer);
+			else if(StatChange.HasStat(StatType::REBIRTH))
+				Server->QueueRebirth(this, 9, StatChange.Values[StatType::DIFFICULTY].Integer);
 
 			return nullptr;
 		}

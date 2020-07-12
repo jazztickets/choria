@@ -69,6 +69,7 @@ _Character::_Character(_Object *Object) :
 	EternalWealth(0),
 	EternalAlacrity(0),
 	EternalKnowledge(0),
+	EternalPain(0),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -340,7 +341,7 @@ void _Character::CalculateStats() {
 	LavaProtection = false;
 	Stunned = 0;
 	SummonLimit = 0;
-	Difficulty = 100;
+	Difficulty = 100 + EternalPain;
 	Resistances.clear();
 
 	// Eternal Strength

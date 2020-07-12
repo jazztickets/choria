@@ -2304,6 +2304,9 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 		case 8:
 			Character->EternalKnowledge += RebirthEvent.Value;
 		break;
+		case 9:
+			Character->EternalPain += RebirthEvent.Value;
+		break;
 	}
 
 	// Keep items from trade bag
