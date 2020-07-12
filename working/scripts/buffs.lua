@@ -374,7 +374,7 @@ end
 -- Sanctuary --
 
 Buff_Sanctuary = Base_Buff:New()
-Buff_Sanctuary.Heal = 5
+Buff_Sanctuary.Heal = 2.5
 Buff_Sanctuary.Armor = 1
 Buff_Sanctuary.DamageBlock = 2
 
@@ -390,7 +390,7 @@ function Buff_Sanctuary.Stats(self, Level, Source, Change)
 end
 
 function Buff_Sanctuary.Update(self, Level, Source, Change)
-	Change.Health = self.Heal * Level
+	Change.Health = math.floor(self.Heal * Level)
 
 	return Change
 end

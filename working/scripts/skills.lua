@@ -292,10 +292,10 @@ end
 -- Fury --
 
 Skill_Fury = Base_Attack:New()
-Skill_Fury.StaminaPerLevel = 0.04
-Skill_Fury.BaseStamina = 0.25
-Skill_Fury.SpeedDuration = 3
-Skill_Fury.SpeedDurationPerLevel = 0.2
+Skill_Fury.StaminaPerLevel = 0.02
+Skill_Fury.BaseStamina = 0.28
+Skill_Fury.SpeedDuration = 2
+Skill_Fury.SpeedDurationPerLevel = 0.1
 
 function Skill_Fury.GetStaminaGain(self, Level)
 	return math.min(self.BaseStamina + self.StaminaPerLevel * Level, 1.0)
@@ -450,10 +450,10 @@ end
 -- Whirlwind --
 
 Skill_Whirlwind = Base_Attack:New()
-Skill_Whirlwind.DamageBase = 20
-Skill_Whirlwind.DamagePerLevel = 3
-Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 4.0
-Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
+Skill_Whirlwind.DamageBase = 31
+Skill_Whirlwind.DamagePerLevel = 4
+Skill_Whirlwind.SlowDurationPerLevel = 0.0
+Skill_Whirlwind.SlowDuration = 4 - Skill_Whirlwind.SlowDurationPerLevel
 
 function Skill_Whirlwind.CanUse(self, Level, Source, Target)
 	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
@@ -685,12 +685,15 @@ end
 -- Fire Blast --
 
 Skill_FireBlast = Base_Spell:New()
-Skill_FireBlast.DamageBase = 50
+Skill_FireBlast.DamageBase = 60
 Skill_FireBlast.DamagePerLevel = 30
+Skill_FireBlast.BurnLevel = 10
+Skill_FireBlast.BurnLevelPerLevel = 5
 Skill_FireBlast.CostPerLevel = 10
 Skill_FireBlast.ManaCostBase = 60 - Skill_FireBlast.CostPerLevel
 Skill_FireBlast.BaseTargets = 3
-Skill_FireBlast.TargetsPerLevel = 0.2
+Skill_FireBlast.Duration = 6
+Skill_FireBlast.TargetsPerLevel = 0.1
 
 function Skill_FireBlast.GetTargetCount(self, Level)
 	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
@@ -700,12 +703,28 @@ function Skill_FireBlast.GetDamagePower(self, Source, Level)
 	return Source.FirePower
 end
 
+function Skill_FireBlast.GetBurnLevel(self, Source, Level)
+	return math.floor((self.BurnLevel + self.BurnLevelPerLevel * Level) * self:GetDamagePower(Source, Level))
+end
+
+function Skill_FireBlast.GetBurnDamage(self, Source, Level)
+	return self:GetBurnLevel(Source, Level) * self:GetDuration(Level)
+end
+
 function Skill_FireBlast.GetInfo(self, Source, Item)
-	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage, igniting them for [c green]" .. self:GetBurnDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self, Level)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+function Skill_FireBlast.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Burning.Pointer
+	Result.Target.BuffLevel = self:GetBurnLevel(Source, Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return true
 end
 
 -- Ignite --
@@ -832,11 +851,12 @@ end
 -- Energy Field --
 
 Skill_EnergyField = {}
-Skill_EnergyField.BasePercent = 20
-Skill_EnergyField.PercentPerLevel = 5
+Skill_EnergyField.BasePercent = 19
+Skill_EnergyField.Constant = 15
+Skill_EnergyField.Multiplier = 99
 
 function Skill_EnergyField.GetReduction(self, Level)
-	return math.min(Skill_EnergyField.BasePercent + self.PercentPerLevel * math.floor(Level / 1), 95)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_EnergyField.GetInfo(self, Source, Item)
@@ -1394,10 +1414,10 @@ end
 -- Enfeeble --
 
 Skill_Enfeeble = Base_Spell:New()
-Skill_Enfeeble.MaxPercent = 75
-Skill_Enfeeble.PercentPerLevel = 4
-Skill_Enfeeble.BasePercent = 25 - Skill_Enfeeble.PercentPerLevel
-Skill_Enfeeble.DurationPerLevel = 0.4
+Skill_Enfeeble.BasePercent = 19
+Skill_Enfeeble.Constant = 15
+Skill_Enfeeble.Multiplier = 99
+Skill_Enfeeble.DurationPerLevel = 0.2
 Skill_Enfeeble.Duration = 5
 Skill_Enfeeble.CostPerLevel = 10
 Skill_Enfeeble.ManaCostBase = 10 - Skill_Enfeeble.CostPerLevel
@@ -1405,7 +1425,7 @@ Skill_Enfeeble.BaseTargets = 1
 Skill_Enfeeble.TargetsPerLevel = 0.2
 
 function Skill_Enfeeble.GetPercent(self, Level)
-	return math.min(math.floor(self.BasePercent + self.PercentPerLevel * Level), self.MaxPercent)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_Enfeeble.GetTargetCount(self, Level)
@@ -1484,7 +1504,8 @@ Skill_Cleave = Base_Attack:New()
 Skill_Cleave.DamageBase = 32
 Skill_Cleave.DamagePerLevel = 1
 Skill_Cleave.BaseTargets = 3
-Skill_Cleave.TargetsPerLevel = 0.2
+Skill_Cleave.MaxTargets = 6
+Skill_Cleave.TargetsPerLevel = 0.1
 
 function Skill_Cleave.CanUse(self, Level, Source, Target)
 	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
@@ -1509,7 +1530,7 @@ function Skill_Cleave.GenerateDamage(self, Level, Source)
 end
 
 function Skill_Cleave.GetTargetCount(self, Level)
-	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+	return math.min(math.floor(self.BaseTargets + self.TargetsPerLevel * Level), self.MaxTargets)
 end
 
 function Skill_Cleave.GetInfo(self, Source, Item)
@@ -1611,7 +1632,7 @@ Skill_BladeDance.Duration = 5
 Skill_BladeDance.IncreasePerLevel = 6
 Skill_BladeDance.BleedingLevel = 10
 Skill_BladeDance.BaseTargets = 2
-Skill_BladeDance.TargetsPerLevel = 0.2
+Skill_BladeDance.TargetsPerLevel = 0.1
 Skill_BladeDance.DamageBase = 40
 Skill_BladeDance.DamagePerLevel = 1
 
@@ -1708,7 +1729,7 @@ Skill_IceNova.DamagePerLevel = 25
 Skill_IceNova.CostPerLevel = 10
 Skill_IceNova.ManaCostBase = 80 - Skill_IceNova.CostPerLevel
 Skill_IceNova.BaseTargets = 3
-Skill_IceNova.TargetsPerLevel = 0.2
+Skill_IceNova.TargetsPerLevel = 0.1
 Skill_IceNova.Duration = 3.2
 Skill_IceNova.DurationPerLevel = 0.2
 
@@ -1744,7 +1765,7 @@ Skill_ChainLightning.DamagePerLevel = 20
 Skill_ChainLightning.CostPerLevel = 8
 Skill_ChainLightning.ManaCostBase = 90 - Skill_ChainLightning.CostPerLevel
 Skill_ChainLightning.BaseTargets = 3
-Skill_ChainLightning.TargetsPerLevel = 0.2
+Skill_ChainLightning.TargetsPerLevel = 0.1
 Skill_ChainLightning.Duration = 2
 Skill_ChainLightning.DurationPerLevel = 0.1
 Skill_ChainLightning.Chance = 35
@@ -1788,12 +1809,14 @@ end
 -- Rupture --
 
 Skill_Rupture = Base_Spell:New()
+Skill_Rupture.DamageBase = 150
+Skill_Rupture.DamagePerLevel = 30
 Skill_Rupture.Level = 20
 Skill_Rupture.LevelPerLevel = 10
 Skill_Rupture.CostPerLevel = 15
 Skill_Rupture.ManaCostBase = 90 - Skill_Rupture.CostPerLevel
 Skill_Rupture.BaseTargets = 3
-Skill_Rupture.TargetsPerLevel = 0.2
+Skill_Rupture.TargetsPerLevel = 0.1
 Skill_Rupture.Duration = 10
 Skill_Rupture.DurationPerLevel = 0
 
@@ -1801,7 +1824,7 @@ function Skill_Rupture.GetTargetCount(self, Level)
 	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
 end
 
-function Skill_Rupture.GetDamage(self, Source, Level)
+function Skill_Rupture.GetPoisonDamage(self, Source, Level)
 	return self:GetLevel(Source, Level) * self:GetDuration(Level)
 end
 
@@ -1834,10 +1857,10 @@ function Skill_Rupture.CanUse(self, Level, Source, Target)
 end
 
 function Skill_Rupture.GetInfo(self, Source, Item)
-	return "Explode a corpse, releasing noxious gas over [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Explode a corpse, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage and releasing noxious gas over [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Rupture.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Rupture.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	if Target.Health == 0 then
 		Result.Target.Corpse = -1
 	else
@@ -1845,9 +1868,8 @@ function Skill_Rupture.Use(self, Level, Duration, Source, Target, Result)
 		Result.Target.BuffLevel = self:GetLevel(Source, Level)
 		Result.Target.BuffDuration = self:GetDuration(Level)
 	end
-	WeaponProc(Source, Target, Result, true)
 
-	return Result
+	return true
 end
 
 function Skill_Rupture.PlaySound(self, Level)
@@ -1871,7 +1893,7 @@ function Skill_Sanctuary.GetTargetCount(self, Level)
 end
 
 function Skill_Sanctuary.GetHeal(self, Source, Level)
-	return Buff_Sanctuary.Heal * self:GetLevel(Source, Level) * self:GetDuration(Level)
+	return math.floor(Buff_Sanctuary.Heal * self:GetLevel(Source, Level) * self:GetDuration(Level))
 end
 
 function Skill_Sanctuary.GetArmor(self, Source, Level)
