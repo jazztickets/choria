@@ -1831,7 +1831,7 @@ INSERT INTO item VALUES(147,5,2,0,0,0,0,'Morning Star','textures/items/mace.png'
 INSERT INTO item VALUES(148,2,0,0,0,0,0,'Cap','textures/items/cap.png','',0,15,1,0,5,0.0,1,0,0,1,0,0,0,0,10,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(149,6,2,0,0,0,0,'Fighting Stick','textures/items/quarter_staff.png','Proc_Harden',0,1000,1,15,20,5.0,1,120,300,0,15,0,0,0,0,0,0,15,0,0,0,15,0,0,'',5);
 INSERT INTO item VALUES(150,14,2,0,0,0,0,'Swift Knife','textures/items/small_knife.png','Proc_Bleed',0,1100,1,40,20,5.0,1,120,120,0,5,30,0,0,0,0,0,30,0,0,0,20,0,0,'',0);
-INSERT INTO item VALUES(151,10,0,1,1,0,0,'Battle Potion','textures/items/death_potion.png','Item_BattlePotion',0,25,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(151,10,0,1,1,0,0,'Battle Potion','textures/items/battle_potion.png','Item_BattlePotion',0,25,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(152,2,0,0,0,0,0,'Mage Hat','textures/items/mage_hat.png','',0,25,1,0,10,0.0,1,0,0,1,0,0,0,15,30,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(153,2,0,0,0,0,0,'Wizard Hat','textures/items/wizard_hat.png','',0,100,1,0,50,0.0,1,0,0,2,0,0,0,30,60,0,1,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(154,6,2,0,0,0,0,'Claymore','textures/items/claymore.png','Proc_Empowered',0,2000,1,20,20,5.0,1,225,600,-5,0,0,0,0,0,0,0,-10,0,0,0,15,0,0,'',0);
