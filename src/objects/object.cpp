@@ -1412,8 +1412,11 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 			// Get first target
 			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
+			if(!Target)
+				return;
+
 			_Battle *Battle = Target->Character->Battle;
-			if(!Target || !Battle)
+			if(!Battle)
 				return;
 
 			// Set initial target
