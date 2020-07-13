@@ -447,6 +447,7 @@ INSERT INTO vendor VALUES(19,'hideout_shop',1.0,0.5);
 INSERT INTO vendor VALUES(20,'ruins_skills',1.0,0.5);
 INSERT INTO vendor VALUES(21,'library_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(22,'garden_vendor',1.0,0.75);
+INSERT INTO vendor VALUES(23,'chamber_vendor',1.0,0.5);
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,
@@ -599,11 +600,11 @@ INSERT INTO vendoritem VALUES(173,15,283);
 INSERT INTO vendoritem VALUES(174,21,284);
 INSERT INTO vendoritem VALUES(177,22,290);
 INSERT INTO vendoritem VALUES(178,17,45);
-INSERT INTO vendoritem VALUES(179,18,292);
 INSERT INTO vendoritem VALUES(180,11,270);
 INSERT INTO vendoritem VALUES(181,20,37);
 INSERT INTO vendoritem VALUES(182,11,222);
 INSERT INTO vendoritem VALUES(183,20,46);
+INSERT INTO vendoritem VALUES(184,23,292);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1979,7 +1980,7 @@ INSERT INTO item VALUES(288,6,4,0,0,0,4,'Icebrand','textures/items/icebrand.png'
 INSERT INTO item VALUES(289,6,2,0,0,0,1,'Mystic Staff','textures/items/mystic_staff.png','Proc_Sanctuary',0,15000,1,10,50,5.0,1,1100,1500,0,25,0,5,0,0,0,0,20,5,0,0,15,0,0,'',15);
 INSERT INTO item VALUES(290,5,5,0,0,0,5,'Shining Star','textures/items/shining_star.png','Proc_Stun',0,15000,1,1,50,3.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,5,15,0,0,'',0);
 INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','',0,25,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/yard.png',0);
-INSERT INTO item VALUES(292,13,0,0,0,0,0,'Ancient Key','textures/items/key1.png','',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
+INSERT INTO item VALUES(292,13,0,0,0,0,0,'Ancient Key','textures/items/key1.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','',0,25,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(294,11,0,0,0,0,0,'Goblin Trophy','textures/items/goblin_trophy.png','',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(295,10,0,1,1,0,0,'Eternal Pain','textures/items/rebirth_pain.png','Item_RebirthPain',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
