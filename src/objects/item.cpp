@@ -616,7 +616,7 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 		if(ShowLevel) {
 			std::string Text = "Level " + std::to_string(DrawLevel);
 			glm::vec4 Color = ae::Assets.Colors["gray"];
-			if(EnchanterMaxLevel && (DrawLevel > EnchanterMaxLevel || EnchanterMaxLevel > MaxLevel)) {
+			if(EnchanterMaxLevel && (DrawLevel > EnchanterMaxLevel || DrawLevel > MaxLevel)) {
 				Text = "I can't upgrade this";
 				Color = ae::Assets.Colors["red"];
 			}
