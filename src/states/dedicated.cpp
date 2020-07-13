@@ -27,6 +27,7 @@
 #include <framework.h>
 #include <server.h>
 #include <stats.h>
+#include <enet/enet.h>
 #include <iomanip>
 
 _DedicatedState DedicatedState;
@@ -64,7 +65,6 @@ void RunCommandThread(_Server *Server) {
 			std::cout << "Command not recognized" << std::endl;
 		}
 	}
-
 
 	Server->StopServer();
 }
@@ -131,7 +131,11 @@ void _DedicatedState::ShowPlayers() {
 	std::cout << "peer count=" << Peers.size() << std::endl;
 	size_t i = 0;
 	for(auto &Peer : Peers) {
-		std::cout << std::setw(3) << i << ": account_id=" << Peer->AccountID;
+		char Buffer[16];
+		ENetAddress *Address = &Peer->ENetPeer->address;
+		enet_address_get_host_ip(Address, Buffer, 16);
+
+		std::cout << std::setw(3) << i << ": ip=" << Buffer << ", account_id=" << Peer->AccountID;
 		if(Peer->Object) {
 			uint32_t MapID = 0;
 			if(Peer->Object->Map)
