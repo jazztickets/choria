@@ -43,8 +43,8 @@ struct _BattleResult {
 		AliveMonsterCount(0),
 		MonsterCount(0),
 		JoinedCount(0),
-		TotalExperienceGiven(0),
-		TotalGoldGiven(0),
+		TotalExperienceGiven(0.0f),
+		TotalGoldGiven(0.0f),
 		TotalBounty(0),
 		TotalGoldStolen(0),
 		ExperiencePerCharacter(0),
@@ -58,8 +58,8 @@ struct _BattleResult {
 	int AliveMonsterCount;
 	int MonsterCount;
 	int JoinedCount;
-	int TotalExperienceGiven;
-	int TotalGoldGiven;
+	float TotalExperienceGiven;
+	float TotalGoldGiven;
 	int TotalBounty;
 	int TotalGoldStolen;
 	int ExperiencePerCharacter;
@@ -122,7 +122,6 @@ class _Battle : public ae::_BaseObject {
 		std::list<_ActionResult> ActionResults;
 
 		// Attributes
-		double Difficulty[2];
 		double Cooldown;
 		uint32_t Zone;
 		int SideCount[2];

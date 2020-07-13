@@ -539,7 +539,8 @@ void _Stats::LoadLights() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty) const {
+void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty) const {
+	float DifficultyMultiplier = (100 + Difficulty) * 0.01f;
 	Object->Monster->DatabaseID = MonsterID;
 
 	// Run query
@@ -551,15 +552,15 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 		Object->Character->Level = Database->GetInt<int>("level");
 		Object->Name = Database->GetString("name");
 		Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
-		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
+		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * DifficultyMultiplier);
 		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
 		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
 		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage");
 		Object->Character->BaseArmor = Database->GetInt<int>("armor");
 		Object->Character->BaseDamageBlock = Database->GetInt<int>("block");
 		Object->Character->BaseAttackPeriod = Database->GetReal("attackperiod");
-		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience");
-		Object->Monster->GoldGiven = Database->GetInt<int>("gold");
+		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience") * DifficultyMultiplier;
+		Object->Monster->GoldGiven = Database->GetInt<int>("gold") * DifficultyMultiplier;
 		Object->Monster->AI = Database->GetString("ai_name");
 		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 
@@ -633,7 +634,7 @@ const ae::_Texture *_Stats::GetPortraitImage(uint32_t PortraitID) const {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const {
+void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const {
 	if(ZoneID == 0)
 		return;
 
@@ -656,15 +657,17 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 	if(Boss) {
 
 		// Run query
-		Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
+		Database->PrepareQuery("SELECT monster_id, odds, difficulty FROM zonedata WHERE zone_id = @zone_id");
 		Database->BindInt(1, ZoneID);
 		while(Database->FetchRow()) {
-			uint32_t MonsterID = Database->GetInt<uint32_t>("monster_id");
+			_Zone ZoneData;
+			ZoneData.MonsterID = Database->GetInt<uint32_t>("monster_id");
+			ZoneData.Difficulty = Database->GetInt<int>("difficulty");
 			uint32_t Count = Database->GetInt<uint32_t>("odds");
 
 			// Populate monster list
 			for(uint32_t i = 0; i < Count; i++)
-				Monsters.push_back(MonsterID);
+				Monsters.push_back(ZoneData);
 		}
 		Database->CloseQuery();
 	}
@@ -698,6 +701,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 			ZoneData.MonsterID = Database->GetInt<uint32_t>("monster_id");
 			ZoneData.Odds = Database->GetInt<uint32_t>("odds");
 			ZoneData.Max = Database->GetInt<int>("max");
+			ZoneData.Difficulty = Database->GetInt<int>("difficulty");
 
 			// Increase max for each player if set
 			if(ZoneData.Max > 0) {
@@ -732,7 +736,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 						// Check monster max
 						if(ZoneData.Max == 0 || (ZoneData.Max > 0 && MonsterTotals[ZoneData.MonsterID] < ZoneData.Max)) {
 							MonsterTotals[ZoneData.MonsterID]++;
-							Monsters.push_back(ZoneData.MonsterID);
+							Monsters.push_back(ZoneData);
 						}
 						break;
 					}

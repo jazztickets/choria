@@ -64,7 +64,6 @@ _Battle::_Battle() :
 	ClientPlayer(nullptr),
 	Manager(nullptr),
 
-	Difficulty{0.0, 1.0},
 	Cooldown(0.0),
 	Zone(0),
 	SideCount{0, 0},
@@ -624,8 +623,8 @@ void _Battle::ServerEndBattle() {
 				SideStats[Side].TotalGoldGiven += Object->Character->Bounty + (int)(Object->Character->Gold * BountyEarned + 0.5f);
 		}
 
-		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
-		SideStats[Side].TotalGoldGiven = (int)std::ceil(SideStats[Side].TotalGoldGiven * Difficulty[Side]);
+		SideStats[Side].TotalExperienceGiven = std::ceil(SideStats[Side].TotalExperienceGiven);
+		SideStats[Side].TotalGoldGiven = std::ceil(SideStats[Side].TotalGoldGiven);
 	}
 
 	// Get winning side

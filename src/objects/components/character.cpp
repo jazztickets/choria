@@ -341,7 +341,7 @@ void _Character::CalculateStats() {
 	LavaProtection = false;
 	Stunned = 0;
 	SummonLimit = 0;
-	Difficulty = 100 + EternalPain;
+	Difficulty = EternalPain;
 	Resistances.clear();
 
 	// Eternal Strength

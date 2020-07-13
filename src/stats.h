@@ -84,9 +84,12 @@ struct _DamageType {
 };
 
 struct _Zone {
+	_Zone() : MonsterID(0), Odds(0), Max(0), Difficulty(0) { }
+
 	uint32_t MonsterID;
 	uint32_t Odds;
 	int Max;
+	int Difficulty;
 };
 
 struct _EventName {
@@ -166,7 +169,7 @@ class _Stats {
 		~_Stats();
 
 		// General Stats
-		void GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty=1.0) const;
+		void GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty=1.0) const;
 
 		// Menu
 		void GetPortraits(std::list<_Portrait> &Portraits) const;
@@ -174,7 +177,7 @@ class _Stats {
 		const ae::_Texture *GetPortraitImage(uint32_t PortraitID) const;
 
 		// Monsters
-		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const;
+		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const;
 		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops) const;
 
 		// Maps

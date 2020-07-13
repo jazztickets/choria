@@ -253,7 +253,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Difficulty
-	if(HUD->Player->Character->Difficulty != 100) {
+	if(HUD->Player->Character->Difficulty != 0) {
 		Buffer << HUD->Player->Character->Difficulty << "%";
 		Font->DrawText("Difficulty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);

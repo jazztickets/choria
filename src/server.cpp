@@ -171,11 +171,17 @@ _Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
 	Object->Monster->SummonBuff = Summon.SummonBuff;
 	Object->Monster->SpellID = Summon.SpellID;
 	Object->Monster->Duration = Summon.Duration;
-	Stats->GetMonsterStats(Object->Monster->DatabaseID, Object);
 
-	// Add stats from script
-	Object->Character->Health = Object->Character->BaseMaxHealth = Summon.Health;
-	Object->Character->Mana = Object->Character->BaseMaxMana = Summon.Mana;
+	// Get difficulty
+	int Difficulty = 0;
+	if(Source->Monster->DatabaseID > 0)
+		Difficulty += Source->Monster->Difficulty;
+	float DifficultyMultiplier = (100 + Difficulty) * 0.01f;
+
+	// Get stats from db and script
+	Stats->GetMonsterStats(Object->Monster->DatabaseID, Object, Difficulty);
+	Object->Character->Health = Object->Character->BaseMaxHealth = Summon.Health * DifficultyMultiplier;
+	Object->Character->Mana = Object->Character->BaseMaxMana = Summon.Mana * DifficultyMultiplier;
 	Object->Character->BaseMinDamage = Summon.MinDamage;
 	Object->Character->BaseMaxDamage = Summon.MaxDamage;
 	Object->Character->BaseArmor = Summon.Armor;
@@ -2120,8 +2126,6 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->PVP = BattleEvent.PVP;
 		Battle->BountyEarned = BattleEvent.BountyEarned;
 		Battle->BountyClaimed = BattleEvent.BountyClaimed;
-		Battle->Difficulty[0] = 1.0;
-		Battle->Difficulty[1] = 1.0;
 
 		// Add players to battle
 		Battle->AddObject(BattleEvent.Object, BattleEvent.Side);
@@ -2149,13 +2153,13 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			AdditionalCount = (int)Players.size();
 
 		// Get monsters
-		std::list<uint32_t> MonsterIDs;
+		std::list<_Zone> Monsters;
 		bool Boss = false;
 		double Cooldown = 0.0;
-		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss, Cooldown);
+		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, Monsters, Boss, Cooldown);
 
 		// Fight if there are monsters
-		if(!MonsterIDs.size())
+		if(!Monsters.size())
 			return;
 
 		// Check for cooldown
@@ -2180,16 +2184,16 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Players.sort(CompareObjects);
 
 		// Get difficulty
-		double Difficulty = 1.0;
+		int Difficulty = 100;
 		if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
 			Scripting->PushReal(Save->Clock);
 			Scripting->MethodCall(1, 1);
-			Difficulty = Scripting->GetReal(1);
+			Difficulty = Scripting->GetInt(1);
 			Scripting->FinishMethodCall();
 		}
 
 		// Get difficulty increase
-		double DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER;
+		int DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER;
 		if(Boss)
 			DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER_BOSS;
 
@@ -2202,24 +2206,21 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Difficulty += DifficultyAdjust;
 
 			// Increase by each player's difficulty stat
-			Difficulty += (PartyPlayer->Character->Difficulty - 100) / 100.0f;
+			Difficulty += PartyPlayer->Character->Difficulty;
 		}
 
 		// Add summons
 		AddBattleSummons(Battle, 0);
 
-		// Set difficulty of battle
-		Battle->Difficulty[0] = 1.0;
-		Battle->Difficulty[1] = Difficulty;
-
 		// Add monsters
-		for(auto &MonsterID : MonsterIDs) {
+		for(auto &Monster : Monsters) {
 			_Object *Object = ObjectManager->Create();
 			Object->Server = this;
 			Object->Scripting = Scripting;
-			Object->Monster->DatabaseID = MonsterID;
+			Object->Monster->DatabaseID = Monster.MonsterID;
+			Object->Monster->Difficulty = Difficulty + Monster.Difficulty;
 			Object->Stats = Stats;
-			Stats->GetMonsterStats(MonsterID, Object, Difficulty);
+			Stats->GetMonsterStats(Monster.MonsterID, Object, Object->Monster->Difficulty);
 			Object->Character->CalculateStats();
 			Battle->AddObject(Object, 1);
 		}

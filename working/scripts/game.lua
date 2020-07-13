@@ -14,8 +14,8 @@ function Game.GetDifficulty(self, Clock)
 
 	-- Make nighttime more difficult
 	if Clock < 6 * 60 or Clock >= 22 * 60 then
-		return 1.5
+		return 50
 	end
 
-	return 1.0
+	return 0
 end

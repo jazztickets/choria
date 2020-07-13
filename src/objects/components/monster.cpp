@@ -25,6 +25,7 @@ _Monster::_Monster(_Object *Object) :
 	DatabaseID(0),
 	SpellID(0),
 	Duration(0.0),
+	Difficulty(0),
 	ExperienceGiven(0),
 	GoldGiven(0),
 	AI("") {

@@ -41,8 +41,9 @@ class _Monster {
 		uint32_t DatabaseID;
 		uint32_t SpellID;
 		double Duration;
-		int ExperienceGiven;
-		int GoldGiven;
+		int Difficulty;
+		float ExperienceGiven;
+		float GoldGiven;
 		std::string AI;
 
 	private:
