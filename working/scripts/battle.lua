@@ -54,9 +54,11 @@ Base_Spell = {
 	ManaCostBase = 0,
 	DamageBase = 0,
 	DamagePerLevel = 0,
+	DamageScale = 0,
 	Duration = 0,
 	DurationPerLevel = 0,
 	CostPerLevel = 0,
+	CostScale = 0.15,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -66,7 +68,7 @@ Base_Spell = {
 	end,
 
 	GetDamage = function(self, Source, Level)
-		return math.floor((self.DamageBase + Level * self.DamagePerLevel) * self:GetDamagePower(Source, Level))
+		return math.floor((self.DamageBase + Level * self.DamagePerLevel + Level * Level * self.DamageScale) * self:GetDamagePower(Source, Level))
 	end,
 
 	GetDuration = function(self, Level)
@@ -78,7 +80,7 @@ Base_Spell = {
 	end,
 
 	GetCost = function(self, Level)
-		return math.max(self.ManaCostBase + Level * self.CostPerLevel, 0)
+		return math.floor(math.max(self.ManaCostBase + Level * self.CostPerLevel + Level * Level * self.CostScale, 0))
 	end,
 
 	ApplyCost = function(self, Source, Level, Result)
@@ -124,6 +126,7 @@ Base_Spell = {
 Base_SummonSpell = {
 	ManaCostBase = 0,
 	CostPerLevel = 0,
+	DamageScale = 0,
 	SkillLevel = 0,
 	SkillLevelPerLevel = 0,
 	SkillLevelPower = 0.75,
@@ -166,7 +169,7 @@ Base_SummonSpell = {
 	end,
 
 	GetLimit = function(self, Source, Level)
-		return math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit)
+		return math.min(math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit), BATTLE_LIMIT-1)
 	end,
 
 	GetSkillLevel = function(self, Source, Level)
@@ -178,7 +181,7 @@ Base_SummonSpell = {
 	end,
 
 	GetDamage = function(self, Source, Level)
-		AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
+		AddedDamage = math.floor((Level - 1) * self.DamagePerLevel) + Level * Level * self.DamageScale
 		return math.floor((self.BaseMinDamage + AddedDamage) * Source.PetPower), math.floor((self.BaseMaxDamage + AddedDamage) * Source.PetPower)
 	end
 }

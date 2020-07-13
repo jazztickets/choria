@@ -616,6 +616,7 @@ end
 Skill_Spark = Base_Spell:New()
 Skill_Spark.DamageBase = 10
 Skill_Spark.DamagePerLevel = 30
+Skill_Spark.DamageScale = 0.75
 Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 
@@ -636,9 +637,10 @@ end
 Skill_Icicle = Base_Spell:New()
 Skill_Icicle.DamageBase = 25
 Skill_Icicle.DamagePerLevel = 25
+Skill_Icicle.DamageScale = 0.70
 Skill_Icicle.CostPerLevel = 4
-Skill_Icicle.Duration = 5
-Skill_Icicle.DurationPerLevel = 0.5
+Skill_Icicle.Duration = 5.1
+Skill_Icicle.DurationPerLevel = 0.1
 Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
 
 function Skill_Icicle.GetDamagePower(self, Source, Level)
@@ -666,13 +668,14 @@ end
 Skill_PoisonTouch = Base_Spell:New()
 Skill_PoisonTouch.PoisonLevelPerLevel = 6
 Skill_PoisonTouch.PoisonLevel = 10 - Skill_PoisonTouch.PoisonLevelPerLevel
+Skill_PoisonTouch.PoisonLevelScale = 0.75
 Skill_PoisonTouch.CostPerLevel = 5
 Skill_PoisonTouch.ManaCostBase = 20 - Skill_PoisonTouch.CostPerLevel
 Skill_PoisonTouch.DurationPerLevel = 0
 Skill_PoisonTouch.Duration = 10
 
 function Skill_PoisonTouch.GetPoisonLevel(self, Source, Level)
-	return math.floor((self.PoisonLevel + self.PoisonLevelPerLevel * Level) * self:GetDamagePower(Source, Level))
+	return math.floor((self.PoisonLevel + self.PoisonLevelPerLevel * Level + Level * Level * self.PoisonLevelScale) * self:GetDamagePower(Source, Level))
 end
 
 function Skill_PoisonTouch.GetDamage(self, Source, Level)
@@ -750,12 +753,13 @@ end
 Skill_Ignite = Base_Spell:New()
 Skill_Ignite.BurnLevel = 30
 Skill_Ignite.BurnLevelPerLevel = 9
+Skill_Ignite.BurnLevelScale = 0.75
 Skill_Ignite.CostPerLevel = 10
-Skill_Ignite.Duration = 6
 Skill_Ignite.ManaCostBase = 30 - Skill_Ignite.CostPerLevel
+Skill_Ignite.Duration = 6
 
 function Skill_Ignite.GetBurnLevel(self, Source, Level)
-	return math.floor((self.BurnLevel + self.BurnLevelPerLevel * Level) * self:GetDamagePower(Source, Level))
+	return math.floor((self.BurnLevel + self.BurnLevelPerLevel * Level + Level * Level * self.BurnLevelScale) * self:GetDamagePower(Source, Level))
 end
 
 function Skill_Ignite.GetDamage(self, Source, Level)
@@ -1032,8 +1036,8 @@ end
 Skill_PetMastery = {}
 Skill_PetMastery.Power = 50
 Skill_PetMastery.PowerPerLevel = 5
-Skill_PetMastery.SummonLimit = 1
-Skill_PetMastery.SummonLimitPerLevel = 0.25
+Skill_PetMastery.SummonLimit = 1.1
+Skill_PetMastery.SummonLimitPerLevel = 0.1
 
 function Skill_PetMastery.GetPower(self, Level)
 	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
@@ -1308,15 +1312,16 @@ Skill_DemonicConjuring.HealthPerLevel = 40
 Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 1
 Skill_DemonicConjuring.Limit = 1
-Skill_DemonicConjuring.LimitPerLevel = 0.1
+Skill_DemonicConjuring.LimitPerLevel = 0.05
 Skill_DemonicConjuring.Duration = 30
 Skill_DemonicConjuring.DurationPerLevel = 1
+Skill_DemonicConjuring.DamageScale = 0.30
 Skill_DemonicConjuring.Monster = Monsters[23]
 
 function Skill_DemonicConjuring.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
 
-	return "Summon a demon to fight for you that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] fire damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] fire damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
@@ -1361,12 +1366,13 @@ Skill_RaiseDead.ArmorPerLevel = 0.25
 Skill_RaiseDead.SpecialChance = 25
 Skill_RaiseDead.SpecialPerLevel = 1
 Skill_RaiseDead.Limit = 2
-Skill_RaiseDead.LimitPerLevel = 0.2
+Skill_RaiseDead.LimitPerLevel = 0.1
 Skill_RaiseDead.SkillLevel = 1
 Skill_RaiseDead.SkillLevelPerLevel = 0.5
 Skill_RaiseDead.Duration = 30
 Skill_RaiseDead.DurationPerLevel = 1
 Skill_RaiseDead.SpecialDamage = 0.85
+Skill_RaiseDead.DamageScale = 0.25
 Skill_RaiseDead.Monster = Monsters[20]
 Skill_RaiseDead.SpecialMonster = Monsters[21]
 
@@ -1669,6 +1675,7 @@ Skill_Portal = Base_Spell:New()
 Skill_Portal.Duration = 3
 Skill_Portal.CostPerLevel = -10
 Skill_Portal.ManaCostBase = 200 - Skill_Portal.CostPerLevel
+Skill_Portal.CostScale = 0
 
 function Skill_Portal.GetInfo(self, Source, Item)
 	return "Teleport home after [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
@@ -1767,7 +1774,7 @@ function Skill_MagicBarrier.GetLevel(self, Source, Level)
 end
 
 function Skill_MagicBarrier.GetInfo(self, Source, Item)
-	return "Create a magic shield around an ally that blocks [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage before breaking\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Create a magic shield around an ally that absorbs [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
@@ -1946,7 +1953,7 @@ Skill_Sanctuary.LevelPerLevel = 1
 Skill_Sanctuary.CostPerLevel = 20
 Skill_Sanctuary.ManaCostBase = 100 - Skill_Sanctuary.CostPerLevel
 Skill_Sanctuary.BaseTargets = 3
-Skill_Sanctuary.TargetsPerLevel = 0.2
+Skill_Sanctuary.TargetsPerLevel = 0.1
 Skill_Sanctuary.Duration = 10
 Skill_Sanctuary.DurationPerLevel = 0
 
