@@ -808,19 +808,34 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(!CheckScope(ActionResult.Scope))
 		return false;
 
-	// Check if target is alive
-	_Object *Target = nullptr;
+	// Check targets
+	_Object *FirstTarget = nullptr;
 	if(Object->Character->Targets.size()) {
-		Target = *Object->Character->Targets.begin();
-		if(!CanTarget(Scripting, Object, Target))
+
+		// Check each target and see if action can be used
+		for(auto Iterator = Object->Character->Targets.begin(); Iterator != Object->Character->Targets.end(); ) {
+			_Object *Target = *Iterator;
+
+			// Remove bad targets
+			if(!CanTarget(Scripting, Object, Target))
+				Iterator = Object->Character->Targets.erase(Iterator);
+			else
+				++Iterator;
+		}
+
+		// No targets left
+		if(Object->Character->Targets.empty())
 			return false;
+
+		// Get first target
+		FirstTarget = *Object->Character->Targets.begin();
 	}
 
 	// Check script's function
 	if(Scripting->StartMethodCall(Script, "CanUse")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
-		Scripting->PushObject(Target);
+		Scripting->PushObject(FirstTarget);
 		Scripting->MethodCall(3, 1);
 		int Value = Scripting->GetBoolean(1);
 		Scripting->FinishMethodCall();
