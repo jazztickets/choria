@@ -193,10 +193,20 @@ bool _Usable::CallCanUse(_Scripting *Scripting, _ActionResult &ActionResult) con
 	if(!CheckScope(ActionResult.Scope))
 		return false;
 
-	// Check if target is alive
-	if(Object->Character->Targets.size() == 1) {
-		_Object *Target = *Object->Character->Targets.begin();
-		if(!CanTarget(Object, Target))
+	// Check each target and see if action can be used
+	if(Object->Character->Targets.size()) {
+		for(auto Iterator = Object->Character->Targets.begin(); Iterator != Object->Character->Targets.end(); ) {
+			_Object *Target = *Iterator;
+
+			// Check if target is valid, otherwise remove
+			if(!CanTarget(Object, Target))
+				Iterator = Object->Character->Targets.erase(Iterator);
+			else
+				++Iterator;
+		}
+
+		// No targets
+		if(Object->Character->Targets.empty())
 			return false;
 	}
 
