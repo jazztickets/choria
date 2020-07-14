@@ -449,6 +449,7 @@ INSERT INTO vendor VALUES(20,'ruins_skills',1.0,0.5);
 INSERT INTO vendor VALUES(21,'library_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(22,'garden_vendor',1.0,0.75);
 INSERT INTO vendor VALUES(23,'chamber_vendor',1.0,0.5);
+INSERT INTO vendor VALUES(24,'rebirth_vendor',1.0,0.5);
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,
@@ -583,7 +584,7 @@ INSERT INTO vendoritem VALUES(154,17,21);
 INSERT INTO vendoritem VALUES(155,14,43);
 INSERT INTO vendoritem VALUES(156,15,98);
 INSERT INTO vendoritem VALUES(158,22,216);
-INSERT INTO vendoritem VALUES(159,18,253);
+INSERT INTO vendoritem VALUES(159,24,253);
 INSERT INTO vendoritem VALUES(160,18,99);
 INSERT INTO vendoritem VALUES(161,2,269);
 INSERT INTO vendoritem VALUES(162,21,219);
@@ -1917,14 +1918,14 @@ INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key0.png'
 INSERT INTO item VALUES(251,13,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(252,13,0,0,0,0,0,'Secret Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(253,11,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(254,10,0,1,1,0,0,'Eternal Strength','textures/items/rebirth_sword.png','Item_RebirthStrength',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(255,10,0,1,1,0,0,'Eternal Guard','textures/items/rebirth_shield.png','Item_RebirthGuard',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(256,10,0,1,1,0,0,'Eternal Fortitude','textures/items/rebirth_health.png','Item_RebirthFortitude',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(257,10,0,1,1,0,0,'Eternal Spirit','textures/items/rebirth_mana.png','Item_RebirthSpirit',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(258,10,0,1,1,0,0,'Eternal Wisdom','textures/items/rebirth_exp.png','Item_RebirthWisdom',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(259,10,0,1,1,0,0,'Eternal Wealth','textures/items/rebirth_gold.png','Item_RebirthWealth',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(260,10,0,1,1,0,0,'Eternal Alacrity','textures/items/rebirth_speed.png','Item_RebirthAlacrity',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(261,10,0,1,1,0,0,'Eternal Knowledge','textures/items/rebirth_book.png','Item_RebirthKnowledge',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(254,10,0,1,1,0,0,'Eternal Strength','textures/items/eternal_strength.png','Item_RebirthStrength',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(255,10,0,1,1,0,0,'Eternal Guard','textures/items/eternal_guard.png','Item_RebirthGuard',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(256,10,0,1,1,0,0,'Eternal Fortitude','textures/items/eternal_fortitude.png','Item_RebirthFortitude',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(257,10,0,1,1,0,0,'Eternal Spirit','textures/items/eternal_spirit.png','Item_RebirthSpirit',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(258,10,0,1,1,0,0,'Eternal Wisdom','textures/items/eternal_wisdom.png','Item_RebirthWisdom',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(259,10,0,1,1,0,0,'Eternal Wealth','textures/items/eternal_wealth.png','Item_RebirthWealth',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(260,10,0,1,1,0,0,'Eternal Alacrity','textures/items/eternal_alacrity.png','Item_RebirthAlacrity',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(261,10,0,1,1,0,0,'Eternal Knowledge','textures/items/eternal_knowledge.png','Item_RebirthKnowledge',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(262,13,0,0,0,0,0,'Timeless Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(263,4,0,0,0,0,0,'Dimensional Slippers','textures/items/dimensional_slippers.png','Item_DiagonalMovement',0,500,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(264,13,0,0,0,0,0,'Hideout Key','textures/items/key0.png','',0,250,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
@@ -1958,7 +1959,7 @@ INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','
 INSERT INTO item VALUES(292,13,0,0,0,0,0,'Chamber Key','textures/items/key1.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','',0,25,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(294,11,0,0,0,0,0,'Goblin Trophy','textures/items/goblin_trophy.png','',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(295,10,0,1,1,0,0,'Eternal Pain','textures/items/rebirth_pain.png','Item_RebirthPain',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(295,10,0,1,1,0,0,'Eternal Pain','textures/items/eternal_pain.png','Item_RebirthPain',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(296,13,0,0,0,0,0,'Ancient Key','textures/items/key2.png','',0,100000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
