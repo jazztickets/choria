@@ -804,7 +804,7 @@ function Item_RebirthKnowledge.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthPain = { Value = 25 }
+Item_RebirthPain = { Value = 10 }
 
 function Item_RebirthPain.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] difficulty increase", Source.RebirthSaveCount, Source.RebirthSaveCount)
