@@ -241,6 +241,17 @@ void _Character::Update(double FrameTime) {
 		else
 			++Iterator;
 	}
+
+	// Update cooldowns
+	for(auto Iterator = Cooldowns.begin(); Iterator != Cooldowns.end(); ) {
+		Iterator->second.Duration -= FrameTime;
+
+		// Remove cooldown
+		if(Iterator->second.Duration <= 0.0)
+			Iterator = Cooldowns.erase(Iterator);
+		else
+			++Iterator;
+	}
 }
 
 // Update health

@@ -44,6 +44,13 @@ struct _Unlock {
 	int Level;
 };
 
+struct _Cooldown {
+	_Cooldown() : Duration(0), MaxDuration(0) { }
+
+	double Duration;
+	double MaxDuration;
+};
+
 // Classes
 class _Character {
 
@@ -243,6 +250,7 @@ class _Character {
 		// Skills
 		std::unordered_map<uint32_t, int> Skills;
 		std::unordered_map<uint32_t, int> MaxSkillLevels;
+		std::unordered_map<uint32_t, _Cooldown> Cooldowns;
 		int SkillPoints;
 		int SkillPointsUnlocked;
 		int SkillPointsUsed;

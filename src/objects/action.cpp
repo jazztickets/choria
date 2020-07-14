@@ -106,6 +106,12 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 				KeyUnlocked = true;
 			}
 		}
+
+		// Set cooldown
+		if(ItemUsed->Cooldown > 0.0) {
+			Source->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown;
+			Source->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown;
+		}
 	}
 
 	// Update stats

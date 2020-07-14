@@ -160,6 +160,15 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		DrawPosition.y += LargeSpacingY;
 	}
 
+	// Draw cooldown
+	if(Cooldown > 0.0) {
+		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
+		std::stringstream Buffer;
+		Buffer << std::fixed << std::setprecision(1) << Cooldown << " second cooldown";
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+		DrawPosition.y += LargeSpacingY;
+	}
+
 	// Get level of item or skill
 	int DrawLevel = Level;
 	int PlayerMaxSkillLevel = 0;
@@ -783,6 +792,10 @@ int _Item::GetEnchantCost(int Level) {
 bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	_Object *Object = ActionResult.Source.Object;
 	if(!Object)
+		return false;
+
+	// Check cooldown
+	if(Object->Character->Cooldowns.find(ActionResult.ActionUsed.Item->ID) != Object->Character->Cooldowns.end())
 		return false;
 
 	// Unlocking skill for the first time

@@ -595,6 +595,9 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	lua_pushnumber(LuaState, Item->Duration);
 	lua_setfield(LuaState, -2, "Duration");
 
+	lua_pushnumber(LuaState, Item->Cooldown);
+	lua_setfield(LuaState, -2, "Cooldown");
+
 	lua_pushinteger(LuaState, (int)Item->Type);
 	lua_setfield(LuaState, -2, "Type");
 

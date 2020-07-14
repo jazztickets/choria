@@ -1519,41 +1519,49 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	int InventorySlot = (int)Data.Read<char>();
 	ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
 
-	// Set texture
-	if(ActionResult.ActionUsed.Item)
-		ActionResult.Texture = ActionResult.ActionUsed.Item->Texture;
-
 	// Get source change
 	HandleStatChange(Data, ActionResult.Source);
 
+	_Object *SourceObject = ActionResult.Source.Object;
+	const _Item *ItemUsed = ActionResult.ActionUsed.Item;
+	if(ItemUsed) {
+		if(ItemUsed->Cooldown > 0.0) {
+			SourceObject->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown;
+			SourceObject->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown;
+		}
+
+		// Set texture
+		ActionResult.Texture = ItemUsed->Texture;
+	}
+
 	// Update source object
-	if(ActionResult.Source.Object) {
-		ActionResult.Source.Object->Fighter->TurnTimer = 0.0;
-		ActionResult.Source.Object->Character->Action.Unset();
-		ActionResult.Source.Object->Character->Targets.clear();
+	if(SourceObject) {
+		SourceObject->Fighter->TurnTimer = 0.0;
+		SourceObject->Character->Action.Unset();
+		SourceObject->Character->Targets.clear();
 
 		// Use item on client
-		if(Player == ActionResult.Source.Object) {
-			if(ActionResult.ActionUsed.Item) {
+		if(Player == SourceObject) {
+			if(ItemUsed) {
 
 				if(DecrementItem) {
 					size_t Index;
-					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
+					if(Player->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot)) {
 						Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 						Player->Character->RefreshActionBarCount();
 					}
 				}
 
 				if(SkillUnlocked) {
-					Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
-					Player->Character->MaxSkillLevels[ActionResult.ActionUsed.Item->ID] = GAME_DEFAULT_MAX_SKILL_LEVEL;
+					Player->Character->Skills[ItemUsed->ID] = 0;
+					Player->Character->MaxSkillLevels[ItemUsed->ID] = GAME_DEFAULT_MAX_SKILL_LEVEL;
 				}
 
 				if(ItemUnlocked)
-					Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
+					Player->Character->Unlocks[ItemUsed->UnlockID].Level = 1;
 
 				if(KeyUnlocked)
-					Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Item, 1));
+					Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ItemUsed, 1));
 			}
 		}
 	}
@@ -1591,8 +1599,8 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	}
 
 	// Play audio
-	if(ActionResult.ActionUsed.Item)
-		ActionResult.ActionUsed.Item->PlaySound(Scripting);
+	if(ItemUsed)
+		ItemUsed->PlaySound(Scripting);
 }
 
 // Handles a stat change

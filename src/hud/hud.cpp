@@ -1152,6 +1152,25 @@ void _HUD::DrawActionBar() {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
 
+			// Draw cooldown
+			auto CooldownIterator = Player->Character->Cooldowns.find(Item->ID);
+			if(CooldownIterator != Player->Character->Cooldowns.end() && CooldownIterator->second.MaxDuration > 0.0) {
+				double CooldownPercent = CooldownIterator->second.Duration / CooldownIterator->second.MaxDuration;
+
+				// Set up graphics
+				ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+				ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
+
+				// Draw dark percentage bg
+				float OverlayHeight = (1.0 - CooldownPercent) * (Button->Bounds.End.y - Button->Bounds.Start.y);
+				ae::Graphics.DrawRectangle(Button->Bounds.Start + glm::vec2(0, OverlayHeight), Button->Bounds.End, true);
+
+				// Draw timer
+				std::stringstream Buffer;
+				Buffer << std::fixed << std::setprecision(1) << ae::Round((float)CooldownIterator->second.Duration);
+				ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE);
+			}
+
 			if(!Item->IsSkill())
 				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(28, 26) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
 		}

@@ -251,6 +251,7 @@ void _Stats::LoadItems() {
 		Item->Level = Database->GetInt<int>("level");
 		Item->MaxLevel = Database->GetInt<int>("maxlevel");
 		Item->Duration = Database->GetReal("duration");
+		Item->Cooldown = Database->GetReal("cooldown");
 		Item->Cost = Database->GetInt<int>("cost");
 		Item->DamageTypeID = Database->GetInt<uint32_t>("damagetype_id");
 		Item->MinDamage = Database->GetInt<int>("mindamage");
@@ -277,6 +278,7 @@ void _Stats::LoadItems() {
 		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
+		Item->Tradable = Database->GetInt<int>("tradable");
 
 		if(!Headless && Item->Texture == nullptr && TexturePath != "")
 			throw std::runtime_error("Can't find texture " + TexturePath);

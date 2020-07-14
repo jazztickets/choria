@@ -117,6 +117,7 @@ class _Item {
 		int Level;
 		int MaxLevel;
 		double Duration;
+		double Cooldown;
 		int Cost;
 		uint32_t DamageTypeID;
 		int MinDamage;
