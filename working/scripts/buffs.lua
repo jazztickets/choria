@@ -393,7 +393,7 @@ Buff_Sanctuary.Armor = 1
 Buff_Sanctuary.DamageBlock = 2
 
 function Buff_Sanctuary.GetInfo(self, Level)
-	return "Armor increased by [c green]" .. self.Armor * Level .. "[c white]\nDamage block increased by [c green]" .. self.DamageBlock * Level .. "[c white]\nSlowly healing for [c green]" .. self.Heal * Level .. " [c white]HP"
+	return "Armor increased by [c green]" .. self.Armor * Level .. "[c white]\nDamage block increased by [c green]" .. self.DamageBlock * Level .. "[c white]\nSlowly healing for [c green]" .. math.floor(self.Heal * Level) .. " [c white]HP"
 end
 
 function Buff_Sanctuary.Stats(self, Level, Source, Change)

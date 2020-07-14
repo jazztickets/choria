@@ -72,7 +72,7 @@ Base_Spell = {
 	end,
 
 	GetDuration = function(self, Level)
-		return math.floor(self.Duration + self.DurationPerLevel * (Level - 1))
+		return math.floor(10 * (self.Duration + self.DurationPerLevel * (Level - 1))) / 10.0
 	end,
 
 	GetDamagePower = function(self, Source, Level)
