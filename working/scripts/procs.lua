@@ -169,8 +169,16 @@ Proc_Bloodlet.LevelPerLevel = 10
 Proc_Bloodlet.DurationPerLevel = 0
 
 function Proc_Bloodlet.GetInfo(self, Source, Item)
-	Total = self:GetTotal(Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. Total .. "[c white] bleeding damage and [c green]" .. Total .. "[c white] healing over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	Bleeding = self:GetTotal(Source, Item)
+	Duration = self:GetDuration(Item)
+	Chance = self:GetChance(Item)
+	Item.Level = math.floor(Item.Level / 2)
+	Healing = self:GetTotal(Source, Item)
+	return "[c green]" .. Chance .. "%[c white] chance for [c green]" .. Bleeding .. "[c white] bleeding damage and [c green]" .. Healing .. "[c white] healing over [c green]" .. Duration .. "[c white] seconds"
+end
+
+function Proc_Bloodlet.GetHealingLevel(self, Item)
+	return math.floor(Item.Level / 2)
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)
@@ -180,6 +188,8 @@ end
 function Proc_Bloodlet.Proc(self, Roll, Item, Source, Target, Result)
 	if Roll <= self:GetChance(Item) then
 		self:AddBuff(Result.Target, Buff_Bleeding.Pointer, Source, Item)
+
+		Item.Level = math.floor(Item.Level / 2)
 		self:AddBuff(Result.Source, Buff_Healing.Pointer, Source, Item)
 
 		return true
