@@ -201,7 +201,7 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 
 	-- Heal
 	for i = 1, #Allies do
-		if Allies[i].Health > 0 and Allies[i].Health <= Allies[i].MaxHealth * 0.75 then
+		if Allies[i].Health > 0 and Allies[i].Health <= Allies[i].MaxHealth * 0.65 then
 
 			-- See if target can be healed
 			Object.AddTarget(Allies[i].Pointer)
