@@ -1928,7 +1928,7 @@ INSERT INTO item VALUES(262,13,0,0,0,0,0,'Timeless Key','textures/items/key1.png
 INSERT INTO item VALUES(263,4,0,0,0,0,0,'Dimensional Slippers','textures/items/dimensional_slippers.png','Item_DiagonalMovement',0,500,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(264,13,0,0,0,0,0,'Hideout Key','textures/items/key0.png','',0,250,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(265,14,2,0,0,0,7,'Bloodletter','textures/items/bloodletter.png','Proc_Bloodlet',0,2000,1,50,50,5.0,1,220,220,0,8,35,15,0,0,0,0,30,0,0,0,20,0,0,'',0);
-INSERT INTO item VALUES(266,5,3,0,0,0,3,'Flamuss','textures/items/flamuss.png','Proc_Ignite',0,18000,1,500,50,5.0,1,650,1200,0,0,0,20,0,0,0,0,0,0,0,0,35,0,0,'',0);
+INSERT INTO item VALUES(266,5,3,0,0,0,3,'Flamuss','textures/items/flamuss.png','Proc_Ignite',0,20000,1,500,50,6.0,1,600,1100,0,0,0,15,0,0,0,0,0,0,0,0,20,0,0,'',0);
 INSERT INTO item VALUES(267,13,0,0,0,0,0,'City Key','textures/items/key2.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(268,13,0,0,0,0,0,'Library Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(269,15,0,0,0,0,0,'Torn Map','textures/items/map.png','',0,100,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/choria.png',0);
@@ -1952,7 +1952,7 @@ INSERT INTO item VALUES(286,8,0,0,0,0,0,'Hungering Ring','textures/items/hunger_
 INSERT INTO item VALUES(287,9,0,0,0,0,0,'Silver Amulet','textures/items/amulet.png','',0,1000,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,'',0);
 INSERT INTO item VALUES(288,6,4,0,0,0,4,'Icebrand','textures/items/icebrand.png','Proc_Slow',0,35000,1,50,50,3.0,1,2000,3500,-20,0,0,25,0,0,0,0,-30,-20,0,0,15,0,0,'',0);
 INSERT INTO item VALUES(289,6,2,0,0,0,1,'Mystic Staff','textures/items/mystic_staff.png','Proc_Sanctuary',0,15000,1,10,50,5.0,1,1100,1500,0,25,0,5,0,0,0,0,20,5,0,0,15,0,0,'',15);
-INSERT INTO item VALUES(290,5,5,0,0,0,5,'Shining Star','textures/items/shining_star.png','Proc_Stun',0,15000,1,1,50,3.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,5,15,0,0,'',0);
+INSERT INTO item VALUES(290,5,5,0,0,0,5,'Shining Star','textures/items/shining_star.png','Proc_Stun',0,18000,1,1,50,3.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,5,15,0,0,'',0);
 INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','',0,25,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/yard.png',0);
 INSERT INTO item VALUES(292,13,0,0,0,0,0,'Chamber Key','textures/items/key1.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);
 INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','',0,25,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0);

@@ -469,7 +469,7 @@ end
 
 Skill_Whirlwind = Base_Attack:New()
 Skill_Whirlwind.DamageBase = 31
-Skill_Whirlwind.DamagePerLevel = 4
+Skill_Whirlwind.DamagePerLevel = 2
 Skill_Whirlwind.SlowDurationPerLevel = 0.0
 Skill_Whirlwind.SlowDuration = 4 - Skill_Whirlwind.SlowDurationPerLevel
 
@@ -1564,11 +1564,11 @@ end
 -- Cleave --
 
 Skill_Cleave = Base_Attack:New()
-Skill_Cleave.DamageBase = 32
+Skill_Cleave.DamageBase = 40
 Skill_Cleave.DamagePerLevel = 1
 Skill_Cleave.BaseTargets = 3
 Skill_Cleave.MaxTargets = 6
-Skill_Cleave.TargetsPerLevel = 0.1
+Skill_Cleave.TargetsPerLevel = 0.06
 
 function Skill_Cleave.CanUse(self, Level, Source, Target)
 	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
@@ -1697,9 +1697,9 @@ Skill_BladeDance.Duration = 5
 Skill_BladeDance.IncreasePerLevel = 5
 Skill_BladeDance.BleedingLevel = 5
 Skill_BladeDance.BaseTargets = 2
-Skill_BladeDance.TargetsPerLevel = 0.1
+Skill_BladeDance.TargetsPerLevel = 0.06666666666
 Skill_BladeDance.DamageBase = 40
-Skill_BladeDance.DamagePerLevel = 1
+Skill_BladeDance.DamagePerLevel = 0.5
 
 function Skill_BladeDance.CanUse(self, Level, Source, Target)
 	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
