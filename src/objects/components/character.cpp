@@ -344,6 +344,10 @@ void _Character::CalculateStats() {
 	Difficulty = EternalPain;
 	Resistances.clear();
 
+	// Base resistances
+	for(int i = 3; i <= 8; i++)
+		Resistances[i] = BaseResistances[i];
+
 	// Eternal Strength
 	float AllDamage = EternalStrength / 100.0f;
 	PhysicalPower = 1.0f + AllDamage;

@@ -579,6 +579,12 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 		Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
 		Object->Character->Gold = Object->Monster->GoldGiven;
 		Object->Character->CalcLevelStats = false;
+		Object->Character->BaseResistances[3] = Database->GetInt<int>("fire_res");
+		Object->Character->BaseResistances[4] = Database->GetInt<int>("cold_res");
+		Object->Character->BaseResistances[5] = Database->GetInt<int>("lightning_res");
+		Object->Character->BaseResistances[6] = Database->GetInt<int>("poison_res");
+		Object->Character->BaseResistances[7] = Database->GetInt<int>("bleed_res");
+		Object->Character->BaseResistances[8] = Database->GetInt<int>("stun_res");
 	}
 
 	// Free memory
