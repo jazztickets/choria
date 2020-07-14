@@ -668,155 +668,169 @@ function RebirthText(UpgradeText, Skills, Items)
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, equipment, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. "\n\nYou will keep your starting skills, plus [c green]" .. Skills .. "[c white] of your highest skills and [c green]" .. Items .. "[c white] of your items in your trade stash\n[c yellow]All unlocks are kept"
 end
 
-Item_RebirthStrength = { Value = 10 }
+Item_EternalStrength = { Value = 10 }
 
-function Item_RebirthStrength.GetInfo(self, Source, Item)
+function Item_EternalStrength.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] damage bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthStrength.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.MaxDamage = self.Value
 
 	return Result
 end
 
-function Item_RebirthStrength.PlaySound(self, Level)
+function Item_EternalStrength.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthGuard = { Value = 5 }
+Item_EternalGuard = { Value = 5 }
 
-function Item_RebirthGuard.GetInfo(self, Source, Item)
+function Item_EternalGuard.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "[c white] armor, damage block, and resistance bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthGuard.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.Armor = self.Value
 
 	return Result
 end
 
-function Item_RebirthGuard.PlaySound(self, Level)
+function Item_EternalGuard.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthFortitude = { Value = 10 }
+Item_EternalFortitude = { Value = 10 }
 
-function Item_RebirthFortitude.GetInfo(self, Source, Item)
+function Item_EternalFortitude.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] max health and heal power bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthFortitude.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalFortitude.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.Health = self.Value
 
 	return Result
 end
 
-function Item_RebirthFortitude.PlaySound(self, Level)
+function Item_EternalFortitude.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthSpirit = { Value = 10 }
+Item_EternalSpirit = { Value = 10 }
 
-function Item_RebirthSpirit.GetInfo(self, Source, Item)
+function Item_EternalSpirit.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] max mana and mana power bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthSpirit.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalSpirit.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.Mana = self.Value
 
 	return Result
 end
 
-function Item_RebirthSpirit.PlaySound(self, Level)
+function Item_EternalSpirit.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthWisdom = { Value = 10 }
+Item_EternalWisdom = { Value = 10 }
 
-function Item_RebirthWisdom.GetInfo(self, Source, Item)
+function Item_EternalWisdom.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] experience bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthWisdom.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalWisdom.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.Experience = self.Value
 
 	return Result
 end
 
-function Item_RebirthWisdom.PlaySound(self, Level)
+function Item_EternalWisdom.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthWealth = { Value = 10 }
+Item_EternalWealth = { Value = 10 }
 
-function Item_RebirthWealth.GetInfo(self, Source, Item)
+function Item_EternalWealth.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] gold bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthWealth.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalWealth.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.Gold = self.Value
 
 	return Result
 end
 
-function Item_RebirthWealth.PlaySound(self, Level)
+function Item_EternalWealth.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthAlacrity = { Value = 5 }
+Item_EternalAlacrity = { Value = 5 }
 
-function Item_RebirthAlacrity.GetInfo(self, Source, Item)
+function Item_EternalAlacrity.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] battle speed bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthAlacrity.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.BattleSpeed = self.Value
 
 	return Result
 end
 
-function Item_RebirthAlacrity.PlaySound(self, Level)
+function Item_EternalAlacrity.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthKnowledge = { Value = 1 }
+Item_EternalKnowledge = { Value = 1 }
 
-function Item_RebirthKnowledge.GetInfo(self, Source, Item)
+function Item_EternalKnowledge.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "[c white] extra skill point", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthKnowledge.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.SkillPoint = self.Value
 
 	return Result
 end
 
-function Item_RebirthKnowledge.PlaySound(self, Level)
+function Item_EternalKnowledge.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RebirthPain = { Value = 10 }
+Item_EternalPain = { Value = 10 }
 
-function Item_RebirthPain.GetInfo(self, Source, Item)
+function Item_EternalPain.GetInfo(self, Source, Item)
 	return RebirthText("[c green]" .. self.Value .. "%[c white] difficulty increase", Source.RebirthSaveCount, Source.RebirthSaveCount)
 end
 
-function Item_RebirthPain.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
 	Result.Target.Difficulty = self.Value
 
 	return Result
 end
 
-function Item_RebirthPain.PlaySound(self, Level)
+function Item_EternalPain.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
+end
+
+Item_RiteWealth = { Value = 10 }
+
+function Item_RiteWealth.GetInfo(self, Source, Item)
+	return ""
+end
+
+function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result)
+
+	return Result
+end
+
+function Item_RiteWealth.PlaySound(self, Level)
 end
