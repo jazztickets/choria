@@ -149,7 +149,7 @@ class _HUD {
 
 		// Objects
 		void SetPlayer(_Object *Player);
-		void SetSkillBarSize(size_t Size);
+		void UpdateActionBarSize();
 		void RemoveStatChanges(_Object *Owner);
 		void AddStatChange(_StatChange &StatChange);
 		void ClearBattleStatChanges();

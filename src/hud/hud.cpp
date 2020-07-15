@@ -1162,7 +1162,7 @@ void _HUD::DrawActionBar() {
 
 		// Get button position
 		std::stringstream Buffer;
-		Buffer << "button_skillbar_" << i;
+		Buffer << "button_actionbar_" << i;
 		ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
@@ -1467,16 +1467,13 @@ void _HUD::SetPlayer(_Object *Player) {
 }
 
 // Resize action bar
-void _HUD::SetSkillBarSize(size_t Size) {
+void _HUD::UpdateActionBarSize() {
 
-	// Set all off
-	for(size_t i = 0; i < ACTIONBAR_MAX_SKILLS; i++)
-		ae::Assets.Elements["button_skillbar_" + std::to_string(i)]->SetEnabled(i < Size);
-
-	// Center actionbar
-	ae::_Element *Button = ae::Assets.Elements["button_skillbar_0"];
-	ActionBarElement->Size.x = Button->Size.x * Size;
-	ActionBarElement->CalculateBounds();
+	// Enable unlocked slots
+	for(int i = 0; i < ACTIONBAR_MAX_SKILLS; i++)
+		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetEnabled(i < Player->Character->SkillBarSize);
+	for(int i = ACTIONBAR_BELT_STARTS; i < ACTIONBAR_MAX_SIZE; i++)
+		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetEnabled(i < ACTIONBAR_BELT_STARTS + Player->Character->BeltSize);
 }
 
 // Remove stat changes owned by an object
@@ -1538,7 +1535,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::EXPERIENCE)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -100 * ae::_Element::GetUIScale());
+		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -150 * ae::_Element::GetUIScale());
 		StatChangeUI.Change = StatChange.Values[StatType::EXPERIENCE].Integer;
 		StatChangeUI.Direction = -1.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
