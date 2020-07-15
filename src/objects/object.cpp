@@ -783,7 +783,14 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 			if(Slot >= ACTIONBAR_BELT_STARTS && Slot >= (uint32_t)(Character->BeltSize + ACTIONBAR_BELT_STARTS))
 				continue;
 
-			Character->ActionBar[Slot].Item = Stats->Items.at(ActionNode["id"].asUInt());
+			const _Item *Item = Stats->Items.at(ActionNode["id"].asUInt());
+			if(Item->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLS)
+				continue;
+
+			if(!Item->IsSkill() && Slot < ACTIONBAR_BELT_STARTS)
+				continue;
+
+			Character->ActionBar[Slot].Item = Item;
 			Character->ActionBar[Slot].ActionBarSlot = Slot;
 		}
 	}

@@ -211,7 +211,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			DrawLevel = 1;
 
 		// Determine whether to show level
-		if(Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ENCHANTER || Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
+		if(Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ENCHANTER || Tooltip.Window == _HUD::WINDOW_SKILLBAR)
 			ShowLevel = true;
 	}
 	else {
@@ -543,11 +543,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		case ItemType::CONSUMABLE:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && CheckScope(ScopeType::WORLD) && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to use");
-			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
+			else if(Tooltip.Window == _HUD::WINDOW_SKILLBAR && CheckScope(ScopeType::WORLD))
 				HelpTextList.push_back("Left-click to use");
 		break;
 		case ItemType::SKILL:
-			if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
+			if(Tooltip.Window == _HUD::WINDOW_SKILLBAR) {
 				if(CheckScope(ScopeType::WORLD) && TargetID != TargetType::NONE)
 					HelpTextList.push_back("Left-click to use");
 			}

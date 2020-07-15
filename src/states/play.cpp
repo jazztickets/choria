@@ -304,6 +304,12 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 				case Action::GAME_SKILL8:
 					SendActionUse((uint8_t)(Action - Action::GAME_SKILL1));
 				break;
+				case Action::GAME_ITEM1:
+				case Action::GAME_ITEM2:
+				case Action::GAME_ITEM3:
+				case Action::GAME_ITEM4:
+					SendActionUse((uint8_t)(Action - Action::GAME_ITEM1 + ACTIONBAR_BELT_STARTS));
+				break;
 				case Action::MENU_BACK:
 				case Action::MENU_PAUSE:
 					HUD->ToggleInGameMenu(Action == Action::MENU_PAUSE);

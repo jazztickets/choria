@@ -141,8 +141,8 @@ _Character::_Character(_Object *Object) :
 	SkillPointsUnlocked(0),
 	SkillPointsUsed(0),
 	SkillPointsOnActionBar(0),
-	BeltSize(0),
-	SkillBarSize(0),
+	BeltSize(ACTIONBAR_DEFAULT_BELTSIZE),
+	SkillBarSize(ACTIONBAR_DEFAULT_SKILLBARSIZE),
 
 	Vendor(nullptr),
 	Trader(nullptr),

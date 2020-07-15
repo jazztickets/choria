@@ -254,7 +254,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							VendorScreen->BuyItem(&Tooltip);
 					}
 				break;
-				case WINDOW_ACTIONBAR:
+				case WINDOW_SKILLBAR:
 					if(SkillScreen->Element->Active || InventoryScreen->Element->Active) {
 						if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 							Cursor = Tooltip;
@@ -412,10 +412,10 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 								BlacksmithScreen->UpgradeSlot = Cursor.Slot;
 						break;
 						// Move item to actionbar
-						case WINDOW_ACTIONBAR:
+						case WINDOW_SKILLBAR:
 							if((Cursor.Window == WINDOW_EQUIPMENT || Cursor.Window == WINDOW_INVENTORY) && !Cursor.InventorySlot.Item->IsSkill())
 								SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.InventorySlot.Item);
-							else if(Cursor.Window == WINDOW_ACTIONBAR)
+							else if(Cursor.Window == WINDOW_SKILLBAR)
 								SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
 						break;
 						// Delete item
@@ -435,7 +435,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 				break;
 				// Drag item from actionbar
-				case WINDOW_ACTIONBAR:
+				case WINDOW_SKILLBAR:
 					switch(Tooltip.Window) {
 						case WINDOW_EQUIPMENT:
 						case WINDOW_INVENTORY:
@@ -446,7 +446,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							else
 								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), nullptr);
 						break;
-						case WINDOW_ACTIONBAR:
+						case WINDOW_SKILLBAR:
 							SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
 						break;
 						default:
@@ -460,7 +460,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 				break;
 				case WINDOW_SKILLS:
-					if(Tooltip.Window == WINDOW_ACTIONBAR) {
+					if(Tooltip.Window == WINDOW_SKILLBAR) {
 						SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.InventorySlot.Item);
 					}
 				break;
@@ -469,8 +469,12 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		// Use action
 		else if(ActionBarElement->GetClickedElement()) {
 			uint8_t Slot = (uint8_t)ActionBarElement->GetClickedElement()->Index;
-			if(Player->Character->Battle)
-				Player->Character->Battle->ClientHandleInput(Action::GAME_SKILL1 + Slot);
+			if(Player->Character->Battle) {
+				if(Slot >= ACTIONBAR_BELT_STARTS)
+					Player->Character->Battle->ClientHandleInput(Action::GAME_ITEM1 + Slot - ACTIONBAR_BELT_STARTS);
+				else
+					Player->Character->Battle->ClientHandleInput(Action::GAME_SKILL1 + Slot);
+			}
 			else
 				PlayState.SendActionUse(Slot);
 		}
@@ -566,7 +570,7 @@ void _HUD::Update(double FrameTime) {
 				Tooltip.InventorySlot.Item = PlayState.Stats->Items.at((uint32_t)Tooltip.Slot.Index);
 				Tooltip.Cost = _Item::GetEnchantCost(Player->Character->MaxSkillLevels[Tooltip.Slot.Index]);
 			} break;
-			case WINDOW_ACTIONBAR: {
+			case WINDOW_SKILLBAR: {
 				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())
 					Tooltip.InventorySlot.Item = Player->Character->ActionBar[Tooltip.Slot.Index].Item;
 			} break;
@@ -1158,7 +1162,16 @@ void _HUD::DrawActionBar() {
 	ActionBarElement->Render();
 
 	// Draw skill bar
-	for(int i = 0; i < ACTIONBAR_MAX_SKILLS; i++) {
+	for(int i = 0; i < ACTIONBAR_MAX_SIZE; i++) {
+		if(i >= ACTIONBAR_MAX_SKILLS && i < ACTIONBAR_BELT_STARTS)
+			continue;
+
+		int ActionButton = Action::GAME_SKILL1 + i;
+		glm::vec2 HotkeyOffset = glm::vec2(-28, -15);
+		if(i >= ACTIONBAR_BELT_STARTS) {
+			HotkeyOffset = glm::vec2(-21, -10);
+			ActionButton = Action::GAME_ITEM1 + i - ACTIONBAR_BELT_STARTS;
+		}
 
 		// Get button position
 		std::stringstream Buffer;
@@ -1191,12 +1204,13 @@ void _HUD::DrawActionBar() {
 				ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE);
 			}
 
+			// Draw item count
 			if(!Item->IsSkill())
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(28, 26) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(21, 20) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
-		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-28, -15) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((size_t)ActionButton), DrawPosition + HotkeyOffset * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
 	}
 }
 
@@ -1340,8 +1354,16 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	if(OldSlot >= Player->Character->ActionBar.size()) {
 
 		// Check for valid item types
-		if(Action.Item && !(Action.Item->IsSkill() || Action.Item->IsConsumable()))
-			return;
+		if(Action.Item) {
+			if(!(Action.Item->IsSkill() || Action.Item->IsConsumable()))
+				return;
+
+			if(Action.Item->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLS)
+				return;
+
+			if(Action.Item->IsConsumable() && Slot < ACTIONBAR_BELT_STARTS)
+				return;
+		}
 
 		// Remove duplicate skills
 		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
@@ -1351,6 +1373,15 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	}
 	// Rearrange action bar
 	else {
+		const _Item *OldItem = Player->Character->ActionBar[OldSlot].Item;
+		if(!OldItem)
+			return;
+
+		if(OldItem->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLS)
+			return;
+		if(!OldItem->IsSkill() && Slot < ACTIONBAR_BELT_STARTS)
+			return;
+
 		Player->Character->ActionBar[OldSlot] = Player->Character->ActionBar[Slot];
 	}
 

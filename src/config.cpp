@@ -55,6 +55,10 @@ void _Config::Init(const std::string &ConfigFile) {
 	ae::Actions.State[Action::GAME_SKILL6].Name = "game_skill6";
 	ae::Actions.State[Action::GAME_SKILL7].Name = "game_skill7";
 	ae::Actions.State[Action::GAME_SKILL8].Name = "game_skill8";
+	ae::Actions.State[Action::GAME_ITEM1].Name = "game_item1";
+	ae::Actions.State[Action::GAME_ITEM2].Name = "game_item2";
+	ae::Actions.State[Action::GAME_ITEM3].Name = "game_item3";
+	ae::Actions.State[Action::GAME_ITEM4].Name = "game_item4";
 	ae::Actions.State[Action::MENU_LEFT].Name = "menu_left";
 	ae::Actions.State[Action::MENU_RIGHT].Name = "menu_right";
 	ae::Actions.State[Action::MENU_UP].Name = "menu_up";
@@ -169,6 +173,10 @@ void _Config::LoadDefaultInputBindings(bool IfNone) {
 	ae::Actions.AddInputMap(1, ae::_Input::KEYBOARD, SDL_SCANCODE_KP_6, Action::GAME_SKILL6, 1.0f, -1.0f, IfNone);
 	ae::Actions.AddInputMap(1, ae::_Input::KEYBOARD, SDL_SCANCODE_KP_7, Action::GAME_SKILL7, 1.0f, -1.0f, IfNone);
 	ae::Actions.AddInputMap(1, ae::_Input::KEYBOARD, SDL_SCANCODE_KP_8, Action::GAME_SKILL8, 1.0f, -1.0f, IfNone);
+	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F1, Action::GAME_ITEM1, 1.0f, -1.0f, IfNone);
+	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F2, Action::GAME_ITEM2, 1.0f, -1.0f, IfNone);
+	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F3, Action::GAME_ITEM3, 1.0f, -1.0f, IfNone);
+	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F4, Action::GAME_ITEM4, 1.0f, -1.0f, IfNone);
 
 	// Menu
 	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_UP, Action::MENU_UP, 1.0f, -1.0f, IfNone);
@@ -178,11 +186,11 @@ void _Config::LoadDefaultInputBindings(bool IfNone) {
 	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_RIGHT, Action::MENU_RIGHT, 1.0f, -1.0f, IfNone);
 	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_RETURN, Action::MENU_GO, 1.0f, -1.0f, IfNone);
 	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, Action::MENU_BACK, 1.0f, -1.0f, IfNone);
-	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F1, Action::MENU_PAUSE, 1.0f, -1.0f, IfNone);
+	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F5, Action::MENU_PAUSE, 1.0f, -1.0f, IfNone);
 
 	// Misc
 	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_GRAVE, Action::MISC_CONSOLE, 1.0f, -1.0f, IfNone);
-	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F2, Action::MISC_DEBUG, 1.0f, -1.0f, IfNone);
+	ae::Actions.AddInputMap(0, ae::_Input::KEYBOARD, SDL_SCANCODE_F6, Action::MISC_DEBUG, 1.0f, -1.0f, IfNone);
 }
 
 // Load the config file

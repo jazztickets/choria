@@ -73,6 +73,12 @@ const int KeyBindings[] = {
 	Action::GAME_SKILL6,
 	Action::GAME_SKILL7,
 	Action::GAME_SKILL8,
+	Action::GAME_ITEM1,
+	Action::GAME_ITEM2,
+	Action::GAME_ITEM3,
+	Action::GAME_ITEM4,
+	Action::MENU_PAUSE,
+	Action::MISC_DEBUG,
 	Action::MISC_CONSOLE,
 };
 
@@ -96,6 +102,12 @@ const char *KeyBindingNames[] = {
 	"Skill 6",
 	"Skill 7",
 	"Skill 8",
+	"Item 1",
+	"Item 2",
+	"Item 3",
+	"Item 4",
+	"Menu",
+	"Stats",
 	"Console",
 };
 
@@ -701,8 +713,8 @@ void _Menu::LoadKeybindings() {
 	ae::_Element *KeyBindingsElement = ae::Assets.Elements["element_menu_keybindings_keys"];
 	ClearKeybindingElements();
 
-	glm::vec2 StartingPosition(260, 70);
-	glm::vec2 Spacing(562, 70);
+	glm::vec2 StartingPosition(260, 60);
+	glm::vec2 Spacing(562, 60);
 	glm::vec2 Size(140, 50);
 
 	// Iterate over actions

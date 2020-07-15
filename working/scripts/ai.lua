@@ -153,7 +153,7 @@ AI_SlimePrince = {}
 function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 
 	-- Use potion when mana is low
-	CanUse = Object.SetAction(2)
+	CanUse = Object.SetAction(10)
 	if CanUse and Object.Mana < Object.MaxMana * 0.5 then
 
 		-- Check for existing mana buff
@@ -264,7 +264,7 @@ function AI_LavaMan.Update(self, Object, Enemies, Allies)
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 5) == 1 then
-		CanUse = Object.SetAction(1)
+		CanUse = Object.SetAction(10)
 		if CanUse == false then
 			Object.SetAction(0)
 		end
@@ -285,7 +285,7 @@ function AI_LavaSpitter.Update(self, Object, Enemies, Allies)
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 5) == 1 then
-		CanUse = Object.SetAction(1)
+		CanUse = Object.SetAction(10)
 		if CanUse == false then
 			Object.SetAction(0)
 		end
@@ -411,7 +411,7 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 		-- See if target can be healed
 		if Healing == false then
 			Object.AddTarget(Object.Pointer)
-			if Object.SetAction(1) == true then
+			if Object.SetAction(10) == true then
 				return
 			end
 
@@ -426,7 +426,7 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 			Object.AddTarget(Enemies[i].Pointer)
 		end
 
-		if Object.SetAction(2) == true then
+		if Object.SetAction(11) == true then
 			return
 		end
 	end

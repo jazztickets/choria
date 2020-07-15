@@ -1057,6 +1057,13 @@ bool _Battle::ClientHandleInput(size_t Action, bool MouseCombat) {
 			ClientSetAction((uint8_t)(Action - Action::GAME_SKILL1));
 			return MouseCombat;
 		break;
+		case Action::GAME_ITEM1:
+		case Action::GAME_ITEM2:
+		case Action::GAME_ITEM3:
+		case Action::GAME_ITEM4:
+			ClientSetAction((uint8_t)(Action - Action::GAME_ITEM1 + ACTIONBAR_BELT_STARTS));
+			return MouseCombat;
+		break;
 		case Action::GAME_UP:
 			ChangeTarget(-1, 0);
 			return false;
