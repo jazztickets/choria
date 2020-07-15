@@ -150,6 +150,16 @@ void _HUD::FormatTime(std::stringstream &Buffer, int64_t Time) {
 		Buffer << Time / 3600 << "h" << (Time / 60 % 60) << "m";
 }
 
+// Format large number into K, M, etc.
+void _HUD::FormatLargeNumber(std::stringstream &Buffer, int Number) {
+	if(std::abs(Number) >= 1000000)
+		Buffer << ae::Round(Number / 1000000.0f) << "M";
+	else if(std::abs(Number) >= 10000)
+		Buffer << ae::Round(Number / 1000.0f) << "K";
+	else
+		Buffer << Number;
+}
+
 // Reset state
 void _HUD::Reset() {
 	delete Minigame;
@@ -1317,7 +1327,9 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 	else
 		Color = ae::Assets.Colors["light_gold"];
 
-	ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(28, -15) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
+	std::stringstream Buffer;
+	_HUD::FormatLargeNumber(Buffer, Price);
+	ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + glm::vec2(28, -15) * ae::_Element::GetUIScale()), ae::RIGHT_BASELINE, Color);
 }
 
 // Sets the player's action bar

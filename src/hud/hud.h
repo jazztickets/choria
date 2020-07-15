@@ -130,6 +130,7 @@ class _HUD {
 
 		// Static functions
 		static void FormatTime(std::stringstream &Buffer, int64_t Time);
+		static void FormatLargeNumber(std::stringstream &Buffer, int Number);
 
 		// Updates
 		void HandleEnter();
