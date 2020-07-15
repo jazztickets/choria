@@ -504,7 +504,7 @@ function Skill_Rejuvenation.GetLevel(self, Source, Level)
 end
 
 function Skill_Rejuvenation.GetInfo(self, Source, Item)
-	return "Heal [c green]" .. self:GetHeal(Source, Item.Level) .. " [c white]HP [c white]over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Heal [c green]" .. self:GetHeal(Source, Item.Level) .. " [c white]HP [c white]over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Rejuvenation.Use(self, Level, Duration, Source, Target, Result)
@@ -533,7 +533,7 @@ function Skill_Heal.GetHeal(self, Source, Level)
 end
 
 function Skill_Heal.GetInfo(self, Source, Item)
-	return "Heal target for [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Heal target for [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Heal.Use(self, Level, Duration, Source, Target, Result)
@@ -560,11 +560,11 @@ function Skill_Resurrect.GetHeal(self, Source, Level)
 end
 
 function Skill_Resurrect.GetInfo(self, Source, Item)
-	return "Resurrect an ally and give them [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Resurrect an ally and give them [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Resurrect.ApplyCost(self, Source, Level, Result)
-	Result.Source.Mana = -self:GetCost(Level)
+	Result.Source.Mana = -self:GetManaCost(Level)
 
 	-- Hack for using in world
 	Result.Source.Resurrect = self:GetHeal(Source, Level)
@@ -598,7 +598,7 @@ function Skill_Spark.GetDamagePower(self, Source, Level)
 end
 
 function Skill_Spark.GetInfo(self, Source, Item)
-	return "Shock a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] lightning damage\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Shock a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] lightning damage\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Spark.PlaySound(self, Level)
@@ -627,7 +627,7 @@ function Skill_Icicle.GetSlow(self, Level)
 end
 
 function Skill_Icicle.GetInfo(self, Source, Item)
-	return "Pierce a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage\nSlows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Pierce a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage\nSlows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -666,7 +666,7 @@ function Skill_PoisonTouch.GetDamagePower(self, Source, Level)
 end
 
 function Skill_PoisonTouch.GetInfo(self, Source, Item)
-	return "Infuse venom into your enemy, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Infuse venom into your enemy, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
@@ -713,7 +713,7 @@ function Skill_FireBlast.GetBurnDamage(self, Source, Level)
 end
 
 function Skill_FireBlast.GetInfo(self, Source, Item)
-	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage, then igniting them for [c green]" .. self:GetBurnDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage, then igniting them for [c green]" .. self:GetBurnDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self, Level)
@@ -751,7 +751,7 @@ function Skill_Ignite.GetDamagePower(self, Source, Level)
 end
 
 function Skill_Ignite.GetInfo(self, Source, Item)
-	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Ignite.Use(self, Level, Duration, Source, Target, Result)
@@ -1308,7 +1308,7 @@ Skill_DemonicConjuring.Monster = Monsters[23]
 function Skill_DemonicConjuring.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
 
-	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] fire damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] fire damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
@@ -1376,7 +1376,7 @@ function Skill_RaiseDead.CanTarget(self, Source, Target, Alive)
 end
 
 function Skill_RaiseDead.CanUse(self, Level, Source, Target)
-	if Source.Mana < self:GetCost(Level) then
+	if Source.Mana < self:GetManaCost(Level) then
 		return false
 	end
 
@@ -1386,7 +1386,7 @@ end
 function Skill_RaiseDead.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
 
-	return "Raise a skeleton from the dead that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Source, Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Raise a skeleton from the dead that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Source, Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
@@ -1458,7 +1458,7 @@ function Skill_Enfeeble.GetInfo(self, Source, Item)
 		Plural = "s"
 	end
 
-	return "Cripple [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their attack damage by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Cripple [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their attack damage by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Enfeeble.Use(self, Level, Duration, Source, Target, Result)
@@ -1502,7 +1502,7 @@ function Skill_Flay.GetInfo(self, Source, Item)
 		Plural = "s"
 	end
 
-	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Flay.Use(self, Level, Duration, Source, Target, Result)
@@ -1533,7 +1533,7 @@ function Skill_Fracture.GetReduction(self, Level)
 end
 
 function Skill_Fracture.GetInfo(self, Source, Item)
-	return "Decimate target's defenses, reducing their armor by [c green]" .. self:GetReduction(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
+	return "Decimate target's defenses, reducing their armor by [c green]" .. self:GetReduction(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
 end
 
 function Skill_Fracture.Use(self, Level, Duration, Source, Target, Result)
@@ -1641,7 +1641,7 @@ Skill_Light.CostPerLevel = 5
 Skill_Light.ManaCostBase = 50 - Skill_Light.CostPerLevel
 
 function Skill_Light.GetInfo(self, Source, Item)
-	return "Emit magic light for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Emit magic light for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Light.Use(self, Level, Duration, Source, Target, Result)
@@ -1665,7 +1665,7 @@ Skill_Portal.ManaCostBase = 200 - Skill_Portal.CostPerLevel
 Skill_Portal.CostScale = 0
 
 function Skill_Portal.GetInfo(self, Source, Item)
-	return "Teleport home after [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Teleport home after [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Portal.Use(self, Level, Duration, Source, Target, Result)
@@ -1762,7 +1762,7 @@ function Skill_MagicBarrier.GetLevel(self, Source, Level)
 end
 
 function Skill_MagicBarrier.GetInfo(self, Source, Item)
-	return "Create a magic shield around an ally that absorbs [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Create a magic shield around an ally that absorbs [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
@@ -1806,7 +1806,7 @@ function Skill_IceNova.GetSlow(self, Level)
 end
 
 function Skill_IceNova.GetInfo(self, Source, Item)
-	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage that slows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage that slows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_IceNova.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1853,7 +1853,7 @@ function Skill_ChainLightning.GetChance(self, Level)
 end
 
 function Skill_ChainLightning.GetInfo(self, Source, Item)
-	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_ChainLightning.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1915,7 +1915,7 @@ function Skill_Rupture.CanTarget(self, Source, Target, Alive)
 end
 
 function Skill_Rupture.CanUse(self, Level, Source, Target)
-	if Source.Mana < self:GetCost(Level) then
+	if Source.Mana < self:GetManaCost(Level) then
 		return false
 	end
 
@@ -1923,7 +1923,7 @@ function Skill_Rupture.CanUse(self, Level, Source, Target)
 end
 
 function Skill_Rupture.GetInfo(self, Source, Item)
-	return "Explode a corpse, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies that deals [c green]" .. self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Explode a corpse, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies that deals [c green]" .. self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Rupture.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1975,7 +1975,7 @@ function Skill_Sanctuary.GetLevel(self, Source, Level)
 end
 
 function Skill_Sanctuary.GetInfo(self, Source, Item)
-	return "Imbue [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies with sanctuary for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, granting [c green]" .. self:GetArmor(Source, Item.Level) .. "[c white] armor, [c green]" .. self:GetDamageBlock(Source, Item.Level) .. "[c white] damage block and [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Item.Level) .. " [c white]MP"
+	return "Imbue [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies with sanctuary for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, granting [c green]" .. self:GetArmor(Source, Item.Level) .. "[c white] armor, [c green]" .. self:GetDamageBlock(Source, Item.Level) .. "[c white] damage block and [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Sanctuary.Use(self, Level, Duration, Source, Target, Result)

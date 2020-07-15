@@ -79,18 +79,18 @@ Base_Spell = {
 		return 1.0
 	end,
 
-	GetCost = function(self, Level)
+	GetManaCost = function(self, Level)
 		return math.floor(math.max(self.ManaCostBase + Level * self.CostPerLevel + Level * Level * self.CostScale, 0))
 	end,
 
 	ApplyCost = function(self, Source, Level, Result)
-		Result.Source.Mana = -self:GetCost(Level)
+		Result.Source.Mana = -self:GetManaCost(Level)
 
 		return Result
 	end,
 
 	CanUse = function(self, Level, Source, Target)
-		if Source.Mana >= self:GetCost(Level) then
+		if Source.Mana >= self:GetManaCost(Level) then
 			return true
 		end
 
@@ -138,18 +138,18 @@ Base_SummonSpell = {
 		return Object
 	end,
 
-	GetCost = function(self, Level)
+	GetManaCost = function(self, Level)
 		return math.max(self.ManaCostBase + Level * self.CostPerLevel, 0)
 	end,
 
 	ApplyCost = function(self, Source, Level, Result)
-		Result.Source.Mana = -self:GetCost(Level)
+		Result.Source.Mana = -self:GetManaCost(Level)
 
 		return Result
 	end,
 
 	CanUse = function(self, Level, Source, Target)
-		if Source.Mana >= self:GetCost(Level) then
+		if Source.Mana >= self:GetManaCost(Level) then
 			return true
 		end
 

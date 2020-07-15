@@ -1541,7 +1541,6 @@ INSERT INTO buildactionbar VALUES(11,5,7,1);
 INSERT INTO buildactionbar VALUES(12,1,108,1);
 INSERT INTO buildactionbar VALUES(13,2,109,1);
 INSERT INTO buildactionbar VALUES(14,3,270,2);
-INSERT INTO buildactionbar VALUES(15,3,109,3);
 INSERT INTO buildactionbar VALUES(16,5,108,2);
 INSERT INTO buildactionbar VALUES(17,21,52,0);
 INSERT INTO buildactionbar VALUES(18,22,53,0);
