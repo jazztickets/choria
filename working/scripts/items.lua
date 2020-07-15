@@ -178,19 +178,19 @@ end
 
 -- Action Slot --
 
-Item_ActionSlot = { }
+Item_SkillSlot = { }
 
-function Item_ActionSlot.GetInfo(self, Source, Item)
-	return "Increase your action bar size\n[c yellow]Can only be used once"
+function Item_SkillSlot.GetInfo(self, Source, Item)
+	return "Increase your skill bar size\n[c yellow]Can only be used once"
 end
 
-function Item_ActionSlot.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.ActionBarSize = 1
+function Item_SkillSlot.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.SkillBarSize = 1
 
 	return Result
 end
 
-function Item_ActionSlot.PlaySound(self, Level)
+function Item_SkillSlot.PlaySound(self, Level)
 	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 end
 

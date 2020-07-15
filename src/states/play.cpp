@@ -938,7 +938,7 @@ void _PlayState::HandleObjectStats(ae::_Buffer &Data) {
 
 	HUD->Reset();
 	HUD->UpdateLabels();
-	HUD->SetActionBarSize(Player->Character->ActionBar.size());
+	HUD->SetSkillBarSize(Player->Character->SkillBarSize);
 }
 
 // Handle world clock change
@@ -1633,8 +1633,8 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 			}
 
 			// Update action bar
-			if(StatChange.HasStat(StatType::ACTIONBARSIZE))
-				HUD->SetActionBarSize(Player->Character->ActionBar.size());
+			if(StatChange.HasStat(StatType::SKILLBARSIZE))
+				HUD->SetSkillBarSize(Player->Character->SkillBarSize);
 
 			// Play death sound
 			if(!Player->Character->Battle && Player->Character->Health <= 0 && WasAlive)

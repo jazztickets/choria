@@ -105,47 +105,48 @@ INSERT INTO stattype VALUES(25,'Experience',1.0);
 INSERT INTO stattype VALUES(26,'Gold',1.0);
 INSERT INTO stattype VALUES(27,'GoldStolen',1.0);
 INSERT INTO stattype VALUES(28,'Invisible',1.0);
-INSERT INTO stattype VALUES(29,'Actionbar Size',1.0);
-INSERT INTO stattype VALUES(30,'Unlock Skill Point',1.0);
-INSERT INTO stattype VALUES(31,'All Skills',1.0);
-INSERT INTO stattype VALUES(32,'Miss',1.0);
-INSERT INTO stattype VALUES(33,'Crit',1.0);
-INSERT INTO stattype VALUES(34,'Flee',1.0);
-INSERT INTO stattype VALUES(35,'Battle',1.0);
-INSERT INTO stattype VALUES(36,'Hunt',1.0);
-INSERT INTO stattype VALUES(37,'Bounty Hunt',1.0);
-INSERT INTO stattype VALUES(38,'Teleport',1.0);
-INSERT INTO stattype VALUES(39,'Light',1.0);
-INSERT INTO stattype VALUES(40,'Clock',1.0);
-INSERT INTO stattype VALUES(41,'Mana Reduction Ratio',1.0);
-INSERT INTO stattype VALUES(42,'Damage Type',1.0);
-INSERT INTO stattype VALUES(43,'Physical Power',1.0);
-INSERT INTO stattype VALUES(44,'Fire Power',1.0);
-INSERT INTO stattype VALUES(45,'Cold Power',1.0);
-INSERT INTO stattype VALUES(46,'Lightning Power',1.0);
-INSERT INTO stattype VALUES(47,'Bleed Power',1.0);
-INSERT INTO stattype VALUES(48,'Poison Power',1.0);
-INSERT INTO stattype VALUES(49,'Pet Power',1.0);
-INSERT INTO stattype VALUES(50,'Heal Power',1.0);
-INSERT INTO stattype VALUES(51,'Mana Power',1.0);
-INSERT INTO stattype VALUES(52,'Respec',1.0);
-INSERT INTO stattype VALUES(53,'Resurrect',1.0);
-INSERT INTO stattype VALUES(54,'Corpse',1.0);
-INSERT INTO stattype VALUES(55,'SummonLimit',1.0);
-INSERT INTO stattype VALUES(56,'Rebirth',1.0);
-INSERT INTO stattype VALUES(57,'DiagonalMovement',1.0);
-INSERT INTO stattype VALUES(58,'MapChange',1.0);
-INSERT INTO stattype VALUES(59,'Clear Buff',1.0);
-INSERT INTO stattype VALUES(60,'Gold Bonus',1.0);
-INSERT INTO stattype VALUES(61,'Exp Bonus',1.0);
-INSERT INTO stattype VALUES(62,'Summon Buff',1.0);
-INSERT INTO stattype VALUES(63,'Lava Protection',1.0);
-INSERT INTO stattype VALUES(64,'Difficulty',1.0);
-INSERT INTO stattype VALUES(65,'Cooldown',1.0);
-INSERT INTO stattype VALUES(66,'RebirthWealth',1.0);
-INSERT INTO stattype VALUES(67,'RebirthWisdom',1.0);
-INSERT INTO stattype VALUES(68,'RebirthKnowledge',1.0);
-INSERT INTO stattype VALUES(69,'RebirthPower',1.0);
+INSERT INTO stattype VALUES(29,'Belt Size',1.0);
+INSERT INTO stattype VALUES(30,'Skill Bar Size',1.0);
+INSERT INTO stattype VALUES(31,'Unlock Skill Point',1.0);
+INSERT INTO stattype VALUES(32,'All Skills',1.0);
+INSERT INTO stattype VALUES(33,'Miss',1.0);
+INSERT INTO stattype VALUES(34,'Crit',1.0);
+INSERT INTO stattype VALUES(35,'Flee',1.0);
+INSERT INTO stattype VALUES(36,'Battle',1.0);
+INSERT INTO stattype VALUES(37,'Hunt',1.0);
+INSERT INTO stattype VALUES(38,'Bounty Hunt',1.0);
+INSERT INTO stattype VALUES(39,'Teleport',1.0);
+INSERT INTO stattype VALUES(40,'Light',1.0);
+INSERT INTO stattype VALUES(41,'Clock',1.0);
+INSERT INTO stattype VALUES(42,'Mana Reduction Ratio',1.0);
+INSERT INTO stattype VALUES(43,'Damage Type',1.0);
+INSERT INTO stattype VALUES(44,'Physical Power',1.0);
+INSERT INTO stattype VALUES(45,'Fire Power',1.0);
+INSERT INTO stattype VALUES(46,'Cold Power',1.0);
+INSERT INTO stattype VALUES(47,'Lightning Power',1.0);
+INSERT INTO stattype VALUES(48,'Bleed Power',1.0);
+INSERT INTO stattype VALUES(49,'Poison Power',1.0);
+INSERT INTO stattype VALUES(50,'Pet Power',1.0);
+INSERT INTO stattype VALUES(51,'Heal Power',1.0);
+INSERT INTO stattype VALUES(52,'Mana Power',1.0);
+INSERT INTO stattype VALUES(53,'Respec',1.0);
+INSERT INTO stattype VALUES(54,'Resurrect',1.0);
+INSERT INTO stattype VALUES(55,'Corpse',1.0);
+INSERT INTO stattype VALUES(56,'SummonLimit',1.0);
+INSERT INTO stattype VALUES(57,'Rebirth',1.0);
+INSERT INTO stattype VALUES(58,'DiagonalMovement',1.0);
+INSERT INTO stattype VALUES(59,'MapChange',1.0);
+INSERT INTO stattype VALUES(60,'Clear Buff',1.0);
+INSERT INTO stattype VALUES(61,'Gold Bonus',1.0);
+INSERT INTO stattype VALUES(62,'Exp Bonus',1.0);
+INSERT INTO stattype VALUES(63,'Summon Buff',1.0);
+INSERT INTO stattype VALUES(64,'Lava Protection',1.0);
+INSERT INTO stattype VALUES(65,'Difficulty',1.0);
+INSERT INTO stattype VALUES(66,'Cooldown',1.0);
+INSERT INTO stattype VALUES(67,'RebirthWealth',1.0);
+INSERT INTO stattype VALUES(68,'RebirthWisdom',1.0);
+INSERT INTO stattype VALUES(69,'RebirthKnowledge',1.0);
+INSERT INTO stattype VALUES(70,'RebirthPower',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -225,10 +226,10 @@ CREATE TABLE IF NOT EXISTS "unlock" (
 	"name" TEXT DEFAULT('None')
 );
 INSERT INTO unlock VALUES(0,'None');
-INSERT INTO unlock VALUES(1,'Action Slot 1');
-INSERT INTO unlock VALUES(2,'Action Slot 2');
-INSERT INTO unlock VALUES(3,'Action Slot 3');
-INSERT INTO unlock VALUES(4,'Action Slot 4');
+INSERT INTO unlock VALUES(1,'Skill Slot 1');
+INSERT INTO unlock VALUES(2,'Skill Slot 2');
+INSERT INTO unlock VALUES(3,'Skill Slot 3');
+INSERT INTO unlock VALUES(4,'Skill Slot 4');
 INSERT INTO unlock VALUES(5,'Skill Point 1');
 INSERT INTO unlock VALUES(6,'Skill Point 2');
 INSERT INTO unlock VALUES(7,'Skill Point 3');
@@ -1380,63 +1381,6 @@ INSERT INTO minigameitem VALUES(28,1,249,1);
 INSERT INTO minigameitem VALUES(29,1,118,1);
 INSERT INTO minigameitem VALUES(30,1,270,1);
 INSERT INTO minigameitem VALUES(31,1,291,1);
-CREATE TABLE IF NOT EXISTS "build" (
-	"id" INTEGER PRIMARY KEY,
-	"name" TEXT,
-	"texture" TEXT,
-	"model_id" INTEGER DEFAULT(0),
-	"actionbarsize" INTEGER DEFAULT(4),
-	"starting" INTEGER DEFAULT(0),
-	"rank" INTEGER DEFAULT(0)
-);
-INSERT INTO build VALUES(0,'','',0,4,0,0);
-INSERT INTO build VALUES(1,'Warrior','textures/builds/warrior.png',1,4,1,1);
-INSERT INTO build VALUES(2,'Mage','textures/builds/mage.png',2,4,1,3);
-INSERT INTO build VALUES(3,'Cleric','textures/builds/cleric.png',3,4,1,2);
-INSERT INTO build VALUES(4,'Thief','textures/builds/thief.png',4,4,1,5);
-INSERT INTO build VALUES(5,'Paladin','textures/builds/paladin.png',5,4,1,4);
-INSERT INTO build VALUES(6,'Warlock','textures/builds/warlock.png',6,4,1,6);
-INSERT INTO build VALUES(7,'Beggar','textures/builds/beggar.png',7,4,1,12);
-INSERT INTO build VALUES(8,'Hunter','textures/builds/hunter.png',8,4,1,7);
-INSERT INTO build VALUES(9,'Gambler','textures/builds/gambler.png',9,4,1,8);
-INSERT INTO build VALUES(10,'Necromancer','textures/builds/necromancer.png',10,4,1,9);
-INSERT INTO build VALUES(11,'Barbarian','textures/builds/barbarian.png',11,4,1,10);
-INSERT INTO build VALUES(12,'Conjurer','textures/builds/conjurer.png',12,4,1,11);
-INSERT INTO build VALUES(13,'','',0,4,0,0);
-INSERT INTO build VALUES(14,'','',0,4,0,0);
-INSERT INTO build VALUES(15,'','',0,4,0,0);
-INSERT INTO build VALUES(16,'','',0,4,0,0);
-INSERT INTO build VALUES(17,'','',0,4,0,0);
-INSERT INTO build VALUES(18,'','',0,4,0,0);
-INSERT INTO build VALUES(19,'','',0,4,0,0);
-INSERT INTO build VALUES(20,'Basic Monster','',0,1,0,0);
-INSERT INTO build VALUES(21,'Spider','',0,1,0,0);
-INSERT INTO build VALUES(22,'Bat','',0,1,0,0);
-INSERT INTO build VALUES(23,'Bat Lord','',0,2,0,0);
-INSERT INTO build VALUES(24,'Crow','',0,1,0,0);
-INSERT INTO build VALUES(25,'Ghost','',0,1,0,0);
-INSERT INTO build VALUES(26,'King Krab','',0,2,0,0);
-INSERT INTO build VALUES(27,'Dead Queen','',0,3,0,0);
-INSERT INTO build VALUES(28,'Zombie','',0,1,0,0);
-INSERT INTO build VALUES(29,'Fireant','',0,1,0,0);
-INSERT INTO build VALUES(30,'Crab','',0,1,0,0);
-INSERT INTO build VALUES(31,'Mud Man','',0,1,0,0);
-INSERT INTO build VALUES(32,'Venomous Bat','',0,1,0,0);
-INSERT INTO build VALUES(33,'Slime Prince','',0,8,0,0);
-INSERT INTO build VALUES(34,'Skeleton Priest','',0,2,0,0);
-INSERT INTO build VALUES(35,'Slime','',0,1,0,0);
-INSERT INTO build VALUES(36,'Skeleton','',0,1,0,0);
-INSERT INTO build VALUES(37,'Demon','',0,1,0,0);
-INSERT INTO build VALUES(38,'Goblin','',0,1,0,0);
-INSERT INTO build VALUES(39,'Goblin Thief','',0,3,0,0);
-INSERT INTO build VALUES(40,'Lava Man','',0,2,0,0);
-INSERT INTO build VALUES(41,'Hornet','',0,1,0,0);
-INSERT INTO build VALUES(42,'Skeleton Mage','',0,6,0,0);
-INSERT INTO build VALUES(43,'Raj','',0,4,0,0);
-INSERT INTO build VALUES(44,'Water Crab','',0,1,0,0);
-INSERT INTO build VALUES(45,'Jem','',0,4,0,0);
-INSERT INTO build VALUES(46,'Lava Spitter','',0,4,0,0);
-INSERT INTO build VALUES(47,'Zog','',0,8,0,0);
 CREATE TABLE IF NOT EXISTS "buildskill" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1782,10 +1726,10 @@ INSERT INTO item VALUES(67,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0
 INSERT INTO item VALUES(68,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(69,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(70,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(96,12,0,0,1,1,0,'Action Slot I','textures/items/actionslot1.png','Item_ActionSlot',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(97,12,0,0,1,2,0,'Action Slot II','textures/items/actionslot2.png','Item_ActionSlot',0,5000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(98,12,0,0,1,3,0,'Action Slot III','textures/items/actionslot3.png','Item_ActionSlot',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(99,12,0,0,1,4,0,'Action Slot IV','textures/items/actionslot4.png','Item_ActionSlot',0,500000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(96,12,0,0,1,1,0,'Skill Slot I','textures/items/skillslot1.png','Item_SkillSlot',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(97,12,0,0,1,2,0,'Skill Slot II','textures/items/skillslot2.png','Item_SkillSlot',0,5000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(98,12,0,0,1,3,0,'Skill Slot III','textures/items/skillslot3.png','Item_SkillSlot',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(99,12,0,0,1,4,0,'Skill Slot IV','textures/items/skillslot4.png','Item_SkillSlot',0,500000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(100,5,2,0,0,0,0,'Short Sword','textures/items/short_sword.png','Proc_Haste',0,25,1,20,10,3.0,1,20,40,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(101,5,2,0,0,0,0,'Stick','textures/items/stick.png','Proc_Mana',0,5,1,10,10,0.0,1,10,20,0,0,0,0,0,20,0,1,0,0,0,0,15,1,0,'',0,0.0);
 INSERT INTO item VALUES(102,5,2,0,0,0,0,'Mace','textures/items/mace.png','Proc_Stun',0,20,1,1,10,1.5,1,10,50,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
@@ -2014,6 +1958,62 @@ INSERT INTO zonedrops VALUES(19,23,125,20);
 INSERT INTO zonedrops VALUES(20,39,264,1);
 INSERT INTO zonedrops VALUES(21,39,221,10);
 INSERT INTO zonedrops VALUES(22,39,294,1);
+CREATE TABLE IF NOT EXISTS "build" (
+"id" INTEGER PRIMARY KEY,
+"name" TEXT,
+"texture" TEXT,
+"model_id" INTEGER DEFAULT(0),
+"starting" INTEGER DEFAULT(0),
+"rank" INTEGER DEFAULT(0)
+);
+INSERT INTO build VALUES(0,'','',0,0,0);
+INSERT INTO build VALUES(1,'Warrior','textures/builds/warrior.png',1,1,1);
+INSERT INTO build VALUES(2,'Mage','textures/builds/mage.png',2,1,3);
+INSERT INTO build VALUES(3,'Cleric','textures/builds/cleric.png',3,1,2);
+INSERT INTO build VALUES(4,'Thief','textures/builds/thief.png',4,1,5);
+INSERT INTO build VALUES(5,'Paladin','textures/builds/paladin.png',5,1,4);
+INSERT INTO build VALUES(6,'Warlock','textures/builds/warlock.png',6,1,6);
+INSERT INTO build VALUES(7,'Beggar','textures/builds/beggar.png',7,1,12);
+INSERT INTO build VALUES(8,'Hunter','textures/builds/hunter.png',8,1,7);
+INSERT INTO build VALUES(9,'Gambler','textures/builds/gambler.png',9,1,8);
+INSERT INTO build VALUES(10,'Necromancer','textures/builds/necromancer.png',10,1,9);
+INSERT INTO build VALUES(11,'Barbarian','textures/builds/barbarian.png',11,1,10);
+INSERT INTO build VALUES(12,'Conjurer','textures/builds/conjurer.png',12,1,11);
+INSERT INTO build VALUES(13,'','',0,0,0);
+INSERT INTO build VALUES(14,'','',0,0,0);
+INSERT INTO build VALUES(15,'','',0,0,0);
+INSERT INTO build VALUES(16,'','',0,0,0);
+INSERT INTO build VALUES(17,'','',0,0,0);
+INSERT INTO build VALUES(18,'','',0,0,0);
+INSERT INTO build VALUES(19,'','',0,0,0);
+INSERT INTO build VALUES(20,'Basic Monster','',0,0,0);
+INSERT INTO build VALUES(21,'Spider','',0,0,0);
+INSERT INTO build VALUES(22,'Bat','',0,0,0);
+INSERT INTO build VALUES(23,'Bat Lord','',0,0,0);
+INSERT INTO build VALUES(24,'Crow','',0,0,0);
+INSERT INTO build VALUES(25,'Ghost','',0,0,0);
+INSERT INTO build VALUES(26,'King Krab','',0,0,0);
+INSERT INTO build VALUES(27,'Dead Queen','',0,0,0);
+INSERT INTO build VALUES(28,'Zombie','',0,0,0);
+INSERT INTO build VALUES(29,'Fireant','',0,0,0);
+INSERT INTO build VALUES(30,'Crab','',0,0,0);
+INSERT INTO build VALUES(31,'Mud Man','',0,0,0);
+INSERT INTO build VALUES(32,'Venomous Bat','',0,0,0);
+INSERT INTO build VALUES(33,'Slime Prince','',0,0,0);
+INSERT INTO build VALUES(34,'Skeleton Priest','',0,0,0);
+INSERT INTO build VALUES(35,'Slime','',0,0,0);
+INSERT INTO build VALUES(36,'Skeleton','',0,0,0);
+INSERT INTO build VALUES(37,'Demon','',0,0,0);
+INSERT INTO build VALUES(38,'Goblin','',0,0,0);
+INSERT INTO build VALUES(39,'Goblin Thief','',0,0,0);
+INSERT INTO build VALUES(40,'Lava Man','',0,0,0);
+INSERT INTO build VALUES(41,'Hornet','',0,0,0);
+INSERT INTO build VALUES(42,'Skeleton Mage','',0,0,0);
+INSERT INTO build VALUES(43,'Raj','',0,0,0);
+INSERT INTO build VALUES(44,'Water Crab','',0,0,0);
+INSERT INTO build VALUES(45,'Jem','',0,0,0);
+INSERT INTO build VALUES(46,'Lava Spitter','',0,0,0);
+INSERT INTO build VALUES(47,'Zog','',0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

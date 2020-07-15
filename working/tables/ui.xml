@@ -234,14 +234,14 @@
 	</element>
 	<element id="element_hud_statuseffects" offset_y="-140" size_x="492" size_y="44" alignment_y="2" index="2"/>
 	<element id="element_actionbar" offset_y="-14" size_x="512" size_y="64" alignment_y="2" index="3">
-		<element id="button_actionbar_0" style="style_hud_slot" hover_style="style_menu_hover" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
-		<element id="button_actionbar_1" style="style_hud_slot" hover_style="style_menu_hover" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
-		<element id="button_actionbar_2" style="style_hud_slot" hover_style="style_menu_hover" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
-		<element id="button_actionbar_3" style="style_hud_slot" hover_style="style_menu_hover" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="3"/>
-		<element id="button_actionbar_4" style="style_hud_slot" hover_style="style_menu_hover" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
-		<element id="button_actionbar_5" style="style_hud_slot" hover_style="style_menu_hover" offset_x="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
-		<element id="button_actionbar_6" style="style_hud_slot" hover_style="style_menu_hover" offset_x="384" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
-		<element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_hover" offset_x="448" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
+		<element id="button_skillbar_0" style="style_hud_slot" hover_style="style_menu_hover" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
+		<element id="button_skillbar_1" style="style_hud_slot" hover_style="style_menu_hover" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
+		<element id="button_skillbar_2" style="style_hud_slot" hover_style="style_menu_hover" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
+		<element id="button_skillbar_3" style="style_hud_slot" hover_style="style_menu_hover" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="3"/>
+		<element id="button_skillbar_4" style="style_hud_slot" hover_style="style_menu_hover" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
+		<element id="button_skillbar_5" style="style_hud_slot" hover_style="style_menu_hover" offset_x="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
+		<element id="button_skillbar_6" style="style_hud_slot" hover_style="style_menu_hover" offset_x="384" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
+		<element id="button_skillbar_7" style="style_hud_slot" hover_style="style_menu_hover" offset_x="448" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
 	</element>
 	<element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-565" offset_y="-215" size_x="96" size_y="48" index="13">
 		<element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" index="0">

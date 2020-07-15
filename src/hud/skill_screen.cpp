@@ -340,15 +340,15 @@ void _SkillScreen::EquipSkill(uint32_t SkillID) {
 			return;
 
 		// Find existing action
-		for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
+		for(int i = 0; i < HUD->Player->Character->SkillBarSize; i++) {
 			if(HUD->Player->Character->ActionBar[i].Item == Skill)
 				return;
 		}
 
 		// Find an empty slot
-		for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
+		for(int i = 0; i < HUD->Player->Character->SkillBarSize; i++) {
 			if(!HUD->Player->Character->ActionBar[i].IsSet()) {
-				HUD->SetActionBar(i, HUD->Player->Character->ActionBar.size(), Skill);
+				HUD->SetActionBar(i, NOSLOT, Skill);
 				return;
 			}
 		}

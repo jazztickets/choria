@@ -455,7 +455,6 @@ void _Stats::LoadBuilds() {
 		_Object *Object = new _Object();
 		Object->Name = std::string("build_") + Database->GetString("name");
 		Object->ModelID = Database->GetInt<uint32_t>("model_id");
-		Object->Character->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
 
 		// Get items
 		Database->PrepareQuery("SELECT * FROM builditem WHERE build_id = @build_id", 1);

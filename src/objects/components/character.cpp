@@ -141,6 +141,8 @@ _Character::_Character(_Object *Object) :
 	SkillPointsUnlocked(0),
 	SkillPointsUsed(0),
 	SkillPointsOnActionBar(0),
+	BeltSize(0),
+	SkillBarSize(0),
 
 	Vendor(nullptr),
 	Trader(nullptr),
@@ -165,6 +167,7 @@ _Character::_Character(_Object *Object) :
 
 	Bot(false) {
 
+	ActionBar.resize(ACTIONBAR_MAX_SIZE);
 }
 
 // Destructor
@@ -465,7 +468,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get skill bonus
-	for(size_t i = 0; i < ActionBar.size(); i++) {
+	for(int i = 0; i < SkillBarSize; i++) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = Object;
 		if(GetActionFromActionBar(ActionResult.ActionUsed, i)) {
@@ -836,7 +839,7 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 		// Update action bar
 		if(Skills[SkillID] == 0) {
-			for(size_t i = 0; i < ActionBar.size(); i++) {
+			for(int i = 0; i < SkillBarSize; i++) {
 				if(ActionBar[i].Item == Skill) {
 					ActionBar[i].Unset();
 					break;

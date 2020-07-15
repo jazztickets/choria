@@ -263,6 +263,8 @@ class _Character {
 
 		// Action bar
 		std::vector<_Action> ActionBar;
+		int BeltSize;
+		int SkillBarSize;
 
 		// Events
 		const _Vendor *Vendor;

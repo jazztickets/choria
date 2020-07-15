@@ -557,7 +557,8 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["build_id"] = Character->BuildID;
 	StatsNode["portrait_id"] = Character->PortraitID;
 	StatsNode["model_id"] = ModelID;
-	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
+	StatsNode["belt_size"] = Character->BeltSize;
+	StatsNode["skillbar_size"] = Character->SkillBarSize;
 	StatsNode["skillpoints_unlocked"] = Character->SkillPointsUnlocked;
 	StatsNode["health"] = Character->Health;
 	StatsNode["mana"] = Character->Mana;
@@ -700,6 +701,8 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->BuildID = StatsNode["build_id"].asUInt();
 	Character->PortraitID = StatsNode["portrait_id"].asUInt();
 	ModelID = StatsNode["model_id"].asUInt();
+	Character->BeltSize = StatsNode["belt_size"].asInt();
+	Character->SkillBarSize = StatsNode["skillbar_size"].asInt();
 	Character->SkillPointsUnlocked = StatsNode["skillpoints_unlocked"].asInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
@@ -731,15 +734,17 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->RebirthKnowledge = StatsNode["rebirth_knowledge"].asInt();
 	Character->RebirthPower = StatsNode["rebirth_power"].asInt();
 
+	if(!Character->BeltSize)
+		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
+
+	if(!Character->SkillBarSize)
+		Character->SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
+
 	if(!Character->Seed)
 		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
 	if(!Character->BuildID)
 		Character->BuildID = 1;
-
-	size_t ActionBarSize = 0;
-	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
-	Character->ActionBar.resize(ActionBarSize);
 
 	// Set items
 	for(Json::ValueIterator BagNode = Data["items"].begin(); BagNode != Data["items"].end(); BagNode++) {
@@ -772,6 +777,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
 		if(Slot < Character->ActionBar.size()) {
+			if(Slot < ACTIONBAR_MAX_SKILLS && Slot >= (uint32_t)Character->SkillBarSize)
+				continue;
+
+			if(Slot >= ACTIONBAR_BELT_STARTS && Slot >= (uint32_t)(Character->BeltSize + ACTIONBAR_BELT_STARTS))
+				continue;
+
 			Character->ActionBar[Slot].Item = Stats->Items.at(ActionNode["id"].asUInt());
 			Character->ActionBar[Slot].ActionBarSlot = Slot;
 		}
@@ -834,6 +845,8 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<uint32_t>(ModelID);
 	Data.Write<uint32_t>(Character->PortraitID);
 	Data.WriteString(Character->PartyName.c_str());
+	Data.Write<uint8_t>(Character->BeltSize);
+	Data.Write<uint8_t>(Character->SkillBarSize);
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
@@ -885,10 +898,8 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	}
 
 	// Write action bar
-	Data.Write<uint8_t>((uint8_t)Character->ActionBar.size());
-	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
 		Character->ActionBar[i].Serialize(Data);
-	}
 
 	// Write unlocks
 	Data.Write<uint32_t>((uint32_t)Character->Unlocks.size());
@@ -952,6 +963,8 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	ModelID = Data.Read<uint32_t>();
 	Character->PortraitID = Data.Read<uint32_t>();
 	Character->PartyName = Data.ReadString();
+	Character->BeltSize = Data.Read<uint8_t>();
+	Character->SkillBarSize = Data.Read<uint8_t>();
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
@@ -1007,9 +1020,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	}
 
 	// Read action bar
-	size_t ActionBarSize = Data.Read<uint8_t>();
-	Character->ActionBar.resize(ActionBarSize);
-	for(size_t i = 0; i < ActionBarSize; i++)
+	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
 		Character->ActionBar[i].Unserialize(Data, Stats);
 
 	// Read unlocks
@@ -1182,13 +1193,11 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Fighter->TurnTimer = glm::clamp(Fighter->TurnTimer, 0.0, 1.0);
 	}
 
-	// Action bar upgrade
-	if(StatChange.HasStat(StatType::ACTIONBARSIZE)) {
-		size_t NewSize = Character->ActionBar.size() + (size_t)StatChange.Values[StatType::ACTIONBARSIZE].Integer;
-		if(NewSize >= ACTIONBAR_MAX_SIZE)
-			NewSize = ACTIONBAR_MAX_SIZE;
-
-		Character->ActionBar.resize(NewSize);
+	// Skill bar upgrade
+	if(StatChange.HasStat(StatType::SKILLBARSIZE)) {
+		Character->SkillBarSize += StatChange.Values[StatType::SKILLBARSIZE].Integer;
+		if(Character->SkillBarSize >= ACTIONBAR_MAX_SKILLS)
+			Character->SkillBarSize = ACTIONBAR_MAX_SKILLS;
 	}
 
 	// Skill point unlocked
@@ -1215,7 +1224,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 				// Set action bar skill to 1
 				bool SetToZero = true;
-				for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+				for(int i = 0; i < Character->SkillBarSize; i++) {
 					if(Character->ActionBar[i].Item == Skill) {
 						Character->Skills[SkillLevel.first] = 1;
 						SetToZero = false;

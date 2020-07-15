@@ -1150,19 +1150,19 @@ void _HUD::DrawMinigame(double BlendFactor) {
 	Minigame->Render(BlendFactor);
 }
 
-// Draw the action bar
+// Draw the skill and belt bar
 void _HUD::DrawActionBar() {
 	if(!Player || !ActionBarElement->Active)
 		return;
 
 	ActionBarElement->Render();
 
-	// Draw action bar
-	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
+	// Draw skill bar
+	for(int i = 0; i < Player->Character->SkillBarSize; i++) {
 
 		// Get button position
 		std::stringstream Buffer;
-		Buffer << "button_actionbar_" << i;
+		Buffer << "button_skillbar_" << i;
 		ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
@@ -1199,7 +1199,6 @@ void _HUD::DrawActionBar() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-28, -15) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
 	}
 }
-
 
 // Draw the party screen
 void _HUD::DrawParty() {
@@ -1468,18 +1467,18 @@ void _HUD::SetPlayer(_Object *Player) {
 }
 
 // Resize action bar
-void _HUD::SetActionBarSize(size_t Size) {
+void _HUD::SetSkillBarSize(size_t Size) {
 
 	// Set all off
-	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
-		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(false);
+	for(size_t i = 0; i < ACTIONBAR_MAX_SKILLS; i++)
+		ae::Assets.Elements["button_skillbar_" + std::to_string(i)]->SetActive(false);
 
 	// Turn on
 	for(size_t i = 0; i < Size; i++)
-		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(true);
+		ae::Assets.Elements["button_skillbar_" + std::to_string(i)]->SetActive(true);
 
 	// Center actionbar
-	ae::_Element *Button = ae::Assets.Elements["button_actionbar_0"];
+	ae::_Element *Button = ae::Assets.Elements["button_skillbar_0"];
 	ActionBarElement->Size.x = Button->Size.x * Size;
 	ActionBarElement->CalculateBounds();
 }
