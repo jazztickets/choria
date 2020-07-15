@@ -128,6 +128,9 @@ class _HUD {
 		void Reset();
 		void ResetChat();
 
+		// Static functions
+		static void FormatTime(std::stringstream &Buffer, int64_t Time);
+
 		// Updates
 		void HandleEnter();
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent);

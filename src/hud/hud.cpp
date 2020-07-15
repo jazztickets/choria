@@ -140,6 +140,16 @@ _HUD::~_HUD() {
 	delete SkillScreen;
 }
 
+// Format time
+void _HUD::FormatTime(std::stringstream &Buffer, int64_t Time) {
+	if(Time < 60)
+		Buffer << Time << "s";
+	else if(Time < 3600)
+		Buffer << Time / 60 << "m";
+	else
+		Buffer << Time / 3600 << "h" << (Time / 60 % 60) << "m";
+}
+
 // Reset state
 void _HUD::Reset() {
 	delete Minigame;

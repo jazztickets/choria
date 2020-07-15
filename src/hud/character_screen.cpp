@@ -317,14 +317,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 
 	// Play time
-	int64_t PlayTime = (int64_t)HUD->Player->Character->PlayTime;
-	if(PlayTime < 60)
-		Buffer << PlayTime << "s";
-	else if(PlayTime < 3600)
-		Buffer << PlayTime / 60 << "m";
-	else
-		Buffer << PlayTime / 3600 << "h" << (PlayTime / 60 % 60) << "m";
-
+	_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->PlayTime);
 	Font->DrawText("Play Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
@@ -332,14 +325,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 
 	// Rebirth time
 	if(HUD->Player->Character->Rebirths > 0) {
-		int64_t RebirthTime = (int64_t)HUD->Player->Character->RebirthTime;
-		if(RebirthTime < 60)
-			Buffer << RebirthTime << "s";
-		else if(RebirthTime < 3600)
-			Buffer << RebirthTime / 60 << "m";
-		else
-			Buffer << RebirthTime / 3600 << "h" << (RebirthTime / 60 % 60) << "m";
-
+		_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->RebirthTime);
 		Font->DrawText("Rebirth Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -347,14 +333,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Battle time
-	int64_t BattleTime = (int64_t)HUD->Player->Character->BattleTime;
-	if(BattleTime < 60)
-		Buffer << BattleTime << "s";
-	else if(BattleTime < 3600)
-		Buffer << BattleTime / 60 << "m";
-	else
-		Buffer << BattleTime / 3600 << "h" << (BattleTime / 60 % 60) << "m";
-
+	_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->BattleTime);
 	Font->DrawText("Battle Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
