@@ -175,7 +175,7 @@
 				</element>
 			</element>
 		</element>
-		<element id="image_hud_gold" texture="textures/hud/gold.png" offset_x="10" offset_y="-30" size_x="48" size_y="48" alignment_x="0" alignment_y="2">
+		<element id="image_hud_gold" texture="textures/hud/gold.png" offset_x="20" offset_y="-30" size_x="48" size_y="48" alignment_x="0" alignment_y="2">
 			<element id="label_hud_gold" color="gold" font="hud_small" offset_x="55" offset_y="36" alignment_x="0" alignment_y="3"/>
 		</element>
 		<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-200" offset_y="20" alignment_x="1" alignment_y="0"/>

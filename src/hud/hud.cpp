@@ -1538,7 +1538,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::EXPERIENCE)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -50 * ae::_Element::GetUIScale());
+		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -100 * ae::_Element::GetUIScale());
 		StatChangeUI.Change = StatChange.Values[StatType::EXPERIENCE].Integer;
 		StatChangeUI.Direction = -1.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
@@ -1559,7 +1559,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		else  {
 			ae::_TextBounds TextBounds;
 			GoldElement->Font->GetStringDimensions(GoldElement->Text, TextBounds);
-			StatChangeUI.StartPosition = glm::vec2(GoldElement->Bounds.Start.x + -TextBounds.Width / 2, GoldElement->Bounds.Start.y + TextBounds.AboveBase);
+			StatChangeUI.StartPosition = glm::vec2(GoldElement->Bounds.Start.x + TextBounds.Width / 2, GoldElement->Bounds.Start.y - 35 * ae::_Element::GetUIScale());
 		}
 
 		// Get amount
@@ -1568,7 +1568,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		else
 			StatChangeUI.Change = StatChange.Values[StatType::GOLDSTOLEN].Integer;
 
-		StatChangeUI.Direction = 1.5f;
+		StatChangeUI.Direction = -1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = ae::Assets.Fonts["menu_buttons"];
 		StatChangeUI.SetText(ae::Assets.Colors["gold"], ae::Assets.Colors["gold"]);
