@@ -1131,7 +1131,16 @@ _Object *_Map::FindDeadPlayer(const _Object *Player, float MaxDistanceSquared) {
 		if(!Object->Character)
 			continue;
 
-		if(Object != Player && !Object->Character->IsAlive()) {
+		if(Object->Character->IsAlive())
+			continue;
+
+		if(Object->Character->Hardcore)
+			continue;
+
+		if(Object->Character->Battle)
+			continue;
+
+		if(Object != Player) {
 			glm::vec2 Delta = Object->Position - Player->Position;
 			float DistanceSquared = glm::dot(Delta, Delta);
 			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {

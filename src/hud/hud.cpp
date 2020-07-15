@@ -801,7 +801,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 					_Cursor EquippedTooltip;
 					EquippedTooltip.InventorySlot = Player->Inventory->GetSlot(CompareSlot);
 					if(EquippedTooltip.InventorySlot.Item)
-						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(0, -1), PlayState.Scripting, Player, EquippedTooltip, _Slot());
+						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(5, -1), PlayState.Scripting, Player, EquippedTooltip, _Slot());
 				}
 			}
 

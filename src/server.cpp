@@ -194,19 +194,6 @@ _Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
 	return Object;
 }
 
-// Resurrect player in the world
-void _Server::Resurrect(_Object *Source, int Health) {
-	if(Source->Character->Battle || !Source->Map)
-		return;
-
-	_Object *DeadPlayer = Source->Map->FindDeadPlayer(Source, 1.0f);
-	if(!DeadPlayer || DeadPlayer->Character->Hardcore)
-		return;
-
-	DeadPlayer->Character->Health = Health;
-	SendHUD(DeadPlayer->Peer);
-}
-
 // Update
 void _Server::Update(double FrameTime) {
 	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
@@ -1066,12 +1053,20 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		// Check for existing action
 		if(!Player->Character->Action.IsSet()) {
-			Player->Character->Targets.clear();
-			Player->Character->Targets.push_back(Player);
 			Player->Character->Action.Item = Item;
 			Player->Character->Action.Level = Item->Level;
 			Player->Character->Action.Duration = Item->Duration;
 			Player->Character->Action.InventorySlot = (int)Slot.Index;
+			Player->Character->Targets.clear();
+
+			if(Item->TargetAlive) {
+				Player->Character->Targets.push_back(Player);
+			}
+			else if(Player->Map) {
+				_Object *DeadPlayer = Player->Map->FindDeadPlayer(Player, 1.0f);
+				if(DeadPlayer)
+					Player->Character->Targets.push_back(DeadPlayer);
+			}
 		}
 	}
 }

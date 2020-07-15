@@ -63,8 +63,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	TooltipType->Text = "";
 	if(Category && Category <= 4)
 		TooltipType->Text = SkillCategories[Category-1];
-	else if(Type != ItemType::NONE)
+	else if(Type != ItemType::NONE) {
 		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);
+		if(Type == ItemType::CONSUMABLE && Scope == ScopeType::BATTLE)
+			TooltipType->Text = "Battle " + TooltipType->Text;
+	}
 
 	// Set up window size
 	std::list<std::string> HelpTextList;

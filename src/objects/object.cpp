@@ -1190,6 +1190,11 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		}
 	}
 
+	// Just revived
+	if(Server && !WasAlive && Character->IsAlive()) {
+		Server->SendHUD(Peer);
+	}
+
 	// Mana change
 	if(StatChange.HasStat(StatType::MANA))
 		Character->UpdateMana(StatChange.Values[StatType::MANA].Integer);
@@ -1291,10 +1296,6 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		// Set clock
 		if(StatChange.HasStat(StatType::CLOCK))
 			Server->SetClock(StatChange.Values[StatType::CLOCK].Float);
-
-		// Resurrect
-		if(StatChange.HasStat(StatType::RESURRECT))
-			Server->Resurrect(this, StatChange.Values[StatType::RESURRECT].Integer);
 
 		// Map Change
 		if(StatChange.HasStat(StatType::MAP_CHANGE))
@@ -1517,6 +1518,13 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 				_Object *Target = ObjectManager->GetObject(NetworkID);
 				if(Target && Item->CanTarget(Scripting, this, Target))
 					Character->Targets.push_back(Target);
+
+				// Using resurrect
+				if(!Item->TargetAlive && !Character->Battle && Map) {
+					_Object *DeadPlayer = Map->FindDeadPlayer(this, 1.0f);
+					if(DeadPlayer)
+						Character->Targets.push_back(DeadPlayer);
+				}
 			}
 		}
 

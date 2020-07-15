@@ -285,6 +285,21 @@ function Buff_BleedResist.Stats(self, Level, Source, Change)
 	return Change
 end
 
+-- Poison Resist --
+
+Buff_PoisonResist = Base_Buff:New()
+
+function Buff_PoisonResist.GetInfo(self, Level)
+	return "Poison resist increased by [c green]" .. Level .. "%"
+end
+
+function Buff_PoisonResist.Stats(self, Level, Source, Change)
+	Change.ResistType = DamageType["Poison"]
+	Change.Resist = Level
+
+	return Change
+end
+
 -- Weak  --
 
 Buff_Weak = Base_Buff:New()

@@ -560,16 +560,7 @@ function Skill_Resurrect.GetHeal(self, Source, Level)
 end
 
 function Skill_Resurrect.GetInfo(self, Source, Item)
-	return "Resurrect an ally and give them [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
-end
-
-function Skill_Resurrect.ApplyCost(self, Source, Level, Result)
-	Result.Source.Mana = -self:GetManaCost(Level)
-
-	-- Hack for using in world
-	Result.Source.Resurrect = self:GetHeal(Source, Level)
-
-	return Result
+	return "Resurrect an ally with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)

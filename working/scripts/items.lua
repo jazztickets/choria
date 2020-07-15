@@ -310,14 +310,16 @@ end
 Item_SlimyGlob = { }
 
 function Item_SlimyGlob.GetInfo(self, Source, Item)
-	return "Purge [c yellow]bleeding[c white] and gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "If bleeding, gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]bleeding"
 end
 
 function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Buff = Buff_BleedResist.Pointer
-	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = Duration
-	Result.Target.ClearBuff = Buff_Bleeding.Pointer
+	if Source.HasBuff(Buff_Bleeding.Pointer) then
+		Result.Target.Buff = Buff_BleedResist.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = Duration
+		Result.Target.ClearBuff = Buff_Bleeding.Pointer
+	end
 
 	return Result
 end
@@ -326,12 +328,32 @@ function Item_SlimyGlob.PlaySound(self, Level)
 	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Crab Legs --
+
+Item_CrabLegs = { }
+
+function Item_CrabLegs.GetInfo(self, Source, Item)
+	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds"
+end
+
+function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Hardened.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
+function Item_CrabLegs.PlaySound(self, Level)
+	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Crow Feather --
 
 Item_CrowFeather = { }
 
 function Item_CrowFeather.GetInfo(self, Source, Item)
-	return "Purge [c yellow]slowness[c white] and increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds\n\nPurges [c yellow]slowness"
 end
 
 function Item_CrowFeather.Use(self, Level, Duration, Source, Target, Result)
@@ -371,13 +393,16 @@ end
 Item_SpiderLeg = { }
 
 function Item_SpiderLeg.GetInfo(self, Source, Item)
-	return "Increase battle speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "If slowed, increase battle speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds\n\nPurges [c yellow]slowness"
 end
 
 function Item_SpiderLeg.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Buff = Buff_Hasted.Pointer
-	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = Duration
+	if Source.HasBuff(Buff_Slowed.Pointer) then
+		Result.Target.Buff = Buff_Hasted.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = Duration
+		Result.Target.ClearBuff = Buff_Slowed.Pointer
+	end
 
 	return Result
 end
@@ -391,14 +416,16 @@ end
 Item_Fang = { }
 
 function Item_Fang.GetInfo(self, Source, Item)
-	return "Purge [c yellow]poison[c white] and increase attack damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "If poisoned, gain [c green]" .. Item.Level .. "% [c yellow]poison [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]poisoned"
 end
 
 function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Buff = Buff_Mighty.Pointer
-	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = Duration
-	Result.Source.ClearBuff = Buff_Poisoned.Pointer
+	if Source.HasBuff(Buff_Poisoned.Pointer) then
+		Result.Target.Buff = Buff_PoisonResist.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = Duration
+		Result.Target.ClearBuff = Buff_Poisoned.Pointer
+	end
 
 	return Result
 end
@@ -427,27 +454,6 @@ function Item_SpectralDust.PlaySound(self, Level)
 	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
--- Crab Legs --
-
-Item_CrabLegs = { }
-
-function Item_CrabLegs.GetInfo(self, Source, Item)
-	return "Purge [c yellow]flayed[c white] and gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds"
-end
-
-function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Buff = Buff_Hardened.Pointer
-	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = Duration
-	Result.Target.ClearBuff = Buff_Flayed.Pointer
-
-	return Result
-end
-
-function Item_CrabLegs.PlaySound(self, Level)
-	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
 -- Teleport Scroll --
 
 Item_TeleportScroll = { }
@@ -462,12 +468,35 @@ function Item_TeleportScroll.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+-- Ankh --
+
+Item_Ankh = { }
+
+function Item_Ankh.GetHeal(self, Source, Level)
+	return math.floor(Level * Source.HealPower + 0.001)
+end
+
+function Item_Ankh.GetInfo(self, Source, Item)
+	return "Throw an ankh at an ally's corpse to resurrect them with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP"
+end
+
+function Item_Ankh.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Health = self:GetHeal(Source, Level)
+	Result.Target.Corpse = 1
+
+	return Result
+end
+
+function Item_Ankh.PlaySound(self, Level)
+	Audio.Play("choir0.ogg")
+end
+
 -- Swamp Glob --
 
 Item_SwampGlob = { }
 
 function Item_SwampGlob.GetInfo(self, Source, Item)
-	return "Purge [c yellow]burning[c white] and slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]burning"
 end
 
 function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result)
@@ -488,7 +517,7 @@ end
 Item_LavaSludge = { }
 
 function Item_LavaSludge.GetInfo(self, Source, Item)
-	return "Purge [c yellow]weakness[c white] and ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c red]Damages yourself when used"
+	return "Ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]weakness[c white]\n\n[c red]Damages yourself when used"
 end
 
 function Item_LavaSludge.GetDamageType(self, Source)
@@ -501,9 +530,11 @@ function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.BuffDuration = Duration
 	Result.Target.ClearBuff = Buff_Weak.Pointer
 
-	Result.Source.Buff = Buff_Burning.Pointer
-	Result.Source.BuffLevel = math.max(1, math.floor(Level / 2))
-	Result.Source.BuffDuration = Duration
+	if Source.MonsterID == 0 then
+		Result.Source.Buff = Buff_Burning.Pointer
+		Result.Source.BuffLevel = math.max(1, math.floor(Level / 2))
+		Result.Source.BuffDuration = Duration
+	end
 	Result.Source.ClearBuff = Buff_Weak.Pointer
 
 	return Result
@@ -584,6 +615,30 @@ function Item_Stinger.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.BuffDuration = Duration
 
 	return Result
+end
+
+-- Smoke Cover --
+
+Item_SmokeCover = { }
+
+function Item_SmokeCover.GetInfo(self, Source, Item)
+	return "Throw down smoke cover for [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies and increase evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. math.floor(Item.Duration) .. " [c white]seconds"
+end
+
+function Item_SmokeCover.GetTargetCount(self, Level)
+	return 3
+end
+
+function Item_SmokeCover.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Evasion.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
+function Item_SmokeCover.PlaySound(self, Level)
+	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Torch --

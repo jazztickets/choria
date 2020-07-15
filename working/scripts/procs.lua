@@ -109,7 +109,7 @@ Proc_Poison.LevelPerLevel = 10
 Proc_Poison.DurationPerLevel = 0
 
 function Proc_Poison.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item)) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
 end
 
 function Proc_Poison.GetLevel(self, Source, Item)
@@ -138,7 +138,7 @@ Proc_Ignite.LevelPerLevel = 10
 Proc_Ignite.DurationPerLevel = 0
 
 function Proc_Ignite.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] fire damage over [c green]" .. math.floor(self:GetDuration(Item)) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] fire damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
 end
 
 function Proc_Ignite.GetLevel(self, Source, Item)
@@ -154,7 +154,7 @@ Proc_Bleed.LevelPerLevel = 10
 Proc_Bleed.DurationPerLevel = 0
 
 function Proc_Bleed.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] bleeding damage over [c green]" .. math.floor(self:GetDuration(Item)) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] bleeding damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
 end
 
 function Proc_Bleed.GetLevel(self, Source, Item)
@@ -170,7 +170,7 @@ Proc_Bloodlet.DurationPerLevel = 0
 
 function Proc_Bloodlet.GetInfo(self, Source, Item)
 	Bleeding = self:GetTotal(Source, Item)
-	Duration = math.floor(self:GetDuration(Item))
+	Duration = self:GetDuration(Item)
 	Chance = self:GetChance(Item)
 	Healing = self:GetTotal(Source, Item)
 	return "[c green]" .. Chance .. "%[c white] chance for [c green]" .. Bleeding .. "[c white] bleeding damage and [c green]" .. Healing .. "[c white] healing over [c green]" .. Duration .. "[c white] seconds"
