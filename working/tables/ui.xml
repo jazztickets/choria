@@ -175,26 +175,26 @@
 				</element>
 			</element>
 		</element>
-		<element id="image_hud_gold" texture="textures/hud/gold.png" offset_x="-20" offset_y="15" size_x="48" size_y="48" alignment_x="2" alignment_y="0">
-			<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-55" offset_y="36" alignment_x="2" alignment_y="3"/>
+		<element id="image_hud_gold" texture="textures/hud/gold.png" offset_x="10" offset_y="-30" size_x="48" size_y="48" alignment_x="0" alignment_y="2">
+			<element id="label_hud_gold" color="gold" font="hud_small" offset_x="55" offset_y="36" alignment_x="0" alignment_y="3"/>
 		</element>
 		<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-200" offset_y="20" alignment_x="1" alignment_y="0"/>
 		<element id="label_hud_clock" font="hud_tiny" offset_x="200" offset_y="20" alignment_x="1" alignment_y="0"/>
 	</element>
-	<element id="element_hud_health" offset_x="-420" offset_y="-26" size_x="210" size_y="44" alignment_y="2">
+	<element id="element_hud_health" offset_x="-420" offset_y="-30" size_x="210" size_y="44" alignment_y="2">
 		<element id="image_hud_health_bar_empty" texture="textures/hud_repeat/health_empty.png" size_y="44" alignment_x="0" alignment_y="0"/>
 		<element id="image_hud_health_bar_full" texture="textures/hud_repeat/health_full.png" size_y="44" alignment_x="0" alignment_y="0"/>
 		<element id="label_hud_health" font="hud_small" offset_y="29" alignment_y="3"/>
 	</element>
-	<element id="element_hud_mana" offset_x="420" offset_y="-26" size_x="210" size_y="44" alignment_y="2">
+	<element id="element_hud_mana" offset_x="420" offset_y="-30" size_x="210" size_y="44" alignment_y="2">
 		<element id="image_hud_mana_bar_empty" texture="textures/hud_repeat/mana_empty.png" size_y="44" alignment_x="0" alignment_y="0"/>
 		<element id="image_hud_mana_bar_full" texture="textures/hud_repeat/mana_full.png" size_y="44" alignment_x="0" alignment_y="0"/>
 		<element id="label_hud_mana" font="hud_small" offset_y="29" alignment_y="3"/>
 	</element>
-	<element id="element_hud_experience" offset_y="-98" size_x="492" size_y="10" alignment_y="2">
-		<element id="image_hud_experience_bar_empty" texture="textures/hud_repeat/experience_empty.png" size_y="10" alignment_x="0" alignment_y="0"/>
-		<element id="image_hud_experience_bar_full" texture="textures/hud_repeat/experience_full.png" size_y="10" alignment_x="0" alignment_y="0"/>
-		<element id="label_hud_experience" font="hud_small" offset_y="-6" alignment_y="3"/>
+	<element id="element_hud_experience" offset_y="0" size_x="512" size_y="20" alignment_y="2">
+		<element id="image_hud_experience_bar_empty" texture="textures/hud_repeat/experience_empty.png" size_y="20" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_full" texture="textures/hud_repeat/experience_full.png" size_y="20" alignment_x="0" alignment_y="0"/>
+		<element id="label_hud_experience" font="hud_tiny" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
 	</element>
 	<element id="element_hud_recentitems" offset_x="-80" offset_y="-50" alignment_x="2" alignment_y="2"/>
 	<element id="element_hud_message" style="style_hud_bg" offset_y="80" alignment_y="0">
@@ -233,15 +233,15 @@
 		</element>
 	</element>
 	<element id="element_hud_statuseffects" offset_y="-140" size_x="492" size_y="44" alignment_y="2" index="2"/>
-	<element id="element_actionbar" offset_y="-14" size_x="512" size_y="64" alignment_y="2" index="3">
-		<element id="button_skillbar_0" style="style_hud_slot" hover_style="style_menu_hover" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
-		<element id="button_skillbar_1" style="style_hud_slot" hover_style="style_menu_hover" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
-		<element id="button_skillbar_2" style="style_hud_slot" hover_style="style_menu_hover" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
-		<element id="button_skillbar_3" style="style_hud_slot" hover_style="style_menu_hover" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="3"/>
-		<element id="button_skillbar_4" style="style_hud_slot" hover_style="style_menu_hover" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
-		<element id="button_skillbar_5" style="style_hud_slot" hover_style="style_menu_hover" offset_x="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
-		<element id="button_skillbar_6" style="style_hud_slot" hover_style="style_menu_hover" offset_x="384" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
-		<element id="button_skillbar_7" style="style_hud_slot" hover_style="style_menu_hover" offset_x="448" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
+	<element id="element_actionbar" offset_y="-20" size_x="512" size_y="64" alignment_y="2" index="3">
+		<element id="button_skillbar_0" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
+		<element id="button_skillbar_1" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
+		<element id="button_skillbar_2" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
+		<element id="button_skillbar_3" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="3"/>
+		<element id="button_skillbar_4" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
+		<element id="button_skillbar_5" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" offset_x="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
+		<element id="button_skillbar_6" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" offset_x="384" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
+		<element id="button_skillbar_7" style="style_hud_slot" hover_style="style_menu_hover" disabled_style="style_hud_slot_disabled" offset_x="448" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
 	</element>
 	<element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-565" offset_y="-215" size_x="96" size_y="48" index="13">
 		<element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" index="0">
