@@ -2253,16 +2253,16 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	std::unordered_map<uint32_t, int> OldMaxSkillLevels = Character->MaxSkillLevels;
 
 	// Reset character
-	int OldActionBarSize = Character->ActionBar.size();
 	Character->ActionBar = Build->Character->ActionBar;
-	Character->ActionBar.resize(OldActionBarSize);
 	Player->Inventory->Bags = Build->Inventory->GetBags();
 	Character->Skills = Build->Character->Skills;
 	Character->MaxSkillLevels.clear();
+	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Gold = 0;
-	Character->Experience = 0;
+	Character->Gold = Character->Gold * Character->RebirthWealth * 0.01f;
+	Character->Experience = Stats->GetLevel(Character->RebirthWisdom + 1)->Experience;
 	Character->UpdateTimer = 0;
+	Character->SkillPointsUnlocked = 0;
 	Character->Vendor = nullptr;
 	Character->Trader = nullptr;
 	Character->Blacksmith = nullptr;
@@ -2276,6 +2276,8 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MenuOpen = false;
 	Character->InventoryOpen = false;
 	Character->SkillsOpen = false;
+	Character->RebirthTime = 0.0;
+	Character->Cooldowns.clear();
 	Character->BattleCooldown.clear();
 	Character->DeleteStatusEffects();
 
@@ -2311,7 +2313,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	}
 
 	// Keep items from trade bag
-	int ItemCount = _RebirthEvent::GetSaveCount(Character->Rebirths + 1);
+	int ItemCount = Character->RebirthPower;
 	for(const auto &Slot : OldTradeBag.Slots) {
 		if(ItemCount && Slot.Item) {
 			Player->Inventory->AddItem(Slot.Item, Slot.Upgrades, Slot.Count);
@@ -2322,26 +2324,25 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	}
 
 	// Get highest skills
-	std::list<_HighestSkill> Skills;
-	for(const auto &Skill : OldSkills) {
-		if(Skill.second > 0)
-			Skills.push_back(_HighestSkill(Skill.first, Skill.second));
+	int SkillCount = Character->RebirthKnowledge;
+	if(SkillCount) {
+		std::list<_HighestSkill> Skills;
+		for(const auto &Skill : OldSkills) {
+			if(Skill.second > 0)
+				Skills.push_back(_HighestSkill(Skill.first, Skill.second));
+		}
+		Skills.sort();
+
+		// Learn old skills and keep max level
+		for(const auto &Skill : Skills) {
+			Character->Skills[Skill.ID] = 0;
+			Character->MaxSkillLevels[Skill.ID] = OldMaxSkillLevels[Skill.ID];
+
+			SkillCount--;
+			if(SkillCount <= 0)
+				break;
+		}
 	}
-	Skills.sort();
-
-	// Learn old skills
-	int SkillCount = _RebirthEvent::GetSaveCount(Character->Rebirths + 1);
-	for(const auto &Skill : Skills) {
-		Character->Skills[Skill.ID] = 0;
-
-		SkillCount--;
-		if(SkillCount <= 0)
-			break;
-	}
-
-	// Keep max skill levels for all skills kept
-	for(const auto &Skill : Character->Skills)
-		Character->MaxSkillLevels[Skill.first] = OldMaxSkillLevels[Skill.first];
 
 	Character->CalculateStats();
 

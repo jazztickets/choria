@@ -664,14 +664,36 @@ end
 
 -- Rebirth --
 
-function RebirthText(UpgradeText, Skills, Items)
-	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, equipment, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. "\n\nYou will keep your starting skills, plus [c green]" .. Skills .. "[c white] of your highest skills and [c green]" .. Items .. "[c white] of your items in your trade stash\n[c yellow]All unlocks are kept"
+function RebirthText(UpgradeText, Source)
+	KeepText = ""
+	if Source.RebirthWealth > 0 then
+		KeepText = KeepText .. "[c green]" .. Source.RebirthWealth .. "%[c white] of your current gold\n"
+	end
+	if Source.RebirthWisdom > 0 then
+		KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom .. "[c white] of your character levels\n"
+	end
+	if Source.RebirthKnowledge > 0 then
+		KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
+	end
+	if Source.RebirthPower > 0 then
+		Plural = ""
+		if Source.RebirthPower ~= 1 then
+			Plural = "s"
+		end
+		KeepText = KeepText .. "[c green]" .. Source.RebirthPower .. "[c white] item" .. Plural .." in your trade bag\n"
+	end
+
+	if KeepText ~= "" then
+		KeepText = "\n\n[c yellow]You will keep\n" .. KeepText
+	end
+
+	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText
 end
 
 Item_EternalStrength = { Value = 10 }
 
 function Item_EternalStrength.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] damage bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] damage bonus", Source)
 end
 
 function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result)
@@ -688,7 +710,7 @@ end
 Item_EternalGuard = { Value = 5 }
 
 function Item_EternalGuard.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "[c white] armor, damage block, and resistance bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "[c white] armor, damage block, and resistance bonus", Source)
 end
 
 function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result)
@@ -705,7 +727,7 @@ end
 Item_EternalFortitude = { Value = 10 }
 
 function Item_EternalFortitude.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] max health and heal power bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] max health and heal power bonus", Source)
 end
 
 function Item_EternalFortitude.Use(self, Level, Duration, Source, Target, Result)
@@ -722,7 +744,7 @@ end
 Item_EternalSpirit = { Value = 10 }
 
 function Item_EternalSpirit.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] max mana and mana power bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] max mana and mana power bonus", Source)
 end
 
 function Item_EternalSpirit.Use(self, Level, Duration, Source, Target, Result)
@@ -739,7 +761,7 @@ end
 Item_EternalWisdom = { Value = 10 }
 
 function Item_EternalWisdom.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] experience bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] experience bonus", Source)
 end
 
 function Item_EternalWisdom.Use(self, Level, Duration, Source, Target, Result)
@@ -756,7 +778,7 @@ end
 Item_EternalWealth = { Value = 10 }
 
 function Item_EternalWealth.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] gold bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] gold bonus", Source)
 end
 
 function Item_EternalWealth.Use(self, Level, Duration, Source, Target, Result)
@@ -773,7 +795,7 @@ end
 Item_EternalAlacrity = { Value = 5 }
 
 function Item_EternalAlacrity.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] battle speed bonus", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] battle speed bonus", Source)
 end
 
 function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
@@ -790,7 +812,7 @@ end
 Item_EternalKnowledge = { Value = 1 }
 
 function Item_EternalKnowledge.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "[c white] extra skill point", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "[c white] extra skill point", Source)
 end
 
 function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result)
@@ -807,7 +829,7 @@ end
 Item_EternalPain = { Value = 10 }
 
 function Item_EternalPain.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] difficulty increase", Source.RebirthSaveCount, Source.RebirthSaveCount)
+	return RebirthText("[c green]" .. self.Value .. "%[c white] difficulty increase", Source)
 end
 
 function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result)
@@ -821,16 +843,72 @@ function Item_EternalPain.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_RiteWealth = { Value = 10 }
+-- Rites --
+
+function RiteText(UpgradeText)
+	return "Permanently increase " .. UpgradeText .. "\n\n[c yellow]Can only be used once"
+end
+
+Item_RiteWealth = { }
 
 function Item_RiteWealth.GetInfo(self, Source, Item)
-	return ""
+	return RiteText("the amount of gold carried over after rebirth by [c green]" .. Item.Level .. "%[c white]")
 end
 
 function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.RebirthWealth = Level
 
 	return Result
 end
 
 function Item_RiteWealth.PlaySound(self, Level)
+	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
+end
+
+Item_RiteWisdom = { }
+
+function Item_RiteWisdom.GetInfo(self, Source, Item)
+	return RiteText("the number of character levels carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+end
+
+function Item_RiteWisdom.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.RebirthWisdom = Level
+
+	return Result
+end
+
+function Item_RiteWisdom.PlaySound(self, Level)
+	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
+end
+
+Item_RiteKnowledge = { }
+
+function Item_RiteKnowledge.GetInfo(self, Source, Item)
+	return RiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+end
+
+function Item_RiteKnowledge.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.RebirthKnowledge = Level
+
+	return Result
+end
+
+function Item_RiteKnowledge.PlaySound(self, Level)
+	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
+end
+
+Item_RitePower = { }
+
+function Item_RitePower.GetInfo(self, Source, Item)
+	return RiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+end
+
+function Item_RitePower.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.RebirthPower = Level
+
+	return Result
+end
+
+function Item_RitePower.PlaySound(self, Level)
+	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 end

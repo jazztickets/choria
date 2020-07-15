@@ -333,6 +333,7 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 			<< " bounty=" << Player->Character->Bounty
 			<< " gamesplayed=" << Player->Character->GamesPlayed
 			<< " rebirths=" << Player->Character->Rebirths
+			<< " rebirthtime=" << Player->Character->RebirthTime
 			<< " )" << std::endl;
 	}
 }

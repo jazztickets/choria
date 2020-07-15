@@ -57,7 +57,6 @@ struct _BattleEvent {
 };
 
 struct _RebirthEvent {
-	static int GetSaveCount(int Rebirths) { return 1 + Rebirths / 5; }
 	_Object *Object;
 	int Type;
 	int Value;

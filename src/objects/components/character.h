@@ -155,6 +155,7 @@ class _Character {
 
 		// Records
 		double PlayTime;
+		double RebirthTime;
 		double BattleTime;
 		int Deaths;
 		int MonsterKills;
@@ -174,6 +175,10 @@ class _Character {
 		int EternalAlacrity;
 		int EternalKnowledge;
 		int EternalPain;
+		int RebirthWealth;
+		int RebirthWisdom;
+		int RebirthKnowledge;
+		int RebirthPower;
 
 		// Levels
 		bool CalcLevelStats;

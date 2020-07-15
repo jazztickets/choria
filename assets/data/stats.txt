@@ -142,6 +142,10 @@ INSERT INTO stattype VALUES(62,'Summon Buff',1.0);
 INSERT INTO stattype VALUES(63,'Lava Protection',1.0);
 INSERT INTO stattype VALUES(64,'Difficulty',1.0);
 INSERT INTO stattype VALUES(65,'Cooldown',1.0);
+INSERT INTO stattype VALUES(66,'RebirthWealth',1.0);
+INSERT INTO stattype VALUES(67,'RebirthWisdom',1.0);
+INSERT INTO stattype VALUES(68,'RebirthKnowledge',1.0);
+INSERT INTO stattype VALUES(69,'RebirthPower',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -235,6 +239,20 @@ INSERT INTO unlock VALUES(11,'Skill Point 7');
 INSERT INTO unlock VALUES(12,'Skill Point 8');
 INSERT INTO unlock VALUES(13,'Skill Point 9');
 INSERT INTO unlock VALUES(14,'Skill Point 10');
+INSERT INTO unlock VALUES(15,'None');
+INSERT INTO unlock VALUES(16,'None');
+INSERT INTO unlock VALUES(17,'None');
+INSERT INTO unlock VALUES(18,'None');
+INSERT INTO unlock VALUES(19,'None');
+INSERT INTO unlock VALUES(20,'None');
+INSERT INTO unlock VALUES(21,'None');
+INSERT INTO unlock VALUES(22,'None');
+INSERT INTO unlock VALUES(23,'None');
+INSERT INTO unlock VALUES(24,'None');
+INSERT INTO unlock VALUES(25,'Rite of Wealth');
+INSERT INTO unlock VALUES(26,'Rite of Wisdom');
+INSERT INTO unlock VALUES(27,'Rite of Knowledge');
+INSERT INTO unlock VALUES(28,'Rite of Power');
 CREATE TABLE IF NOT EXISTS "script" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -609,6 +627,9 @@ INSERT INTO vendoritem VALUES(183,20,46);
 INSERT INTO vendoritem VALUES(184,23,292);
 INSERT INTO vendoritem VALUES(185,18,296);
 INSERT INTO vendoritem VALUES(186,24,297);
+INSERT INTO vendoritem VALUES(187,24,298);
+INSERT INTO vendoritem VALUES(188,24,299);
+INSERT INTO vendoritem VALUES(189,24,300);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1960,9 +1981,12 @@ INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','
 INSERT INTO item VALUES(292,13,0,0,0,0,0,'Chamber Key','textures/items/key1.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','',0,25,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(294,11,0,0,0,0,0,'Goblin Trophy','textures/items/goblin_trophy.png','',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(295,10,0,1,1,0,0,'Eternal Pain','textures/items/eternal_pain.png','Item_RebirthPain',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(295,10,0,1,1,0,0,'Eternal Pain','textures/items/eternal_pain.png','Item_EternalPain',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(296,13,0,0,0,0,0,'Ancient Key','textures/items/key2.png','',0,100000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(297,10,0,1,1,0,0,'Rite of Wealth','textures/items/rite_wealth.png','Item_RiteWealth',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(297,12,0,0,1,25,0,'Rite of Wealth','textures/items/rite_wealth.png','Item_RiteWealth',0,100000,0,5,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(298,12,0,0,1,26,0,'Rite of Wisdom','textures/items/rite_wisdom.png','Item_RiteWisdom',0,100000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(299,12,0,0,1,27,0,'Rite of Knowledge','textures/items/rite_knowledge.png','Item_RiteKnowledge',0,1000000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(300,12,0,0,1,28,0,'Rite of Power','textures/items/rite_power.png','Item_RitePower',0,1000000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

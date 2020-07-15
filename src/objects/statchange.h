@@ -109,6 +109,10 @@ enum class StatType : int {
 	LAVA_PROTECTION,
 	DIFFICULTY,
 	COOLDOWN,
+	REBIRTH_WEALTH,
+	REBIRTH_WISDOM,
+	REBIRTH_KNOWLEDGE,
+	REBIRTH_POWER,
 	COUNT,
 };
 
@@ -191,6 +195,10 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "LavaProtection",         { StatType::LAVA_PROTECTION        , StatValueType::BOOLEAN } },
 	{ "Difficulty",             { StatType::DIFFICULTY             , StatValueType::INTEGER } },
 	{ "Cooldown",               { StatType::COOLDOWN               , StatValueType::FLOAT   } },
+	{ "RebirthWealth",          { StatType::REBIRTH_WEALTH         , StatValueType::INTEGER } },
+	{ "RebirthWisdom",          { StatType::REBIRTH_WISDOM         , StatValueType::INTEGER } },
+	{ "RebirthKnowledge",       { StatType::REBIRTH_KNOWLEDGE      , StatValueType::INTEGER } },
+	{ "RebirthPower",           { StatType::REBIRTH_POWER          , StatValueType::INTEGER } },
 };
 
 union _Value {

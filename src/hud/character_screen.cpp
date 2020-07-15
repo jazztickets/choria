@@ -276,6 +276,42 @@ void _CharacterScreen::Render(double BlendFactor) {
 		HasResist = true;
 	}
 
+	// Rebirth Wealth
+	if(HUD->Player->Character->RebirthWealth > 0) {
+		Buffer << HUD->Player->Character->RebirthWealth << "%";
+		Font->DrawText("Rebirth Wealth", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Rebirth Wisdom
+	if(HUD->Player->Character->RebirthWisdom > 0) {
+		Buffer << HUD->Player->Character->RebirthWisdom;
+		Font->DrawText("Rebirth Wisdom", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Rebirth Knowledge
+	if(HUD->Player->Character->RebirthKnowledge > 0) {
+		Buffer << HUD->Player->Character->RebirthKnowledge;
+		Font->DrawText("Rebirth Knowledge", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Rebirth Power
+	if(HUD->Player->Character->RebirthPower > 0) {
+		Buffer << HUD->Player->Character->RebirthPower;
+		Font->DrawText("Rebirth Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Separator
 	if(HasResist)
 		DrawPosition.y += SpacingY;
@@ -293,6 +329,22 @@ void _CharacterScreen::Render(double BlendFactor) {
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
+
+	// Rebirth time
+	if(HUD->Player->Character->Rebirths > 0) {
+		int64_t RebirthTime = (int64_t)HUD->Player->Character->RebirthTime;
+		if(RebirthTime < 60)
+			Buffer << RebirthTime << "s";
+		else if(RebirthTime < 3600)
+			Buffer << RebirthTime / 60 << "m";
+		else
+			Buffer << RebirthTime / 3600 << "h" << (RebirthTime / 60 % 60) << "m";
+
+		Font->DrawText("Rebirth Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Battle time
 	int64_t BattleTime = (int64_t)HUD->Player->Character->BattleTime;

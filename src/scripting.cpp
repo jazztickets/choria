@@ -472,8 +472,17 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Fighter->Corpse);
 	lua_setfield(LuaState, -2, "Corpse");
 
-	lua_pushinteger(LuaState, _RebirthEvent::GetSaveCount(Object->Character->Rebirths + 1));
-	lua_setfield(LuaState, -2, "RebirthSaveCount");
+	lua_pushinteger(LuaState, Object->Character->RebirthWealth);
+	lua_setfield(LuaState, -2, "RebirthWealth");
+
+	lua_pushinteger(LuaState, Object->Character->RebirthWisdom);
+	lua_setfield(LuaState, -2, "RebirthWisdom");
+
+	lua_pushinteger(LuaState, Object->Character->RebirthKnowledge);
+	lua_setfield(LuaState, -2, "RebirthKnowledge");
+
+	lua_pushinteger(LuaState, Object->Character->RebirthPower);
+	lua_setfield(LuaState, -2, "RebirthPower");
 
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");

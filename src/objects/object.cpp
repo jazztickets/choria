@@ -184,6 +184,7 @@ void _Object::Update(double FrameTime) {
 
 		// Update playtime
 		Character->PlayTime += FrameTime;
+		Character->RebirthTime += FrameTime;
 		if(Character->Battle)
 			Character->BattleTime += FrameTime;
 	}
@@ -564,6 +565,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["gold"] = Character->Gold;
 	StatsNode["goldlost"] = Character->GoldLost;
 	StatsNode["playtime"] = Character->PlayTime;
+	StatsNode["rebirthtime"] = Character->RebirthTime;
 	StatsNode["battletime"] = Character->BattleTime;
 	StatsNode["deaths"] = Character->Deaths;
 	StatsNode["monsterkills"] = Character->MonsterKills;
@@ -582,6 +584,10 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["eternal_alacrity"] = Character->EternalAlacrity;
 	StatsNode["eternal_knowledge"] = Character->EternalKnowledge;
 	StatsNode["eternal_pain"] = Character->EternalPain;
+	StatsNode["rebirth_wealth"] = Character->RebirthWealth;
+	StatsNode["rebirth_wisdom"] = Character->RebirthWisdom;
+	StatsNode["rebirth_knowledge"] = Character->RebirthKnowledge;
+	StatsNode["rebirth_power"] = Character->RebirthPower;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -701,6 +707,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->Gold = StatsNode["gold"].asInt();
 	Character->GoldLost = StatsNode["goldlost"].asInt();
 	Character->PlayTime = StatsNode["playtime"].asDouble();
+	Character->RebirthTime = StatsNode["rebirthtime"].asDouble();
 	Character->BattleTime = StatsNode["battletime"].asDouble();
 	Character->Deaths = StatsNode["deaths"].asInt();
 	Character->MonsterKills = StatsNode["monsterkills"].asInt();
@@ -719,6 +726,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->EternalAlacrity = StatsNode["eternal_alacrity"].asInt();
 	Character->EternalKnowledge = StatsNode["eternal_knowledge"].asInt();
 	Character->EternalPain = StatsNode["eternal_pain"].asInt();
+	Character->RebirthWealth = StatsNode["rebirth_wealth"].asInt();
+	Character->RebirthWisdom = StatsNode["rebirth_wisdom"].asInt();
+	Character->RebirthKnowledge = StatsNode["rebirth_knowledge"].asInt();
+	Character->RebirthPower = StatsNode["rebirth_power"].asInt();
 
 	if(!Character->Seed)
 		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
@@ -834,6 +845,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->Hardcore);
 	Data.Write<int>(Character->GoldLost);
 	Data.Write<double>(Character->PlayTime);
+	Data.Write<double>(Character->RebirthTime);
 	Data.Write<double>(Character->BattleTime);
 	Data.Write<int>(Character->Deaths);
 	Data.Write<int>(Character->MonsterKills);
@@ -850,6 +862,10 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->EternalAlacrity);
 	Data.Write<int>(Character->EternalKnowledge);
 	Data.Write<int>(Character->EternalPain);
+	Data.Write<int>(Character->RebirthWealth);
+	Data.Write<int>(Character->RebirthWisdom);
+	Data.Write<int>(Character->RebirthKnowledge);
+	Data.Write<int>(Character->RebirthPower);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -947,6 +963,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->Hardcore = Data.Read<int>();
 	Character->GoldLost = Data.Read<int>();
 	Character->PlayTime = Data.Read<double>();
+	Character->RebirthTime = Data.Read<double>();
 	Character->BattleTime = Data.Read<double>();
 	Character->Deaths = Data.Read<int>();
 	Character->MonsterKills = Data.Read<int>();
@@ -963,6 +980,10 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->EternalAlacrity = Data.Read<int>();
 	Character->EternalKnowledge = Data.Read<int>();
 	Character->EternalPain = Data.Read<int>();
+	Character->RebirthWealth = Data.Read<int>();
+	Character->RebirthWisdom = Data.Read<int>();
+	Character->RebirthKnowledge = Data.Read<int>();
+	Character->RebirthPower = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1175,6 +1196,16 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->SkillPointsUnlocked += StatChange.Values[StatType::SKILLPOINT].Integer;
 		Character->CalculateStats();
 	}
+
+	// Rebirth bonus
+	if(StatChange.HasStat(StatType::REBIRTH_WEALTH))
+		Character->RebirthWealth += StatChange.Values[StatType::REBIRTH_WEALTH].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_WISDOM))
+		Character->RebirthWisdom += StatChange.Values[StatType::REBIRTH_WISDOM].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_KNOWLEDGE))
+		Character->RebirthKnowledge += StatChange.Values[StatType::REBIRTH_KNOWLEDGE].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_POWER))
+		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
 
 	// Reset skills
 	if(StatChange.HasStat(StatType::RESPEC)) {

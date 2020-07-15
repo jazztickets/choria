@@ -52,6 +52,7 @@ _Character::_Character(_Object *Object) :
 	Status(0),
 
 	PlayTime(0.0),
+	RebirthTime(0.0),
 	BattleTime(0.0),
 	Deaths(0),
 	MonsterKills(0),
@@ -70,6 +71,10 @@ _Character::_Character(_Object *Object) :
 	EternalAlacrity(0),
 	EternalKnowledge(0),
 	EternalPain(0),
+	RebirthWealth(0),
+	RebirthWisdom(0),
+	RebirthKnowledge(0),
+	RebirthPower(0),
 
 	CalcLevelStats(true),
 	Level(0),
