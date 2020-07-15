@@ -72,7 +72,7 @@ end
 Buff_Invis = {}
 
 function Buff_Invis.GetInfo(self, Level)
-	return "Avoiding combat"
+	return "Avoiding battle"
 end
 
 function Buff_Invis.Stats(self, Level, Source, Change)

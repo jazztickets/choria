@@ -560,7 +560,7 @@ function Skill_Resurrect.GetHeal(self, Source, Level)
 end
 
 function Skill_Resurrect.GetInfo(self, Source, Item)
-	return "Resurrect an ally with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Resurrect an ally with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Can be used outside of battle"
 end
 
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
@@ -1055,7 +1055,7 @@ function Skill_Flee.GetDuration(self, Level)
 end
 
 function Skill_Flee.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from combat\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c yellow]Unusable in boss battles"
+	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from battle\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n\n[c yellow]Unusable in boss battles"
 end
 
 function Skill_Flee.ApplyCost(self, Source, Level, Result)

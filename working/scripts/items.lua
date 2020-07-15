@@ -52,7 +52,7 @@ end
 Item_InvisPotion = Base_Potion:New()
 
 function Item_InvisPotion.GetInfo(self, Source, Item)
-	return "Turn invisible and avoid combat for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Turn invisible and avoid battle for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
 function Item_InvisPotion.Use(self, Level, Duration, Source, Target, Result)
