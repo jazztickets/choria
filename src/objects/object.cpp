@@ -1207,6 +1207,13 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 			Character->SkillBarSize = ACTIONBAR_MAX_SKILLS;
 	}
 
+	// Belt size upgrade
+	if(StatChange.HasStat(StatType::BELTSIZE)) {
+		Character->BeltSize += StatChange.Values[StatType::BELTSIZE].Integer;
+		if(Character->BeltSize >= ACTIONBAR_MAX_ITEMS)
+			Character->BeltSize = ACTIONBAR_MAX_ITEMS;
+	}
+
 	// Skill point unlocked
 	if(StatChange.HasStat(StatType::SKILLPOINT)) {
 		Character->SkillPointsUnlocked += StatChange.Values[StatType::SKILLPOINT].Integer;

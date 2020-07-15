@@ -254,6 +254,9 @@ INSERT INTO unlock VALUES(25,'Rite of Wealth');
 INSERT INTO unlock VALUES(26,'Rite of Wisdom');
 INSERT INTO unlock VALUES(27,'Rite of Knowledge');
 INSERT INTO unlock VALUES(28,'Rite of Power');
+INSERT INTO unlock VALUES(29,'Belt Slot 1');
+INSERT INTO unlock VALUES(30,'Belt Slot 2');
+INSERT INTO unlock VALUES(31,'Belt Slot 3');
 CREATE TABLE IF NOT EXISTS "script" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -457,7 +460,7 @@ INSERT INTO vendor VALUES(9,'san_weapon',1.0,0.5);
 INSERT INTO vendor VALUES(10,'san_armor',1.0,0.5);
 INSERT INTO vendor VALUES(11,'ruins_vendor',1.0,0.59999999999999997779);
 INSERT INTO vendor VALUES(12,'ham_game',1.0,0.5);
-INSERT INTO vendor VALUES(13,'lighthouse_skills',1.0,0.5);
+INSERT INTO vendor VALUES(13,'lighthouse_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(14,'dungeon_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5);
 INSERT INTO vendor VALUES(16,'wym_gear',1.0,0.5);
@@ -631,6 +634,9 @@ INSERT INTO vendoritem VALUES(186,24,297);
 INSERT INTO vendoritem VALUES(187,24,298);
 INSERT INTO vendoritem VALUES(188,24,299);
 INSERT INTO vendoritem VALUES(189,24,300);
+INSERT INTO vendoritem VALUES(190,2,301);
+INSERT INTO vendoritem VALUES(191,13,302);
+INSERT INTO vendoritem VALUES(192,15,303);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1930,6 +1936,9 @@ INSERT INTO item VALUES(297,12,0,0,1,25,0,'Rite of Wealth','textures/items/rite_
 INSERT INTO item VALUES(298,12,0,0,1,26,0,'Rite of Wisdom','textures/items/rite_wisdom.png','Item_RiteWisdom',0,25000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(299,12,0,0,1,27,0,'Rite of Knowledge','textures/items/rite_knowledge.png','Item_RiteKnowledge',0,500000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(300,12,0,0,1,28,0,'Rite of Power','textures/items/rite_power.png','Item_RitePower',0,1000000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(301,12,0,0,1,29,0,'Belt Slot I','textures/items/beltslot1.png','Item_BeltSlot',0,250,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(302,12,0,0,1,30,0,'Belt Slot II','textures/items/beltslot2.png','Item_BeltSlot',0,2500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(303,12,0,0,1,31,0,'Belt Slot III','textures/items/beltslot3.png','Item_BeltSlot',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

@@ -176,7 +176,7 @@ function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
--- Action Slot --
+-- Skill Slot --
 
 Item_SkillSlot = { }
 
@@ -191,6 +191,24 @@ function Item_SkillSlot.Use(self, Level, Duration, Source, Target, Result)
 end
 
 function Item_SkillSlot.PlaySound(self, Level)
+	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
+end
+
+-- Belt Slot --
+
+Item_BeltSlot = { }
+
+function Item_BeltSlot.GetInfo(self, Source, Item)
+	return "Increase your belt size\n[c yellow]Can only be used once"
+end
+
+function Item_BeltSlot.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.BeltSize = 1
+
+	return Result
+end
+
+function Item_BeltSlot.PlaySound(self, Level)
 	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 end
 
