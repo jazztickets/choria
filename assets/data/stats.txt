@@ -1939,7 +1939,7 @@ INSERT INTO item VALUES(249,10,0,1,1,0,0,'Potion of Unlearning','textures/items/
 INSERT INTO item VALUES(250,13,0,0,0,0,0,'Storage Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(251,13,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(252,13,0,0,0,0,0,'Secret Key','textures/items/key0.png','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(253,11,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(253,11,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','',0,5000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(254,10,0,1,1,0,0,'Eternal Strength','textures/items/eternal_strength.png','Item_EternalStrength',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(255,10,0,1,1,0,0,'Eternal Guard','textures/items/eternal_guard.png','Item_EternalGuard',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(256,10,0,1,1,0,0,'Eternal Fortitude','textures/items/eternal_fortitude.png','Item_EternalFortitude',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
@@ -1983,9 +1983,9 @@ INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','
 INSERT INTO item VALUES(294,11,0,0,0,0,0,'Goblin Trophy','textures/items/goblin_trophy.png','',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(295,10,0,1,1,0,0,'Eternal Pain','textures/items/eternal_pain.png','Item_EternalPain',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(296,13,0,0,0,0,0,'Ancient Key','textures/items/key2.png','',0,100000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(297,12,0,0,1,25,0,'Rite of Wealth','textures/items/rite_wealth.png','Item_RiteWealth',0,100000,0,5,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(298,12,0,0,1,26,0,'Rite of Wisdom','textures/items/rite_wisdom.png','Item_RiteWisdom',0,100000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(299,12,0,0,1,27,0,'Rite of Knowledge','textures/items/rite_knowledge.png','Item_RiteKnowledge',0,1000000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(297,12,0,0,1,25,0,'Rite of Wealth','textures/items/rite_wealth.png','Item_RiteWealth',0,10000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(298,12,0,0,1,26,0,'Rite of Wisdom','textures/items/rite_wisdom.png','Item_RiteWisdom',0,25000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(299,12,0,0,1,27,0,'Rite of Knowledge','textures/items/rite_knowledge.png','Item_RiteKnowledge',0,500000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(300,12,0,0,1,28,0,'Rite of Power','textures/items/rite_power.png','Item_RitePower',0,1000000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,

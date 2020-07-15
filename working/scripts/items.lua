@@ -844,15 +844,39 @@ function Item_EternalPain.PlaySound(self, Level)
 end
 
 -- Rites --
+Base_Rite = {
 
-function RiteText(UpgradeText)
-	return "Permanently increase " .. UpgradeText .. "\n\n[c yellow]Can only be used once"
-end
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
 
-Item_RiteWealth = { }
+	GetRiteText = function(self, UpgradeText)
+		return "Permanently increase " .. UpgradeText .. "\n\n[c yellow]Can only be used once"
+	end,
+
+	PlaySound = function(self, Level)
+		Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
+	end,
+
+	GetUpgradedPrice = function(self, Upgrades)
+		return math.floor(self.Item.Cost + self.Item.Cost * Upgrades ^ self.Exponent)
+	end,
+
+	Exponent = 1.0
+}
+
+Item_RiteWealth = Base_Rite:New()
+Item_RiteWealth.Exponent = 1.25
 
 function Item_RiteWealth.GetInfo(self, Source, Item)
-	return RiteText("the amount of gold carried over after rebirth by [c green]" .. Item.Level .. "%[c white]")
+	return self:GetRiteText("the amount of gold carried over after rebirth by [c green]" .. Item.Level .. "%[c white]")
+end
+
+function Item_RiteWealth.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source.RebirthWealth)
 end
 
 function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result)
@@ -861,14 +885,15 @@ function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_RiteWealth.PlaySound(self, Level)
-	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
-end
-
-Item_RiteWisdom = { }
+Item_RiteWisdom = Base_Rite:New()
+Item_RiteWisdom.Exponent = 1.25
 
 function Item_RiteWisdom.GetInfo(self, Source, Item)
-	return RiteText("the number of character levels carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+	return self:GetRiteText("the number of character levels carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+end
+
+function Item_RiteWisdom.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source.RebirthWisdom)
 end
 
 function Item_RiteWisdom.Use(self, Level, Duration, Source, Target, Result)
@@ -877,14 +902,15 @@ function Item_RiteWisdom.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_RiteWisdom.PlaySound(self, Level)
-	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
-end
-
-Item_RiteKnowledge = { }
+Item_RiteKnowledge = Base_Rite:New()
+Item_RiteKnowledge.Exponent = 1.5
 
 function Item_RiteKnowledge.GetInfo(self, Source, Item)
-	return RiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+	return self:GetRiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+end
+
+function Item_RiteKnowledge.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source.RebirthKnowledge)
 end
 
 function Item_RiteKnowledge.Use(self, Level, Duration, Source, Target, Result)
@@ -893,22 +919,19 @@ function Item_RiteKnowledge.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_RiteKnowledge.PlaySound(self, Level)
-	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
-end
-
-Item_RitePower = { }
+Item_RitePower = Base_Rite:New()
+Item_RitePower.Exponent = 2.0
 
 function Item_RitePower.GetInfo(self, Source, Item)
-	return RiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+end
+
+function Item_RitePower.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source.RebirthPower)
 end
 
 function Item_RitePower.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.RebirthPower = Level
 
 	return Result
-end
-
-function Item_RitePower.PlaySound(self, Level)
-	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 end

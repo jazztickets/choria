@@ -746,7 +746,7 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
+int _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
 	if(!Vendor)
 		return 0;
 
@@ -757,7 +757,17 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) 
 	else
 		Percent = Vendor->SellPercent;
 
-	int Price = (int)(Cost * Percent) * QueryCount;
+	// Check for GetCost function in script
+	int ItemCost = Cost;
+	if(Scripting->StartMethodCall(Script, "GetCost")) {
+		Scripting->PushObject(Source);
+		Scripting->MethodCall(1, 1);
+		ItemCost = Scripting->GetInt(1);
+		Scripting->FinishMethodCall();
+	}
+
+	// Get vendor's price
+	int Price = (int)(ItemCost * Percent) * QueryCount;
 
 	// Add some value for upgrades
 	if(Level) {
