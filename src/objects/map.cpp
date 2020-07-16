@@ -1028,7 +1028,7 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 }
 
 // Returns a battle instance close to a player
-_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
+_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle) {
 	for(const auto &Object : Objects) {
 		if(!Object->Character)
 			continue;
@@ -1049,12 +1049,15 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
 			continue;
 
-		if(Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
-			if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
-				return Object->Character->Battle;
-			else
-				HitPrivateParty = true;
+		if(Object->Character->Battle->SideCount[0] >= BATTLE_MAX_OBJECTS_PER_SIDE) {
+			HitFullBattle = true;
+			continue;
 		}
+
+		if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
+			return Object->Character->Battle;
+		else
+			HitPrivateParty = true;
 	}
 
 	return nullptr;

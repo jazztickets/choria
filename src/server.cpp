@@ -1678,10 +1678,13 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Find a nearby battle instance
 	bool HitPrivateParty = false;
-	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty);
+	bool HitFullBattle = false;
+	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty, HitFullBattle);
 	if(!Battle) {
 		if(HitPrivateParty)
 			SendMessage(Peer, "Can't join private party", "red");
+		else if(HitFullBattle)
+			SendMessage(Peer, "Can't join full battle", "red");
 
 		return;
 	}
