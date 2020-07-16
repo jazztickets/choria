@@ -31,7 +31,7 @@
 #include <iomanip>
 
 // Draw tooltip
-void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const {
+void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration, bool ShowDismiss) const {
 	std::stringstream Buffer;
 
 	ae::_Element *TooltipElement = ae::Assets.Elements["element_buffs_tooltip"];
@@ -47,6 +47,12 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const
 
 	// Get window width
 	glm::vec2 Size = TooltipElement->Size;
+	Size.y = 180 * ae::_Element::GetUIScale();
+	TooltipDuration->BaseOffset.y = 165;
+	if(ShowDismiss) {
+		Size.y += 25 * ae::_Element::GetUIScale();
+		TooltipDuration->BaseOffset.y = 185;
+	}
 
 	// Position window
 	glm::vec2 WindowOffset = ae::Input.GetMouse();
@@ -62,6 +68,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const
 		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
 	TooltipElement->Offset = WindowOffset;
+	TooltipElement->Size = Size;
 	TooltipElement->CalculateBounds(false);
 
 	// Render tooltip
@@ -121,6 +128,11 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const
 		}
 	}
 	Buffer.str("");
+
+	if(ShowDismiss) {
+		DrawPosition.y += 5 * ae::_Element::GetUIScale();
+		ae::Assets.Fonts["hud_small"]->DrawText("Right-click to dismiss", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+	}
 }
 
 // Call scripting function by name

@@ -455,6 +455,9 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
+		case PacketType::PLAYER_CLEARBUFF:
+			HandleClearBuff(Data, Peer);
+		break;
 		case PacketType::COMMAND:
 			HandleCommand(Data, Peer);
 		break;
@@ -1547,6 +1550,27 @@ void _Server::HandlePlayerStatus(ae::_Buffer &Data, ae::_Peer *Peer) {
 		break;
 	}
 
+}
+
+// Handle a player dismissing a buff
+void _Server::HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	// Get data
+	uint32_t BuffID = Data.Read<uint32_t>();
+	_Object *Player = Peer->Object;
+	if(Player->Character->Battle)
+		return;
+
+	// Update buff
+	for(auto &StatusEffect : Player->Character->StatusEffects) {
+		if(StatusEffect->Buff->ID == BuffID) {
+			StatusEffect->Duration = 0.0;
+			UpdateBuff(Player, StatusEffect);
+			break;
+		}
+	}
 }
 
 // Upgrade an item

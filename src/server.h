@@ -124,6 +124,7 @@ class _Server {
 		void HandleActionBarChanged(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleBattleFinished(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandlePlayerStatus(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer);

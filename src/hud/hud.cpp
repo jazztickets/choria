@@ -219,6 +219,16 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			}
 		}
 
+		// Dismiss status effect
+		if(Tooltip.StatusEffect && !Player->Character->Battle) {
+			if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::PLAYER_CLEARBUFF);
+				Packet.Write<uint32_t>(Tooltip.StatusEffect->Buff->ID);
+				PlayState.Network->SendPacket(Packet);
+			}
+		}
+
 		if(Tooltip.InventorySlot.Item) {
 			switch(Tooltip.Window) {
 				case WINDOW_TRADEYOURS:
@@ -811,7 +821,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Draw status effects
 		if(Tooltip.StatusEffect)
-			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level, Tooltip.StatusEffect->Duration);
+			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level, Tooltip.StatusEffect->Duration, !Player->Character->Battle && Tooltip.StatusEffect->Buff->Dismiss);
 	}
 	// Dead outside of combat
 	else {
