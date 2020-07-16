@@ -1271,6 +1271,8 @@ void _HUD::DrawRecentItems() {
 	// Draw items
 	glm::vec2 DrawPosition = ae::Assets.Elements["element_hud_recentitems"]->Bounds.Start;
 	for(auto &RecentItem : RecentItems) {
+		if(!RecentItem.Item)
+			continue;
 
 		// Get alpha
 		double TimeLeft = HUD_RECENTITEM_TIMEOUT - RecentItem.Time;

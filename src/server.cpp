@@ -1261,6 +1261,22 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Update items
 	Player->AcceptTrader(RequiredItemSlots);
 
+	// Give buff
+	if(Player->Character->Trader->RewardItem == nullptr) {
+		_StatChange StatChange;
+		StatChange.Object = Player;
+		StatChange.Values[StatType::BUFF].Pointer = (void *)Stats->Buffs.at(22);
+		StatChange.Values[StatType::BUFFLEVEL].Integer = 10;
+		StatChange.Values[StatType::BUFFDURATION].Float = 60;
+		Player->UpdateStats(StatChange);
+
+		// Build packet
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+		StatChange.Serialize(Packet);
+		Network->SendPacket(Packet, Player->Peer);
+	}
+
 	// Send new inventory
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY);

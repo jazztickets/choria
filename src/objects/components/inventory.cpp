@@ -285,11 +285,12 @@ _Slot _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
 // Find a slot for an item in a certain bag
 _Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int Upgrades, int Count) {
 	_Slot EmptySlot;
+
 	_Bag &Bag = Bags[(size_t)BagType];
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Try to find an existing stack first
-		if(Item->IsStackable() && Bag.Slots[i].Item == Item && Bag.Slots[i].Upgrades == Upgrades && Bag.Slots[i].Count + Count <= Bag.Slots[i].MaxCount)
+		if(Item && Item->IsStackable() && Bag.Slots[i].Item == Item && Bag.Slots[i].Upgrades == Upgrades && Bag.Slots[i].Count + Count <= Bag.Slots[i].MaxCount)
 			return _Slot(BagType, i);
 
 		// Keep track of the first empty slot in case stack is not found
@@ -304,7 +305,7 @@ _Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int U
 
 // Attempts to add an item to the inventory
 bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, _Slot TargetSlot) {
-	if(!Count)
+	if(!Count || !Item)
 		return false;
 
 	bool Added = false;
