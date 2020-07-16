@@ -333,7 +333,10 @@ void _Character::CalculateStats() {
 	MaxDamage = BaseMaxDamage;
 	Armor = BaseArmor;
 	DamageBlock = BaseDamageBlock;
+	HealthRegen = 0;
+	ManaRegen = 0;
 	HealthUpdateMultiplier = 1.0f;
+	ManaReductionRatio = 0.0f;
 	AttackPower = 1.0f;
 	MoveSpeed = 100;
 	Evasion = 0;

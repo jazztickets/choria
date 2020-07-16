@@ -1160,6 +1160,7 @@ INSERT INTO trader VALUES(67,'unstable_potion',305,1);
 INSERT INTO trader VALUES(68,'shrapnel_bomb',306,1);
 INSERT INTO trader VALUES(69,'smoke_cover',116,1);
 INSERT INTO trader VALUES(70,'beggar',0,1);
+INSERT INTO trader VALUES(71,'secret_garden_map',308,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1305,7 +1306,7 @@ INSERT INTO traderitem VALUES(161,60,211,1);
 INSERT INTO traderitem VALUES(162,60,147,1);
 INSERT INTO traderitem VALUES(163,60,151,10);
 INSERT INTO traderitem VALUES(164,55,225,1);
-INSERT INTO traderitem VALUES(165,56,283,1);
+INSERT INTO traderitem VALUES(165,56,308,1);
 INSERT INTO traderitem VALUES(166,61,124,1);
 INSERT INTO traderitem VALUES(167,61,115,1);
 INSERT INTO traderitem VALUES(168,61,108,1);
@@ -1338,6 +1339,9 @@ INSERT INTO traderitem VALUES(195,69,270,1);
 INSERT INTO traderitem VALUES(196,69,110,1);
 INSERT INTO traderitem VALUES(197,69,146,3);
 INSERT INTO traderitem VALUES(198,70,221,1);
+INSERT INTO traderitem VALUES(199,71,283,1);
+INSERT INTO traderitem VALUES(200,71,116,5);
+INSERT INTO traderitem VALUES(201,71,155,5);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1965,6 +1969,7 @@ INSERT INTO item VALUES(304,10,0,3,3,0,0,'Ankh','textures/items/ankh.png','Item_
 INSERT INTO item VALUES(305,10,0,4,2,0,0,'Unstable Potion','textures/items/blinding_bomb.png','Item_UnstablePotion',0,175,1,25,0,7.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(306,10,0,4,2,0,0,'Shrapnel Bomb','textures/items/shrapnel_bomb.png','Item_ShrapnelBomb',0,250,1,35,0,10.0,1,0,0,0,0,200,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(307,5,2,0,0,0,0,'Flanged Mace','textures/items/flanged_mace.png','Proc_Stun',0,1750,1,1,20,2.5,1,140,220,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
+INSERT INTO item VALUES(308,15,0,0,0,0,0,'Secret Garden Map','textures/items/map.png','',0,35000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/secret_garden.png',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
