@@ -630,7 +630,7 @@ function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
 end
 
 function Skill_Icicle.PlaySound(self, Level)
-	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg", 0.65)
+	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg", 0.4)
 end
 
 -- Poison Touch --

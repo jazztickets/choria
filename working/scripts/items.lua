@@ -619,7 +619,7 @@ function Item_ShrapnelBomb.GetPierce(self, Source)
 end
 
 function Item_ShrapnelBomb.GetInfo(self, Source, Item)
-	return "Toss an exploding contraption at your enemies, dealing [c green]" .. self:GetPierce(Item.Level) .. "[c white] pierce damage and reducing their resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
+	return "Toss an exploding contraption at your enemies, dealing pierce damage and reducing their resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_ShrapnelBomb.Use(self, Level, Duration, Source, Target, Result)

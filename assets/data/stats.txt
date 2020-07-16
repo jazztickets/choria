@@ -638,6 +638,7 @@ INSERT INTO vendoritem VALUES(192,15,303);
 INSERT INTO vendoritem VALUES(193,15,305);
 INSERT INTO vendoritem VALUES(194,15,306);
 INSERT INTO vendoritem VALUES(195,15,116);
+INSERT INTO vendoritem VALUES(196,9,307);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1962,7 +1963,8 @@ INSERT INTO item VALUES(302,12,0,0,1,30,0,'Belt Slot II','textures/items/beltslo
 INSERT INTO item VALUES(303,12,0,0,1,31,0,'Belt Slot III','textures/items/beltslot3.png','Item_BeltSlot',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(304,10,0,3,3,0,0,'Ankh','textures/items/ankh.png','Item_Ankh',0,500,1,100,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(305,10,0,4,2,0,0,'Unstable Potion','textures/items/blinding_bomb.png','Item_UnstablePotion',0,175,1,25,0,7.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(306,10,0,4,2,0,0,'Shrapnel Bomb','textures/items/shrapnel_bomb.png','Item_ShrapnelBomb',0,250,1,35,0,10.0,1,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(306,10,0,4,2,0,0,'Shrapnel Bomb','textures/items/shrapnel_bomb.png','Item_ShrapnelBomb',0,250,1,35,0,10.0,1,0,0,0,0,200,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(307,5,2,0,0,0,0,'Flanged Mace','textures/items/flanged_mace.png','Proc_Stun',0,1750,1,1,20,2.5,1,140,220,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
