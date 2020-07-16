@@ -115,10 +115,16 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	// Push limits
 	lua_pushinteger(LuaState, BATTLE_MAX_OBJECTS_PER_SIDE);
 	lua_setglobal(LuaState, "BATTLE_LIMIT");
-	lua_pushinteger(LuaState, ACTIONBAR_MAX_ITEMS);
+	lua_pushinteger(LuaState, ACTIONBAR_MAX_BELTSIZE);
 	lua_setglobal(LuaState, "MAX_BELT_SIZE");
-	lua_pushinteger(LuaState, ACTIONBAR_MAX_SKILLS);
+	lua_pushinteger(LuaState, ACTIONBAR_MAX_SKILLBARSIZE);
 	lua_setglobal(LuaState, "MAX_SKILLBAR_SIZE");
+	lua_pushinteger(LuaState, GAME_MAX_SKILL_UNLOCKS);
+	lua_setglobal(LuaState, "MAX_SKILL_UNLOCKS");
+	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_BELTSIZE);
+	lua_setglobal(LuaState, "DEFAULT_BELTSIZE");
+	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_SKILLBARSIZE);
+	lua_setglobal(LuaState, "DEFAULT_SKILLBARSIZE");
 
 	// Push bag types
 	lua_pushinteger(LuaState, (int)BagType::NONE);
@@ -490,6 +496,12 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->Character->RebirthGirth);
 	lua_setfield(LuaState, -2, "RebirthGirth");
+
+	lua_pushinteger(LuaState, Object->Character->RebirthProficiency);
+	lua_setfield(LuaState, -2, "RebirthProficiency");
+
+	lua_pushinteger(LuaState, Object->Character->RebirthInsight);
+	lua_setfield(LuaState, -2, "RebirthInsight");
 
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");

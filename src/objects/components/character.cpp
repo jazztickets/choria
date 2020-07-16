@@ -77,6 +77,8 @@ _Character::_Character(_Object *Object) :
 	RebirthKnowledge(0),
 	RebirthPower(0),
 	RebirthGirth(0),
+	RebirthProficiency(0),
+	RebirthInsight(0),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -931,8 +933,11 @@ void _Character::DeleteStatusEffects() {
 	StatusEffects.clear();
 }
 
-// Unlock items based on search term and count
-void _Character::UnlockBySearch(const std::string &Search, int Count) {
+// Unlock items based on search term and count. Return sum of levels
+int _Character::UnlockBySearch(const std::string &Search, int Count) {
+
+	std::vector<uint32_t> UnlockIDs;
+	UnlockIDs.reserve(Count);
 
 	// Get unlock ids
 	ae::_Database *Database = Object->Stats->Database;
@@ -941,9 +946,25 @@ void _Character::UnlockBySearch(const std::string &Search, int Count) {
 	Database->BindInt(2, Count);
 	while(Database->FetchRow()) {
 		uint32_t ID = Database->GetInt<uint32_t>("id");
+		UnlockIDs.push_back(ID);
+
+		// Unlock for character
 		Unlocks[ID].Level = 1;
 	}
 	Database->CloseQuery();
+
+	// Get level
+	int Sum = 0;
+	for(const auto &UnlockID : UnlockIDs) {
+		Database->PrepareQuery("SELECT level FROM item WHERE unlock_id = @unlock_id");
+		Database->BindInt(1, UnlockID);
+		if(Database->FetchRow()) {
+			Sum += Database->GetInt<int>("level");
+		}
+		Database->CloseQuery();
+	}
+
+	return Sum;
 }
 
 // Return true if the object has the item unlocked

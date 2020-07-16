@@ -619,7 +619,7 @@ function Item_ShrapnelBomb.GetPierce(self, Source)
 end
 
 function Item_ShrapnelBomb.GetInfo(self, Source, Item)
-	return "Toss an exploding contraption at your enemies, dealing pierce damage and reducing their resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
+	return "Toss an exploding contraption at your enemies, dealing pierce damage and reducing resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_ShrapnelBomb.Use(self, Level, Duration, Source, Target, Result)
@@ -1072,11 +1072,11 @@ Item_RiteGirth.Exponent = 2
 
 function Item_RiteGirth.GetInfo(self, Source, Item)
 	AddedText = ""
-	if Source.RebirthGirth >= MAX_BELT_SIZE - 1 then
+	if Source.RebirthGirth >= MAX_BELT_SIZE - DEFAULT_BELTSIZE then
 		AddedText = "\n[c red]Max girth attained"
 	end
 
-	return self:GetRiteText("the belt size carried over after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+	return self:GetRiteText("the belt size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
 end
 
 function Item_RiteGirth.GetCost(self, Source)
@@ -1084,7 +1084,57 @@ function Item_RiteGirth.GetCost(self, Source)
 end
 
 function Item_RiteGirth.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.RebirthGirth = Level
+	if Target.RebirthGirth < MAX_BELT_SIZE - DEFAULT_BELTSIZE then
+		Result.Target.RebirthGirth = Level
+	end
+
+	return Result
+end
+
+Item_RiteProficiency = Base_Rite:New()
+Item_RiteProficiency.Exponent = 1.25
+
+function Item_RiteProficiency.GetInfo(self, Source, Item)
+	AddedText = ""
+	if Source.RebirthProficiency >= MAX_SKILLBAR_SIZE - DEFAULT_SKILLBARSIZE then
+		AddedText = "\n[c red]Max proficiency attained"
+	end
+
+	return self:GetRiteText("the skill bar size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+end
+
+function Item_RiteProficiency.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source.RebirthProficiency)
+end
+
+function Item_RiteProficiency.Use(self, Level, Duration, Source, Target, Result)
+	if Target.RebirthProficiency < MAX_SKILLBAR_SIZE - DEFAULT_SKILLBARSIZE then
+		Result.Target.RebirthProficiency = Level
+	end
+
+	return Result
+end
+
+Item_RiteInsight = Base_Rite:New()
+Item_RiteInsight.Exponent = 1.25
+
+function Item_RiteInsight.GetInfo(self, Source, Item)
+	AddedText = ""
+	if Source.RebirthInsight >= MAX_SKILL_UNLOCKS then
+		AddedText = "\n[c red]Max insight attained"
+	end
+
+	return self:GetRiteText("the starting skill point unlocks after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+end
+
+function Item_RiteInsight.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source.RebirthInsight)
+end
+
+function Item_RiteInsight.Use(self, Level, Duration, Source, Target, Result)
+	if Target.RebirthInsight < MAX_SKILL_UNLOCKS then
+		Result.Target.RebirthInsight = Level
+	end
 
 	return Result
 end

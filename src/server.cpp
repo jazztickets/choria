@@ -2355,8 +2355,15 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	}
 
 	// Keep belt unlocks
-	Character->BeltSize = std::min(Character->RebirthGirth + 1, ACTIONBAR_MAX_ITEMS);
+	Character->BeltSize = std::min(Character->RebirthGirth + ACTIONBAR_DEFAULT_BELTSIZE, ACTIONBAR_MAX_BELTSIZE);
 	Character->UnlockBySearch("Belt Slot %", Character->RebirthGirth);
+
+	// Keep skill bar unlocks
+	Character->SkillBarSize = std::min(Character->RebirthProficiency + ACTIONBAR_DEFAULT_SKILLBARSIZE, ACTIONBAR_MAX_SKILLBARSIZE);
+	Character->UnlockBySearch("Skill Slot %", Character->RebirthProficiency);
+
+	// Keep skill point unlocks
+	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->RebirthInsight);
 
 	// Keep items from trade bag
 	int ItemCount = Character->RebirthPower;

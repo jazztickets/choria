@@ -40,14 +40,14 @@ void _CharacterScreen::Render(double BlendFactor) {
 	Element->Render();
 
 	// Get font
-	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
+	ae::_Font *Font = ae::Assets.Fonts["hud_char"];
 
 	// Set up UI
 	int SpacingY = Font->MaxAbove + Font->MaxBelow;
 	glm::vec2 Spacing((int)(SpacingY * 0.5f), 0);
 	glm::vec2 DrawPosition = Element->Bounds.Start;
-	DrawPosition.x += (int)(Element->Size.x/2 + SpacingY * 0.8f);
-	DrawPosition.y += (int)(SpacingY * 1.5f);
+	DrawPosition.x += (int)(Element->Size.x/2 + 10 * ae::_Element::GetUIScale());
+	DrawPosition.y += (int)(SpacingY * 2.0f);
 	std::stringstream Buffer;
 
 	// Damage
@@ -320,6 +320,25 @@ void _CharacterScreen::Render(double BlendFactor) {
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
+
+	// Rebirth Proficiency
+	if(HUD->Player->Character->RebirthProficiency > 0) {
+		Buffer << HUD->Player->Character->RebirthProficiency;
+		Font->DrawText("Rebirth Proficiency", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Rebirth Insight
+	if(HUD->Player->Character->RebirthInsight > 0) {
+		Buffer << HUD->Player->Character->RebirthInsight;
+		Font->DrawText("Rebirth Insight", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 
 	// Separator
 	if(HasResist)

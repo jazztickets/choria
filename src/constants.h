@@ -121,12 +121,13 @@ const  float        GAME_UPGRADE_AMOUNT             =  0.25f;
 const  float        GAME_NEGATIVE_UPGRADE_SCALE     =  0.25f;
 const  int          GAME_TRADING_LEVEL              =  3;
 const  int          GAME_DEFAULT_MAX_SKILL_LEVEL    =  5;
+const  int          GAME_MAX_SKILL_UNLOCKS          =  10;
 //     Actionbar
 const  int          ACTIONBAR_BELT_STARTS           =  10;
 const  int          ACTIONBAR_DEFAULT_BELTSIZE      =  1;
 const  int          ACTIONBAR_DEFAULT_SKILLBARSIZE  =  4;
-const  int          ACTIONBAR_MAX_SKILLS            =  8;
-const  int          ACTIONBAR_MAX_ITEMS             =  4;
+const  int          ACTIONBAR_MAX_SKILLBARSIZE      =  8;
+const  int          ACTIONBAR_MAX_BELTSIZE          =  4;
 const  int          ACTIONBAR_MAX_SIZE              =  ACTIONBAR_BELT_STARTS+ACTIONBAR_DEFAULT_SKILLBARSIZE;
 //     Inventory
 const  int          INVENTORY_TOOLTIP_OFFSET        =  50;

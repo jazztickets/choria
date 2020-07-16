@@ -146,6 +146,9 @@ INSERT INTO stattype VALUES(66,'RebirthWealth',1.0);
 INSERT INTO stattype VALUES(67,'RebirthWisdom',1.0);
 INSERT INTO stattype VALUES(68,'RebirthKnowledge',1.0);
 INSERT INTO stattype VALUES(69,'RebirthPower',1.0);
+INSERT INTO stattype VALUES(70,'RebirthGirth',1.0);
+INSERT INTO stattype VALUES(71,'RebirthProficiency',1.0);
+INSERT INTO stattype VALUES(72,'RebirthInsight',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -257,6 +260,8 @@ INSERT INTO unlock VALUES(29,'Belt Slot 1');
 INSERT INTO unlock VALUES(30,'Belt Slot 2');
 INSERT INTO unlock VALUES(31,'Belt Slot 3');
 INSERT INTO unlock VALUES(32,'Rite of Girth');
+INSERT INTO unlock VALUES(33,'Rite of Proficiency');
+INSERT INTO unlock VALUES(34,'Rite of Insight');
 CREATE TABLE IF NOT EXISTS "script" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -641,6 +646,8 @@ INSERT INTO vendoritem VALUES(194,15,306);
 INSERT INTO vendoritem VALUES(195,15,116);
 INSERT INTO vendoritem VALUES(196,9,307);
 INSERT INTO vendoritem VALUES(197,24,309);
+INSERT INTO vendoritem VALUES(198,24,310);
+INSERT INTO vendoritem VALUES(199,24,311);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1973,6 +1980,8 @@ INSERT INTO item VALUES(306,10,0,4,2,0,0,'Shrapnel Bomb','textures/items/shrapne
 INSERT INTO item VALUES(307,5,2,0,0,0,0,'Flanged Mace','textures/items/flanged_mace.png','Proc_Stun',0,1750,1,1,20,2.5,1,140,220,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(308,15,0,0,0,0,0,'Secret Garden Map','textures/items/map.png','',0,35000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/secret_garden.png',0,0.0);
 INSERT INTO item VALUES(309,12,0,0,1,32,0,'Rite of Girth','textures/items/rite_girth.png','Item_RiteGirth',0,75000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(310,12,0,0,1,33,0,'Rite of Proficiency','textures/items/rite_proficiency.png','Item_RiteProficiency',0,750000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(311,12,0,0,1,34,0,'Rite of Insight','textures/items/rite_insight.png','Item_RiteInsight',0,100000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

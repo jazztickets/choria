@@ -1173,7 +1173,7 @@ void _HUD::DrawActionBar() {
 
 	// Draw skill bar
 	for(int i = 0; i < ACTIONBAR_MAX_SIZE; i++) {
-		if(i >= ACTIONBAR_MAX_SKILLS && i < ACTIONBAR_BELT_STARTS)
+		if(i >= ACTIONBAR_MAX_SKILLBARSIZE && i < ACTIONBAR_BELT_STARTS)
 			continue;
 
 		int ActionButton = Action::GAME_SKILL1 + i;
@@ -1370,7 +1370,7 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 			if(!(Action.Item->IsSkill() || Action.Item->IsConsumable()))
 				return;
 
-			if(Action.Item->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLS)
+			if(Action.Item->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLBARSIZE)
 				return;
 
 			if(Action.Item->IsConsumable() && Slot < ACTIONBAR_BELT_STARTS)
@@ -1389,7 +1389,7 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 		if(!OldItem)
 			return;
 
-		if(OldItem->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLS)
+		if(OldItem->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLBARSIZE)
 			return;
 		if(!OldItem->IsSkill() && Slot < ACTIONBAR_BELT_STARTS)
 			return;
@@ -1513,7 +1513,7 @@ void _HUD::SetPlayer(_Object *Player) {
 void _HUD::UpdateActionBarSize() {
 
 	// Enable unlocked slots
-	for(int i = 0; i < ACTIONBAR_MAX_SKILLS; i++)
+	for(int i = 0; i < ACTIONBAR_MAX_SKILLBARSIZE; i++)
 		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetEnabled(i < Player->Character->SkillBarSize);
 	for(int i = ACTIONBAR_BELT_STARTS; i < ACTIONBAR_MAX_SIZE; i++)
 		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetEnabled(i < ACTIONBAR_BELT_STARTS + Player->Character->BeltSize);

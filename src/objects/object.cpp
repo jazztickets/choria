@@ -591,6 +591,8 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["rebirth_knowledge"] = Character->RebirthKnowledge;
 	StatsNode["rebirth_power"] = Character->RebirthPower;
 	StatsNode["rebirth_girth"] = Character->RebirthGirth;
+	StatsNode["rebirth_proficiency"] = Character->RebirthProficiency;
+	StatsNode["rebirth_insight"] = Character->RebirthInsight;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -737,6 +739,8 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->RebirthKnowledge = StatsNode["rebirth_knowledge"].asInt();
 	Character->RebirthPower = StatsNode["rebirth_power"].asInt();
 	Character->RebirthGirth = StatsNode["rebirth_girth"].asInt();
+	Character->RebirthProficiency = StatsNode["rebirth_proficiency"].asInt();
+	Character->RebirthInsight = StatsNode["rebirth_insight"].asInt();
 
 	if(!Character->BeltSize)
 		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
@@ -781,14 +785,14 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
 		if(Slot < Character->ActionBar.size()) {
-			if(Slot < ACTIONBAR_MAX_SKILLS && Slot >= (uint32_t)Character->SkillBarSize)
+			if(Slot < ACTIONBAR_MAX_SKILLBARSIZE && Slot >= (uint32_t)Character->SkillBarSize)
 				continue;
 
 			if(Slot >= ACTIONBAR_BELT_STARTS && Slot >= (uint32_t)(Character->BeltSize + ACTIONBAR_BELT_STARTS))
 				continue;
 
 			const _Item *Item = Stats->Items.at(ActionNode["id"].asUInt());
-			if(Item->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLS)
+			if(Item->IsSkill() && Slot >= ACTIONBAR_MAX_SKILLBARSIZE)
 				continue;
 
 			if(!Item->IsSkill() && Slot < ACTIONBAR_BELT_STARTS)
@@ -891,6 +895,8 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->RebirthKnowledge);
 	Data.Write<int>(Character->RebirthPower);
 	Data.Write<int>(Character->RebirthGirth);
+	Data.Write<int>(Character->RebirthProficiency);
+	Data.Write<int>(Character->RebirthInsight);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -1010,6 +1016,8 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->RebirthKnowledge = Data.Read<int>();
 	Character->RebirthPower = Data.Read<int>();
 	Character->RebirthGirth = Data.Read<int>();
+	Character->RebirthProficiency = Data.Read<int>();
+	Character->RebirthInsight = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1217,15 +1225,15 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	// Skill bar upgrade
 	if(StatChange.HasStat(StatType::SKILLBARSIZE)) {
 		Character->SkillBarSize += StatChange.Values[StatType::SKILLBARSIZE].Integer;
-		if(Character->SkillBarSize >= ACTIONBAR_MAX_SKILLS)
-			Character->SkillBarSize = ACTIONBAR_MAX_SKILLS;
+		if(Character->SkillBarSize >= ACTIONBAR_MAX_SKILLBARSIZE)
+			Character->SkillBarSize = ACTIONBAR_MAX_SKILLBARSIZE;
 	}
 
 	// Belt size upgrade
 	if(StatChange.HasStat(StatType::BELTSIZE)) {
 		Character->BeltSize += StatChange.Values[StatType::BELTSIZE].Integer;
-		if(Character->BeltSize >= ACTIONBAR_MAX_ITEMS)
-			Character->BeltSize = ACTIONBAR_MAX_ITEMS;
+		if(Character->BeltSize >= ACTIONBAR_MAX_BELTSIZE)
+			Character->BeltSize = ACTIONBAR_MAX_BELTSIZE;
 	}
 
 	// Skill point unlocked
@@ -1245,6 +1253,10 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_GIRTH))
 		Character->RebirthGirth += StatChange.Values[StatType::REBIRTH_GIRTH].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_PROFICIENCY))
+		Character->RebirthProficiency += StatChange.Values[StatType::REBIRTH_PROFICIENCY].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_INSIGHT))
+		Character->RebirthInsight += StatChange.Values[StatType::REBIRTH_INSIGHT].Integer;
 
 	// Reset skills
 	if(StatChange.HasStat(StatType::RESPEC)) {

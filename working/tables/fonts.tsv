@@ -1,6 +1,7 @@
 name	font	program	size
 menu_buttons	fonts/pt_sans_bold.ttf	text	34
 hud_tiny	fonts/pt_sans_bold.ttf	text	16
+hud_char	fonts/pt_sans_bold.ttf	text	18
 hud_small	fonts/pt_sans_bold.ttf	text	22
 hud_medium	fonts/pt_sans_bold.ttf	text	28
 hud_large	fonts/pt_sans_bold.ttf	text	66
