@@ -190,22 +190,12 @@ class _Character {
 		// Base attributes
 		int BaseMaxHealth;
 		int BaseMaxMana;
-		int BaseHealthRegen;
-		int BaseManaRegen;
-		float BaseManaReductionRatio;
-		float BaseHealthUpdateMultiplier;
-		float BaseAttackPower;
 		int BaseMinDamage;
 		int BaseMaxDamage;
 		int BaseArmor;
 		int BaseDamageBlock;
-		int BasePierce;
-		int BaseMoveSpeed;
 		int BaseBattleSpeed;
 		double BaseAttackPeriod;
-		int BaseEvasion;
-		int BaseHitChance;
-		int BaseAllSkills;
 
 		// Final attributes
 		int Health;

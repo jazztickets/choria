@@ -84,22 +84,12 @@ _Character::_Character(_Object *Object) :
 
 	BaseMaxHealth(0),
 	BaseMaxMana(0),
-	BaseHealthRegen(0),
-	BaseManaRegen(0),
-	BaseManaReductionRatio(0.0f),
-	BaseHealthUpdateMultiplier(1.0f),
-	BaseAttackPower(1.0f),
 	BaseMinDamage(0),
 	BaseMaxDamage(0),
 	BaseArmor(0),
 	BaseDamageBlock(0),
-	BasePierce(0),
-	BaseMoveSpeed(100),
 	BaseBattleSpeed(100),
 	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
-	BaseEvasion(0),
-	BaseHitChance(100),
-	BaseAllSkills(0),
 
 	Health(1),
 	MaxHealth(1),
@@ -338,21 +328,18 @@ void _Character::CalculateStats() {
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
-	HealthRegen = BaseHealthRegen;
-	ManaRegen = BaseManaRegen;
-	ManaReductionRatio = BaseManaReductionRatio;
-	HealthUpdateMultiplier = BaseHealthUpdateMultiplier;
-	AttackPower = BaseAttackPower;
 	BattleSpeed = BaseBattleSpeed;
-	Evasion = BaseEvasion;
-	HitChance = BaseHitChance;
 	MinDamage = BaseMinDamage;
 	MaxDamage = BaseMaxDamage;
 	Armor = BaseArmor;
 	DamageBlock = BaseDamageBlock;
-	Pierce = BasePierce;
-	MoveSpeed = BaseMoveSpeed;
-	AllSkills = BaseAllSkills;
+	HealthUpdateMultiplier = 1.0f;
+	AttackPower = 1.0f;
+	MoveSpeed = 100;
+	Evasion = 0;
+	HitChance = 100;
+	Pierce = 0;
+	AllSkills = 0;
 
 	Object->Light = 0;
 	Invisible = 0;
