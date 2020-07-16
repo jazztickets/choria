@@ -158,6 +158,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 		// Setup console
 		Console = new ae::_Console(ae::Assets.Programs["ortho_pos"], ae::Assets.Fonts["console"]);
+		Console->LoadHistory(Config.ConfigPath + "history.txt");
 		Console->CommandList.push_back("maxfps");
 		Console->CommandList.push_back("quit");
 		Console->CommandList.push_back("volume");
