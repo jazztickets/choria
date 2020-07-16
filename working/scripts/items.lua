@@ -578,6 +578,64 @@ function Item_Firebomb.PlaySound(self, Level)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Unstable Potion --
+
+Item_UnstablePotion = Base_Attack:New()
+
+function Item_UnstablePotion.GetTargetCount(self, Level)
+	return 3
+end
+
+function Item_UnstablePotion.GetInfo(self, Source, Item)
+	return "Toss an unstable potion at your enemies, blinding them for [c green]" .. Item.Duration .. " [c white]seconds"
+end
+
+function Item_UnstablePotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Blinded.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
+function Item_UnstablePotion.PlaySound(self, Level)
+	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Shrapnel Bomb --
+
+Item_ShrapnelBomb = Base_Attack:New()
+
+function Item_ShrapnelBomb.GenerateDamage(self, Level, Source)
+	return self.Item.GenerateDamage(Source.Pointer, 0)
+end
+
+function Item_ShrapnelBomb.GetTargetCount(self, Level)
+	return 3
+end
+
+function Item_ShrapnelBomb.GetPierce(self, Source)
+	return self.Item.Pierce
+end
+
+function Item_ShrapnelBomb.GetInfo(self, Source, Item)
+	return "Toss an exploding contraption at your enemies, dealing [c green]" .. self:GetPierce(Item.Level) .. "[c white] pierce damage and reducing their resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Item_ShrapnelBomb.Use(self, Level, Duration, Source, Target, Result)
+	Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buff_Flayed.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
+function Item_ShrapnelBomb.PlaySound(self, Level)
+	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Bone --
 
 Item_Bone = { }
