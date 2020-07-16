@@ -1827,6 +1827,9 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Position = Player->Map->GetValidCoord(glm::ivec2(X, Y));
 		SendPlayerPosition(Player->Peer);
 	}
+	else if(Command == "save") {
+		SaveTime = Config.AutoSavePeriod;
+	}
 }
 
 // Handle action use by player

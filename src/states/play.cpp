@@ -541,6 +541,11 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			else
 				Console->AddMessage("usage: search [table] [query]");
 		}
+		else if(Console->Command == "save") {
+			if(Player && Network && Network->IsConnected()) {
+				Network->SendPacket(Packet);
+			}
+		}
 		else {
 			return false;
 		}

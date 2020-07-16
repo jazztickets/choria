@@ -176,6 +176,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			Console->CommandList.push_back("map");
 			Console->CommandList.push_back("move");
 			Console->CommandList.push_back("search");
+			Console->CommandList.push_back("save");
 		}
 
 		// Sort commands
