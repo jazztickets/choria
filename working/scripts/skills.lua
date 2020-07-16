@@ -1230,6 +1230,7 @@ end
 Skill_Backstab = Base_Attack:New()
 Skill_Backstab.BaseDamage = 50
 Skill_Backstab.DamagePerLevel = 20
+Skill_Backstab.Stamina = 90
 Skill_Backstab.DamageMultiplier = 300 - Skill_Backstab.DamagePerLevel
 
 function Skill_Backstab.GetDamage(self, Level)
@@ -1242,7 +1243,7 @@ function Skill_Backstab.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Attack for [c green]" .. math.floor(self.BaseDamage) .. "% [c white]weapon damage\nDeal [c green]" .. self:GetDamage(Item.Level) .. "% [c white]damage to stunned enemies\n[c " .. TextColor .. "]Can only use off-hand weapons"
+	return "Attack for [c green]" .. math.floor(self.BaseDamage) .. "% [c white]weapon damage\nDeal [c green]" .. self:GetDamage(Item.Level) .. "% [c white]damage to stunned enemies\nGain [c green]" .. self.Stamina .. "%[c white] [c yellow]stamina[c white] for a kill\n[c " .. TextColor .. "]Can only use off-hand weapons"
 end
 
 function Skill_Backstab.CanUse(self, Level, Source, Target)
@@ -1264,6 +1265,9 @@ function Skill_Backstab.Proc(self, Roll, Level, Duration, Source, Target, Result
 		Effect = Target.StatusEffects[i]
 		if Effect.Buff == Buff_Stunned then
 			Result.Target.Health = math.floor(Result.Target.Health * (self:GetDamage(Level) / 100.0))
+			if Target.Health + Result.Target.Health < 0 then
+				Result.Source.Stamina = self.Stamina * 0.01
+			end
 			Result.Target.Crit = true
 			return true
 		end
