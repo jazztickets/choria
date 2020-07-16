@@ -1698,7 +1698,7 @@ CREATE TABLE IF NOT EXISTS "item" (
 INSERT INTO item VALUES(0,0,0,0,0,0,0,'None','','',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(1,1,2,2,2,0,0,'Attack','textures/skills/attack.png','Skill_Attack',2,50,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(2,1,0,1,2,0,0,'Flee','textures/skills/flee.png','Skill_Flee',4,75,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(3,1,5,2,2,0,0,'Spark','textures/skills/spark.png','Skill_Spark',3,150,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,1.0);
+INSERT INTO item VALUES(3,1,5,2,2,0,0,'Spark','textures/skills/spark.png','Skill_Spark',3,150,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.75);
 INSERT INTO item VALUES(4,1,0,3,3,0,0,'Heal','textures/skills/heal.png','Skill_Heal',3,350,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,2.0);
 INSERT INTO item VALUES(5,1,0,0,0,0,0,'Toughness','textures/skills/toughness.png','Skill_Toughness',1,500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(6,1,0,0,0,0,0,'Arcane Mastery','textures/skills/arcanemastery.png','Skill_ArcaneMastery',1,600,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
@@ -1710,11 +1710,11 @@ INSERT INTO item VALUES(11,1,0,0,0,0,0,'Evasion','textures/skills/evasion.png','
 INSERT INTO item VALUES(12,1,0,2,2,0,0,'Pickpocket','textures/skills/pickpocket.png','Skill_Pickpocket',4,400,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(13,1,0,1,2,0,0,'Parry','textures/skills/parry.png','Skill_Parry',4,325,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(14,1,0,4,2,0,0,'Taunt','textures/skills/taunt.png','Skill_Taunt',4,800,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0);
-INSERT INTO item VALUES(15,1,3,2,2,0,0,'Ignite','textures/skills/ignite.png','Skill_Ignite',3,500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,2.0);
+INSERT INTO item VALUES(15,1,3,2,2,0,0,'Ignite','textures/skills/ignite.png','Skill_Ignite',3,500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,1.0);
 INSERT INTO item VALUES(16,1,2,2,2,0,0,'Backstab','textures/skills/backstab.png','Skill_Backstab',2,500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(17,1,0,3,3,0,0,'Resurrect','textures/skills/resurrect.png','Skill_Resurrect',3,1000,0,0,50,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0);
 INSERT INTO item VALUES(18,1,0,3,3,0,0,'Rejuvenation','textures/skills/rejuvenation.png','Skill_Rejuvenation',3,200,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,2.0);
-INSERT INTO item VALUES(19,1,4,2,2,0,0,'Icicle','textures/skills/icicle.png','Skill_Icicle',3,175,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,1.0);
+INSERT INTO item VALUES(19,1,4,2,2,0,0,'Icicle','textures/skills/icicle.png','Skill_Icicle',3,175,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.75);
 INSERT INTO item VALUES(20,1,2,2,2,0,0,'Fury','textures/skills/fury.png','Skill_Fury',2,1200,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(21,1,0,1,2,0,0,'Demonic Conjuring','textures/skills/demonic_conjuring.png','Skill_DemonicConjuring',3,400,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0);
 INSERT INTO item VALUES(22,1,0,4,2,0,0,'Enfeeble','textures/skills/enfeeble.png','Skill_Enfeeble',3,200,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,1.0);
@@ -1740,7 +1740,7 @@ INSERT INTO item VALUES(41,1,5,4,2,0,0,'Chain Lightning','textures/skills/chain_
 INSERT INTO item VALUES(42,1,6,9,2,0,0,'Rupture','textures/skills/rupture.png','Skill_Rupture',3,1150,0,0,50,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0);
 INSERT INTO item VALUES(43,1,0,5,3,0,0,'Sanctuary','textures/skills/sanctuary.png','Skill_Sanctuary',3,1800,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,10.0);
 INSERT INTO item VALUES(44,1,0,4,2,0,0,'Flay','textures/skills/flay.png','Skill_Flay',3,2500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0);
-INSERT INTO item VALUES(45,1,6,2,2,0,0,'Poison Touch','textures/skills/poison_touch.png','Skill_PoisonTouch',3,225,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,1.0);
+INSERT INTO item VALUES(45,1,6,2,2,0,0,'Poison Touch','textures/skills/poison_touch.png','Skill_PoisonTouch',3,225,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,1.5);
 INSERT INTO item VALUES(46,1,0,2,2,0,0,'Fracture','textures/skills/fracture.png','Skill_Fracture',3,650,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0);
 INSERT INTO item VALUES(47,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(48,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);

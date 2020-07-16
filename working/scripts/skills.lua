@@ -638,8 +638,8 @@ end
 Skill_PoisonTouch = Base_Spell:New()
 Skill_PoisonTouch.PoisonLevelPerLevel = 6
 Skill_PoisonTouch.PoisonLevel = 10 - Skill_PoisonTouch.PoisonLevelPerLevel
-Skill_PoisonTouch.PoisonLevelScale = 0.75
-Skill_PoisonTouch.CostPerLevel = 5
+Skill_PoisonTouch.PoisonLevelScale = 0.5
+Skill_PoisonTouch.CostPerLevel = 7
 Skill_PoisonTouch.ManaCostBase = 20 - Skill_PoisonTouch.CostPerLevel
 Skill_PoisonTouch.DurationPerLevel = 0
 Skill_PoisonTouch.Duration = 10
@@ -725,7 +725,7 @@ Skill_Ignite = Base_Spell:New()
 Skill_Ignite.BurnLevel = 30
 Skill_Ignite.BurnLevelPerLevel = 9
 Skill_Ignite.BurnLevelScale = 0.5
-Skill_Ignite.CostPerLevel = 10
+Skill_Ignite.CostPerLevel = 8
 Skill_Ignite.ManaCostBase = 30 - Skill_Ignite.CostPerLevel
 Skill_Ignite.Duration = 6
 
