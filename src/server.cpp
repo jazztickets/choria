@@ -922,10 +922,10 @@ _Object *_Server::CreateBot() {
 	Bot->Character->Bot = true;
 	Bot->Scripting = Scripting;
 	Bot->Server = this;
-	Bot->Character->PartyName = "bot";
 	Bot->Character->CharacterID = CharacterID;
 	Bot->Stats = Stats;
 	Save->LoadPlayer(Stats, Bot);
+	Bot->Character->PartyName = "bot";
 
 	// Create fake peer
 	Bot->Peer = new ae::_Peer(nullptr);

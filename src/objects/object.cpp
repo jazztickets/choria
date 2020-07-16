@@ -576,6 +576,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["nextbattle"] = Character->NextBattle;
 	StatsNode["rebirths"] = Character->Rebirths;
 	StatsNode["seed"] = Character->Seed;
+	StatsNode["partyname"] = Character->PartyName;
 	StatsNode["eternal_strength"] = Character->EternalStrength;
 	StatsNode["eternal_guard"] = Character->EternalGuard;
 	StatsNode["eternal_fortitude"] = Character->EternalFortitude;
@@ -720,6 +721,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->NextBattle = StatsNode["nextbattle"].asInt();
 	Character->Rebirths = StatsNode["rebirths"].asInt();
 	Character->Seed = StatsNode["seed"].asUInt();
+	Character->PartyName = StatsNode["partyname"].asString();
 	Character->EternalStrength = StatsNode["eternal_strength"].asInt();
 	Character->EternalGuard = StatsNode["eternal_guard"].asInt();
 	Character->EternalFortitude = StatsNode["eternal_fortitude"].asInt();
