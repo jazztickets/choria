@@ -477,7 +477,7 @@ function Item_Ankh.GetHeal(self, Source, Level)
 end
 
 function Item_Ankh.GetInfo(self, Source, Item)
-	return "Throw an ankh at an ally's corpse to resurrect them with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP"
+	return "Throw an ankh at an ally's corpse to resurrect them with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\n\n[c yellow]Can be used outside of battle"
 end
 
 function Item_Ankh.Use(self, Level, Duration, Source, Target, Result)
