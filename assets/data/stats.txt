@@ -494,7 +494,6 @@ INSERT INTO vendoritem VALUES(16,4,105);
 INSERT INTO vendoritem VALUES(17,1,7);
 INSERT INTO vendoritem VALUES(18,4,113);
 INSERT INTO vendoritem VALUES(19,5,96);
-INSERT INTO vendoritem VALUES(20,5,116);
 INSERT INTO vendoritem VALUES(23,3,117);
 INSERT INTO vendoritem VALUES(24,3,118);
 INSERT INTO vendoritem VALUES(25,3,119);
@@ -636,6 +635,9 @@ INSERT INTO vendoritem VALUES(189,24,300);
 INSERT INTO vendoritem VALUES(190,2,301);
 INSERT INTO vendoritem VALUES(191,13,302);
 INSERT INTO vendoritem VALUES(192,15,303);
+INSERT INTO vendoritem VALUES(193,15,305);
+INSERT INTO vendoritem VALUES(194,15,306);
+INSERT INTO vendoritem VALUES(195,15,116);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1154,6 +1156,8 @@ INSERT INTO trader VALUES(64,'slimy_map',282,1);
 INSERT INTO trader VALUES(65,'eternal_pain',295,1);
 INSERT INTO trader VALUES(66,'ankh',304,1);
 INSERT INTO trader VALUES(67,'unstable_potion',305,1);
+INSERT INTO trader VALUES(68,'shrapnel_bomb',306,1);
+INSERT INTO trader VALUES(69,'smoke_cover',116,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -1326,6 +1330,11 @@ INSERT INTO traderitem VALUES(188,66,222,1);
 INSERT INTO traderitem VALUES(189,67,110,1);
 INSERT INTO traderitem VALUES(190,67,114,2);
 INSERT INTO traderitem VALUES(192,67,215,2);
+INSERT INTO traderitem VALUES(193,68,270,1);
+INSERT INTO traderitem VALUES(194,68,133,10);
+INSERT INTO traderitem VALUES(195,69,270,1);
+INSERT INTO traderitem VALUES(196,69,110,1);
+INSERT INTO traderitem VALUES(197,69,146,3);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1761,7 +1770,7 @@ INSERT INTO item VALUES(112,13,0,0,1,0,0,'Cellar Key','textures/items/key0.png',
 INSERT INTO item VALUES(113,3,0,0,0,0,8,'Bronze Armor','textures/items/bronze_armor.png','',0,250,1,0,10,0.0,1,0,0,10,2,0,5,0,0,0,0,-5,-5,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(114,10,0,1,1,0,0,'Crow Feather','textures/items/crow_feather.png','Item_CrowFeather',0,8,1,20,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(115,10,0,1,2,0,0,'Spider Leg','textures/items/spider_leg.png','Item_SpiderLeg',0,15,1,30,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(116,10,0,5,2,0,0,'Smoke Cover','textures/items/elusive_potion.png','Item_SmokeCover',0,75,1,30,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(116,10,0,5,2,0,0,'Elusive Potion','textures/items/elusive_potion.png','Item_ElusivePotion',0,300,1,30,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(117,6,2,0,0,0,0,'Axe','textures/items/axe.png','Proc_Blind',0,225,1,20,10,5.0,1,60,120,-1,0,0,0,0,0,0,0,-5,0,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(118,14,2,0,0,0,0,'Small Knife','textures/items/small_knife.png','Proc_Bleed',0,15,1,10,10,5.0,1,10,10,0,1,5,0,0,0,0,0,25,0,0,0,20,0,0,'',0,0.0);
 INSERT INTO item VALUES(119,5,2,0,0,0,0,'Sword','textures/items/sword.png','Proc_Haste',0,150,1,20,10,3.0,1,30,90,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
@@ -1950,7 +1959,7 @@ INSERT INTO item VALUES(301,12,0,0,1,29,0,'Belt Slot I','textures/items/beltslot
 INSERT INTO item VALUES(302,12,0,0,1,30,0,'Belt Slot II','textures/items/beltslot2.png','Item_BeltSlot',0,2500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(303,12,0,0,1,31,0,'Belt Slot III','textures/items/beltslot3.png','Item_BeltSlot',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(304,10,0,3,3,0,0,'Ankh','textures/items/ankh.png','Item_Ankh',0,500,1,100,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(305,10,0,4,2,0,0,'Unstable Potion','textures/items/blinding_bomb.png','Item_UnstablePotion',0,150,1,25,0,7.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(305,10,0,4,2,0,0,'Unstable Potion','textures/items/blinding_bomb.png','Item_UnstablePotion',0,175,1,25,0,7.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(306,10,0,4,2,0,0,'Shrapnel Bomb','textures/items/shrapnel_bomb.png','Item_ShrapnelBomb',0,250,1,35,0,10.0,1,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,

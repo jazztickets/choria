@@ -675,19 +675,19 @@ function Item_Stinger.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
--- Smoke Cover --
+-- Elusive Potion --
 
-Item_SmokeCover = { }
+Item_ElusivePotion = { }
 
-function Item_SmokeCover.GetInfo(self, Source, Item)
+function Item_ElusivePotion.GetInfo(self, Source, Item)
 	return "Throw down smoke cover for [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies and increase evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. math.floor(Item.Duration) .. " [c white]seconds"
 end
 
-function Item_SmokeCover.GetTargetCount(self, Level)
+function Item_ElusivePotion.GetTargetCount(self, Level)
 	return 3
 end
 
-function Item_SmokeCover.Use(self, Level, Duration, Source, Target, Result)
+function Item_ElusivePotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Evasion.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -695,7 +695,7 @@ function Item_SmokeCover.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_SmokeCover.PlaySound(self, Level)
+function Item_ElusivePotion.PlaySound(self, Level)
 	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
