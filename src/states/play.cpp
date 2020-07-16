@@ -512,7 +512,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 				ae::_Database *Database = PlayState.Stats->Database;
 				try {
 					std::string Field = Table == "map" ? "file" : "name";
-					Database->PrepareQuery("SELECT id, " + Field + " FROM " + Table + " WHERE " + Field + " like @search");
+					Database->PrepareQuery("SELECT id, " + Field + " FROM " + Table + " WHERE " + Field + " LIKE @search");
 					Database->BindString(1, Search);
 					while(Database->FetchRow()) {
 						int ID = Database->GetInt<int>("id");

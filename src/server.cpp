@@ -2317,6 +2317,8 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->InventoryOpen = false;
 	Character->SkillsOpen = false;
 	Character->RebirthTime = 0.0;
+	Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
+	Character->SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
 	Character->Cooldowns.clear();
 	Character->BattleCooldown.clear();
 	Character->DeleteStatusEffects();
@@ -2351,6 +2353,10 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 			Character->EternalPain += RebirthEvent.Value;
 		break;
 	}
+
+	// Keep belt unlocks
+	Character->BeltSize = std::min(Character->RebirthGirth + 1, ACTIONBAR_MAX_ITEMS);
+	Character->UnlockBySearch("Belt Slot %", Character->RebirthGirth);
 
 	// Keep items from trade bag
 	int ItemCount = Character->RebirthPower;

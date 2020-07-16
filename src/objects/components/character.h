@@ -124,6 +124,7 @@ class _Character {
 		void DeleteStatusEffects();
 
 		// Unlocks
+		void UnlockBySearch(const std::string &Search, int Count);
 		bool HasUnlocked(const _Item *Item) const;
 
 		// Base
@@ -179,6 +180,7 @@ class _Character {
 		int RebirthWisdom;
 		int RebirthKnowledge;
 		int RebirthPower;
+		int RebirthGirth;
 
 		// Levels
 		bool CalcLevelStats;

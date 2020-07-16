@@ -590,6 +590,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["rebirth_wisdom"] = Character->RebirthWisdom;
 	StatsNode["rebirth_knowledge"] = Character->RebirthKnowledge;
 	StatsNode["rebirth_power"] = Character->RebirthPower;
+	StatsNode["rebirth_girth"] = Character->RebirthGirth;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -735,6 +736,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->RebirthWisdom = StatsNode["rebirth_wisdom"].asInt();
 	Character->RebirthKnowledge = StatsNode["rebirth_knowledge"].asInt();
 	Character->RebirthPower = StatsNode["rebirth_power"].asInt();
+	Character->RebirthGirth = StatsNode["rebirth_girth"].asInt();
 
 	if(!Character->BeltSize)
 		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
@@ -888,6 +890,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->RebirthWisdom);
 	Data.Write<int>(Character->RebirthKnowledge);
 	Data.Write<int>(Character->RebirthPower);
+	Data.Write<int>(Character->RebirthGirth);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -1006,6 +1009,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->RebirthWisdom = Data.Read<int>();
 	Character->RebirthKnowledge = Data.Read<int>();
 	Character->RebirthPower = Data.Read<int>();
+	Character->RebirthGirth = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1013,6 +1017,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Inventory->Unserialize(Data, Stats);
 
 	// Read skills
+	Character->Skills.clear();
 	uint32_t SkillCount = Data.Read<uint32_t>();
 	for(uint32_t i = 0; i < SkillCount; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
@@ -1021,6 +1026,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	}
 
 	// Read max skill levels
+	Character->MaxSkillLevels.clear();
 	uint32_t MaxSkillLevelCount = Data.Read<uint32_t>();
 	for(uint32_t i = 0; i < MaxSkillLevelCount; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
@@ -1033,6 +1039,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 		Character->ActionBar[i].Unserialize(Data, Stats);
 
 	// Read unlocks
+	Character->Unlocks.clear();
 	uint32_t UnlockCount = Data.Read<uint32_t>();
 	for(uint32_t i = 0; i < UnlockCount; i++) {
 		uint32_t UnlockID = Data.Read<uint32_t>();
@@ -1236,6 +1243,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->RebirthKnowledge += StatChange.Values[StatType::REBIRTH_KNOWLEDGE].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_POWER))
 		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_GIRTH))
+		Character->RebirthGirth += StatChange.Values[StatType::REBIRTH_GIRTH].Integer;
 
 	// Reset skills
 	if(StatChange.HasStat(StatType::RESPEC)) {

@@ -1066,3 +1066,25 @@ function Item_RitePower.Use(self, Level, Duration, Source, Target, Result)
 
 	return Result
 end
+
+Item_RiteGirth = Base_Rite:New()
+Item_RiteGirth.Exponent = 2
+
+function Item_RiteGirth.GetInfo(self, Source, Item)
+	AddedText = ""
+	if Source.RebirthGirth >= MAX_BELT_SIZE - 1 then
+		AddedText = "\n[c red]Max girth attained"
+	end
+
+	return self:GetRiteText("the belt size carried over after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+end
+
+function Item_RiteGirth.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source.RebirthGirth)
+end
+
+function Item_RiteGirth.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.RebirthGirth = Level
+
+	return Result
+end

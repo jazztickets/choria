@@ -113,6 +113,7 @@ enum class StatType : int {
 	REBIRTH_WISDOM,
 	REBIRTH_KNOWLEDGE,
 	REBIRTH_POWER,
+	REBIRTH_GIRTH,
 	COUNT,
 };
 
@@ -199,6 +200,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "RebirthWisdom",          { StatType::REBIRTH_WISDOM         , StatValueType::INTEGER } },
 	{ "RebirthKnowledge",       { StatType::REBIRTH_KNOWLEDGE      , StatValueType::INTEGER } },
 	{ "RebirthPower",           { StatType::REBIRTH_POWER          , StatValueType::INTEGER } },
+	{ "RebirthGirth",           { StatType::REBIRTH_GIRTH          , StatValueType::INTEGER } },
 };
 
 union _Value {

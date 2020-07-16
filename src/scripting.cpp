@@ -112,9 +112,13 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	}
 	lua_setglobal(LuaState, "DamageType");
 
-	// Push max side count
+	// Push limits
 	lua_pushinteger(LuaState, BATTLE_MAX_OBJECTS_PER_SIDE);
 	lua_setglobal(LuaState, "BATTLE_LIMIT");
+	lua_pushinteger(LuaState, ACTIONBAR_MAX_ITEMS);
+	lua_setglobal(LuaState, "MAX_BELT_SIZE");
+	lua_pushinteger(LuaState, ACTIONBAR_MAX_SKILLS);
+	lua_setglobal(LuaState, "MAX_SKILLBAR_SIZE");
 
 	// Push bag types
 	lua_pushinteger(LuaState, (int)BagType::NONE);
@@ -483,6 +487,9 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->Character->RebirthPower);
 	lua_setfield(LuaState, -2, "RebirthPower");
+
+	lua_pushinteger(LuaState, Object->Character->RebirthGirth);
+	lua_setfield(LuaState, -2, "RebirthGirth");
 
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");

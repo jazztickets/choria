@@ -312,6 +312,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Rebirth Girth
+	if(HUD->Player->Character->RebirthGirth > 0) {
+		Buffer << HUD->Player->Character->RebirthGirth;
+		Font->DrawText("Rebirth Girth", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Separator
 	if(HasResist)
 		DrawPosition.y += SpacingY;

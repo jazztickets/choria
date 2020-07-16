@@ -23,6 +23,7 @@
 #include <objects/buff.h>
 #include <ae/buffer.h>
 #include <ae/random.h>
+#include <ae/database.h>
 #include <scripting.h>
 #include <packet.h>
 #include <stats.h>
@@ -75,6 +76,7 @@ _Character::_Character(_Object *Object) :
 	RebirthWisdom(0),
 	RebirthKnowledge(0),
 	RebirthPower(0),
+	RebirthGirth(0),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -927,6 +929,21 @@ void _Character::DeleteStatusEffects() {
 		delete StatusEffect;
 
 	StatusEffects.clear();
+}
+
+// Unlock items based on search term and count
+void _Character::UnlockBySearch(const std::string &Search, int Count) {
+
+	// Get unlock ids
+	ae::_Database *Database = Object->Stats->Database;
+	Database->PrepareQuery("SELECT id FROM unlock WHERE name LIKE @search ORDER BY id LIMIT @limit");
+	Database->BindString(1, Search);
+	Database->BindInt(2, Count);
+	while(Database->FetchRow()) {
+		uint32_t ID = Database->GetInt<uint32_t>("id");
+		Unlocks[ID].Level = 1;
+	}
+	Database->CloseQuery();
 }
 
 // Return true if the object has the item unlocked
