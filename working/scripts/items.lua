@@ -731,7 +731,7 @@ function Item_DiagonalMovement.GetInfo(self, Source, Item)
 	return "[c yellow]Allows for diagonal movement"
 end
 
-function Item_DiagonalMovement.Stats(self, Level, Object, Change)
+function Item_DiagonalMovement.Stats(self, Upgrades, Object, Change)
 	Change.DiagonalMovement = 1
 
 	return Change
@@ -745,7 +745,7 @@ function Item_ElusiveRing.GetInfo(self, Source, Item)
 	return "[c yellow]Allows for diagonal movement"
 end
 
-function Item_ElusiveRing.Stats(self, Level, Object, Change)
+function Item_ElusiveRing.Stats(self, Upgrades, Object, Change)
 	Change.DiagonalMovement = 1
 
 	return Change
@@ -759,7 +759,7 @@ function Item_LavaProtection.GetInfo(self, Source, Item)
 	return "[c yellow]Grants immunity to lava"
 end
 
-function Item_LavaProtection.Stats(self, Level, Object, Change)
+function Item_LavaProtection.Stats(self, Upgrades, Object, Change)
 	Change.LavaProtection = 1
 
 	return Change
@@ -773,8 +773,8 @@ function Item_PainRing.GetInfo(self, Source, Item)
 	return "[c gray]Quit hurting yourself"
 end
 
-function Item_PainRing.Stats(self, Level, Object, Change)
-	Change.Difficulty = 100
+function Item_PainRing.Stats(self, Upgrades, Object, Change)
+	Change.Difficulty = 50 + Upgrades * 5
 
 	return Change
 end
@@ -784,11 +784,163 @@ end
 Item_HungerRing = { }
 
 function Item_HungerRing.GetInfo(self, Source, Item)
-	return "[c yellow]Increase attack power by 100%"
+	return "[c yellow]Increases attack power by 100%"
 end
 
-function Item_HungerRing.Stats(self, Level, Object, Change)
+function Item_HungerRing.Stats(self, Upgrades, Object, Change)
 	Change.AttackPower = 1
+
+	return Change
+end
+
+-- Physical Power --
+
+Item_PhysicalPower = { }
+Item_PhysicalPower.PowerPerUpgrade = 2
+
+function Item_PhysicalPower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_PhysicalPower.GetInfo(self, Source, Item)
+	return "Increases physical power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_PhysicalPower.Stats(self, Upgrades, Object, Change)
+	Change.PhysicalPower = self:GetPower(Upgrades) * 0.01 + 0.00001
+
+	return Change
+end
+
+-- Fire Power --
+
+Item_FirePower = { }
+Item_FirePower.PowerPerUpgrade = 2
+
+function Item_FirePower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_FirePower.GetInfo(self, Source, Item)
+	return "Increases fire power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_FirePower.Stats(self, Upgrades, Object, Change)
+	Change.FirePower = self:GetPower(Upgrades) * 0.01 + 0.00001
+
+	return Change
+end
+
+-- Cold Power --
+
+Item_ColdPower = { }
+Item_ColdPower.PowerPerUpgrade = 2
+
+function Item_ColdPower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_ColdPower.GetInfo(self, Source, Item)
+	return "Increases cold power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_ColdPower.Stats(self, Upgrades, Object, Change)
+	Change.ColdPower = self:GetPower(Upgrades) * 0.01 + 0.00001
+
+	return Change
+end
+
+-- Lightning Power --
+
+Item_LightningPower = { }
+Item_LightningPower.PowerPerUpgrade = 2
+
+function Item_LightningPower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_LightningPower.GetInfo(self, Source, Item)
+	return "Increases lightning power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_LightningPower.Stats(self, Upgrades, Object, Change)
+	Change.LightningPower = self:GetPower(Upgrades) * 0.01 + 0.00001
+
+	return Change
+end
+
+-- Bleed Power --
+
+Item_BleedPower = { }
+Item_BleedPower.PowerPerUpgrade = 2
+
+function Item_BleedPower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_BleedPower.GetInfo(self, Source, Item)
+	return "Increases bleed power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_BleedPower.Stats(self, Upgrades, Object, Change)
+	Change.BleedPower = self:GetPower(Upgrades) * 0.01 + 0.00001
+
+	return Change
+end
+
+-- Poison Power --
+
+Item_PoisonPower = { }
+Item_PoisonPower.PowerPerUpgrade = 2
+
+function Item_PoisonPower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_PoisonPower.GetInfo(self, Source, Item)
+	return "Increases poison power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_PoisonPower.Stats(self, Upgrades, Object, Change)
+	Change.PoisonPower = self:GetPower(Upgrades) * 0.01 + 0.00001
+
+	return Change
+end
+
+-- Heal Power --
+
+Item_HealPower = { }
+Item_HealPower.PowerPerUpgrade = 2
+
+function Item_HealPower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_HealPower.GetInfo(self, Source, Item)
+	return "Increases heal power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_HealPower.Stats(self, Upgrades, Object, Change)
+	Change.HealPower = self:GetPower(Upgrades) * 0.01 + 0.00001
+
+	return Change
+end
+
+-- Pet Power --
+
+Item_PetPower = { }
+Item_PetPower.PowerPerUpgrade = 2
+
+function Item_PetPower.GetPower(self, Upgrades)
+	return self.Item.Level + Upgrades * self.PowerPerUpgrade
+end
+
+function Item_PetPower.GetInfo(self, Source, Item)
+	return "Increases pet power by [c green]" .. self:GetPower(Item.Upgrades) .. "%"
+end
+
+function Item_PetPower.Stats(self, Upgrades, Object, Change)
+	Change.PetPower = self:GetPower(Upgrades) * 0.01 + 0.00001
 
 	return Change
 end

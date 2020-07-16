@@ -412,6 +412,7 @@ void _Character::CalculateStats() {
 		int Upgrades = EquipmentBag.Slots[i].Upgrades;
 		if(Item) {
 			_ActionResult ActionResult;
+			ActionResult.ActionUsed.Level = Upgrades;
 			ActionResult.Source.Object = Object;
 			Item->GetStats(Object->Scripting, ActionResult);
 			CalculateStatBonuses(ActionResult.Source);
