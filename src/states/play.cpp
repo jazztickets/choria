@@ -1676,7 +1676,11 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 		Map->Clock = Clock;
 
 	if(Player->Character->Level > OldLevel) {
-		HUD->SetMessage("You have " + std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point(s). Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to use them.");
+		std::string Plural = "";
+		if(Player->Character->GetSkillPointsAvailable() != 1)
+			Plural = "s";
+
+		HUD->SetMessage("You have " + std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point" + Plural + ". Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to increase your skills.");
 		ae::Audio.PlaySound(ae::Assets.Sounds["success0.ogg"]);
 
 		if(Player->Character->Level == 2) {
