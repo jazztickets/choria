@@ -703,7 +703,10 @@ void _Battle::ServerEndBattle() {
 			if(Boss) {
 				for(auto &ItemID : ItemDrops) {
 					for(auto &Object : RewardObjects) {
-						Object->Fighter->ItemDropsReceived.push_back(ItemID);
+
+						// Give drops to players that don't have the boss on cooldown
+						if(Object->Character->BattleCooldown.find(Zone) == Object->Character->BattleCooldown.end())
+							Object->Fighter->ItemDropsReceived.push_back(ItemID);
 					}
 				}
 			}
@@ -730,13 +733,21 @@ void _Battle::ServerEndBattle() {
 		int ExperienceEarned = 0;
 		int GoldEarned = 0;
 		if(Object->Character->IsAlive()) {
-			ExperienceEarned = SideStats[WinningSide].ExperiencePerCharacter;
-			GoldEarned = SideStats[WinningSide].GoldPerCharacter;
 
-			// Boost xp/gold gain
-			if(!PVP) {
-				ExperienceEarned *= Object->Character->ExperienceMultiplier;
-				GoldEarned *= Object->Character->GoldMultiplier;
+			// Get rewards if boss isn't on cooldown
+			if(Object->Character->BattleCooldown.find(Zone) == Object->Character->BattleCooldown.end()) {
+				ExperienceEarned = SideStats[WinningSide].ExperiencePerCharacter;
+				GoldEarned = SideStats[WinningSide].GoldPerCharacter;
+
+				// Boost xp/gold gain
+				if(!PVP) {
+					ExperienceEarned *= Object->Character->ExperienceMultiplier;
+					GoldEarned *= Object->Character->GoldMultiplier;
+				}
+
+				// Start cooldown timer
+				if(Cooldown > 0.0 && Zone)
+					Object->Character->BattleCooldown[Zone] = Cooldown;
 			}
 
 			// Handle pickpocket
@@ -783,10 +794,6 @@ void _Battle::ServerEndBattle() {
 			else
 				Object->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
-
-		// Start cooldown timer
-		if(Object->Character->IsAlive() && Cooldown > 0.0 && Zone)
-			Object->Character->BattleCooldown[Zone] = Cooldown;
 
 		// Update stats
 		int CurrentLevel = Object->Character->Level;
