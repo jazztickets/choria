@@ -105,7 +105,7 @@ end
 Proc_Poison = Base_Proc:New()
 Proc_Poison.Buff = Buff_Poisoned
 Proc_Poison.ChancePerLevel = 1
-Proc_Poison.LevelPerLevel = 10
+Proc_Poison.PercentPerLevel = 10
 Proc_Poison.DurationPerLevel = 0
 
 function Proc_Poison.GetInfo(self, Source, Item)
@@ -113,7 +113,7 @@ function Proc_Poison.GetInfo(self, Source, Item)
 end
 
 function Proc_Poison.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.PoisonPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.PoisonPower)
 end
 
 -- Slow --
@@ -134,7 +134,7 @@ end
 Proc_Ignite = Base_Proc:New()
 Proc_Ignite.Buff = Buff_Burning
 Proc_Ignite.ChancePerLevel = 1
-Proc_Ignite.LevelPerLevel = 10
+Proc_Ignite.PercentPerLevel = 10
 Proc_Ignite.DurationPerLevel = 0
 
 function Proc_Ignite.GetInfo(self, Source, Item)
@@ -142,7 +142,7 @@ function Proc_Ignite.GetInfo(self, Source, Item)
 end
 
 function Proc_Ignite.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.FirePower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.FirePower)
 end
 
 -- Bleed --
@@ -150,7 +150,7 @@ end
 Proc_Bleed = Base_Proc:New()
 Proc_Bleed.Buff = Buff_Bleeding
 Proc_Bleed.ChancePerLevel = 1
-Proc_Bleed.LevelPerLevel = 10
+Proc_Bleed.PercentPerLevel = 10
 Proc_Bleed.DurationPerLevel = 0
 
 function Proc_Bleed.GetInfo(self, Source, Item)
@@ -158,14 +158,14 @@ function Proc_Bleed.GetInfo(self, Source, Item)
 end
 
 function Proc_Bleed.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.BleedPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower)
 end
 
 -- Bloodlet --
 
 Proc_Bloodlet = Base_Proc:New()
 Proc_Bloodlet.ChancePerLevel = 1
-Proc_Bloodlet.LevelPerLevel = 10
+Proc_Bloodlet.PercentPerLevel = 10
 Proc_Bloodlet.DurationPerLevel = 0
 
 function Proc_Bloodlet.GetInfo(self, Source, Item)
@@ -181,7 +181,7 @@ function Proc_Bloodlet.GetHealingLevel(self, Item)
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.BleedPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower)
 end
 
 function Proc_Bloodlet.Proc(self, Roll, Item, Source, Target, Result)

@@ -149,18 +149,22 @@ void _CharacterScreen::Render(double BlendFactor) {
 	DrawPosition.y += SpacingY;
 
 	// Hit chance
-	Buffer << HUD->Player->Character->HitChance << "%";
-	Font->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
+	if(HUD->Player->Character->HitChance != 100) {
+		Buffer << HUD->Player->Character->HitChance << "%";
+		Font->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Evasion
-	Buffer << HUD->Player->Character->Evasion << "%";
-	Font->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
+	if(HUD->Player->Character->Evasion != 0) {
+		Buffer << HUD->Player->Character->Evasion << "%";
+		Font->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Attack Power
 	if(HUD->Player->Character->AttackPower != 1.0f) {
@@ -264,7 +268,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Resistances
 	bool HasResist = false;
 	for(auto &Resistance : HUD->Player->Character->Resistances) {
-		if(Resistance.first == 0)
+		if(Resistance.first == 0 || Resistance.second == 0)
 			continue;
 
 		Buffer << Resistance.second << "%";

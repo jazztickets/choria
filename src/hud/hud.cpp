@@ -220,7 +220,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		}
 
 		// Dismiss status effect
-		if(Tooltip.StatusEffect && !Player->Character->Battle) {
+		if(Tooltip.StatusEffect && Tooltip.StatusEffect->Buff->Dismiss && !Player->Character->Battle) {
 			if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::PLAYER_CLEARBUFF);
