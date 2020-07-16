@@ -245,7 +245,9 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	int DrawMaxDamage = (int)GetMaxDamage(Upgrades);
 	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
 		std::stringstream Buffer;
-		if(DrawMinDamage != DrawMaxDamage)
+		if(ae::Input.ModKeyDown(KMOD_ALT))
+			Buffer << ae::Round((DrawMinDamage + DrawMaxDamage) / 2.0f);
+		else if(DrawMinDamage != DrawMaxDamage)
 			Buffer << DrawMinDamage << " - " << DrawMaxDamage;
 		else
 			Buffer << DrawMinDamage;

@@ -774,6 +774,7 @@ INSERT INTO buff VALUES(25,'Skeleton Priests','Buff_SummonSkeletonPriest','textu
 INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0,0,0);
 INSERT INTO buff VALUES(27,'Fractured','Buff_Fractured','textures/buffs/fractured.png',0,1,0);
 INSERT INTO buff VALUES(28,'Poison Resist','Buff_PoisonResist','textures/buffs/poison_resist.png',0,1,1);
+INSERT INTO buff VALUES(29,'Cold Resist','Buff_ColdResist','textures/buffs/cold_resist.png',0,1,1);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1816,7 +1817,7 @@ INSERT INTO item VALUES(142,5,2,0,0,0,0,'Magic Stick','textures/items/magic_stic
 INSERT INTO item VALUES(143,3,0,0,0,0,6,'Cloth Vest','textures/items/cloth_vest.png','',0,50,1,0,10,0.0,1,0,0,1,0,0,5,0,0,0,0,10,5,0,0,0,0,0,'',4,0.0);
 INSERT INTO item VALUES(144,3,0,0,0,0,0,'Wizard Robes','textures/items/wizard_robes.png','',0,400,1,0,50,0.0,1,0,0,4,1,0,0,30,50,0,2,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(145,8,0,0,0,0,0,'Ring of Health','textures/items/ring.png','',0,125,1,0,50,0.0,1,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(146,10,0,1,2,0,0,'Spectral Dust','textures/items/spectral_dust.png','Item_SpectralDust',0,25,1,15,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(146,10,0,1,2,0,0,'Spectral Dust','textures/items/spectral_dust.png','Item_SpectralDust',0,25,1,25,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(147,5,2,0,0,0,0,'Morning Star','textures/items/mace.png','Proc_Stun',0,400,1,1,20,2.0,1,50,110,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(148,2,0,0,0,0,0,'Cap','textures/items/cap.png','',0,15,1,0,5,0.0,1,0,0,1,0,0,0,0,10,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(149,6,2,0,0,0,0,'Fighting Stick','textures/items/quarter_staff.png','Proc_Harden',0,1000,1,15,20,5.0,1,120,300,0,15,0,0,0,0,0,0,15,0,0,0,15,0,0,'',5,0.0);

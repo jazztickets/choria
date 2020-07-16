@@ -439,11 +439,11 @@ end
 Item_SpectralDust = { }
 
 function Item_SpectralDust.GetInfo(self, Source, Item)
-	return "Increase evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Increase cold resist by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_SpectralDust.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Buff = Buff_Evasion.Pointer
+	Result.Target.Buff = Buff_ColdResist.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
 

@@ -300,6 +300,21 @@ function Buff_PoisonResist.Stats(self, Level, Source, Change)
 	return Change
 end
 
+-- Cold Resist --
+
+Buff_ColdResist = Base_Buff:New()
+
+function Buff_ColdResist.GetInfo(self, Level)
+	return "Cold resist increased by [c green]" .. Level .. "%"
+end
+
+function Buff_ColdResist.Stats(self, Level, Source, Change)
+	Change.ResistType = DamageType["Cold"]
+	Change.Resist = Level
+
+	return Change
+end
+
 -- Weak  --
 
 Buff_Weak = Base_Buff:New()

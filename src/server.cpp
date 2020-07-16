@@ -1581,6 +1581,9 @@ void _Server::HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Update buff
 	for(auto &StatusEffect : Player->Character->StatusEffects) {
+		if(!StatusEffect->Buff->Dismiss)
+			continue;
+
 		if(StatusEffect->Buff->ID == BuffID) {
 			StatusEffect->Duration = 0.0;
 			UpdateBuff(Player, StatusEffect);
