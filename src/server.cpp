@@ -1801,6 +1801,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Process command
 	std::string Command = Data.ReadString();
 	if(Command == "battle") {
+		Player->Character->BattleCooldown.clear();
+
 		uint32_t ZoneID = Data.Read<uint32_t>();
 		QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
 	}
@@ -1809,11 +1811,6 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		int Change = Data.Read<int>();
 		Player->Character->Bounty = std::max(0, Adjust ? Player->Character->Bounty + Change : Change);
 		SendHUD(Peer);
-	}
-	else if(Command == "clearbuffs") {
-		Player->Character->DeleteStatusEffects();
-		Player->Character->BattleCooldown.clear();
-		Player->Character->CalculateStats();
 	}
 	else if(Command == "clock") {
 		double Clock = Data.Read<int>();

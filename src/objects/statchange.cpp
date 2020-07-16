@@ -120,7 +120,7 @@ void _StatChangeUI::Render(double BlendFactor) {
 		Color.a = (float)(TimeLeft / HUD_STATCHANGE_FADETIME);
 
 	// Get final draw position
-	glm::vec2 DrawPosition = glm::mix(LastPosition, Position, BlendFactor);
+	glm::ivec2 DrawPosition = glm::mix(LastPosition, Position, BlendFactor);
 
 	// Draw text
 	Font->DrawText(Text, DrawPosition, ae::CENTER_MIDDLE, Color);
