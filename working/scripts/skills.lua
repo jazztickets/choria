@@ -583,13 +583,37 @@ Skill_Spark.DamagePerLevel = 30
 Skill_Spark.DamageScale = 0.75
 Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
+Skill_Spark.Duration = 1.0
+Skill_Spark.DurationPerLevel = 0.075
+Skill_Spark.Chance = 25.2
+Skill_Spark.ChancePerLevel = 0.2
+Skill_Spark.CostScale = 0.08
 
 function Skill_Spark.GetDamagePower(self, Source, Level)
 	return Source.LightningPower
 end
 
+function Skill_Spark.GetDuration(self, Level)
+	return math.floor(10 * (self.Duration + self.DurationPerLevel * (Level - 1))) / 10.0
+end
+
+function Skill_Spark.GetChance(self, Level)
+	return math.floor(self.Chance + self.ChancePerLevel * (Level - 1))
+end
+
 function Skill_Spark.GetInfo(self, Source, Item)
-	return "Shock a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] lightning damage\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Shock a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] lightning damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Spark.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= self:GetChance(Level) then
+		Result.Target.Buff = Buff_Stunned.Pointer
+		Result.Target.BuffLevel = 1
+		Result.Target.BuffDuration = self:GetDuration(Level)
+		return true
+	end
+
+	return false
 end
 
 function Skill_Spark.PlaySound(self, Level)
@@ -608,6 +632,7 @@ Skill_Icicle.SlowPerLevel = 0.25
 Skill_Icicle.Duration = 3.0
 Skill_Icicle.DurationPerLevel = 0.05
 Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
+Skill_Icicle.CostScale = 0.08
 
 function Skill_Icicle.GetDamagePower(self, Source, Level)
 	return Source.ColdPower
@@ -643,6 +668,7 @@ Skill_PoisonTouch.CostPerLevel = 7
 Skill_PoisonTouch.ManaCostBase = 20 - Skill_PoisonTouch.CostPerLevel
 Skill_PoisonTouch.DurationPerLevel = 0
 Skill_PoisonTouch.Duration = 10
+Skill_PoisonTouch.CostScale = 0.08
 
 function Skill_PoisonTouch.GetPoisonLevel(self, Source, Level)
 	return math.floor((self.PoisonLevel + self.PoisonLevelPerLevel * Level + Level * Level * self.PoisonLevelScale) * self:GetDamagePower(Source, Level))
@@ -728,6 +754,7 @@ Skill_Ignite.BurnLevelScale = 0.5
 Skill_Ignite.CostPerLevel = 8
 Skill_Ignite.ManaCostBase = 30 - Skill_Ignite.CostPerLevel
 Skill_Ignite.Duration = 6
+Skill_Ignite.CostScale = 0.08
 
 function Skill_Ignite.GetBurnLevel(self, Source, Level)
 	return math.floor((self.BurnLevel + self.BurnLevelPerLevel * Level + Level * Level * self.BurnLevelScale) * self:GetDamagePower(Source, Level))
@@ -1852,7 +1879,7 @@ function Skill_ChainLightning.GetDamagePower(self, Source, Level)
 end
 
 function Skill_ChainLightning.GetDuration(self, Level)
-	return self.Duration + self.DurationPerLevel * (Level - 1)
+	return math.floor(10 * (self.Duration + self.DurationPerLevel * (Level - 1))) / 10.0
 end
 
 function Skill_ChainLightning.GetChance(self, Level)
@@ -1860,7 +1887,7 @@ function Skill_ChainLightning.GetChance(self, Level)
 end
 
 function Skill_ChainLightning.GetInfo(self, Source, Item)
-	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. "[c white] MP"
 end
 
 function Skill_ChainLightning.Proc(self, Roll, Level, Duration, Source, Target, Result)
