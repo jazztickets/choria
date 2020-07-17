@@ -944,6 +944,16 @@ void _Character::DeleteStatusEffects() {
 	StatusEffects.clear();
 }
 
+// Clear player unlocks
+void _Character::ClearUnlocks() {
+	Unlocks.clear();
+	SkillPointsUnlocked = 0;
+	BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
+	SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
+	for(size_t i = 0; i < ActionBar.size(); i++)
+		ActionBar[i].Unset();
+}
+
 // Unlock items based on search term and count. Return sum of levels
 int _Character::UnlockBySearch(const std::string &Search, int Count) {
 

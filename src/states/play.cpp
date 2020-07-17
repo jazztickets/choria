@@ -447,6 +447,13 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			else
 				Console->AddMessage("usage: " + Console->Command + " [+-][amount]");
 		}
+		else if(Console->Command == "clearunlocks") {
+			if(Player && Network && Network->IsConnected()) {
+				Player->Character->ClearUnlocks();
+				HUD->UpdateActionBarSize();
+				Network->SendPacket(Packet);
+			}
+		}
 		else if(Console->Command == "clock") {
 			if(Parameters.size() == 1) {
 				if(Network && Network->IsConnected()) {

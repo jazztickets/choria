@@ -1815,6 +1815,9 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Character->Bounty = std::max(0, Adjust ? Player->Character->Bounty + Change : Change);
 		SendHUD(Peer);
 	}
+	else if(Command == "clearunlocks") {
+		Player->Character->ClearUnlocks();
+	}
 	else if(Command == "clock") {
 		double Clock = Data.Read<int>();
 		if(Clock < 0)

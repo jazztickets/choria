@@ -124,6 +124,7 @@ class _Character {
 		void DeleteStatusEffects();
 
 		// Unlocks
+		void ClearUnlocks();
 		int UnlockBySearch(const std::string &Search, int Count);
 		bool HasUnlocked(const _Item *Item) const;
 
