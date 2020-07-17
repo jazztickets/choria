@@ -113,6 +113,7 @@ class _Item {
 		const ae::_Texture *Texture;
 		const ae::_Texture *AltTexture;
 		ItemType Type;
+		bool BulkBuy;
 		int Category;
 		int Level;
 		int MaxLevel;

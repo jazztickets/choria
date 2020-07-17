@@ -242,10 +242,13 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						else
 							Cursor = Tooltip;
 					}
-					// Use an item
+					// Use or sell an item
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(ae::Input.ModKeyDown(KMOD_SHIFT) || (Config.RightClickSell && Player->Character->Vendor)) {
-							VendorScreen->SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_CTRL));
+							int Amount = 1;
+							if(Tooltip.InventorySlot.Item && Tooltip.InventorySlot.Item->BulkBuy && ae::Input.ModKeyDown(KMOD_CTRL))
+								Amount += (INVENTORY_SPLIT_MODIFIER - 1);
+							VendorScreen->SellItem(&Tooltip, Amount);
 						}
 						else {
 							ae::_Buffer Packet;
@@ -551,7 +554,7 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_VENDOR: {
 				if(Player->Character->Vendor && Tooltip.Slot.Index < Player->Character->Vendor->Items.size()) {
 					Tooltip.InventorySlot.Item = Player->Character->Vendor->Items[Tooltip.Slot.Index];
-					if(ae::Input.ModKeyDown(KMOD_SHIFT))
+					if(ae::Input.ModKeyDown(KMOD_SHIFT) && Tooltip.InventorySlot.Item->BulkBuy)
 						Tooltip.InventorySlot.Count = INVENTORY_INCREMENT_MODIFIER;
 					else
 						Tooltip.InventorySlot.Count = 1;
