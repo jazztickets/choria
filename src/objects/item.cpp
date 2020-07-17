@@ -762,8 +762,11 @@ int _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendo
 	float Percent;
 	if(Buy)
 		Percent = Vendor->BuyPercent;
-	else
+	else {
 		Percent = Vendor->SellPercent;
+		if(Category == 5)
+			Percent = 0.0;
+	}
 
 	// Check for GetCost function in script
 	int ItemCost = Cost;
