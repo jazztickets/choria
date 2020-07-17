@@ -220,10 +220,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	else {
 
 		// Draw upgrade level for items
-		if(Upgrades) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Upgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
-		}
+		std::stringstream Buffer;
+		if(MaxLevel == 0 || Upgrades == MaxLevel)
+			Buffer << "Max Level";
+		else
+			Buffer << "Level " << Upgrades << "/" << MaxLevel;
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		DrawPosition.y += SpacingY;
 	}
 
 	// Draw description
