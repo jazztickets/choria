@@ -571,7 +571,7 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_BLACKSMITH: {
 				if(Player->Character->Blacksmith && Player->Inventory->IsValidSlot(BlacksmithScreen->UpgradeSlot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(BlacksmithScreen->UpgradeSlot);
-					if(Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
+					if(Tooltip.InventorySlot.Item && Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
 						Tooltip.InventorySlot.Upgrades++;
 				}
 			} break;

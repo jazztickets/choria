@@ -946,7 +946,10 @@ void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 // Get passive stats
 void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Stats")) {
-		Scripting->PushInt(ActionResult.ActionUsed.Level);
+		if(IsSkill())
+			Scripting->PushInt(ActionResult.ActionUsed.Level);
+		else
+			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushStatChange(&ActionResult.Source);
 		Scripting->MethodCall(3, 1);
