@@ -253,13 +253,22 @@ function Item_ThrowingKnives.GetDamageType(self, Source)
 end
 
 function Item_ThrowingKnives.GetInfo(self, Source, Item)
-	return "Throw a knife at your enemy"
+	return "Throw a knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.BleedPower) * Item.Duration) .. "[c white] bleed damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_ThrowingKnives.Use(self, Level, Duration, Source, Target, Result)
 	Battle_ResolveDamage(self, Level, Source, Target, Result)
+	self:Proc(1, Level, Duration, Source, Target, Result)
 
 	return Result
+end
+
+function Item_ThrowingKnives.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Bleeding.Pointer
+	Result.Target.BuffLevel = Level * Source.BleedPower
+	Result.Target.BuffDuration = Duration
+
+	return true
 end
 
 function Item_ThrowingKnives.PlaySound(self, Level)
