@@ -1091,16 +1091,28 @@ end
 -- Pickpocket --
 
 Skill_Pickpocket = {}
-Skill_Pickpocket.Constant = 30
-Skill_Pickpocket.BasePercent = 23
-Skill_Pickpocket.Multiplier = 84
+Skill_Pickpocket.ChanceConstant = 100
+Skill_Pickpocket.ChanceBasePercent = 40
+Skill_Pickpocket.ChanceMultiplier = 90
+Skill_Pickpocket.GoldConstant = 100
+Skill_Pickpocket.GoldBasePercent = 34
+Skill_Pickpocket.GoldMultiplier = 125
+Skill_Pickpocket.PlayerMultiplier = 0.2
 
 function Skill_Pickpocket.GetChance(self, Level)
-	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
+	return math.floor(self.ChanceMultiplier * Level / (self.ChanceConstant + Level) + self.ChanceBasePercent)
+end
+
+function Skill_Pickpocket.GetGold(self, Level)
+	return math.floor(self.GoldMultiplier * Level / (self.GoldConstant + Level) + self.GoldBasePercent)
+end
+
+function Skill_Pickpocket.GetGoldPlayer(self, Level)
+	return self:GetGold(Level) * self.PlayerMultiplier
 end
 
 function Skill_Pickpocket.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to steal [c green]50%][c white] gold from a monster or [c green]10%[c white] from a player"
+	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to steal [c green]" .. self:GetGold(Item.Level) .. "%][c white] gold from a monster or [c green]" .. self:GetGoldPlayer(Item.Level) .. "%[c white] from a player"
 end
 
 function Skill_Pickpocket.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1108,9 +1120,9 @@ function Skill_Pickpocket.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	if Roll <= self:GetChance(Level) then
 		GoldAvailable = Target.Gold
 		if Target.MonsterID > 0 then
-			GoldAmount = math.ceil(GoldAvailable / 2)
+			GoldAmount = math.ceil(GoldAvailable * self:GetGold(Level) * 0.01)
 		else
-			GoldAmount = math.ceil(GoldAvailable / 10)
+			GoldAmount = math.ceil(GoldAvailable * self:GetGoldPlayer(Level) * 0.01)
 		end
 
 		if GoldAmount <= Target.Gold then
@@ -1145,7 +1157,7 @@ Skill_Parry.Constant = 30
 Skill_Parry.BasePercent = 48
 Skill_Parry.Multiplier = 80
 
-function Skill_Pickpocket.GetChance(self, Level)
+function Skill_Parry.GetChance(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
