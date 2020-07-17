@@ -528,7 +528,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Tradable
 	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+		ae::Assets.Fonts["hud_small"]->DrawText("Cannot trade with other players", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 		DrawPosition.y += ControlSpacingY;
 	}
 
