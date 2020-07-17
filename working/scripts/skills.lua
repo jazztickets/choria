@@ -332,9 +332,9 @@ Skill_Gash = Base_Attack:New()
 Skill_Gash.BaseChance = 34
 Skill_Gash.ChancePerLevel = 1
 Skill_Gash.Duration = 5
-Skill_Gash.IncreasePerLevel = 6
+Skill_Gash.IncreasePerLevel = 1
 Skill_Gash.BleedingLevel = 10
-Skill_Gash.BleedScale = 1.25
+Skill_Gash.BleedScale = 1.15
 
 function Skill_Gash.CanUse(self, Level, Source, Target)
 	OffHandCount = 0
@@ -392,11 +392,11 @@ end
 Skill_ShieldBash = Base_Attack:New()
 Skill_ShieldBash.Duration = 2.0
 Skill_ShieldBash.DurationPerLevel = 0.05
-Skill_ShieldBash.DamageBase = 150
-Skill_ShieldBash.DamagePerLevel = 3
-Skill_ShieldBash.Constant = 0
+Skill_ShieldBash.DamageBase = 300
+Skill_ShieldBash.DamagePerLevel = 10
+Skill_ShieldBash.Constant = 10000
 Skill_ShieldBash.BasePercent = 75
-Skill_ShieldBash.Multiplier = 0
+Skill_ShieldBash.Multiplier = 2010
 
 function Skill_ShieldBash.GetChance(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
