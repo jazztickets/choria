@@ -644,6 +644,7 @@ INSERT INTO vendoritem VALUES(196,9,307);
 INSERT INTO vendoritem VALUES(197,24,309);
 INSERT INTO vendoritem VALUES(198,24,310);
 INSERT INTO vendoritem VALUES(199,24,311);
+INSERT INTO vendoritem VALUES(200,5,313);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1290,17 +1291,17 @@ INSERT INTO traderitem VALUES(137,52,114,5);
 INSERT INTO traderitem VALUES(138,52,215,2);
 INSERT INTO traderitem VALUES(139,53,126,1);
 INSERT INTO traderitem VALUES(140,54,134,5);
-INSERT INTO traderitem VALUES(141,54,222,3);
-INSERT INTO traderitem VALUES(142,54,191,3);
+INSERT INTO traderitem VALUES(141,54,222,2);
+INSERT INTO traderitem VALUES(142,54,191,1);
 INSERT INTO traderitem VALUES(143,55,132,1);
 INSERT INTO traderitem VALUES(144,55,265,1);
 INSERT INTO traderitem VALUES(145,55,285,1);
 INSERT INTO traderitem VALUES(146,56,279,1);
 INSERT INTO traderitem VALUES(147,56,291,1);
-INSERT INTO traderitem VALUES(148,56,280,1);
-INSERT INTO traderitem VALUES(149,56,281,1);
-INSERT INTO traderitem VALUES(150,56,282,1);
-INSERT INTO traderitem VALUES(151,56,284,1);
+INSERT INTO traderitem VALUES(148,56,313,1);
+INSERT INTO traderitem VALUES(149,56,280,1);
+INSERT INTO traderitem VALUES(150,56,281,1);
+INSERT INTO traderitem VALUES(151,56,282,1);
 INSERT INTO traderitem VALUES(152,57,244,1);
 INSERT INTO traderitem VALUES(153,57,286,1);
 INSERT INTO traderitem VALUES(154,57,30,1);
@@ -1314,7 +1315,7 @@ INSERT INTO traderitem VALUES(161,60,211,1);
 INSERT INTO traderitem VALUES(162,60,147,1);
 INSERT INTO traderitem VALUES(163,60,151,10);
 INSERT INTO traderitem VALUES(164,55,225,1);
-INSERT INTO traderitem VALUES(165,56,308,1);
+INSERT INTO traderitem VALUES(165,56,284,1);
 INSERT INTO traderitem VALUES(166,61,124,1);
 INSERT INTO traderitem VALUES(167,61,115,1);
 INSERT INTO traderitem VALUES(168,61,108,1);
@@ -1328,9 +1329,8 @@ INSERT INTO traderitem VALUES(175,63,134,20);
 INSERT INTO traderitem VALUES(176,63,151,1);
 INSERT INTO traderitem VALUES(177,63,195,1);
 INSERT INTO traderitem VALUES(178,64,125,20);
-INSERT INTO traderitem VALUES(179,64,191,3);
-INSERT INTO traderitem VALUES(180,64,114,2);
-INSERT INTO traderitem VALUES(181,64,215,2);
+INSERT INTO traderitem VALUES(179,64,191,1);
+INSERT INTO traderitem VALUES(180,64,222,2);
 INSERT INTO traderitem VALUES(182,16,233,3);
 INSERT INTO traderitem VALUES(183,8,294,1);
 INSERT INTO traderitem VALUES(184,65,253,1);
@@ -1358,6 +1358,8 @@ INSERT INTO traderitem VALUES(206,72,134,10);
 INSERT INTO traderitem VALUES(207,73,211,1);
 INSERT INTO traderitem VALUES(208,73,237,10);
 INSERT INTO traderitem VALUES(209,73,39,1);
+INSERT INTO traderitem VALUES(213,64,114,1);
+INSERT INTO traderitem VALUES(214,56,308,1);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1987,6 +1989,7 @@ INSERT INTO item VALUES(309,10,0,0,1,0,0,'Rite of Girth','textures/items/rite_gi
 INSERT INTO item VALUES(310,10,0,0,1,0,0,'Rite of Proficiency','textures/items/rite_proficiency.png','Item_RiteProficiency',5,750000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(311,10,0,0,1,0,0,'Rite of Insight','textures/items/rite_insight.png','Item_RiteInsight',5,100000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(312,8,0,0,0,0,0,'Dark Ring','textures/items/dark_ring.png','Item_DarkRing',0,500,1,20,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(313,15,0,0,0,0,0,'Nocturnal Map','textures/items/map.png','',0,375,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/bat.png',0,0.0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
