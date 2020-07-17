@@ -1170,7 +1170,7 @@ Base_Rite = {
 	end,
 
 	GetRiteText = function(self, UpgradeText)
-		return "Permanently increase " .. UpgradeText .. "\n\n[c yellow]Can only be used once"
+		return "Permanently increase " .. UpgradeText
 	end,
 
 	PlaySound = function(self, Level)
@@ -1260,7 +1260,7 @@ Item_RiteGirth.Exponent = 2
 function Item_RiteGirth.GetInfo(self, Source, Item)
 	AddedText = ""
 	if Source.RebirthGirth >= MAX_BELT_SIZE - DEFAULT_BELTSIZE then
-		AddedText = "\n[c red]Max girth attained"
+		AddedText = "\n\n[c red]Max girth attained"
 	end
 
 	return self:GetRiteText("the belt size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
@@ -1284,7 +1284,7 @@ Item_RiteProficiency.Exponent = 1.25
 function Item_RiteProficiency.GetInfo(self, Source, Item)
 	AddedText = ""
 	if Source.RebirthProficiency >= MAX_SKILLBAR_SIZE - DEFAULT_SKILLBARSIZE then
-		AddedText = "\n[c red]Max proficiency attained"
+		AddedText = "\n\n[c red]Max proficiency attained"
 	end
 
 	return self:GetRiteText("the skill bar size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
@@ -1308,7 +1308,7 @@ Item_RiteInsight.Exponent = 1.25
 function Item_RiteInsight.GetInfo(self, Source, Item)
 	AddedText = ""
 	if Source.RebirthInsight >= MAX_SKILL_UNLOCKS then
-		AddedText = "\n[c red]Max insight attained"
+		AddedText = "\n\n[c red]Max insight attained"
 	end
 
 	return self:GetRiteText("the starting skill point unlocks after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
