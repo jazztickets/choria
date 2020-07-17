@@ -94,6 +94,7 @@ class _Scripting {
 		static int ObjectClearTargets(lua_State *LuaState);
 		static int ObjectClearBattleTargets(lua_State *LuaState);
 		static int ObjectGetInventoryItem(lua_State *LuaState);
+		static int ObjectGetInventoryItemCount(lua_State *LuaState);
 		static int ObjectGetSkillPointsAvailable(lua_State *LuaState);
 		static int ObjectSpendSkillPoints(lua_State *LuaState);
 		static int ObjectSetAction(lua_State *LuaState);

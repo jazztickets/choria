@@ -1177,8 +1177,10 @@ Base_Rite = {
 		Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 	end,
 
-	GetUpgradedPrice = function(self, Upgrades)
-		return math.floor(self.Item.Cost + self.Item.Cost * Upgrades ^ self.Exponent)
+	GetUpgradedPrice = function(self, Source, Upgrades)
+		Count = Source.GetInventoryItemCount(self.Item.Pointer)
+
+		return math.floor(self.Item.Cost + self.Item.Cost * (Count + Upgrades) ^ self.Exponent)
 	end,
 
 	Exponent = 1.0
@@ -1192,7 +1194,7 @@ function Item_RiteWealth.GetInfo(self, Source, Item)
 end
 
 function Item_RiteWealth.GetCost(self, Source)
-	return self:GetUpgradedPrice(Source.RebirthWealth)
+	return self:GetUpgradedPrice(Source, Source.RebirthWealth)
 end
 
 function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result)
@@ -1209,7 +1211,7 @@ function Item_RiteWisdom.GetInfo(self, Source, Item)
 end
 
 function Item_RiteWisdom.GetCost(self, Source)
-	return self:GetUpgradedPrice(Source.RebirthWisdom)
+	return self:GetUpgradedPrice(Source, Source.RebirthWisdom)
 end
 
 function Item_RiteWisdom.Use(self, Level, Duration, Source, Target, Result)
@@ -1226,7 +1228,7 @@ function Item_RiteKnowledge.GetInfo(self, Source, Item)
 end
 
 function Item_RiteKnowledge.GetCost(self, Source)
-	return self:GetUpgradedPrice(Source.RebirthKnowledge)
+	return self:GetUpgradedPrice(Source, Source.RebirthKnowledge)
 end
 
 function Item_RiteKnowledge.Use(self, Level, Duration, Source, Target, Result)
@@ -1243,7 +1245,7 @@ function Item_RitePower.GetInfo(self, Source, Item)
 end
 
 function Item_RitePower.GetCost(self, Source)
-	return self:GetUpgradedPrice(Source.RebirthPower)
+	return self:GetUpgradedPrice(Source, Source.RebirthPower)
 end
 
 function Item_RitePower.Use(self, Level, Duration, Source, Target, Result)
@@ -1265,7 +1267,7 @@ function Item_RiteGirth.GetInfo(self, Source, Item)
 end
 
 function Item_RiteGirth.GetCost(self, Source)
-	return self:GetUpgradedPrice(Source.RebirthGirth)
+	return self:GetUpgradedPrice(Source, Source.RebirthGirth)
 end
 
 function Item_RiteGirth.Use(self, Level, Duration, Source, Target, Result)
@@ -1289,7 +1291,7 @@ function Item_RiteProficiency.GetInfo(self, Source, Item)
 end
 
 function Item_RiteProficiency.GetCost(self, Source)
-	return self:GetUpgradedPrice(Source.RebirthProficiency)
+	return self:GetUpgradedPrice(Source, Source.RebirthProficiency)
 end
 
 function Item_RiteProficiency.Use(self, Level, Duration, Source, Target, Result)
@@ -1313,7 +1315,7 @@ function Item_RiteInsight.GetInfo(self, Source, Item)
 end
 
 function Item_RiteInsight.GetCost(self, Source)
-	return self:GetUpgradedPrice(Source.RebirthInsight)
+	return self:GetUpgradedPrice(Source, Source.RebirthInsight)
 end
 
 function Item_RiteInsight.Use(self, Level, Duration, Source, Target, Result)

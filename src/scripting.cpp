@@ -386,6 +386,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GetInventoryItem");
 
 	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetInventoryItemCount, 1);
+	lua_setfield(LuaState, -2, "GetInventoryItemCount");
+
+	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectGetSkillPointsAvailable, 1);
 	lua_setfield(LuaState, -2, "GetSkillPointsAvailable");
 
@@ -1043,6 +1047,25 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 
 	// Push item
 	PushItem(LuaState, Item, Upgrades);
+
+	return 1;
+}
+
+// Get count of a particular item in player's inventory
+int _Scripting::ObjectGetInventoryItemCount(lua_State *LuaState) {
+
+	// Get self pointer
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	if(!Object)
+		return 0;
+
+	// Get item
+	const _Item *Item = (const _Item *)lua_touserdata(LuaState, 1);
+	if(!Item)
+		return 0;
+
+	// Return count
+	lua_pushinteger(LuaState, Object->Inventory->CountItem(Item));
 
 	return 1;
 }
