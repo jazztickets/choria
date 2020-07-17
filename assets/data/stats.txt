@@ -783,7 +783,7 @@ CREATE TABLE IF NOT EXISTS "zone" (
 INSERT INTO zone VALUES(1,'crow',0,0.0,1,3);
 INSERT INTO zone VALUES(2,'crow_slime',0,0.0,1,2);
 INSERT INTO zone VALUES(3,'crow_slime_ant',0,0.0,1,3);
-INSERT INTO zone VALUES(4,'ant_spider',0,0.0,1,2);
+INSERT INTO zone VALUES(4,'ant_spider',0,0.0,2,2);
 INSERT INTO zone VALUES(5,'bat_spider',0,0.0,2,5);
 INSERT INTO zone VALUES(6,'bat_slime',0,0.0,1,4);
 INSERT INTO zone VALUES(7,'bat_lord',1,1440.0,0,0);
