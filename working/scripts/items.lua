@@ -755,7 +755,7 @@ end
 
 Item_PainRing = { }
 Item_PainRing.Difficulty = 50
-Item_PainRing.DifficultyPerLevel = 10
+Item_PainRing.DifficultyPerLevel = 5
 
 function Item_PainRing.GetInfo(self, Source, Item)
 	return "[c gray]Quit hurting yourself"
@@ -791,7 +791,7 @@ end
 -- Attack Power --
 
 Item_AttackPower = { }
-Item_AttackPower.PowerPerUpgrade = 2
+Item_AttackPower.PowerPerUpgrade = 1
 
 function Item_AttackPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -810,7 +810,7 @@ end
 -- Physical Power --
 
 Item_PhysicalPower = { }
-Item_PhysicalPower.PowerPerUpgrade = 2
+Item_PhysicalPower.PowerPerUpgrade = 1
 
 function Item_PhysicalPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -829,7 +829,7 @@ end
 -- Fire Power --
 
 Item_FirePower = { }
-Item_FirePower.PowerPerUpgrade = 2
+Item_FirePower.PowerPerUpgrade = 1
 
 function Item_FirePower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -848,7 +848,7 @@ end
 -- Cold Power --
 
 Item_ColdPower = { }
-Item_ColdPower.PowerPerUpgrade = 2
+Item_ColdPower.PowerPerUpgrade = 1
 
 function Item_ColdPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -867,7 +867,7 @@ end
 -- Lightning Power --
 
 Item_LightningPower = { }
-Item_LightningPower.PowerPerUpgrade = 2
+Item_LightningPower.PowerPerUpgrade = 1
 
 function Item_LightningPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -886,7 +886,7 @@ end
 -- Bleed Power --
 
 Item_BleedPower = { }
-Item_BleedPower.PowerPerUpgrade = 2
+Item_BleedPower.PowerPerUpgrade = 1
 
 function Item_BleedPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -905,7 +905,7 @@ end
 -- Poison Power --
 
 Item_PoisonPower = { }
-Item_PoisonPower.PowerPerUpgrade = 2
+Item_PoisonPower.PowerPerUpgrade = 1
 
 function Item_PoisonPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -924,7 +924,7 @@ end
 -- Heal Power --
 
 Item_HealPower = { }
-Item_HealPower.PowerPerUpgrade = 2
+Item_HealPower.PowerPerUpgrade = 1
 
 function Item_HealPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -943,7 +943,7 @@ end
 -- Mana Power --
 
 Item_ManaPower = { }
-Item_ManaPower.PowerPerUpgrade = 2
+Item_ManaPower.PowerPerUpgrade = 1
 
 function Item_ManaPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -962,7 +962,7 @@ end
 -- Pet Power --
 
 Item_PetPower = { }
-Item_PetPower.PowerPerUpgrade = 2
+Item_PetPower.PowerPerUpgrade = 1
 
 function Item_PetPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
