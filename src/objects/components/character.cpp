@@ -759,6 +759,7 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 
 // Get a vector of summon structs from the character's list of status effects
 void _Character::GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffect *> > &Summons) {
+	std::unordered_map<_Item *, int> SummonLimits;
 	for(auto &StatusEffect : StatusEffects) {
 
 		// See if the buff has a summon skill attached to it
@@ -787,9 +788,18 @@ void _Character::GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffec
 			ActionResult.Source.Object = Object;
 			ActionResult.Summon.SummonBuff = StatusEffect->Buff;
 			Action.Item->Use(Object->Scripting, ActionResult);
+
+			// Get summon limit for skill
+			if(SummonLimits.find(SummonSkill) == SummonLimits.end())
+				SummonLimits[SummonSkill] = ActionResult.Summon.Limit;
+
+			// Add summons to list
 			if(ActionResult.Summon.ID) {
-				for(int i = 0; i < StatusEffect->Level; i++)
+				int AllowedSummons = std::min(StatusEffect->Level, SummonLimits[SummonSkill]);
+				for(int i = 0; i < AllowedSummons; i++) {
+					SummonLimits[SummonSkill]--;
 					Summons.push_back(std::pair<_Summon, _StatusEffect *>(ActionResult.Summon, StatusEffect));
+				}
 			}
 		}
 	}
