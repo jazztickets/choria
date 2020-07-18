@@ -42,6 +42,7 @@ class _DedicatedState : public ae::_State {
 		// State parameters
 		void SetNetworkPort(uint16_t NetworkPort) { this->NetworkPort = NetworkPort; }
 		void SetHardcore(bool Hardcore) { this->Hardcore = Hardcore; }
+		void SetDevMode(bool DevMode) { this->DevMode = DevMode; };
 
 		// Commands
 		void ShowCommands();
@@ -57,6 +58,7 @@ class _DedicatedState : public ae::_State {
 		// Parameters
 		uint16_t NetworkPort;
 		bool Hardcore;
+		bool DevMode;
 
 };
 

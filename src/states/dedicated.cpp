@@ -74,7 +74,8 @@ _DedicatedState::_DedicatedState() :
 	Server(nullptr),
 	Thread(nullptr),
 	NetworkPort(0),
-	Hardcore(false) {
+	Hardcore(false),
+	DevMode(false) {
 
 }
 
@@ -85,6 +86,7 @@ void _DedicatedState::Init() {
 	try {
 		Server = new _Server(NetworkPort);
 		Server->Hardcore = Hardcore;
+		Server->IsTesting = DevMode;
 
 		if(Hardcore)
 			std::cout << "Hardcore only is on" << std::endl;
