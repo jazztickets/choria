@@ -152,10 +152,7 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 				return true;
 		break;
 		case EquipmentType::HAND2: {
-			if(Item->Type == ItemType::OFFHAND)
-				return true;
-
-			if(Item->Type == ItemType::SHIELD && (GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item == nullptr || GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item->Type != ItemType::TWOHANDED_WEAPON))
+			if((Item->Type == ItemType::OFFHAND || Item->Type == ItemType::SHIELD) && (GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item == nullptr || GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item->Type != ItemType::TWOHANDED_WEAPON))
 				return true;
 		} break;
 		case EquipmentType::RING1:
