@@ -1,6 +1,9 @@
 
 -- Wrapper function for Object.AddTarget that handles taunted state
 function AI_AddTarget(Source, Target, AffectedByTaunt)
+	if Target == nil then
+		return
+	end
 
 	-- Check if affected by taunt
 	if AffectedByTaunt == false then
