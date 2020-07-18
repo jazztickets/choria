@@ -371,14 +371,20 @@ AI_Raj = {}
 
 function AI_Raj.Update(self, Object, Enemies, Allies)
 
+	local Storage = Battles[Object.BattleID]
+	if Storage[Object.ID] == nil then
+		Storage[Object.ID] = { Turns = 0 }
+	end
+
 	-- Chance to do special attack
-	if Random.GetInt(1, 5) == 1 then
+	if Storage[Object.ID].Turns > 2 and Random.GetInt(1, 3) == 1 then
 		for i = 1, #Enemies do
 			Object.AddTarget(Enemies[i].Pointer)
 		end
 
-		Object.SetAction(1)
-		return
+		if Object.SetAction(1) then
+			return
+		end
 	end
 
 	-- Get random target
@@ -388,7 +394,9 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 	AI_AddTarget(Object, Enemies[Target], true)
 
 	-- Set skill
-	Object.SetAction(0)
+	if Object.SetAction(0) then
+		Storage[Object.ID].Turns = Storage[Object.ID].Turns + 1
+	end
 end
 
 AI_Jem = {}
