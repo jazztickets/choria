@@ -1902,7 +1902,7 @@ function Skill_ChainLightning.Proc(self, Roll, Level, Duration, Source, Target, 
 end
 
 function Skill_ChainLightning.PlaySound(self, Level)
-	Audio.Play("shock0.ogg")
+	Audio.Play("shock0.ogg", 0.35)
 end
 
 -- Rupture --
