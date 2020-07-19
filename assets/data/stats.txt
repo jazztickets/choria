@@ -1901,7 +1901,7 @@ INSERT INTO item VALUES(215,10,0,2,2,0,0,'Fire Dust','textures/items/fire_dust.p
 INSERT INTO item VALUES(216,13,0,0,1,0,0,'Prisoner Key','textures/items/key1.png','',0,10000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(217,9,0,0,0,0,0,'Lucky Amulet','textures/items/amulet_gold.png','',0,1000,1,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(218,7,0,0,0,0,0,'Gauntlet','textures/items/gauntlet.png','',0,35,1,0,10,0.0,1,0,0,0,3,2,0,0,0,0,0,10,0,0,0,0,0,0,'',0,0.0);
-INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key2.png','',0,150,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
+INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key2.png','',0,1000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(220,10,0,1,1,0,0,'Torch','textures/items/torch.png','Item_Torch',0,15,1,3,0,60.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(221,11,0,0,0,0,0,'Game Token','textures/items/token.png','',0,10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/medium_torch.png','Item_Torch',0,35,1,5,0,120.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
