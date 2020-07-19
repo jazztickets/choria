@@ -54,14 +54,6 @@ void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 // Resolve action
 bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
-	// Check for deleted targets
-	for(auto Iterator = Source->Character->Targets.begin(); Iterator != Source->Character->Targets.end(); ) {
-		if((*Iterator)->Deleted)
-			Iterator = Source->Character->Targets.erase(Iterator);
-		else
-			++Iterator;
-	}
-
 	// Build action result struct
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;

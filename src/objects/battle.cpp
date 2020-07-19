@@ -997,9 +997,19 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			Object->Monster->Owner = nullptr;
 
 		if(Object->Character) {
+
+			// Remove source in status effect
 			for(auto &StatusEffect : Object->Character->StatusEffects) {
 				if(RemoveObject == StatusEffect->Source)
 					StatusEffect->Source = nullptr;
+			}
+
+			// Remove from targets
+			for(auto Iterator = Object->Character->Targets.begin(); Iterator != Object->Character->Targets.end(); ) {
+				if(*Iterator == RemoveObject)
+					Iterator = Object->Character->Targets.erase(Iterator);
+				else
+					++Iterator;
 			}
 		}
 	}
