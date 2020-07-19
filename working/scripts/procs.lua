@@ -173,12 +173,16 @@ function Proc_Bloodlet.GetInfo(self, Source, Item)
 	Bleeding = self:GetTotal(Source, Item)
 	Duration = self:GetDuration(Item)
 	Chance = self:GetChance(Item)
-	Healing = self:GetTotal(Source, Item)
+	Healing = self:GetHealingTotal(Source, Item)
 	return "[c green]" .. Chance .. "%[c white] chance for [c green]" .. Bleeding .. "[c white] bleeding damage and [c green]" .. Healing .. "[c white] healing over [c green]" .. Duration .. "[c white] seconds"
 end
 
-function Proc_Bloodlet.GetHealingLevel(self, Item)
-	return math.floor(Item.Level / 2)
+function Proc_Bloodlet.GetHealingTotal(self, Source, Item)
+	return math.floor(self:GetHealingLevel(Source, Item) * self:GetDuration(Item))
+end
+
+function Proc_Bloodlet.GetHealingLevel(self, Source, Item)
+	return self:GetLevel(Source, Item) / 2
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)
@@ -187,13 +191,39 @@ end
 
 function Proc_Bloodlet.Proc(self, Roll, Item, Source, Target, Result)
 	if Roll <= self:GetChance(Item) then
-		self:AddBuff(Result.Target, Buff_Bleeding.Pointer, Source, Item)
-		self:AddBuff(Result.Source, Buff_Healing.Pointer, Source, Item)
+		self:AddBuff(Result.Target, Buff_Bleeding.Pointer, Source, Item, self:GetLevel(Source, Item))
+		self:AddBuff(Result.Source, Buff_Healing.Pointer, Source, Item, self:GetHealingLevel(Source, Item))
 
 		return true
 	end
 
 	return false
+end
+
+function Proc_Bloodlet.AddBuff(self, Change, Buff, Source, Item, Level)
+
+	-- Get stats from item
+	Duration = self:GetDuration(Item)
+
+	-- Check for existing buff
+	if Change.Buff == nil then
+		Change.Buff = Buff
+		Change.BuffLevel = Level
+		Change.BuffDuration = Duration
+		return
+	end
+
+	-- Buff exists, but is different
+	if Change.Buff ~= Buff then
+		return
+	end
+
+	-- Take better level or duration
+	if Level > Change.BuffLevel then
+		Change.BuffLevel = Level
+	elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
+		Change.BuffDuration = Duration
+	end
 end
 
 -- Haste --
@@ -240,7 +270,7 @@ Proc_Empowered = Base_Proc:New()
 Proc_Empowered.Buff = Buff_Empowered
 Proc_Empowered.OnSelf = true
 Proc_Empowered.ChancePerLevel = 1
-Proc_Empowered.LevelPerLevel = 1
+Proc_Empowered.LevelPerLevel = 0.2
 Proc_Empowered.DurationPerLevel = 0.1
 
 function Proc_Empowered.GetInfo(self, Source, Item)

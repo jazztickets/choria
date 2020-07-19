@@ -256,21 +256,27 @@ end
 -- Attack --
 
 Skill_Attack = Base_Attack:New()
-Skill_Attack.BaseChance = 4
-Skill_Attack.ChancePerLevel = 1
+Skill_Attack.BaseChance = 8
+Skill_Attack.ChancePerLevel = 0.25
 Skill_Attack.DamageBase = 100
-Skill_Attack.DamagePerLevel = 4
+Skill_Attack.DamagePerLevel = 2
+Skill_Attack.CritMultiplier = 2
+Skill_Attack.CritMultiplierPerLevel = 0.02
 
 function Skill_Attack.GetDamage(self, Level)
 	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
 end
 
+function Skill_Attack.GetCritMultiplier(self, Level)
+	return self.CritMultiplier + self.CritMultiplierPerLevel * (Level - 1)
+end
+
 function Skill_Attack.GetChance(self, Level)
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+	return math.floor(math.min(self.BaseChance + self.ChancePerLevel * Level, 100))
 end
 
 function Skill_Attack.GetInfo(self, Source, Item)
-	return "Attack for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
+	return "Attack for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]" .. self:GetCritMultiplier(Item.Level) .. "x[c white] damage"
 end
 
 function Skill_Attack.PlaySound(self, Level)
@@ -282,7 +288,7 @@ function Skill_Attack.GenerateDamage(self, Level, Source)
 
 	Crit = false
 	if Random.GetInt(1, 100) <= self:GetChance(Level) then
-		Damage = Damage * 3
+		Damage = math.floor(Damage * self:GetCritMultiplier(Level))
 		Crit = true
 	end
 
@@ -292,7 +298,7 @@ end
 -- Fury --
 
 Skill_Fury = Base_Attack:New()
-Skill_Fury.StaminaPerLevel = 0.02
+Skill_Fury.StaminaPerLevel = 0.01
 Skill_Fury.BaseStamina = 0.28
 Skill_Fury.SpeedDuration = 2
 Skill_Fury.SpeedDurationPerLevel = 0.1
@@ -329,12 +335,14 @@ end
 -- Gash --
 
 Skill_Gash = Base_Attack:New()
-Skill_Gash.BaseChance = 34
+Skill_Gash.DamageBase = 100.5
+Skill_Gash.DamagePerLevel = 0.5
+Skill_Gash.BaseChance = 36
 Skill_Gash.ChancePerLevel = 1
 Skill_Gash.Duration = 5
 Skill_Gash.IncreasePerLevel = 1
 Skill_Gash.BleedingLevel = 10
-Skill_Gash.BleedScale = 1.15
+Skill_Gash.BleedScale = 2.0
 
 function Skill_Gash.CanUse(self, Level, Source, Target)
 	OffHandCount = 0
@@ -351,8 +359,16 @@ function Skill_Gash.CanUse(self, Level, Source, Target)
 	return OffHandCount > 0
 end
 
+function Skill_Gash.GetDamage(self, Level)
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
+end
+
+function Skill_Gash.GenerateDamage(self, Level, Source)
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+end
+
 function Skill_Gash.GetChance(self, Level)
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
 end
 
 function Skill_Gash.GetBleedDamage(self, Source, Level)
@@ -369,7 +385,7 @@ function Skill_Gash.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Slice your enemy with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires at least one off-hand weapon"
+	return "Slice your enemy, dealing [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires at least one off-hand weapon"
 end
 
 function Skill_Gash.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -456,7 +472,9 @@ end
 
 Skill_Whirlwind = Base_Attack:New()
 Skill_Whirlwind.DamageBase = 75
-Skill_Whirlwind.DamagePerLevel = 3
+Skill_Whirlwind.DamagePerLevel = 1
+Skill_Whirlwind.Duration = 3
+Skill_Whirlwind.DurationPerLevel = 0
 
 function Skill_Whirlwind.CanUse(self, Level, Source, Target)
 	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
@@ -468,11 +486,23 @@ function Skill_Whirlwind.CanUse(self, Level, Source, Target)
 end
 
 function Skill_Whirlwind.GetDamage(self, Level)
-	return math.floor(Skill_Whirlwind.DamageBase + Skill_Whirlwind.DamagePerLevel * Level)
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
 end
 
 function Skill_Whirlwind.GenerateDamage(self, Level, Source)
 	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+end
+
+function Skill_Whirlwind.GetDuration(self, Level)
+	return math.max(self.Duration + self.DurationPerLevel * (Level - 1), 0.5)
+end
+
+function Skill_Whirlwind.ApplyCost(self, Source, Level, Result)
+	Result.Source.Buff = Buff_Slowed.Pointer
+	Result.Source.BuffLevel = 30
+	Result.Source.BuffDuration = self:GetDuration(Level)
+
+	return Result
 end
 
 function Skill_Whirlwind.GetInfo(self, Source, Item)
@@ -481,7 +511,7 @@ function Skill_Whirlwind.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Slash all enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\n[c " .. TextColor .. "]Requires a two-handed weapon"
+	return "Slash all enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
 end
 
 function Skill_Whirlwind.PlaySound(self, Level)
@@ -789,11 +819,11 @@ end
 
 Skill_Toughness = {}
 Skill_Toughness.HealthPerLevel = 60
-Skill_Toughness.Armor = 1
+Skill_Toughness.Armor = 5
+Skill_Toughness.ArmorPerLevel = 0.5
 
 function Skill_Toughness.GetArmor(self, Level)
-
-	return self.Armor * math.floor(Level / 1)
+	return math.floor(self.Armor + self.ArmorPerLevel * math.floor(Level - 1))
 end
 
 function Skill_Toughness.GetInfo(self, Source, Item)
@@ -840,7 +870,8 @@ end
 Skill_Evasion = {}
 Skill_Evasion.ChancePerLevel = 1
 Skill_Evasion.BaseChance = 10
-Skill_Evasion.BattleSpeed = 1
+Skill_Evasion.BattleSpeed = 5
+Skill_Evasion.BattleSpeedPerLevel = 0.5
 
 function Skill_Evasion.GetChance(self, Level)
 
@@ -849,7 +880,7 @@ end
 
 function Skill_Evasion.GetBattleSpeed(self, Level)
 
-	return math.floor(self.BattleSpeed * math.floor(Level / 1))
+	return math.floor(self.BattleSpeed + self.BattleSpeedPerLevel * (Level - 1))
 end
 
 function Skill_Evasion.GetInfo(self, Source, Item)
@@ -1240,14 +1271,6 @@ function Skill_Taunt.GetInfo(self, Source, Item)
 	return "Taunt [c green]" .. Count .. "[c white] " .. Plural .. " for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, forcing them to attack you. Increase armor by [c green]" .. self:GetArmor(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds"
 end
 
-function Skill_Taunt.ApplyCost(self, Source, Level, Result)
-	Result.Source.Buff = Buff_Slowed.Pointer
-	Result.Source.BuffLevel = 30
-	Result.Source.BuffDuration = self.FatigueDuration
-
-	return Result
-end
-
 function Skill_Taunt.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Taunted.Pointer
 	Result.Target.BuffLevel = 1
@@ -1587,7 +1610,7 @@ end
 
 Skill_Cleave = Base_Attack:New()
 Skill_Cleave.DamageBase = 50
-Skill_Cleave.DamagePerLevel = 2.5
+Skill_Cleave.DamagePerLevel = 1.75
 Skill_Cleave.BaseTargets = 3
 Skill_Cleave.TargetsPerLevel = 0
 
@@ -1717,11 +1740,11 @@ Skill_BladeDance.ChancePerLevel = 0
 Skill_BladeDance.Duration = 5
 Skill_BladeDance.IncreasePerLevel = 10
 Skill_BladeDance.BleedingLevel = 100
-Skill_BladeDance.BaseTargets = 3
-Skill_BladeDance.TargetsPerLevel = 0.1
-Skill_BladeDance.DamageBase = 80
-Skill_BladeDance.DamagePerLevel = 2
-Skill_BladeDance.BleedScale = 0.5
+Skill_BladeDance.BaseTargets = 4
+Skill_BladeDance.TargetsPerLevel = 0.08
+Skill_BladeDance.DamageBase = 100
+Skill_BladeDance.DamagePerLevel = 3
+Skill_BladeDance.BleedScale = 2
 
 function Skill_BladeDance.CanUse(self, Level, Source, Target)
 	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
@@ -1743,6 +1766,10 @@ end
 
 function Skill_BladeDance.GetChance(self, Level)
 	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
+end
+
+function Skill_BladeDance.GenerateDamage(self, Level, Source)
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
 end
 
 function Skill_BladeDance.GetBleedDamage(self, Source, Level)
