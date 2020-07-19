@@ -1783,7 +1783,7 @@ INSERT INTO item VALUES(97,12,0,0,1,2,0,'Skill Slot II','textures/items/skillslo
 INSERT INTO item VALUES(98,12,0,0,1,3,0,'Skill Slot III','textures/items/skillslot3.png','Item_SkillSlot',0,50000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(99,12,0,0,1,4,0,'Skill Slot IV','textures/items/skillslot4.png','Item_SkillSlot',0,500000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(100,5,2,0,0,0,0,'Short Sword','textures/items/short_sword.png','Proc_Haste',0,25,1,20,10,3.0,1,20,40,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
-INSERT INTO item VALUES(101,5,2,0,0,0,0,'Stick','textures/items/stick.png','Proc_Mana',0,5,1,10,10,0.0,1,10,20,0,0,0,0,0,20,0,1,0,0,0,0,15,1,0,'',0,0.0);
+INSERT INTO item VALUES(101,5,2,0,0,0,0,'Stick','textures/items/stick.png','Proc_Mana',0,5,1,10,10,0.0,1,5,15,0,0,0,0,0,20,0,1,0,0,0,0,15,1,0,'',0,0.0);
 INSERT INTO item VALUES(102,5,2,0,0,0,0,'Mace','textures/items/mace.png','Proc_Stun',0,20,1,1,10,1.5,1,10,50,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(103,14,2,0,0,0,0,'Dagger','textures/items/dagger.png','Proc_Bleed',0,25,1,10,10,5.0,1,20,20,0,2,10,0,0,0,0,0,20,0,0,0,20,0,0,'',0,0.0);
 INSERT INTO item VALUES(104,3,0,0,0,0,0,'Mage Robes','textures/items/mage_robes.png','',0,100,1,0,10,0.0,1,0,0,2,0,0,0,10,25,0,1,0,0,0,0,0,0,0,'',0,0.0);
@@ -1824,7 +1824,7 @@ INSERT INTO item VALUES(138,8,0,0,0,0,0,'Troll''s Ring','textures/items/ring.png
 INSERT INTO item VALUES(139,11,0,0,0,0,0,'Crab Trophy','textures/items/crab_trophy.png','',0,300,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(140,11,0,0,0,0,0,'Slime Trophy','textures/items/slime_trophy.png','',0,750,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(141,5,2,0,0,0,0,'Scimitar','textures/items/scimitar.png','Proc_Haste',0,750,1,30,20,3.0,1,90,170,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0,0.0);
-INSERT INTO item VALUES(142,5,2,0,0,0,0,'Magic Stick','textures/items/magic_stick.png','Proc_Mana',0,350,1,30,20,0.0,1,40,70,0,0,0,0,0,100,0,2,0,0,0,0,15,1,0,'',0,0.0);
+INSERT INTO item VALUES(142,5,2,0,0,0,0,'Magic Stick','textures/items/magic_stick.png','Proc_Mana',0,350,1,30,20,0.0,1,20,40,0,0,0,0,0,100,0,2,0,0,0,0,15,1,0,'',0,0.0);
 INSERT INTO item VALUES(143,3,0,0,0,0,6,'Cloth Vest','textures/items/cloth_vest.png','',0,50,1,0,10,0.0,1,0,0,1,0,0,5,0,0,0,0,10,5,0,0,0,0,0,'',4,0.0);
 INSERT INTO item VALUES(144,3,0,0,0,0,0,'Wizard Robes','textures/items/wizard_robes.png','',0,400,1,0,50,0.0,1,0,0,4,1,0,0,30,50,0,2,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(145,8,0,0,0,0,0,'Ring of Health','textures/items/ring.png','Item_HealPower',0,125,1,5,10,0.0,1,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,0,'',0,0.0);
@@ -1922,7 +1922,7 @@ INSERT INTO item VALUES(239,13,0,0,0,0,0,'Bridge Key','textures/items/key2.png',
 INSERT INTO item VALUES(240,10,0,1,2,0,0,'Stinger','textures/items/stinger.png','Item_Stinger',0,80,1,15,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0);
 INSERT INTO item VALUES(241,5,2,0,0,0,0,'Light Blade','textures/items/light_blade.png','Proc_Haste',0,12000,1,30,50,3.0,1,400,900,0,0,0,0,0,0,0,0,15,5,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(242,14,2,0,0,0,0,'Moon Blade','textures/items/moon_blade.png','Proc_Bleed',0,8000,1,80,50,5.0,1,360,360,0,10,40,0,0,20,0,0,40,0,0,0,20,0,0,'',0,0.0);
-INSERT INTO item VALUES(243,5,2,0,0,0,0,'Arcane Wand','textures/items/arcane_wand.png','Proc_Mana',0,7500,1,100,50,0.0,1,150,250,0,0,0,0,0,500,0,10,0,0,0,0,15,1,2,'',0,0.0);
+INSERT INTO item VALUES(243,5,2,0,0,0,0,'Arcane Wand','textures/items/arcane_wand.png','Proc_Mana',0,7500,1,100,50,0.0,1,50,100,0,0,0,0,0,500,0,10,0,0,0,0,15,1,2,'',0,0.0);
 INSERT INTO item VALUES(244,6,2,0,0,0,0,'Greatsword','textures/items/greatsword.png','Proc_Empowered',0,25000,1,25,50,5.0,1,1400,2500,-10,0,0,0,0,0,0,0,-20,-5,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(245,5,2,0,0,0,0,'Spider Sword','textures/items/spider_sword.png','Proc_Slow',0,350,1,30,20,3.0,1,70,130,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0,0.0);
 INSERT INTO item VALUES(246,5,2,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,50,10.0,1,110,220,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0,0.0);

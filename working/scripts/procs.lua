@@ -73,6 +73,7 @@ Base_Proc = {
 
 	Buff = nil,
 	OnSelf = false,
+	SpellOnly = false,
 	MaxLevel = nil,
 	ChancePerLevel = 0,
 	LevelPerLevel = 0,
@@ -292,9 +293,10 @@ Proc_Mana = Base_Proc:New()
 Proc_Mana.ChancePerLevel = 1
 Proc_Mana.LevelPerLevel = 5
 Proc_Mana.DurationPerLevel = 0
+Proc_Mana.SpellOnly = true
 
 function Proc_Mana.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance to restore [c green]" .. self:GetLevel(Source, Item) .. "[c white] MP"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance to restore [c blue]" .. self:GetLevel(Source, Item) .. "[c white] MP on spell use"
 end
 
 function Proc_Mana.GetLevel(self, Source, Item)
