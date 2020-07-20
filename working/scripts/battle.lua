@@ -76,7 +76,7 @@ Base_Spell = {
 	end,
 
 	GetDamagePower = function(self, Source, Level)
-		return 1.0
+		return Source.SpellDamage * 0.01
 	end,
 
 	GetManaCost = function(self, Level)
@@ -120,7 +120,6 @@ Base_Spell = {
 		return Result
 	end
 }
-
 
 -- Base Summon Spell Skill --
 Base_SummonSpell = {

@@ -567,6 +567,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
 
+	lua_pushinteger(LuaState, Object->Character->SpellDamage);
+	lua_setfield(LuaState, -2, "SpellDamage");
+
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
 

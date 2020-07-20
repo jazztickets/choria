@@ -166,6 +166,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Spell Damage
+	if(HUD->Player->Character->SpellDamage != 100) {
+		Buffer << (int)(HUD->Player->Character->SpellDamage) << "%";
+		Font->DrawText("Spell Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Attack Power
 	if(HUD->Player->Character->AttackPower != 1.0f) {
 		Buffer << (int)(HUD->Player->Character->AttackPower * 100) << "%";

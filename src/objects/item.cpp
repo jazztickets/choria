@@ -485,6 +485,22 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		StatDrawn = true;
 	}
 
+	// Spell Damage
+	int DrawSpellDamage = (int)GetSpellDamage(Upgrades);
+	if(DrawSpellDamage != 0) {
+		std::stringstream Buffer;
+		Buffer << (DrawSpellDamage < 0 ? "" : "+") << DrawSpellDamage << "%";
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetSpellDamage(Upgrades), CompareInventory.Item->GetSpellDamage(CompareInventory.Upgrades));
+
+		ae::Assets.Fonts["hud_medium"]->DrawText("Spell Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
 	// + all skills
 	int DrawAllSkills = (int)GetAllSkills(Upgrades);
 	if(DrawAllSkills != 0) {
@@ -1036,6 +1052,11 @@ float _Item::GetMoveSpeed(int Upgrades) const {
 // Get evasion
 float _Item::GetEvasion(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::EVASION, Upgrades, Evasion);
+}
+
+// Get spell damage
+float _Item::GetSpellDamage(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::SPELL_DAMAGE, Upgrades, SpellDamage);
 }
 
 // Get resistance

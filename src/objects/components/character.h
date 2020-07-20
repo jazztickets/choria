@@ -234,6 +234,7 @@ class _Character {
 		int BattleSpeed;
 		int EquipmentBattleSpeed;
 		int Evasion;
+		int SpellDamage;
 		int HitChance;
 		int AllSkills;
 		int SummonLimit;

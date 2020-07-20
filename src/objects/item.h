@@ -99,6 +99,7 @@ class _Item {
 		float GetBattleSpeed(int Upgrades) const;
 		float GetMoveSpeed(int Upgrades) const;
 		float GetEvasion(int Upgrades) const;
+		float GetSpellDamage(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
 		float GetGoldBonus(int Upgrades) const;
 		float GetExpBonus(int Upgrades) const;
@@ -138,6 +139,7 @@ class _Item {
 		int AllSkills;
 		int Chance;
 		int SpellProc;
+		int SpellDamage;
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;

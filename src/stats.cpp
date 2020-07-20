@@ -280,6 +280,7 @@ void _Stats::LoadItems() {
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
 		Item->Tradable = Database->GetInt<int>("tradable");
+		Item->SpellDamage = Database->GetInt<int>("spell_damage");
 		Item->BulkBuy = true;
 
 		if(Item->Category == 5 || Item->Type == ItemType::UNLOCKABLE)

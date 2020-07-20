@@ -126,6 +126,7 @@ _Character::_Character(_Object *Object) :
 	BattleSpeed(0),
 	EquipmentBattleSpeed(0),
 	Evasion(0),
+	SpellDamage(100),
 	HitChance(100),
 	AllSkills(0),
 	SummonLimit(0),
@@ -345,6 +346,7 @@ void _Character::CalculateStats() {
 	MoveSpeed = 100;
 	Evasion = 0;
 	HitChance = 100;
+	SpellDamage = 100;
 	Pierce = 0;
 	AllSkills = 0;
 
@@ -437,6 +439,7 @@ void _Character::CalculateStats() {
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
 			Evasion += Item->GetEvasion(Upgrades);
 			AllSkills += Item->GetAllSkills(Upgrades);
+			SpellDamage += Item->GetSpellDamage(Upgrades);
 			GoldMultiplier += Item->GetGoldBonus(Upgrades) / 100.0f;
 			ExperienceMultiplier += Item->GetExpBonus(Upgrades) / 100.0f;
 
