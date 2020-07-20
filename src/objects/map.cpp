@@ -1096,6 +1096,10 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 		if(Object->Character->PartyName != "" && Object->Character->PartyName == Attacker->Character->PartyName)
 			continue;
 
+		// Check for rank
+		if(Object->Character->Rebirths != Attacker->Character->Rebirths)
+			continue;
+
 		// Check distance
 		glm::vec2 Delta = Object->Position - Attacker->Position;
 		if(glm::dot(Delta, Delta) <= BATTLE_PVP_DISTANCE)
