@@ -487,7 +487,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Cooldown reduction
 	int DrawCooldownReduction = (int)GetCooldownReduction(Upgrades);
-	if(DrawCooldownReduction != 0) {
+	if(IsEquippable() && DrawCooldownReduction != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawCooldownReduction < 0 ? "" : "+") << DrawCooldownReduction << "%";
 
