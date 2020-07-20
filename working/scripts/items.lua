@@ -1005,26 +1005,15 @@ end
 
 function RebirthText(UpgradeText, Source)
 	KeepText = ""
-	if Source.RebirthWealth > 0 then
-		KeepText = KeepText .. "[c green]" .. Source.RebirthWealth .. "%[c white] of your current gold\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthWealth .. "%[c white] of your current gold\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom .. "[c white] of your character levels\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
+	Plural = ""
+	if Source.RebirthPower ~= 1 then
+		Plural = "s"
 	end
-	if Source.RebirthWisdom > 0 then
-		KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom .. "[c white] of your character levels\n"
-	end
-	if Source.RebirthKnowledge > 0 then
-		KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
-	end
-	if Source.RebirthPower > 0 then
-		Plural = ""
-		if Source.RebirthPower ~= 1 then
-			Plural = "s"
-		end
-		KeepText = KeepText .. "[c green]" .. Source.RebirthPower .. "[c white] item" .. Plural .." in your trade bag\n"
-	end
-
-	if KeepText ~= "" then
-		KeepText = "\n\n[c yellow]You will keep\n" .. KeepText
-	end
+	KeepText = KeepText .. "[c green]" .. Source.RebirthPower .. "[c white] item" .. Plural .." in your trade bag\n"
+	KeepText = "\n\n[c yellow]You will keep\n" .. KeepText
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText
 end
