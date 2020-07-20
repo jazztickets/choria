@@ -510,6 +510,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
+	lua_pushinteger(LuaState, Object->Fighter->GoldStolen);
+	lua_setfield(LuaState, -2, "GoldStolen");
+
 	lua_pushinteger(LuaState, Object->Character->Health);
 	lua_setfield(LuaState, -2, "Health");
 

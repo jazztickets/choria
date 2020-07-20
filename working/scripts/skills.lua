@@ -804,7 +804,11 @@ function Skill_Flee.GetChance(self, Level)
 end
 
 function Skill_Flee.CanUse(self, Level, Source, Target)
-	return not Source.BossBattle
+	if not Source.BossBattle then
+		return true
+	end
+
+	return Source.BossBattle and Source.GoldStolen == 0
 end
 
 function Skill_Flee.GetChance(self, Level)
@@ -816,7 +820,7 @@ function Skill_Flee.GetDuration(self, Level)
 end
 
 function Skill_Flee.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from battle\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n\n[c yellow]Unusable in boss battles"
+	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from battle\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n\n[c yellow]Unusable in boss battles after [c yellow]pickpocketing"
 end
 
 function Skill_Flee.ApplyCost(self, Source, Level, Result)
