@@ -153,6 +153,12 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Source->Character->Action.Unset();
 	Source->Character->Targets.clear();
 
+	// Remove object from battle
+	if(Source->Fighter->FleeBattle) {
+		Source->Character->Battle->RemoveObject(Source);
+		Source->Fighter->FleeBattle = false;
+	}
+
 	return true;
 }
 

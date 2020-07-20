@@ -60,6 +60,7 @@ class _Fighter {
 		int GoldStolen;
 		int Corpse;
 		bool JoinedBattle;
+		bool FleeBattle;
 		uint8_t BattleSide;
 
 	private:

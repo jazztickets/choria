@@ -1284,8 +1284,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Flee from battle
 	if(StatChange.HasStat(StatType::FLEE)) {
-		if(Character->Battle)
-			Character->Battle->RemoveObject(this);
+		if(Fighter)
+			Fighter->FleeBattle = true;
 	}
 
 	// Use corpse

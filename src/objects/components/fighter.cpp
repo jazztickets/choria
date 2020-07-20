@@ -34,6 +34,7 @@ _Fighter::_Fighter(_Object *Object) :
 	GoldStolen(0),
 	Corpse(1),
 	JoinedBattle(false),
+	FleeBattle(false),
 	BattleSide(0) {
 
 }
