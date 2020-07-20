@@ -131,6 +131,8 @@ _Character::_Character(_Object *Object) :
 	AllSkills(0),
 	SummonLimit(0),
 	Difficulty(0),
+	MinigameSpeed(1),
+	CooldownMultiplier(0),
 
 	SkillPoints(0),
 	SkillPointsUnlocked(0),
@@ -352,10 +354,12 @@ void _Character::CalculateStats() {
 
 	Object->Light = 0;
 	Invisible = 0;
+	CooldownMultiplier = 1.0f;
 	DiagonalMovement = false;
 	LavaProtection = false;
 	Stunned = 0;
 	SummonLimit = 0;
+	MinigameSpeed = 1;
 	Difficulty = EternalPain;
 	Resistances.clear();
 
@@ -440,6 +444,7 @@ void _Character::CalculateStats() {
 			Evasion += Item->GetEvasion(Upgrades);
 			AllSkills += Item->GetAllSkills(Upgrades);
 			SpellDamage += Item->GetSpellDamage(Upgrades);
+			CooldownMultiplier += Item->GetCooldownReduction(Upgrades) / 100.0f;
 			GoldMultiplier += Item->GetGoldBonus(Upgrades) / 100.0f;
 			ExperienceMultiplier += Item->GetExpBonus(Upgrades) / 100.0f;
 
@@ -524,6 +529,9 @@ void _Character::CalculateStats() {
 		BattleSpeed = BATTLE_MIN_SPEED;
 	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
 		MoveSpeed = PLAYER_MIN_MOVESPEED;
+
+	if(CooldownMultiplier <= 0.0f)
+		CooldownMultiplier = 0.0f;
 
 	MaxHealth *= MaxHealthMultiplier;
 	MaxMana *= MaxManaMultiplier;
@@ -644,6 +652,9 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::DIAGONAL_MOVEMENT))
 		DiagonalMovement = StatChange.Values[StatType::DIAGONAL_MOVEMENT].Integer;
+
+	if(StatChange.HasStat(StatType::MINIGAME_SPEED))
+		MinigameSpeed = StatChange.Values[StatType::MINIGAME_SPEED].Integer;
 
 	if(StatChange.HasStat(StatType::LAVA_PROTECTION))
 		LavaProtection = StatChange.Values[StatType::LAVA_PROTECTION].Integer;

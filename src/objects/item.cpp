@@ -164,10 +164,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Draw cooldown
-	if(Cooldown > 0.0) {
+	if(!IsEquippable() && Cooldown > 0.0) {
 		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
 		std::stringstream Buffer;
-		Buffer << std::fixed << std::setprecision(1) << Cooldown << " second cooldown";
+		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->CooldownMultiplier << " second cooldown";
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 		DrawPosition.y += LargeSpacingY;
 	}
@@ -480,6 +480,22 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			Color = GetCompareColor(GetExpBonus(Upgrades), CompareInventory.Item->GetExpBonus(CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("XP Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
+	// Cooldown reduction
+	int DrawCooldownReduction = (int)GetCooldownReduction(Upgrades);
+	if(DrawCooldownReduction != 0) {
+		std::stringstream Buffer;
+		Buffer << (DrawCooldownReduction < 0 ? "" : "+") << DrawCooldownReduction << "%";
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetCooldownReduction(Upgrades), CompareInventory.Item->GetCooldownReduction(CompareInventory.Upgrades));
+
+		ae::Assets.Fonts["hud_medium"]->DrawText("Cooldowns", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -1072,6 +1088,11 @@ float _Item::GetGoldBonus(int Upgrades) const {
 // Get experience bonus
 float _Item::GetExpBonus(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::EXP_BONUS, Upgrades, ExpBonus);
+}
+
+// Get cooldown reduction
+float _Item::GetCooldownReduction(int Upgrades) const {
+	return -GetUpgradedValue<float>(StatType::COOLDOWN, Upgrades, -Cooldown);
 }
 
 // Get + all skills

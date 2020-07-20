@@ -776,6 +776,20 @@ function Item_PainRing.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Lucky Amulet--
+
+Item_LuckyAmulet = { }
+
+function Item_LuckyAmulet.GetInfo(self, Source, Item)
+	return "[c yellow]Increases gambling speed"
+end
+
+function Item_LuckyAmulet.Stats(self, Item, Object, Change)
+	Change.MinigameSpeed = 2
+
+	return Change
+end
+
 -- Dark Ring --
 
 Item_DarkRing = { }

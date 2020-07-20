@@ -658,19 +658,23 @@ void _HUD::Update(double FrameTime) {
 
 	// Update minigame
 	if(Minigame) {
-		Minigame->Update(FrameTime);
-		if(Minigame->State == _Minigame::StateType::DONE) {
-			ae::_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::MINIGAME_GETPRIZE);
-			Packet.Write<float>(Minigame->DropX);
-			PlayState.Network->SendPacket(Packet);
+		for(int i = 0; i < Player->Character->MinigameSpeed; i++) {
+			Minigame->Update(FrameTime);
+			if(Minigame->State == _Minigame::StateType::DONE) {
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::MINIGAME_GETPRIZE);
+				Packet.Write<float>(Minigame->DropX);
+				PlayState.Network->SendPacket(Packet);
 
-			Minigame->State =_Minigame::StateType::NEEDSEED;
+				Minigame->State =_Minigame::StateType::NEEDSEED;
 
-			if(Minigame->Prizes[Minigame->Bucket])
-				ae::Audio.PlaySound(ae::Assets.Sounds["success1.ogg"]);
-			else
-				ae::Audio.PlaySound(ae::Assets.Sounds["fail0.ogg"]);
+				if(Minigame->Prizes[Minigame->Bucket])
+					ae::Audio.PlaySound(ae::Assets.Sounds["success1.ogg"]);
+				else
+					ae::Audio.PlaySound(ae::Assets.Sounds["fail0.ogg"]);
+
+				break;
+			}
 		}
 	}
 

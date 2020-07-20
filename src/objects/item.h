@@ -103,6 +103,7 @@ class _Item {
 		float GetResistance(int Upgrades) const;
 		float GetGoldBonus(int Upgrades) const;
 		float GetExpBonus(int Upgrades) const;
+		float GetCooldownReduction(int Upgrades) const;
 		float GetAllSkills(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 

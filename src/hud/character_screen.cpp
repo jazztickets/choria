@@ -166,6 +166,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Cooldown reduction
+	if(HUD->Player->Character->CooldownMultiplier != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->CooldownMultiplier * 100) << "%";
+		Font->DrawText("Cooldowns", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Spell Damage
 	if(HUD->Player->Character->SpellDamage != 100) {
 		Buffer << (int)(HUD->Player->Character->SpellDamage) << "%";
