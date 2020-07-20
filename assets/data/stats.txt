@@ -1976,10 +1976,10 @@ INSERT INTO item VALUES(289,6,2,0,0,0,1,'Mystic Staff','textures/items/mystic_st
 INSERT INTO item VALUES(290,5,2,0,0,0,5,'Shining Star','textures/items/shining_star.png','Proc_Stun',0,18000,1,1,50,3.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,5,15,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(291,15,0,0,0,0,0,'Spooky Map','textures/items/map.png','',0,25,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/yard.png',0,0.0,0);
 INSERT INTO item VALUES(292,13,0,0,0,0,0,'Chamber Key','textures/items/key1.png','',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
-INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','',0,25,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
+INSERT INTO item VALUES(293,13,0,0,0,0,0,'Witch Key','textures/items/key2.png','',0,25,0,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(294,11,0,0,0,0,0,'Goblin Trophy','textures/items/goblin_trophy.png','',0,500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(295,10,0,1,1,0,0,'Eternal Pain','textures/items/eternal_pain.png','Item_EternalPain',0,0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
-INSERT INTO item VALUES(296,13,0,0,0,0,0,'Ancient Key','textures/items/key2.png','',0,100000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
+INSERT INTO item VALUES(296,13,0,0,0,0,0,'Ancient Key','textures/items/key2.png','',0,100000,0,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(297,10,0,0,1,0,0,'Rite of Wealth','textures/items/rite_wealth.png','Item_RiteWealth',5,10000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(298,10,0,0,1,0,0,'Rite of Wisdom','textures/items/rite_wisdom.png','Item_RiteWisdom',5,25000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(299,10,0,0,1,0,0,'Rite of Knowledge','textures/items/rite_knowledge.png','Item_RiteKnowledge',5,500000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
