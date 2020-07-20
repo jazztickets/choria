@@ -1112,13 +1112,23 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 		if(!Object->Character)
 			continue;
 
-		if(Object != Player && Object->Character->WaitingForTrade && Object->Character->TradePlayer == nullptr) {
-			glm::vec2 Delta = Object->Position - Player->Position;
-			float DistanceSquared = glm::dot(Delta, Delta);
-			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
-				ClosestDistanceSquared = DistanceSquared;
-				ClosestPlayer = Object;
-			}
+		if(Object == Player)
+			continue;
+
+		if(!Object->Character->WaitingForTrade)
+			continue;
+
+		if(Object->Character->TradePlayer)
+			continue;
+
+		if(Object->Character->Rebirths != Player->Character->Rebirths)
+			continue;
+
+		glm::vec2 Delta = Object->Position - Player->Position;
+		float DistanceSquared = glm::dot(Delta, Delta);
+		if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
+			ClosestDistanceSquared = DistanceSquared;
+			ClosestPlayer = Object;
 		}
 	}
 
