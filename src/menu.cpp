@@ -933,7 +933,8 @@ void _Menu::RemapInput(int InputType, int Input) {
 	}
 
 	// Remove duplicate keys/buttons
-	ae::Actions.ClearMappingForInput(InputType, Input);
+	for(const auto &Action : KeyBindings)
+		ae::Actions.ClearMappingForInputAction(InputType, Input, Action);
 
 	// Clear out existing action
 	ClearAction(RebindAction, RebindType);
