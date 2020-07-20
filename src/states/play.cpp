@@ -230,7 +230,7 @@ void _PlayState::StartLocalServer() {
 // Action handler, return true to stop handling same input
 bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	if(Value == 0)
-		return true;
+		return false;
 
 	// Handle console toggling
 	if(Action == Action::MISC_CONSOLE) {
@@ -240,7 +240,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 	// Ignore actions when console is open
 	if(Framework.Console->IsOpen())
-		return true;
+		return false;
 
 	// Pass to menu
 	if(Menu.State != _Menu::STATE_NONE)
@@ -248,7 +248,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 	// Check for player
 	if(!Player)
-		return true;
+		return false;
 
 	// Handle enter key
 	if(Action == Action::GAME_CHAT) {
@@ -356,7 +356,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 		}
 	}
 
-	return true;
+	return false;
 }
 
 // Key handler

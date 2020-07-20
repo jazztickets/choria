@@ -194,12 +194,12 @@ void _EditorState::Close() {
 // Handle actions
 bool _EditorState::HandleAction(int InputType, size_t Action, int Value) {
 	if(Value == 0)
-		return true;
+		return false;
 
 	if(Action == Action::MISC_CONSOLE)
 		Framework.Console->Toggle();
 
-	return true;
+	return false;
 }
 
 // Key events
