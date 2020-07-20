@@ -62,20 +62,20 @@ bool _Sprite::CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &No
 
 		glm::vec2 ClosestPoint = Point;
 		int ClampCount = 0;
-		if(ClosestPoint.x < -Shape.HalfWidth[0]) {
-			ClosestPoint.x = -Shape.HalfWidth[0];
+		if(ClosestPoint.x < -Shape.HalfSize[0]) {
+			ClosestPoint.x = -Shape.HalfSize[0];
 			ClampCount++;
 		}
-		if(ClosestPoint.y < -Shape.HalfWidth[1]) {
-			ClosestPoint.y = -Shape.HalfWidth[1];
+		if(ClosestPoint.y < -Shape.HalfSize[1]) {
+			ClosestPoint.y = -Shape.HalfSize[1];
 			ClampCount++;
 		}
-		if(ClosestPoint.x > Shape.HalfWidth[0]) {
-			ClosestPoint.x = Shape.HalfWidth[0];
+		if(ClosestPoint.x > Shape.HalfSize[0]) {
+			ClosestPoint.x = Shape.HalfSize[0];
 			ClampCount++;
 		}
-		if(ClosestPoint.y > Shape.HalfWidth[1]) {
-			ClosestPoint.y = Shape.HalfWidth[1];
+		if(ClosestPoint.y > Shape.HalfSize[1]) {
+			ClosestPoint.y = Shape.HalfSize[1];
 			ClampCount++;
 		}
 
@@ -107,7 +107,7 @@ bool _Sprite::CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &No
 	else {
 
 		float SquareDistance = Point.x * Point.x + Point.y * Point.y;
-		float RadiiSum = Radius + Shape.HalfWidth[0];
+		float RadiiSum = Radius + Shape.HalfSize[0];
 
 		bool Hit = SquareDistance < RadiiSum * RadiiSum;
 		if(Hit) {
