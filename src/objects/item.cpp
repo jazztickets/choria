@@ -261,8 +261,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetAverageDamage(Upgrades), CompareInventory.Item->GetAverageDamage(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Damage", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -271,8 +271,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(!IsSkill() && DamageTypeID > 1) {
 		std::stringstream Buffer;
 		Buffer << Stats->DamageTypes.at(DamageTypeID).Name;
-		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Type", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Type", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -287,8 +287,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetPierce(Upgrades), CompareInventory.Item->GetPierce(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Pierce", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Pierce", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -303,8 +303,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetArmor(Upgrades), CompareInventory.Item->GetArmor(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Armor", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Armor", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -319,8 +319,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetDamageBlock(Upgrades), CompareInventory.Item->GetDamageBlock(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Block", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Block", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -335,8 +335,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetMaxHealth(Upgrades), CompareInventory.Item->GetMaxHealth(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Health", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Health", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -351,8 +351,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetMaxMana(Upgrades), CompareInventory.Item->GetMaxMana(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Mana", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Mana", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -367,8 +367,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetResistance(Upgrades), CompareInventory.Item->GetResistance(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes.at(ResistanceTypeID).Name + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes.at(ResistanceTypeID).Name + " Resist", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -383,8 +383,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetMoveSpeed(Upgrades), CompareInventory.Item->GetMoveSpeed(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Move Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Move Speed", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -399,8 +399,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetBattleSpeed(Upgrades), CompareInventory.Item->GetBattleSpeed(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Battle Speed", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -415,8 +415,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetEvasion(Upgrades), CompareInventory.Item->GetEvasion(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Evasion", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -431,8 +431,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetHealthRegen(Upgrades), CompareInventory.Item->GetHealthRegen(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Health Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Health Regen", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -447,8 +447,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetManaRegen(Upgrades), CompareInventory.Item->GetManaRegen(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Mana Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Mana Regen", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -463,8 +463,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetGoldBonus(Upgrades), CompareInventory.Item->GetGoldBonus(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Gold Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Gold Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -479,8 +479,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetExpBonus(Upgrades), CompareInventory.Item->GetExpBonus(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("XP Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("XP Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -495,8 +495,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetCooldownReduction(Upgrades), CompareInventory.Item->GetCooldownReduction(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Cooldowns", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Cooldowns", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -511,8 +511,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetSpellDamage(Upgrades), CompareInventory.Item->GetSpellDamage(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Spell Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Spell Damage", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -527,8 +527,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetAllSkills(Upgrades), CompareInventory.Item->GetAllSkills(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("All Skills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_medium"]->DrawText("All Skills", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
