@@ -230,7 +230,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 			where = ""
 			if len(pairs):
-				where = 'WHERE ' + ', '.join(pairs)
+				where = 'WHERE ' + ' AND '.join(pairs)
 
 			# get table data
 			try:
