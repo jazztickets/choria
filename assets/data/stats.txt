@@ -646,6 +646,7 @@ INSERT INTO vendoritem VALUES(199,24,311);
 INSERT INTO vendoritem VALUES(200,5,313);
 INSERT INTO vendoritem VALUES(201,16,314);
 INSERT INTO vendoritem VALUES(202,16,315);
+INSERT INTO vendoritem VALUES(203,18,316);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1998,6 +1999,7 @@ INSERT INTO item VALUES(312,8,0,0,0,0,0,'Dark Ring','textures/items/dark_ring.pn
 INSERT INTO item VALUES(313,15,0,0,0,0,0,'Nocturnal Map','textures/items/map.png','',0,375,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/bat.png',0,0.0,0);
 INSERT INTO item VALUES(314,7,0,0,0,0,0,'Arcane Book','textures/items/arcane_book.png','',0,7000,1,0,50,0.0,1,0,0,0,10,0,0,50,100,0,5,0,0,0,0,0,0,2,'',0,0.0,0);
 INSERT INTO item VALUES(315,6,2,0,0,0,0,'Light Staff','textures/items/light_staff.png','Item_HealPower',0,10000,1,20,50,5.0,1,750,1200,0,20,0,0,0,350,2,8,15,0,0,0,15,0,2,'',0,-2.0,0);
+INSERT INTO item VALUES(316,9,0,0,0,0,0,'Lava Amulet','textures/items/amulet_orange.png','Item_LavaProtection',0,75000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
