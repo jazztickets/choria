@@ -1018,6 +1018,9 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 		if(Object == Player)
 			continue;
 
+		if(Object->Character->Rebirths != Player->Character->Rebirths || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE)
+			continue;
+
 		glm::vec2 Delta = Object->Position - Player->Position;
 		if(glm::dot(Delta, Delta) <= DistanceSquared && Object->Character->CanBattle() && Player->Character->PartyName == Object->Character->PartyName) {
 			Players.push_back(Object);
@@ -1028,7 +1031,7 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 }
 
 // Returns a battle instance close to a player
-_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle) {
+_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction) {
 	for(const auto &Object : Objects) {
 		if(!Object->Character)
 			continue;
@@ -1051,6 +1054,11 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 
 		if(Object->Character->Battle->SideCount[0] >= BATTLE_MAX_OBJECTS_PER_SIDE) {
 			HitFullBattle = true;
+			continue;
+		}
+
+		if(Object->Character->Rebirths != Player->Character->Rebirths || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE) {
+			HitLevelRestriction = true;
 			continue;
 		}
 
@@ -1098,6 +1106,9 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 
 		// Check for rank
 		if(Object->Character->Rebirths != Attacker->Character->Rebirths)
+			continue;
+
+		if(Object->Character->Rebirths != Attacker->Character->Rebirths || std::abs(Object->Character->Level - Attacker->Character->Level) > BATTLE_LEVEL_RANGE)
 			continue;
 
 		// Check distance

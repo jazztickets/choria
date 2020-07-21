@@ -97,6 +97,7 @@ const  int          BATTLE_PVP_ATTACKER_SIDE        =  1;
 const  float        BATTLE_PVP_DISTANCE             =  1.42f*1.42f;
 const  float        BATTLE_JOIN_DISTANCE            =  1.42f*1.42f;
 const  float        BATTLE_COOP_DISTANCE            =  7.0f*7.0f;
+const  int          BATTLE_LEVEL_RANGE              =  10;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
