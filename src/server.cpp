@@ -1019,6 +1019,9 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
+	// Get alternate flag
+	bool Alternate = Data.ReadBit();
+
 	// Get item slot index
 	_Slot Slot;
 	Slot.Unserialize(Data);
@@ -1036,7 +1039,7 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Item->GetEquipmentSlot(TargetSlot);
 
 		// Check for empty second ring slot
-		if(TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::RING2].Item)
+		if(Alternate || (TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::RING2].Item))
 			TargetSlot.Index = EquipmentType::RING2;
 
 		// Check for empty main hand when equipping off-hand

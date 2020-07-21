@@ -77,6 +77,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	float SpacingY = 36 * ae::_Element::GetUIScale();
 	float ControlSpacingY = 28 * ae::_Element::GetUIScale();
 	float LargeSpacingY = 56 * ae::_Element::GetUIScale();
+	float RewindSpacingY = -28 * ae::_Element::GetUIScale();
 	glm::vec2 Spacing = glm::vec2(10, 0) * ae::_Element::GetUIScale();
 
 	// Set window width
@@ -93,9 +94,18 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(Player->Character->Vendor)
 		Size.y += LargeSpacingY;
 
-	// Remove extra size
-	if(IsSkill() && Tooltip.Window != _HUD::WINDOW_SKILLS && Tooltip.Window != _HUD::WINDOW_ENCHANTER)
-		Size.y -= INVENTORY_TOOLTIP_HEIGHT_EXTRA;
+	// Increase size for description
+	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, 50, 50, Size.x - SidePadding * 2);
+	float DescriptionSizeY = DescriptionLines * INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
+	Size.y += DescriptionSizeY;
+
+	// Add extra size for two skill levels
+	if(IsSkill() && (Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ENCHANTER))
+		Size.y += DescriptionSizeY + SpacingY;
+
+	// Increase window size for each attribute
+	int Upgrades = Tooltip.InventorySlot.Upgrades;
+	Size.y += SpacingY * GetAttributeCount(Upgrades);
 
 	// Position window
 	glm::vec2 WindowOffset = Position;
@@ -129,6 +139,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
 	DrawPosition.y += LargeSpacingY;
 
+	// Draw map
 	if(Type == ItemType::MAP) {
 		if(AltTexture == nullptr)
 			return;
@@ -154,7 +165,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Draw target text
 	if(TargetID != TargetType::NONE) {
-		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
+		DrawPosition.y += RewindSpacingY;
 		std::string DeadText = TargetAlive ? "" : "Dead ";
 		std::string InfoText = "Target " + DeadText + Player->Stats->TargetTypes.at((uint32_t)TargetID);
 		if(TargetID == TargetType::ENEMY_CORPSE_AOE)
@@ -165,7 +176,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Draw cooldown
 	if(!IsEquippable() && Cooldown > 0.0) {
-		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
+		DrawPosition.y += RewindSpacingY;
 		std::stringstream Buffer;
 		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->CooldownMultiplier << " second cooldown";
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
@@ -178,7 +189,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	int EnchanterMaxLevel = 0;
 	bool IsLocked = false;
 	bool ShowLevel = false;
-	int Upgrades = Tooltip.InventorySlot.Upgrades;
 	if(IsSkill()) {
 
 		// Get max skill level
@@ -226,8 +236,9 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				Buffer << "Max Level";
 			else
 				Buffer << "Level " << Upgrades << "/" << MaxLevel;
+			DrawPosition.y += RewindSpacingY;
 			ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
+			DrawPosition.y += LargeSpacingY;
 		}
 	}
 
@@ -327,7 +338,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Max health
 	int DrawMaxHealth = (int)GetMaxHealth(Upgrades);
-	if(DrawMaxHealth > 0) {
+	if(DrawMaxHealth != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxHealth < 0 ? "" : "+") << DrawMaxHealth;
 
@@ -343,7 +354,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Max mana
 	int DrawMaxMana = (int)GetMaxMana(Upgrades);
-	if(DrawMaxMana > 0) {
+	if(DrawMaxMana != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxMana < 0 ? "" : "+") << DrawMaxMana;
 
@@ -573,12 +584,15 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	std::string InfoText;
 	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	switch(Type) {
-		case ItemType::ONEHANDED_WEAPON:
-		case ItemType::TWOHANDED_WEAPON:
 		case ItemType::HELMET:
 		case ItemType::ARMOR:
 		case ItemType::BOOTS:
+		case ItemType::ONEHANDED_WEAPON:
+		case ItemType::TWOHANDED_WEAPON:
 		case ItemType::SHIELD:
+		case ItemType::RING:
+		case ItemType::AMULET:
+		case ItemType::OFFHAND:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to equip");
 		break;
@@ -690,7 +704,7 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 		std::string Token;
 
 		// Draw description
-		float TextSpacingY = 26 * ae::_Element::GetUIScale();
+		float TextSpacingY = INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 		while(std::getline(Buffer, Token, '\n')) {
 			std::list<std::string> Strings;
 			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
@@ -841,6 +855,77 @@ int _Item::GetUpgradeCost(int Level) const {
 int _Item::GetEnchantCost(int Level) {
 	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1;
 	return std::max(0, (int)(std::ceil(Index * (GAME_ENCHANT_BASE_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
+}
+
+// Get count of drawable attributes
+int _Item::GetAttributeCount(int Upgrades) const {
+	int Count = 0;
+
+	if((int)GetMinDamage(Upgrades) != 0 || (int)GetMaxDamage(Upgrades))
+		Count++;
+	if(!IsSkill() && DamageTypeID > 1)
+		Count++;
+	if((int)GetPierce(Upgrades) != 0)
+		Count++;
+	if((int)GetArmor(Upgrades) != 0)
+		Count++;
+	if((int)GetDamageBlock(Upgrades) != 0)
+		Count++;
+	if((int)GetMaxHealth(Upgrades) != 0)
+		Count++;
+	if((int)GetMaxMana(Upgrades) != 0)
+		Count++;
+	if(ResistanceTypeID)
+		Count++;
+	if((int)GetMoveSpeed(Upgrades) != 0)
+		Count++;
+	if((int)GetBattleSpeed(Upgrades) != 0)
+		Count++;
+	if((int)GetEvasion(Upgrades) != 0)
+		Count++;
+	if((int)GetHealthRegen(Upgrades) != 0)
+		Count++;
+	if((int)GetManaRegen(Upgrades) != 0)
+		Count++;
+	if((int)GetGoldBonus(Upgrades) != 0)
+		Count++;
+	if((int)GetExpBonus(Upgrades) != 0)
+		Count++;
+	if(IsEquippable() && (int)GetCooldownReduction(Upgrades) != 0)
+		Count++;
+	if((int)GetSpellDamage(Upgrades) != 0)
+		Count++;
+	if((int)GetAllSkills(Upgrades) != 0)
+		Count++;
+
+	return Count;
+}
+
+// Get number of lines in a description
+int _Item::GetDescriptionLineCount(_Scripting *Scripting, _Object *Object, int DrawLevel, int Upgrades, float Width) const {
+
+	// Check for scripting function
+	int Lines = 0;
+	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+
+		// Get description from script
+		Scripting->PushObject(Object);
+		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades);
+		Scripting->MethodCall(2, 1);
+		std::string Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+
+		// Get line count
+		std::stringstream Buffer(Info);
+		std::string Token;
+		while(std::getline(Buffer, Token, '\n')) {
+			std::list<std::string> Strings;
+			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
+			Lines += Strings.size();
+		}
+	}
+
+	return Lines;
 }
 
 // Return true if the item can be used

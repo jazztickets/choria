@@ -419,7 +419,7 @@
 		<element id="label_died_respawn" font="menu_buttons" offset_y="210" alignment_y="3"/>
 		<element id="label_died_gold" font="hud_medium" offset_y="-140" alignment_y="2"/>
 	</element>
-	<element id="element_item_tooltip" style="style_hud_item_tooltip_bg" size_x="350" size_y="420" alignment_x="0" alignment_y="0">
+	<element id="element_item_tooltip" style="style_hud_item_tooltip_bg" size_x="350" size_y="10" alignment_x="0" alignment_y="0">
 		<element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
 		<element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
 	</element>

@@ -244,7 +244,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 					// Use or sell an item
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						if(ae::Input.ModKeyDown(KMOD_SHIFT) || (Config.RightClickSell && Player->Character->Vendor)) {
+						if(ae::Input.ModKeyDown(KMOD_SHIFT) || (Config.RightClickSell && Player->Character->Vendor && !ae::Input.ModKeyDown(KMOD_CTRL))) {
 							int Amount = 1;
 							if(Tooltip.InventorySlot.Item && Tooltip.InventorySlot.Item->BulkBuy && ae::Input.ModKeyDown(KMOD_CTRL))
 								Amount += (INVENTORY_SPLIT_MODIFIER - 1);
@@ -253,6 +253,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						else {
 							ae::_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
+							Packet.WriteBit(ae::Input.ModKeyDown(KMOD_CTRL));
 							Tooltip.Slot.Serialize(Packet);
 							PlayState.Network->SendPacket(Packet);
 						}
