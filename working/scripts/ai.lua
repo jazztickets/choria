@@ -341,7 +341,7 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 
 	-- Cast spell
 	Roll = Random.GetInt(1, 10)
-	if Roll < 5 then
+	if Roll < 4 then
 
 		-- Ice nova
 		CanCast = Object.SetAction(2)

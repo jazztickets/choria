@@ -251,6 +251,14 @@ function Skill_DemonAttack.PlaySound(self, Level)
 	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Ice Imp attack --
+
+Skill_IceImpAttack = Base_Attack:New()
+
+function Skill_IceImpAttack.PlaySound(self, Level)
+	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- PLAYER SKILLS --
 
 -- Attack --

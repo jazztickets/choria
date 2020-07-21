@@ -129,12 +129,18 @@ Base_SummonSpell = {
 	SkillLevel = 0,
 	SkillLevelPerLevel = 0,
 	SkillLevelPower = 0.75,
+	SpecialChance = 0,
+	SpecialChancePerLevel = 0,
 
 	New = function(self, Object)
 		Object = Object or {}
 		setmetatable(Object, self)
 		self.__index = self
 		return Object
+	end,
+
+	GetSpecialChance = function(self, Level)
+		return math.floor(self.SpecialChance + (Level - 1) * self.SpecialChancePerLevel)
 	end,
 
 	GetManaCost = function(self, Level)

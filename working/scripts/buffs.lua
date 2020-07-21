@@ -456,6 +456,23 @@ function Buff_SummonDemon.GetSummonSkill(self)
 	return Skill_DemonicConjuring.Item.Pointer
 end
 
+-- Ice Imp --
+
+Buff_SummonIceImp = Base_Buff:New()
+
+function Buff_SummonIceImp.GetInfo(self, Level)
+	Plural = ""
+	if Level ~= 1 then
+		Plural = "s"
+	end
+
+	return "Carrying [c green]" .. Level .. "[c white] ice imp" .. Plural
+end
+
+function Buff_SummonIceImp.GetSummonSkill(self)
+	return Skill_DemonicConjuring.Item.Pointer
+end
+
 -- Skeletons --
 
 Buff_SummonSkeleton = Base_Buff:New()

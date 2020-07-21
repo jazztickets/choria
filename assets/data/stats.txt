@@ -774,6 +774,7 @@ INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0,
 INSERT INTO buff VALUES(27,'Fractured','Buff_Fractured','textures/buffs/fractured.png',0,1,0);
 INSERT INTO buff VALUES(28,'Poison Resist','Buff_PoisonResist','textures/buffs/poison_resist.png',0,1,1);
 INSERT INTO buff VALUES(29,'Cold Resist','Buff_ColdResist','textures/buffs/cold_resist.png',0,1,1);
+INSERT INTO buff VALUES(30,'Ice Imps','Buff_SummonIceImp','textures/buffs/summon_ice_imp.png',1,1,1);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1013,7 +1014,7 @@ INSERT INTO monster VALUES(19,1,'Slime Prince','textures/monsters/slime_prince.p
 INSERT INTO monster VALUES(20,1,'Skeleton','textures/monsters/skeleton.png',30,25,650,0,100,150,5,10,2.0,14,36,0,0,15,55,75,-50);
 INSERT INTO monster VALUES(21,1,'Skeleton Priest','textures/monsters/skeleton_priest.png',35,30,750,600,50,100,0,0,2.6600000000000001421,6,34,0,0,15,55,75,-50);
 INSERT INTO monster VALUES(22,1,'Dusty Ant','textures/monsters/dusty_ant.png',40,40,1000,0,125,175,25,15,2.0,2,29,50,-25,-25,25,0,0);
-INSERT INTO monster VALUES(23,1,'Demon','textures/monsters/demon.png',40,35,1200,0,100,225,10,0,2.0,14,37,50,0,0,0,0,0);
+INSERT INTO monster VALUES(23,1,'Demon','textures/monsters/demon.png',40,35,1200,0,100,225,10,0,2.0,14,37,50,-25,0,0,0,0);
 INSERT INTO monster VALUES(24,1,'Goblin','textures/monsters/goblin.png',6,5,175,0,20,40,2,0,2.0,1,38,0,0,0,0,0,0);
 INSERT INTO monster VALUES(25,1,'Goblin Thief','textures/monsters/goblin_thief.png',15,150,300,0,50,100,5,5,1.6000000000000000888,7,39,0,0,0,0,0,0);
 INSERT INTO monster VALUES(26,1,'Lava Man','textures/monsters/lava_man.png',75,75,1250,0,125,200,10,5,2.0,8,40,75,-50,0,0,0,0);
@@ -1029,6 +1030,7 @@ INSERT INTO monster VALUES(35,1,'Lost One','textures/monsters/lost_one.png',150,
 INSERT INTO monster VALUES(36,1,'Lava Slime','textures/monsters/lava_slime.png',165,200,7000,0,300,325,10,5,3.0,1,35,65,-45,0,0,25,0);
 INSERT INTO monster VALUES(37,1,'The Elite','textures/monsters/the_elite.png',10000,10000,50000,0,5000,10000,100,1000,10.0,1,20,0,0,0,0,0,0);
 INSERT INTO monster VALUES(38,1,'Zog','textures/monsters/zog.png',1000000,50000,999999,999999,10000,20000,100,4000,5.0,13,47,75,75,75,75,75,75);
+INSERT INTO monster VALUES(39,1,'Ice Imp','textures/monsters/ice_imp.png',40,35,1200,0,100,225,10,0,2.0,14,48,-25,50,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -1494,7 +1496,7 @@ INSERT INTO buildskill VALUES(51,41,66,15);
 INSERT INTO buildskill VALUES(52,42,64,1);
 INSERT INTO buildskill VALUES(53,42,21,10);
 INSERT INTO buildskill VALUES(54,42,44,5);
-INSERT INTO buildskill VALUES(55,42,30,6);
+INSERT INTO buildskill VALUES(55,42,30,1);
 INSERT INTO buildskill VALUES(56,43,51,1);
 INSERT INTO buildskill VALUES(57,43,28,1);
 INSERT INTO buildskill VALUES(58,44,61,20);
@@ -1521,6 +1523,7 @@ INSERT INTO buildskill VALUES(78,12,38,0);
 INSERT INTO buildskill VALUES(79,33,36,50);
 INSERT INTO buildskill VALUES(80,42,40,5);
 INSERT INTO buildskill VALUES(81,5,14,1);
+INSERT INTO buildskill VALUES(82,48,67,1);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
@@ -1676,6 +1679,7 @@ INSERT INTO buildactionbar VALUES(92,12,109,10);
 INSERT INTO buildactionbar VALUES(93,33,36,3);
 INSERT INTO buildactionbar VALUES(94,42,40,5);
 INSERT INTO buildactionbar VALUES(95,5,14,2);
+INSERT INTO buildactionbar VALUES(96,48,67,0);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,
@@ -1778,7 +1782,7 @@ INSERT INTO item VALUES(63,1,2,2,2,0,0,'Ant Attack','textures/skills/monster_att
 INSERT INTO item VALUES(64,1,2,2,2,0,0,'Skeleton Attack','textures/skills/monster_attack.png','Skill_SkeletonAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(65,1,3,2,2,0,0,'Demon Attack','textures/skills/monster_attack.png','Skill_DemonAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(66,1,2,2,2,0,0,'Sting','textures/skills/sting.png','Skill_Sting',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
-INSERT INTO item VALUES(67,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
+INSERT INTO item VALUES(67,1,4,2,2,0,0,'Ice Imp Attack','textures/skills/monster_attack.png','Skill_IceImpAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(68,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(69,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(70,1,2,2,2,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
@@ -1988,7 +1992,7 @@ INSERT INTO item VALUES(301,12,0,0,1,11,0,'Belt Slot I','textures/items/beltslot
 INSERT INTO item VALUES(302,12,0,0,1,12,0,'Belt Slot II','textures/items/beltslot2.png','Item_BeltSlot',0,2500,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(303,12,0,0,1,13,0,'Belt Slot III','textures/items/beltslot3.png','Item_BeltSlot',0,25000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(304,10,0,3,3,0,0,'Ankh','textures/items/ankh.png','Item_Ankh',0,500,1,100,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
-INSERT INTO item VALUES(305,10,0,4,2,0,0,'Unstable Potion','textures/items/blinding_bomb.png','Item_UnstablePotion',0,175,1,25,0,7.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
+INSERT INTO item VALUES(305,10,0,4,2,0,0,'Unstable Potion','textures/items/blinding_bomb.png','Item_UnstablePotion',0,175,1,30,0,7.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(306,10,0,4,2,0,0,'Shrapnel Bomb','textures/items/shrapnel_bomb.png','Item_ShrapnelBomb',0,250,1,35,0,10.0,1,0,0,0,0,200,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(307,5,2,0,0,0,0,'Flanged Mace','textures/items/flanged_mace.png','Proc_Stun',0,1750,1,1,20,2.5,1,140,220,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(308,15,0,0,0,0,0,'Secret Garden Map','textures/items/map.png','',0,35000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/secret_garden.png',0,0.0,0);
@@ -2083,6 +2087,7 @@ INSERT INTO build VALUES(44,'Water Crab','',0,0,0);
 INSERT INTO build VALUES(45,'Jem','',0,0,0);
 INSERT INTO build VALUES(46,'Lava Spitter','',0,0,0);
 INSERT INTO build VALUES(47,'Zog','',0,0,0);
+INSERT INTO build VALUES(48,'Ice Imp','',0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
