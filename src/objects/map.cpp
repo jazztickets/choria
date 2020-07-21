@@ -1108,7 +1108,7 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 		if(Object->Character->Rebirths != Attacker->Character->Rebirths)
 			continue;
 
-		if(Object->Character->Rebirths != Attacker->Character->Rebirths || std::abs(Object->Character->Level - Attacker->Character->Level) > BATTLE_LEVEL_RANGE)
+		if(std::abs(Object->Character->Level - Attacker->Character->Level) > BATTLE_LEVEL_RANGE)
 			continue;
 
 		// Check distance
