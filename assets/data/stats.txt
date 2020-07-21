@@ -1854,7 +1854,7 @@ INSERT INTO item VALUES(164,2,0,0,0,0,7,'Reinforced Helm','textures/items/reinfo
 INSERT INTO item VALUES(165,3,0,0,0,0,8,'Metal Armor','textures/items/metal_armor.png','',0,1000,1,0,20,0.0,1,0,0,13,4,0,8,0,0,0,0,-5,-5,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(166,8,0,0,0,0,1,'Prismatic Ring','textures/items/ring.png','',0,500,1,0,10,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(167,8,0,0,0,0,1,'Greater Prismatic Ring','textures/items/ring.png','',0,0,1,0,10,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
-INSERT INTO item VALUES(168,8,0,0,0,0,1,'Prismatic Ring III','textures/items/ring.png','',0,0,1,0,10,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
+INSERT INTO item VALUES(168,8,0,0,0,0,1,'Ulimate Prismatic Ring','textures/items/ring.png','',0,0,1,0,10,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(169,8,0,0,0,0,2,'Physical Ring','textures/items/ring.png','',0,1000,1,0,10,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(170,8,0,0,0,0,2,'Greater Physical Ring','textures/items/ring.png','',0,0,1,0,10,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(171,8,0,0,0,0,2,'Ultimate Physical Ring','textures/items/ring.png','',0,0,1,0,10,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
@@ -1968,7 +1968,7 @@ INSERT INTO item VALUES(281,15,0,0,0,0,0,'Sandy Map','textures/items/map.png',''
 INSERT INTO item VALUES(282,15,0,0,0,0,0,'Slimy Map','textures/items/map.png','',0,500,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/slime.png',0,0.0,0);
 INSERT INTO item VALUES(283,15,0,0,0,0,0,'Garden Map','textures/items/map.png','',0,5000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/gardens.png',0,0.0,0);
 INSERT INTO item VALUES(284,15,0,0,0,0,0,'City Map','textures/items/map.png','',0,500,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/city.png',0,0.0,0);
-INSERT INTO item VALUES(285,8,0,0,0,0,0,'Uncomfortable Ring','textures/items/pain_ring.png','Item_PainRing',0,1000,1,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
+INSERT INTO item VALUES(285,8,0,0,0,0,0,'Ring of Pain','textures/items/pain_ring.png','Item_PainRing',0,1000,1,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(286,8,0,0,0,0,0,'Hungering Ring','textures/items/hunger_ring.png','Item_AttackPower',0,500,1,100,0,0.0,1,0,0,0,0,0,0,0,0,-50,0,0,0,0,0,0,0,0,'',0,0.0,0);
 INSERT INTO item VALUES(287,9,0,0,0,0,0,'Silver Amulet','textures/items/amulet.png','',0,5000,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,-10.0,0);
 INSERT INTO item VALUES(288,6,4,0,0,0,4,'Icebrand','textures/items/icebrand.png','Proc_Slow',0,35000,1,50,50,3.0,1,2000,3500,-20,0,0,25,0,0,0,0,-30,-20,0,0,15,0,0,'',0,0.0,0);
