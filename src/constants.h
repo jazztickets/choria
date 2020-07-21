@@ -121,6 +121,7 @@ const  int          GAME_ENCHANT_INCREASE_LEVEL     =  5;
 const  float        GAME_UPGRADE_AMOUNT             =  0.25f;
 const  float        GAME_NEGATIVE_UPGRADE_SCALE     =  0.25f;
 const  int          GAME_TRADING_LEVEL              =  3;
+const  int          GAME_TRADING_LEVEL_RANGE        =  10;
 const  int          GAME_DEFAULT_MAX_SKILL_LEVEL    =  5;
 const  int          GAME_MAX_SKILL_UNLOCKS          =  10;
 //     Actionbar
