@@ -59,6 +59,9 @@ function AI_Attract.Update(self, Object, Enemies, Allies)
 
 	-- Find enemy with debuff
 	AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
+	if AttractIndex == 0 then
+		AttractIndex = AI_FindAttractant(Buff_Flayed, Enemies)
+	end
 
 	-- Target enemy with debuff
 	if AttractIndex > 0 then

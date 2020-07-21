@@ -691,7 +691,7 @@ function Skill_Flay.GetInfo(self, Source, Item)
 		Plural = "s"
 	end
 
-	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foe" .. Plural .. ", reducing their resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
 end
 
 function Skill_Flay.Use(self, Level, Duration, Source, Target, Result)
