@@ -229,11 +229,18 @@ bool _Inventory::CanSwap(const _Slot &OldSlot, const _Slot &NewSlot) {
 	if(OldSlot == NewSlot)
 		return false;
 
+	const _Item *OldItem = GetSlot(OldSlot).Item;
+
 	// Check if the item is even equippable
-	if(NewSlot.Type == BagType::EQUIPMENT && !CanEquipItem(NewSlot.Index, GetSlot(OldSlot).Item))
+	if(NewSlot.Type == BagType::EQUIPMENT && !CanEquipItem(NewSlot.Index, OldItem))
 		return false;
 
-	if(NewSlot.Type == BagType::TRADE && GetSlot(OldSlot).Item && !GetSlot(OldSlot).Item->Tradable)
+	// Not tradable
+	if(NewSlot.Type == BagType::TRADE && OldItem && !OldItem->Tradable)
+		return false;
+
+	// Cursed items
+	if(OldItem && OldItem->Cursed && OldSlot.Type == BagType::EQUIPMENT)
 		return false;
 
 	return true;
@@ -282,6 +289,10 @@ _Slot _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
 // Find a slot for an item in a certain bag
 _Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int Upgrades, int Count) {
 	_Slot EmptySlot;
+
+	// Don't put cursed items in equipment slot from trader
+	if(Item && Item->Cursed && BagType == BagType::EQUIPMENT)
+		return EmptySlot;
 
 	_Bag &Bag = Bags[(size_t)BagType];
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {

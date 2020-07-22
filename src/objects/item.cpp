@@ -65,8 +65,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		TooltipType->Text = SkillCategories[Category-1];
 	else if(Type != ItemType::NONE) {
 		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);
-		if(Type == ItemType::CONSUMABLE && Scope == ScopeType::BATTLE)
+		if(Type == ItemType::CONSUMABLE && Scope == ScopeType::BATTLE) {
 			TooltipType->Text = "Battle " + TooltipType->Text;
+		}
+		else if(Cursed) {
+			TooltipType->Text = "Cursed " + TooltipType->Text;
+			TooltipType->Color = ae::Assets.Colors["red"];
+		}
 	}
 
 	// Set up window size
@@ -75,7 +80,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	Size.x = INVENTORY_TOOLTIP_WIDTH * ae::_Element::GetUIScale();
 	float SidePadding = 36 * ae::_Element::GetUIScale();
 	float SpacingY = 36 * ae::_Element::GetUIScale();
-	float ControlSpacingY = 28 * ae::_Element::GetUIScale();
+	float ControlSpacingY = 32 * ae::_Element::GetUIScale();
 	float LargeSpacingY = 56 * ae::_Element::GetUIScale();
 	float RewindSpacingY = -28 * ae::_Element::GetUIScale();
 	glm::vec2 Spacing = glm::vec2(10, 0) * ae::_Element::GetUIScale();
@@ -93,6 +98,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	Size.y = INVENTORY_TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
 	if(Player->Character->Vendor)
 		Size.y += LargeSpacingY;
+	if(Cursed)
+		Size.y += SpacingY;
 
 	// Increase size for description
 	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, 50, 50, Size.x - SidePadding * 2);
@@ -593,6 +600,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		case ItemType::RING:
 		case ItemType::AMULET:
 		case ItemType::OFFHAND:
+			if(Cursed) {
+				InfoText = "Cursed items cannot be unequipped";
+				InfoColor = ae::Assets.Colors["red"];
+			}
+
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to equip");
 		break;

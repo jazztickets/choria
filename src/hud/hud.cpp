@@ -435,6 +435,11 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						// Delete item
 						case -1: {
 							if(!ae::Graphics.Element->HitElement) {
+
+								// Can't deleted cursed equipped items
+								if(Cursor.InventorySlot.Item && Cursor.InventorySlot.Item->Cursed && Cursor.Slot.Type == BagType::EQUIPMENT)
+									break;
+
 								InitConfirm("Delete this item?");
 								DeleteSlot = Cursor.Slot;
 							}

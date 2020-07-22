@@ -147,6 +147,7 @@ class _Item {
 		int Resistance;
 		bool Tradable;
 		bool TargetAlive;
+		bool Cursed;
 		TargetType TargetID;
 		ScopeType Scope;
 		uint32_t UnlockID;
