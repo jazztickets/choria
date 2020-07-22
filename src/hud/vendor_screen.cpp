@@ -103,8 +103,13 @@ void _VendorScreen::BuyItem(_Cursor *Item, _Slot TargetSlot) {
 }
 
 // Sell an item
-void _VendorScreen::SellItem(_Cursor *CursorItem, int Amount) {
-	if(!CursorItem->InventorySlot.Item || !HUD->Player->Character->Vendor)
+void _VendorScreen::SellItem(_Cursor *Cursor, int Amount) {
+	const _Item *Item = Cursor->InventorySlot.Item;
+	if(!Item || !HUD->Player->Character->Vendor)
+		return;
+
+	// Can't sell cursed equipped items
+	if(Item->Cursed && Cursor->Slot.Type == BagType::EQUIPMENT)
 		return;
 
 	// Notify server
@@ -112,6 +117,6 @@ void _VendorScreen::SellItem(_Cursor *CursorItem, int Amount) {
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
 	Packet.Write<uint8_t>((uint8_t)Amount);
-	CursorItem->Slot.Serialize(Packet);
+	Cursor->Slot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
 }
