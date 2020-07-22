@@ -100,6 +100,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		Size.y += LargeSpacingY;
 	if(Cursed)
 		Size.y += SpacingY;
+	if(Player->Character->IsTrading())
+		Size.y += SpacingY;
 
 	// Increase size for description
 	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, 50, 50, Size.x - SidePadding * 2);
@@ -604,8 +606,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				InfoText = "Cursed items cannot be unequipped";
 				InfoColor = ae::Assets.Colors["red"];
 			}
-
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
+			else if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to equip");
 		break;
 		case ItemType::CONSUMABLE:
@@ -663,8 +664,12 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		DrawPosition.y += ControlSpacingY;
 	}
 
+	// Move hint
+	if(Player->Character->IsTrading())
+		HelpTextList.push_back("Shift+click to move");
+
 	// Split hint
-	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1)
+	if(Tooltip.InventorySlot.Count > 1)
 		HelpTextList.push_back("Ctrl+click to split");
 
 	// Draw ui hints

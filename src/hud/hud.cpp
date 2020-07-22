@@ -239,6 +239,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 						if(ae::Input.ModKeyDown(KMOD_CTRL))
 							SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
+						else if(ae::Input.ModKeyDown(KMOD_SHIFT))
+							Transfer(Tooltip.Slot);
 						else
 							Cursor = Tooltip;
 					}
@@ -250,7 +252,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 								Amount += (INVENTORY_SPLIT_MODIFIER - 1);
 							VendorScreen->SellItem(&Tooltip, Amount);
 						}
-						else {
+						else if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->Cursed) {
 							ae::_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 							Packet.WriteBit(ae::Input.ModKeyDown(KMOD_CTRL));
@@ -1444,16 +1446,42 @@ void _HUD::SendPartyInfo() {
 // Split a stack of items
 void _HUD::SplitStack(const _Slot &Slot, uint8_t Count) {
 
-	// Don't split trade items
-	if(Slot.Type == BagType::TRADE)
-		return;
-
 	// Build packet
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_SPLIT);
 	Slot.Serialize(Packet);
 	Packet.Write<uint8_t>(Count);
 
+	PlayState.Network->SendPacket(Packet);
+}
+
+// Move a stack of items between bags
+void _HUD::Transfer(const _Slot &SourceSlot) {
+
+	// Get target bag
+	BagType TargetBagType = BagType::NONE;
+	switch(SourceSlot.Type) {
+		case BagType::INVENTORY:
+		case BagType::EQUIPMENT:
+			if(SourceSlot.Type == BagType::EQUIPMENT && Player->Inventory->GetSlot(SourceSlot).Item && Player->Inventory->GetSlot(SourceSlot).Item->Cursed)
+				return;
+
+			if(TradeScreen->Element->Active)
+				TargetBagType = BagType::TRADE;
+		break;
+		case BagType::TRADE:
+			TargetBagType = BagType::INVENTORY;
+		break;
+	}
+
+	if(TargetBagType == BagType::NONE)
+		return;
+
+	// Write packet
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY_TRANSFER);
+	SourceSlot.Serialize(Packet);
+	Packet.Write<uint8_t>((uint8_t)TargetBagType);
 	PlayState.Network->SendPacket(Packet);
 }
 

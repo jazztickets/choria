@@ -366,10 +366,8 @@ void _Inventory::MoveTradeToInventory() {
 
 // Splits an item stack
 bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
-	if(Slot.Index == NOSLOT || Slot.Type != BagType::INVENTORY)
+	if(Slot.Index == NOSLOT)
 		return false;
-
-	_Bag &Bag = GetBag(BagType::INVENTORY);
 
 	// Make sure stack is large enough
 	_InventorySlot &SplitItem = GetSlot(Slot);
@@ -380,13 +378,14 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 
 		// Find an empty slot or existing item starting from bag
 		bool Found = false;
+		_Bag &Bag = GetBag(Slot.Type);
 		for(size_t i = 0; i < Bag.Slots.size(); i++) {
 			EmptySlot.Index++;
 			if(EmptySlot.Index >= Bag.Slots.size())
 				EmptySlot.Index = 0;
 
 			_InventorySlot &Item = GetSlot(EmptySlot);
-			if(Item.Item == nullptr || (Item.Item == SplitItem.Item && Item.Upgrades == SplitItem.Upgrades && Item.Count <= GetSlot(EmptySlot).MaxCount - Count)) {
+			if(Item.Item == nullptr || (Item.Item == SplitItem.Item && Item.Count <= GetSlot(EmptySlot).MaxCount - Count)) {
 				Found = true;
 				break;
 			}

@@ -364,9 +364,6 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 		case PacketType::TRADE_CANCEL:
 			//HandleTradeCancel(Data);
 		break;
-		case PacketType::TRADE_ITEM:
-			//HandleTradeItem(Data);
-		break;
 		case PacketType::TRADE_GOLD:
 			//HandleTradeGold(Data);
 		break;

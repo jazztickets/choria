@@ -413,6 +413,9 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case PacketType::INVENTORY_MOVE:
 			HandleInventoryMove(Data, Peer);
 		break;
+		case PacketType::INVENTORY_TRANSFER:
+			HandleInventoryTransfer(Data, Peer);
+		break;
 		case PacketType::INVENTORY_USE:
 			HandleInventoryUse(Data, Peer);
 		break;
@@ -982,33 +985,47 @@ void _Server::HandleInventoryMove(ae::_Buffer &Data, ae::_Peer *Peer) {
 	NewSlot.Unserialize(Data);
 
 	// Move items
-	{
-		ae::_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
-		if(Player->Inventory->MoveInventory(Packet, OldSlot, NewSlot)) {
-			Network->SendPacket(Packet, Peer);
-			Player->Character->CalculateStats();
-		}
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
+	if(Player->Inventory->MoveInventory(Packet, OldSlot, NewSlot)) {
+		Network->SendPacket(Packet, Peer);
+		Player->Character->CalculateStats();
 	}
 
 	// Check for trading players
-	_Object *TradePlayer = Player->Character->TradePlayer;
-	if(Player->Character->WaitingForTrade && TradePlayer && (OldSlot.Type == BagType::TRADE || NewSlot.Type == BagType::TRADE)) {
+	if(OldSlot.Type == BagType::TRADE || NewSlot.Type == BagType::TRADE)
+		SendTradePlayerInventory(Player);
+}
 
-		// Reset agreement
-		Player->Character->TradeAccepted = false;
-		TradePlayer->Character->TradeAccepted = false;
+// Handle transfer between inventory bags
+void _Server::HandleInventoryTransfer(ae::_Buffer &Data, ae::_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
 
-		// Build packet
+	_Object *Player = Peer->Object;
+
+	// Read data
+	_Slot SourceSlot;
+	BagType TargetBagType;
+	SourceSlot.Unserialize(Data);
+	TargetBagType = (BagType)Data.Read<uint8_t>();
+
+	// Transfer items
+	std::list<_Slot> SlotsUpdated;
+	if(Player->Inventory->Transfer(SourceSlot, TargetBagType, SlotsUpdated)) {
+
+		// Send inventory update
 		ae::_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
+		Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
+		Packet.Write<uint8_t>(SlotsUpdated.size());
+		for(const auto &Slot : SlotsUpdated)
+			Player->Inventory->SerializeSlot(Packet, Slot);
 
-		// Write slots
-		Player->Inventory->SerializeSlot(Packet, NewSlot);
-		Player->Inventory->SerializeSlot(Packet, OldSlot);
+		Network->SendPacket(Packet, Peer);
 
-		// Send updates
-		Network->SendPacket(Packet, TradePlayer->Peer);
+		// Check for trading players
+		if(SourceSlot.Type == BagType::TRADE || TargetBagType == BagType::TRADE)
+			SendTradePlayerInventory(Player);
 	}
 }
 
@@ -1088,15 +1105,15 @@ void _Server::HandleInventorySplit(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Slot.Unserialize(Data);
 	uint8_t Count = Data.Read<uint8_t>();
 
-	// Inventory only
-	if(Slot.Type == BagType::TRADE)
-		return;
-
 	// Split items
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 	if(Player->Inventory->SplitStack(Packet, Slot, Count))
 		Network->SendPacket(Packet, Peer);
+
+	// Check for trading players
+	if(Slot.Type == BagType::TRADE)
+		SendTradePlayerInventory(Player);
 }
 
 // Handle deleting an item
@@ -1124,20 +1141,8 @@ void _Server::HandleInventoryDelete(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Network->SendPacket(Packet, Peer);
 
 	// Check for trading players
-	_Object *TradePlayer = Player->Character->TradePlayer;
-	if(Player->Character->WaitingForTrade && TradePlayer && Slot.Type == BagType::TRADE) {
-
-		// Reset agreement
-		Player->Character->TradeAccepted = false;
-		TradePlayer->Character->TradeAccepted = false;
-
-		// Notify trade player
-		ae::_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
-		Player->Inventory->SerializeSlot(Packet, Slot);
-		Player->Inventory->SerializeSlot(Packet, Slot);
-		Network->SendPacket(Packet, TradePlayer->Peer);
-	}
+	if(Slot.Type == BagType::TRADE)
+		SendTradePlayerInventory(Player);
 }
 
 // Handles a vendor exchange message
@@ -2179,6 +2184,23 @@ void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer, b
 		if(!Added)
 			break;
 	}
+}
+
+// Send the list of trade items to a trading player
+void _Server::SendTradePlayerInventory(_Object *Player) {
+	_Object *TradePlayer = Player->Character->TradePlayer;
+	if(!TradePlayer)
+		return;
+
+	// Reset agreement
+	Player->Character->TradeAccepted = false;
+	TradePlayer->Character->TradeAccepted = false;
+
+	// Send inventory
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::TRADE_INVENTORY);
+	Player->Inventory->GetBag(BagType::TRADE).Serialize(Packet);
+	Network->SendPacket(Packet, TradePlayer->Peer);
 }
 
 // Start a battle event

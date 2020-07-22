@@ -119,6 +119,7 @@ class _Character {
 		void InitializeSkillLevels();
 
 		// UI
+		bool IsTrading() { return WaitingForTrade || TradePlayer; }
 		bool CanTrade() const;
 		void ResetUIState();
 		bool AddStatusEffect(_StatusEffect *StatusEffect);

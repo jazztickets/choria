@@ -882,8 +882,8 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 		case PacketType::TRADE_CANCEL:
 			HandleTradeCancel(Data);
 		break;
-		case PacketType::TRADE_ITEM:
-			HandleTradeItem(Data);
+		case PacketType::TRADE_INVENTORY:
+			HandleTradeInventory(Data);
 		break;
 		case PacketType::TRADE_GOLD:
 			HandleTradeGold(Data);
@@ -1273,6 +1273,21 @@ void _PlayState::HandleInventoryUpdate(ae::_Buffer &Data) {
 	Player->Character->CalculateStats();
 }
 
+// Handles a trade item update
+void _PlayState::HandleTradeInventory(ae::_Buffer &Data) {
+
+	// Get trading player
+	if(!Player->Character->TradePlayer)
+		return;
+
+	// Get slot updates
+	Player->Character->TradePlayer->Inventory->GetBag(BagType::TRADE).Unserialize(Data, Stats);
+
+	// Reset agreement
+	Player->Character->TradePlayer->Character->TradeAccepted = false;
+	HUD->TradeScreen->ResetAcceptButton();
+}
+
 // Handle gold update
 void _PlayState::HandleInventoryGold(ae::_Buffer &Data) {
 	if(!Player)
@@ -1327,22 +1342,6 @@ void _PlayState::HandleTradeCancel(ae::_Buffer &Data) {
 	// Reset agreement
 	HUD->TradeScreen->ResetAcceptButton();
 	HUD->TradeScreen->ResetTradeTheirsWindow();
-}
-
-// Handles a trade item update
-void _PlayState::HandleTradeItem(ae::_Buffer &Data) {
-
-	// Get trading player
-	if(!Player->Character->TradePlayer)
-		return;
-
-	// Get slot updates
-	Player->Character->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
-	Player->Character->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
-
-	// Reset agreement
-	Player->Character->TradePlayer->Character->TradeAccepted = false;
-	HUD->TradeScreen->ResetAcceptButton();
 }
 
 // Handles a gold update from the trading player

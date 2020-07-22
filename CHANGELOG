@@ -3,8 +3,8 @@ choria 0.5.1 -
 - Added item belt that only stores items
 - Added 3 new starting builds
 - Added 4 new bosses
-- Added 10 new monsters
-- Added 22 new skills
+- Added 10+ new monsters
+- Added 20+ new skills
 - Added 60+ new items
 - Added 10+ different procs to weapons
 - Added 4 new songs
@@ -19,6 +19,7 @@ choria 0.5.1 -
 - Summons are now stored in buffs outside of battle
 - Direction of party members now show on current map
 - Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle
+- Added shift-click to transfer items between bags
 - Skills are now sorted by category
 - Added password hashing to server
 - Resurrect spell can now be cast in the world
