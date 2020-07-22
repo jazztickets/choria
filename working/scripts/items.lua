@@ -708,6 +708,22 @@ function Item_ElusivePotion.PlaySound(self, Level)
 	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Greater Battle Potion --
+
+Item_GreaterBattlePotion = { }
+
+function Item_GreaterBattlePotion.GetInfo(self, Source, Item)
+	return "[c gray]Only for the bravest adventurers..."
+end
+
+function Item_GreaterBattlePotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Difficult.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
 -- Torch --
 
 Item_Torch = { }

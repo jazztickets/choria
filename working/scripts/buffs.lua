@@ -506,3 +506,17 @@ end
 function Buff_SummonSkeletonPriest.GetSummonSkill(self)
 	return Skill_RaiseDead.Item.Pointer
 end
+
+-- Difficult --
+
+Buff_Difficult = Base_Buff:New()
+
+function Buff_Difficult.GetInfo(self, Level)
+	return "Difficulty increased by [c green]" .. Level .. "%"
+end
+
+function Buff_Difficult.Stats(self, Level, Source, Change)
+	Change.Difficulty = Level
+
+	return Change
+end
