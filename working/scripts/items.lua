@@ -790,6 +790,14 @@ function Item_LuckyAmulet.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Dark Note --
+
+Item_DarkNote = { }
+
+function Item_DarkNote.GetInfo(self, Source, Item)
+	return "[c gray]Great power lies within the tower..."
+end
+
 -- Dark Ring --
 
 Item_DarkRing = { }
