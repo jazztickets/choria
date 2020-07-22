@@ -833,8 +833,10 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		}
 
 		// Draw status effects
-		if(Tooltip.StatusEffect)
-			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level, Tooltip.StatusEffect->Duration, !Player->Character->Battle && Tooltip.StatusEffect->Buff->Dismiss);
+		if(Tooltip.StatusEffect) {
+			int DismissLevel = !Player->Character->Battle ? Tooltip.StatusEffect->Buff->Dismiss : 0;
+			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level, Tooltip.StatusEffect->Duration, DismissLevel);
+		}
 	}
 	// Dead outside of combat
 	else {

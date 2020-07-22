@@ -35,7 +35,7 @@ class _Buff {
 
 	public:
 
-		void DrawTooltip(_Scripting *Scripting, int Level, double Duration, bool ShowDismiss) const;
+		void DrawTooltip(_Scripting *Scripting, int Level, double Duration, int DismissLevel) const;
 		void ExecuteScript(_Scripting *Scripting, const std::string &Function, int Level, _StatChange &StatChange) const;
 
 		uint32_t ID;
@@ -44,7 +44,7 @@ class _Buff {
 		const ae::_Texture *Texture;
 		bool PauseDuringBattle;
 		bool ShowLevel;
-		bool Dismiss;
+		int Dismiss;
 
 	private:
 

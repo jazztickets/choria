@@ -1588,7 +1588,14 @@ void _Server::HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer) {
 			continue;
 
 		if(StatusEffect->Buff->ID == BuffID) {
-			StatusEffect->Duration = 0.0;
+			if(StatusEffect->Buff->Dismiss == 2) {
+				StatusEffect->Level--;
+				if(StatusEffect->Level <= 0)
+					StatusEffect->Duration = 0.0;
+			}
+			else
+				StatusEffect->Duration = 0.0;
+
 			UpdateBuff(Player, StatusEffect);
 			break;
 		}

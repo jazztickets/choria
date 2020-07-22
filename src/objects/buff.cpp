@@ -31,7 +31,7 @@
 #include <iomanip>
 
 // Draw tooltip
-void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration, bool ShowDismiss) const {
+void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration, int DismissLevel) const {
 	std::stringstream Buffer;
 
 	ae::_Element *TooltipElement = ae::Assets.Elements["element_buffs_tooltip"];
@@ -49,7 +49,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration, bool 
 	glm::vec2 Size = TooltipElement->Size;
 	Size.y = 180 * ae::_Element::GetUIScale();
 	TooltipDuration->BaseOffset.y = 165;
-	if(ShowDismiss) {
+	if(DismissLevel) {
 		Size.y += 25 * ae::_Element::GetUIScale();
 		TooltipDuration->BaseOffset.y = 185;
 	}
@@ -129,9 +129,14 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration, bool 
 	}
 	Buffer.str("");
 
-	if(ShowDismiss) {
+	if(DismissLevel) {
 		DrawPosition.y += 5 * ae::_Element::GetUIScale();
-		ae::Assets.Fonts["hud_small"]->DrawText("Right-click to dismiss", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+
+		std::string Text = "Right-click to dismiss";
+		if(DismissLevel == 2)
+			Text += " one summon";
+
+		ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 	}
 }
 
