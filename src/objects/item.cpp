@@ -966,14 +966,22 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Object->Character->Targets.size()) {
 
 		// Check each target and see if action can be used
+		bool IsFirstTarget = true;
 		for(auto Iterator = Object->Character->Targets.begin(); Iterator != Object->Character->Targets.end(); ) {
 			_Object *Target = *Iterator;
 
+			// Determine whether to force target alive based on target type
+			bool ForceTargetAlive = false;
+			if(ActionResult.ActionUsed.Item->TargetID == TargetType::ENEMY_CORPSE_AOE && !IsFirstTarget)
+				ForceTargetAlive = true;
+
 			// Remove bad targets
-			if(!CanTarget(Scripting, Object, Target))
+			if(!CanTarget(Scripting, Object, Target, ForceTargetAlive))
 				Iterator = Object->Character->Targets.erase(Iterator);
 			else
 				++Iterator;
+
+			IsFirstTarget = false;
 		}
 
 		// No targets left
