@@ -2042,6 +2042,27 @@ void _Server::Slap(ae::NetworkIDType PlayerID, int GoldAmount) {
 	BroadcastMessage(nullptr, Player->Name + " has been slapped for misbehaving!", "yellow");
 }
 
+// Send message to player about battle cooldown
+void _Server::SendBattleCooldownMessage(ae::_Peer *Peer, double Duration) {
+	if(!Peer)
+		return;
+
+	if(Duration <= 10)
+		SendMessage(Peer, "The soul is upon you", "yellow");
+	else if(Duration <= 60)
+		SendMessage(Peer, "The soul radiates", "yellow");
+	else if(Duration <= 300)
+		SendMessage(Peer, "The soul shines", "yellow");
+	else if(Duration <= 600)
+		SendMessage(Peer, "The soul glows", "yellow");
+	else if(Duration <= 1800)
+		SendMessage(Peer, "The soul shimmers", "yellow");
+	else if(Duration <= 3600)
+		SendMessage(Peer, "The soul is faint", "yellow");
+	else if(Duration <= 7200)
+		SendMessage(Peer, "The soul has vanished... for now", "yellow");
+}
+
 // Send a message to the player
 void _Server::SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName) {
 	if(!ValidatePeer(Peer))
@@ -2215,8 +2236,10 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			return;
 
 		// Check for cooldown
-		if(BattleEvent.Object->Character->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->Character->BattleCooldown.end())
+		if(BattleEvent.Object->Character->IsZoneOnCooldown(BattleEvent.Zone)) {
+			SendBattleCooldownMessage(BattleEvent.Object->Peer, BattleEvent.Object->Character->BattleCooldown[BattleEvent.Zone]);
 			return;
+		}
 
 		// Create a new battle instance
 		_Battle *Battle = BattleManager->Create();

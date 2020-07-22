@@ -96,6 +96,7 @@ class _Server {
 		void SetClock(double Clock);
 		void UpdateBuff(_Object *Player, _StatusEffect *StatusEffect);
 		void Slap(ae::NetworkIDType PlayerID, int GoldAmount);
+		void SendBattleCooldownMessage(ae::_Peer *Peer, double Duration);
 
 		// Packet handling
 		void HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer);

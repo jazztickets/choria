@@ -705,7 +705,7 @@ void _Battle::ServerEndBattle() {
 					for(auto &Object : RewardObjects) {
 
 						// Give drops to players that don't have the boss on cooldown
-						if(Object->Character->BattleCooldown.find(Zone) == Object->Character->BattleCooldown.end())
+						if(!Object->Character->IsZoneOnCooldown(Zone))
 							Object->Fighter->ItemDropsReceived.push_back(ItemID);
 					}
 				}
@@ -735,7 +735,7 @@ void _Battle::ServerEndBattle() {
 		if(Object->Character->IsAlive()) {
 
 			// Get rewards if boss isn't on cooldown
-			if(Object->Character->BattleCooldown.find(Zone) == Object->Character->BattleCooldown.end()) {
+			if(!Object->Character->IsZoneOnCooldown(Zone)) {
 				ExperienceEarned = SideStats[WinningSide].ExperiencePerCharacter;
 				GoldEarned = SideStats[WinningSide].GoldPerCharacter;
 

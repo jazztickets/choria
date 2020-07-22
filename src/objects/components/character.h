@@ -101,6 +101,7 @@ class _Character {
 		bool CanPVP() const { return !Battle && IsAlive(); }
 
 		// Battle
+		bool IsZoneOnCooldown(uint32_t Zone) { return BattleCooldown.find(Zone) != BattleCooldown.end(); }
 		void GenerateNextBattle();
 		int GenerateDamage();
 		float GetDamagePower(int DamageTypeID);
