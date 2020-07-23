@@ -633,23 +633,23 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 	// Show network stats
 	if(ShowDebug) {
-		glm::vec2 Offset = glm::vec2(28 * ae::_Element::GetUIScale(), ae::Graphics.ViewportSize.y - 90 * ae::_Element::GetUIScale());
+		glm::vec2 Offset = glm::vec2(ae::Graphics.ViewportSize.x - 150 * ae::_Element::GetUIScale(), 31 * ae::_Element::GetUIScale());
 		float SpacingY = 22 * ae::_Element::GetUIScale();
 
 		Buffer << ae::Graphics.FramesPerSecond << " FPS";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), Offset + glm::vec2(0, SpacingY * 0));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 0)));
 		Buffer.str("");
 
 		Buffer << std::fixed << std::setprecision(4) << PlayState.Network->GetSentSpeed() / 1024.0f << " KB/s out";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), Offset + glm::vec2(0, SpacingY * 1));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 1)));
 		Buffer.str("");
 
 		Buffer << std::fixed << std::setprecision(4) << PlayState.Network->GetReceiveSpeed() / 1024.0f << " KB/s in";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), Offset + glm::vec2(0, SpacingY * 2));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 2)));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetRTT() << "ms";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), Offset + glm::vec2(0, SpacingY * 3));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 3)));
 		Buffer.str("");
 	}
 
