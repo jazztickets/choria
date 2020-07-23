@@ -1270,6 +1270,9 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Player->AcceptTrader(RequiredItemSlots);
 
 	// Give buff
+	std::string RewardName;
+	uint32_t RewardID;
+	int RewardCount;
 	if(Player->Character->Trader->RewardItem == nullptr) {
 		_StatChange StatChange;
 		StatChange.Object = Player;
@@ -1283,6 +1286,15 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 		StatChange.Serialize(Packet);
 		Network->SendPacket(Packet, Player->Peer);
+
+		RewardName = "Beggar buff";
+		RewardID = 0;
+		RewardCount = 0;
+	}
+	else {
+		RewardName = Player->Character->Trader->RewardItem->Name;
+		RewardID = Player->Character->Trader->RewardItem->ID;
+		RewardCount = Player->Character->Trader->Count;
 	}
 
 	// Send new inventory
@@ -1290,6 +1302,9 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Packet.Write<PacketType>(PacketType::INVENTORY);
 	Player->Inventory->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
+
+	// Log
+	Log << "[TRADER] Player " << Player->Name << " trades for " << RewardCount << "x " << RewardName << " ( character_id=" << Peer->CharacterID << " item_id=" << RewardID << " )" << std::endl;
 }
 
 // Handles a skill adjust
