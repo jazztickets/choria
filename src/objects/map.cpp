@@ -61,11 +61,11 @@ const double MESSAGE_LENGTH = 5.0;
 
 // Colors of each time cycle
 const std::vector<glm::vec4> DayCycles = {
-	{ 0.05f, 0.05f, 0.3f,  1 },
-	{ 0.10f, 0.10f, 0.1f,  1 },
-	{ 0.6f,  0.6f,  0.45f, 1 },
-	{ 0.55f, 0.45f, 0.30f, 1 },
-	{ 0.5,   0.4f,  0.3f,  1 },
+	{ 0.0625f, 0.0625f, 0.375f,  1 },
+	{ 0.125f,  0.125f,  0.125f,  1 },
+	{ 0.75f,   0.75f,   0.5625f, 1 },
+	{ 0.6875f, 0.5625f, 0.375f,  1 },
+	{ 0.625f,  0.5f,    0.375f,  1 },
 };
 
 // Time of each cycle change
