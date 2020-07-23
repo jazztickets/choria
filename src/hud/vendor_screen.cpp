@@ -43,7 +43,7 @@ void _VendorScreen::Init() {
 }
 
 // Close screen
-bool _VendorScreen::Close() {
+bool _VendorScreen::Close(bool SendNotify) {
 	bool WasOpen = Element->Active;
 	HUD->InventoryScreen->Close();
 	if(HUD->Player)

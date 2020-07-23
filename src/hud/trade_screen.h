@@ -32,7 +32,7 @@ class _TradeScreen : public _Screen {
 		_TradeScreen(_HUD *HUD, ae::_Element *Element);
 
 		void Init() override;
-		bool Close(bool SendNotify=true);
+		bool Close(bool SendNotify=true) override;
 
 		void Toggle() override;
 		void Render(double BlendFactor) override;

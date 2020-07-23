@@ -31,7 +31,7 @@ class _VendorScreen : public _Screen {
 		_VendorScreen(_HUD *HUD, ae::_Element *Element);
 
 		void Init() override;
-		bool Close() override;
+		bool Close(bool SendNotify=true) override;
 
 		void Render(double BlendFactor) override;
 

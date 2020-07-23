@@ -31,7 +31,7 @@ class _Map;
 class _Stats;
 class _Scripting;
 struct _Event;
-struct _StatChange;
+class _StatChange;
 
 namespace ae {
 	template<class T> class _Manager;

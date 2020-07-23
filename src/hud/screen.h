@@ -33,7 +33,7 @@ class _Screen {
 		virtual ~_Screen() { }
 
 		virtual void Init() { }
-		virtual bool Close() { return false; }
+		virtual bool Close(bool SendNotify=true) { return false; }
 
 		virtual void Toggle();
 		virtual void Render(double BlendFactor) { }

@@ -43,7 +43,7 @@ void _BlacksmithScreen::Init() {
 }
 
 // Close
-bool _BlacksmithScreen::Close() {
+bool _BlacksmithScreen::Close(bool SendNotify) {
 	bool WasOpen = Element->Active;
 	HUD->InventoryScreen->Close();
 

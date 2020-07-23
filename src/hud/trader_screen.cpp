@@ -48,7 +48,7 @@ void _TraderScreen::Init() {
 }
 
 // Close screen
-bool _TraderScreen::Close() {
+bool _TraderScreen::Close(bool SendNotify) {
 	bool WasOpen = Element->Active;
 	Element->SetActive(false);
 	HUD->Cursor.Reset();

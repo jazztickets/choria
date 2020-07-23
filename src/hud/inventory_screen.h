@@ -30,7 +30,7 @@ class _InventoryScreen : public _Screen {
 
 		_InventoryScreen(_HUD *HUD, ae::_Element *Element);
 
-		bool Close() override;
+		bool Close(bool SendNotify=true) override;
 		void Toggle() override;
 		void Render(double BlendFactor) override;
 

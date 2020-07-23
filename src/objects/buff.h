@@ -24,7 +24,7 @@
 // Forward Declarations
 class _Object;
 class _Scripting;
-struct _StatChange;
+class _StatChange;
 
 namespace ae {
 	class _Texture;

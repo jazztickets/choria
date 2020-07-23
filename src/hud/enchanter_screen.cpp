@@ -136,7 +136,7 @@ void _EnchanterScreen::Init() {
 }
 
 // Close screen
-bool _EnchanterScreen::Close() {
+bool _EnchanterScreen::Close(bool SendNotify) {
 	bool WasOpen = Element->Active;
 
 	Element->SetActive(false);

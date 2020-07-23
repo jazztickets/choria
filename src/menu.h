@@ -165,7 +165,6 @@ class _Menu {
 		bool FromInGame;
 		bool BadGameVersion;
 		int RebindType;
-		int RebindInput;
 		int RebindAction;
 
 		// UI

@@ -28,7 +28,7 @@ class _EnchanterScreen : public _Screen {
 		_EnchanterScreen(_HUD *HUD, ae::_Element *Element);
 
 		void Init() override;
-		bool Close() override;
+		bool Close(bool SendNotify=true) override;
 
 		void Toggle() override;
 		void Render(double BlendFactor) override;
