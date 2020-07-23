@@ -61,6 +61,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	// Set label values
 	TooltipName->Text = Name;
 	TooltipType->Text = "";
+	TooltipType->Color = glm::vec4(1.0f);
 	if(Category && Category <= 4)
 		TooltipType->Text = SkillCategories[Category-1];
 	else if(Type != ItemType::NONE) {
