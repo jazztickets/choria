@@ -182,7 +182,7 @@ function Proc_Bloodlet.GetHealingTotal(self, Source, Item)
 end
 
 function Proc_Bloodlet.GetHealingLevel(self, Source, Item)
-	return self:GetLevel(Source, Item) / 2
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.HealPower * 0.5)
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)
