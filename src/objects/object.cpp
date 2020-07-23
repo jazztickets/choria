@@ -926,6 +926,14 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 		Data.Write<int>(Unlock.second.Level);
 	}
 
+	// Write cooldowns
+	Data.Write<uint32_t>((uint32_t)Character->Cooldowns.size());
+	for(const auto &Cooldown : Character->Cooldowns) {
+		Data.Write<uint32_t>(Cooldown.first);
+		Data.Write<float>(Cooldown.second.Duration);
+		Data.Write<float>(Cooldown.second.MaxDuration);
+	}
+
 	// Write status effects
 	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
 	for(const auto &StatusEffect : Character->StatusEffects) {
@@ -1053,6 +1061,15 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 		uint32_t UnlockID = Data.Read<uint32_t>();
 		int Level = Data.Read<int>();
 		Character->Unlocks[UnlockID].Level = Level;
+	}
+
+	// Read cooldowns
+	Character->Cooldowns.clear();
+	uint32_t CooldownCount = Data.Read<uint32_t>();
+	for(uint32_t i = 0; i < CooldownCount; i++) {
+		uint32_t CooldownID = Data.Read<uint32_t>();
+		Character->Cooldowns[CooldownID].Duration = Data.Read<float>();
+		Character->Cooldowns[CooldownID].MaxDuration = Data.Read<float>();
 	}
 
 	// Read status effects
