@@ -44,6 +44,7 @@ $(document).ready(function() {
 			columns: columns,
 			trimDropdown: false,
 			manualColumnResize: true,
+			manualColumnFreeze: true,
 			wordWrap: false,
 			contextMenu: {
 				items: {

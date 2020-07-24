@@ -115,10 +115,6 @@ a:hover {
 	border-bottom: 1px solid #666;
 }
 
-.handsontable td.area {
-	background-color: initial;
-}
-
 .htContextMenu table tbody tr td {
 	background-color: #111;
 }
@@ -145,5 +141,9 @@ a:hover {
 
 td.empty {
 	border: none;
-	background: none;
+}
+
+.handsontable tbody th.ht__highlight, .handsontable thead th.ht__highlight {
+	background: #222222;
+	color: white;
 }
