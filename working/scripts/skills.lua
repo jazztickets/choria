@@ -1151,8 +1151,8 @@ Skill_BladeDance.IncreasePerLevel = 10
 Skill_BladeDance.BleedingLevel = 100
 Skill_BladeDance.BaseTargets = 4
 Skill_BladeDance.TargetsPerLevel = 0.08
-Skill_BladeDance.DamageBase = 100
-Skill_BladeDance.DamagePerLevel = 3
+Skill_BladeDance.DamageBase = 75
+Skill_BladeDance.DamagePerLevel = 2
 Skill_BladeDance.BleedScale = 2
 
 function Skill_BladeDance.CanUse(self, Level, Source, Target)

@@ -213,7 +213,7 @@ end
 -- Fire Blast --
 
 Skill_FireBlast = Base_Spell:New()
-Skill_FireBlast.DamageBase = 360
+Skill_FireBlast.DamageBase = 120
 Skill_FireBlast.DamagePerLevel = 30
 Skill_FireBlast.DamageScale = 2
 Skill_FireBlast.BurnLevel = 10
@@ -259,7 +259,7 @@ end
 -- Ice Nova --
 
 Skill_IceNova = Base_Spell:New()
-Skill_IceNova.DamageBase = 300
+Skill_IceNova.DamageBase = 100
 Skill_IceNova.DamagePerLevel = 25
 Skill_IceNova.DamageScale = 2
 Skill_IceNova.CostPerLevel = 20
@@ -302,7 +302,7 @@ end
 -- Chain Lightning --
 
 Skill_ChainLightning = Base_Spell:New()
-Skill_ChainLightning.DamageBase = 450
+Skill_ChainLightning.DamageBase = 150
 Skill_ChainLightning.DamagePerLevel = 20
 Skill_ChainLightning.DamageScale = 2.25
 Skill_ChainLightning.CostPerLevel = 18
@@ -352,7 +352,7 @@ end
 -- Rupture --
 
 Skill_Rupture = Base_Spell:New()
-Skill_Rupture.DamageBase = 300
+Skill_Rupture.DamageBase = 100
 Skill_Rupture.DamagePerLevel = 30
 Skill_Rupture.DamageScale = 2.5
 Skill_Rupture.Level = 20
