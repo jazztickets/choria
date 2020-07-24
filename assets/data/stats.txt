@@ -1854,7 +1854,7 @@ INSERT INTO item VALUES(150,14,2,0,0,0,0,'Swift Knife','textures/items/small_kni
 INSERT INTO item VALUES(151,10,0,1,1,0,0,'Battle Potion','textures/items/battle_potion.png','Item_BattlePotion',0,25,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(152,2,0,0,0,0,0,'Mage Hat','textures/items/mage_hat.png','',0,25,1,0,10,0.0,1,0,0,1,0,0,0,15,30,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(153,2,0,0,0,0,0,'Wizard Hat','textures/items/wizard_hat.png','',0,100,1,0,50,0.0,1,0,0,2,0,0,0,30,60,0,1,0,0,0,0,0,0,0,'',0,0.0,0,0);
-INSERT INTO item VALUES(154,6,2,0,0,0,0,'Claymore','textures/items/claymore.png','Proc_Empowered',0,2000,1,20,20,5.0,1,225,600,-5,0,0,0,0,0,0,0,-10,0,0,0,15,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(154,6,2,0,0,0,0,'Claymore','textures/items/claymore.png','Proc_Empowered',0,2000,1,15,20,5.0,1,225,600,-5,0,0,0,0,0,0,0,-10,0,0,0,15,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(155,10,0,1,1,0,0,'Ghostly Potion','textures/items/ghostly_potion.png','Item_InvisPotion',0,150,1,0,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(156,10,0,8,3,0,0,'Poison','textures/items/poison.png','Item_PoisonPotion',0,25,1,10,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(157,3,0,0,0,0,7,'Reinforced Jerkin','textures/items/reinforced_jerkin.png','',0,300,1,0,20,0.0,1,0,0,8,2,0,10,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
@@ -1941,7 +1941,7 @@ INSERT INTO item VALUES(240,10,0,1,2,0,0,'Stinger','textures/items/stinger.png',
 INSERT INTO item VALUES(241,5,2,0,0,0,0,'Light Blade','textures/items/light_blade.png','Proc_Haste',0,12000,1,30,50,3.0,1,400,900,0,0,0,0,0,0,0,0,15,5,0,0,15,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(242,14,2,0,0,0,0,'Moon Blade','textures/items/moon_blade.png','Proc_Bleed',0,8000,1,80,50,5.0,1,360,360,0,10,40,0,0,20,0,0,40,0,0,0,20,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(243,5,2,0,0,0,0,'Arcane Wand','textures/items/arcane_wand.png','Proc_Mana',0,7500,1,100,50,0.0,1,50,100,0,0,0,0,0,250,0,10,0,0,0,0,15,1,0,'',0,0.0,40,0);
-INSERT INTO item VALUES(244,6,2,0,0,0,0,'Greatsword','textures/items/greatsword.png','Proc_Empowered',0,25000,1,25,50,5.0,1,1400,2500,-15,0,0,0,0,0,0,0,-20,-15,0,0,15,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(244,6,2,0,0,0,0,'Greatsword','textures/items/greatsword.png','Proc_Empowered',0,25000,1,15,50,5.0,1,1400,2500,-15,0,0,0,0,0,0,0,-20,-15,0,0,15,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(245,5,2,0,0,0,0,'Spider Sword','textures/items/spider_sword.png','Proc_Slow',0,350,1,30,20,3.0,1,70,130,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(246,5,2,0,0,0,0,'Venom Blade','textures/items/venom_blade.png','Proc_Poison',0,1200,1,80,50,10.0,1,110,220,0,0,0,0,0,0,0,0,5,0,0,0,15,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(247,10,0,1,3,0,0,'Glowing Salve','textures/items/glowing_salve.png','Item_HealingSalve',0,500,1,600,0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);

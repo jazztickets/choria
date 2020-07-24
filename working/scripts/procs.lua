@@ -269,7 +269,7 @@ end
 Proc_Empowered = Base_Proc:New()
 Proc_Empowered.Buff = Buff_Empowered
 Proc_Empowered.OnSelf = true
-Proc_Empowered.ChancePerLevel = 1
+Proc_Empowered.ChancePerLevel = 0.5
 Proc_Empowered.LevelPerLevel = 0.2
 Proc_Empowered.DurationPerLevel = 0.1
 
