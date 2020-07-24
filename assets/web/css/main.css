@@ -141,6 +141,7 @@ a:hover {
 
 td.empty {
 	border: none;
+	background: #111
 }
 
 .handsontable tbody th.ht__highlight, .handsontable thead th.ht__highlight {
