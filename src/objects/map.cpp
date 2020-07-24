@@ -1139,7 +1139,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 		if(Object->Character->Rebirths != Player->Character->Rebirths)
 			continue;
 
-		if(std::abs(Object->Character->Level - Player->Character->Level) > GAME_TRADING_LEVEL_RANGE)
+		if(GAME_TRADING_LEVEL_RANGE && std::abs(Object->Character->Level - Player->Character->Level) > GAME_TRADING_LEVEL_RANGE)
 			continue;
 
 		glm::vec2 Delta = Object->Position - Player->Position;

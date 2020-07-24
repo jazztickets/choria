@@ -175,6 +175,14 @@ void _TradeScreen::ResetTradeTheirsWindow() {
 	ae::Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
 	ae::Assets.Elements["label_trade_name_yours"]->Text = HUD->Player->Name;
 	ae::Assets.Elements["image_trade_portrait_yours"]->Texture = HUD->Player->Character->Portrait;
+
+	ae::_Element *RestrictLabel = ae::Assets.Elements["label_trade_status_restrict"];
+	if(GAME_TRADING_LEVEL_RANGE) {
+		RestrictLabel->SetActive(true);
+		RestrictLabel->Text = "Other player must be within " + std::to_string(GAME_TRADING_LEVEL_RANGE) + " levels";
+	}
+	else
+		RestrictLabel->SetActive(false);
 }
 
 // Trade with another player

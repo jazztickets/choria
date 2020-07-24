@@ -400,6 +400,7 @@
 			</element>
 		</element>
 		<element id="label_trade_status" font="hud_medium" text="Waiting for other player..." offset_y="90" alignment_y="0"/>
+		<element id="label_trade_status_restrict" font="hud_small" offset_y="130" alignment_y="0" color="gray" />
 	</element>
 	<element id="element_minigame" style="style_hud_bg" size_x="100%" size_y="100%" index="12">
 		<element id="element_minigame_board" style="style_minigame_bg">

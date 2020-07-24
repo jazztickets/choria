@@ -613,6 +613,7 @@ void _HUD::Update(double FrameTime) {
 		if(Player->Character->TradePlayer) {
 			ae::Assets.Elements["element_trade_theirs"]->SetActive(true);
 			ae::Assets.Elements["label_trade_status"]->SetActive(false);
+			ae::Assets.Elements["label_trade_status_restrict"]->SetActive(false);
 
 			ae::Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->Character->TradePlayer->Character->TradeGold);
 			ae::Assets.Elements["label_trade_name_theirs"]->Text = Player->Character->TradePlayer->Name;
