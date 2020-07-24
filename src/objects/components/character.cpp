@@ -27,6 +27,7 @@
 #include <scripting.h>
 #include <packet.h>
 #include <stats.h>
+#include <algorithm>
 #include <cmath>
 
 // Constructor
@@ -535,8 +536,7 @@ void _Character::CalculateStats() {
 	if(CooldownMultiplier <= 0.0f)
 		CooldownMultiplier = 0.0f;
 
-	ConsumeChance = std::min(ConsumeChance, 100);
-	ConsumeChance = std::max(ConsumeChance, 0);
+	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
 
 	MaxHealth *= MaxHealthMultiplier;
 	MaxMana *= MaxManaMultiplier;
