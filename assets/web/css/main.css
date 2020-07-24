@@ -141,10 +141,14 @@ a:hover {
 
 td.empty {
 	border: none;
-	background: #111
+	background: #111;
 }
 
 .handsontable tbody th.ht__highlight, .handsontable thead th.ht__highlight {
 	background: #222222;
 	color: white;
+}
+
+.handsontable.listbox td, .handsontable.listbox th, .handsontable.listbox tr:first-child td, .handsontable.listbox tr:first-child th, .handsontable.listbox tr:last-child th {
+	border-color: #333333;
 }
