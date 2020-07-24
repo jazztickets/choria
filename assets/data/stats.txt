@@ -151,6 +151,7 @@ INSERT INTO stattype VALUES(71,'RebirthProficiency',1.0);
 INSERT INTO stattype VALUES(72,'RebirthInsight',1.0);
 INSERT INTO stattype VALUES(73,'Spell Damage',1.0);
 INSERT INTO stattype VALUES(74,'Minigame Speed',1.0);
+INSERT INTO stattype VALUES(75,'Consume Chance',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -648,6 +649,7 @@ INSERT INTO vendoritem VALUES(201,16,314);
 INSERT INTO vendoritem VALUES(202,16,315);
 INSERT INTO vendoritem VALUES(203,18,316);
 INSERT INTO vendoritem VALUES(204,16,317);
+INSERT INTO vendoritem VALUES(205,2,320);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -2015,6 +2017,7 @@ INSERT INTO item VALUES(316,9,0,0,0,0,0,'Lava Amulet','textures/items/amulet_ora
 INSERT INTO item VALUES(317,6,2,0,0,0,0,'Diabolic Staff','textures/items/diabolic_staff.png','Item_PetPower',0,13000,1,80,50,0.0,1,600,800,0,10,0,0,0,350,0,10,0,0,0,0,15,0,2,'',0,0.0,0,0);
 INSERT INTO item VALUES(318,11,0,0,0,0,0,'Dark Note','textures/items/note.png','Item_DarkNote',0,5000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(319,10,0,1,1,0,0,'Greater Battle Potion','textures/items/greater_battle_potion.png','Item_GreaterBattlePotion',0,1000,1,100,0,300.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(320,9,0,0,0,0,0,'Mundane Amulet','textures/items/amulet_green.png','Item_ConsumeChance',0,150,1,25,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

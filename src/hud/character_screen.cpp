@@ -166,6 +166,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Consume chance
+	if(HUD->Player->Character->ConsumeChance != 100) {
+		Buffer << HUD->Player->Character->ConsumeChance << "%";
+		Font->DrawText("Consume Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Cooldown reduction
 	if(HUD->Player->Character->CooldownMultiplier != 1.0f) {
 		Buffer << (int)(HUD->Player->Character->CooldownMultiplier * 100) << "%";

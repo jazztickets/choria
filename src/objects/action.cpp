@@ -27,6 +27,7 @@
 #include <objects/battle.h>
 #include <ae/manager.h>
 #include <ae/buffer.h>
+#include <ae/random.h>
 #include <packet.h>
 #include <constants.h>
 #include <server.h>
@@ -80,8 +81,8 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 			if(!Source->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
 				return false;
 
-			Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
-			DecrementItem = true;
+			// Handle different item types
+			int ConsumeRoll = 0;
 			if(ItemUsed->IsSkill()) {
 
 				// Learn skill
@@ -96,6 +97,16 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 			else if(ItemUsed->IsKey()) {
 				Source->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ItemUsed, 1));
 				KeyUnlocked = true;
+			}
+			else {
+				if(Source->Character->Battle)
+					ConsumeRoll = ae::GetRandomInt(1, 100);
+			}
+
+			// Roll to consume item
+			if(ConsumeRoll <= Source->Character->ConsumeChance) {
+				Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
+				DecrementItem = true;
 			}
 		}
 

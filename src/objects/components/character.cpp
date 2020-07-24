@@ -132,6 +132,7 @@ _Character::_Character(_Object *Object) :
 	SummonLimit(0),
 	Difficulty(0),
 	MinigameSpeed(1),
+	ConsumeChance(100),
 	CooldownMultiplier(0),
 
 	SkillPoints(0),
@@ -360,6 +361,7 @@ void _Character::CalculateStats() {
 	Stunned = 0;
 	SummonLimit = 0;
 	MinigameSpeed = 1;
+	ConsumeChance = 100;
 	Difficulty = EternalPain;
 	Resistances.clear();
 
@@ -533,6 +535,9 @@ void _Character::CalculateStats() {
 	if(CooldownMultiplier <= 0.0f)
 		CooldownMultiplier = 0.0f;
 
+	ConsumeChance = std::min(ConsumeChance, 100);
+	ConsumeChance = std::max(ConsumeChance, 0);
+
 	MaxHealth *= MaxHealthMultiplier;
 	MaxMana *= MaxManaMultiplier;
 	Health = std::min(Health, MaxHealth);
@@ -661,6 +666,9 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::DIFFICULTY))
 		Difficulty += StatChange.Values[StatType::DIFFICULTY].Integer;
+
+	if(StatChange.HasStat(StatType::CONSUME_CHANCE))
+		ConsumeChance += StatChange.Values[StatType::CONSUME_CHANCE].Integer;
 }
 
 // Get percentage to next level

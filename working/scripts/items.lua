@@ -806,6 +806,25 @@ function Item_LuckyAmulet.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Consume Chance --
+
+Item_ConsumeChance = { }
+Item_ConsumeChance.ChancePerUpgrade = 1
+
+function Item_ConsumeChance.GetInfo(self, Source, Item)
+	return "Decrease chance to consume items in battle by [c green]" .. self:GetChance(Item) .. "%[c white]"
+end
+
+function Item_ConsumeChance.GetChance(self, Item)
+	return Item.Level + Item.Upgrades * self.ChancePerUpgrade
+end
+
+function Item_ConsumeChance.Stats(self, Item, Object, Change)
+	Change.ConsumeChance = -self:GetChance(Item)
+
+	return Change
+end
+
 -- Dark Note --
 
 Item_DarkNote = { }
