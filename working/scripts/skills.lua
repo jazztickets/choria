@@ -1146,7 +1146,7 @@ end
 Skill_BladeDance = Base_Attack:New()
 Skill_BladeDance.BaseChance = 75
 Skill_BladeDance.ChancePerLevel = 0
-Skill_BladeDance.Duration = 7
+Skill_BladeDance.Duration = 5
 Skill_BladeDance.IncreasePerLevel = 10
 Skill_BladeDance.BleedingLevel = 100
 Skill_BladeDance.BaseTargets = 4
