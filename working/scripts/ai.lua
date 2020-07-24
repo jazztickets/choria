@@ -104,7 +104,7 @@ AI_Boss = {}
 function AI_Boss.Update(self, Object, Enemies, Allies)
 
 	-- Chance to do special attack
-	if Random.GetInt(1, 10) == 1 then
+	if Random.GetInt(1, 5) == 1 then
 		for i = 1, #Enemies do
 			Object.AddTarget(Enemies[i].Pointer)
 		end

@@ -1780,10 +1780,10 @@ INSERT INTO item VALUES(50,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0
 INSERT INTO item VALUES(51,1,2,2,2,0,0,'Monster Attack','textures/skills/monster_attack.png','Skill_MonsterAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(52,1,2,2,2,0,0,'Spider Bite','textures/skills/spider_bite.png','Skill_SpiderBite',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(53,1,2,2,2,0,0,'Fang Bite','textures/skills/fang_bite.png','Skill_FangBite',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
-INSERT INTO item VALUES(54,1,2,6,2,0,0,'Swoop','textures/skills/swoop.png','Skill_Swoop',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(54,1,2,6,2,0,0,'Swoop','textures/skills/swoop.png','Skill_Swoop',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,10.0,0,0);
 INSERT INTO item VALUES(55,1,2,2,2,0,0,'Crow Attack','textures/skills/crow_attack.png','Skill_CrowAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(56,1,4,2,2,0,0,'Ghost Attack','textures/skills/ghost_attack.png','Skill_GhostAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
-INSERT INTO item VALUES(57,1,2,6,2,0,0,'Pincer Attack','textures/skills/pincer_attack.png','Skill_PincerAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(57,1,5,6,2,0,0,'Pincer Attack','textures/skills/pincer_attack.png','Skill_PincerAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,10.0,0,0);
 INSERT INTO item VALUES(58,1,2,2,2,0,0,'Chew Attack','textures/skills/chew_attack.png','Skill_ChewAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(59,1,2,2,2,0,0,'Swamp Attack','textures/skills/swamp_attack.png','Skill_SwampAttack',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(60,1,2,2,2,0,0,'Venom Bite','textures/skills/fang_bite.png','Skill_VenomBite',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
