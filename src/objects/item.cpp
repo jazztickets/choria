@@ -666,7 +666,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Move hint
-	if(Player->Character->IsTrading())
+	if(Player->Character->IsTrading() && Tradable)
 		HelpTextList.push_back("Shift+click to move");
 
 	// Split hint
