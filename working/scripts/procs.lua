@@ -283,8 +283,8 @@ Proc_Sanctuary = Base_Proc:New()
 Proc_Sanctuary.Buff = Buff_Sanctuary
 Proc_Sanctuary.OnSelf = true
 Proc_Sanctuary.ChancePerLevel = 1
-Proc_Sanctuary.LevelPerLevel = 1
-Proc_Sanctuary.DurationPerLevel = 0.1
+Proc_Sanctuary.LevelPerLevel = 0.5
+Proc_Sanctuary.DurationPerLevel = 0
 
 function Proc_Sanctuary.GetInfo(self, Source, Item)
 	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for a level [c green]" .. self:GetLevel(Source, Item) .. "[c white] [c yellow]sanctuary[c white] buff for [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
