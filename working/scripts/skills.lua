@@ -350,7 +350,7 @@ Skill_Gash.ChancePerLevel = 1
 Skill_Gash.Duration = 5
 Skill_Gash.IncreasePerLevel = 1
 Skill_Gash.BleedingLevel = 10
-Skill_Gash.BleedScale = 2.0
+Skill_Gash.BleedScale = 1.1
 
 function Skill_Gash.CanUse(self, Level, Source, Target)
 	OffHandCount = 0
