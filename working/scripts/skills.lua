@@ -774,7 +774,7 @@ end
 -- Pet Mastery --
 
 Skill_PetMastery = {}
-Skill_PetMastery.Power = 50
+Skill_PetMastery.Power = 25
 Skill_PetMastery.PowerPerLevel = 5
 Skill_PetMastery.SummonLimit = 1.1
 Skill_PetMastery.SummonLimitPerLevel = 0.1
