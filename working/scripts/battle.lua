@@ -174,7 +174,7 @@ Base_SummonSpell = {
 	end,
 
 	GetLimit = function(self, Source, Level)
-		return math.min(math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit), BATTLE_LIMIT-1)
+		return math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit)
 	end,
 
 	GetSkillLevel = function(self, Source, Level)
