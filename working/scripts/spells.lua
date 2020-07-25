@@ -468,10 +468,10 @@ Skill_DemonicConjuring.ManaCostBase = 25 - Skill_DemonicConjuring.CostPerLevel
 Skill_DemonicConjuring.BaseHealth = 100
 Skill_DemonicConjuring.BaseMinDamage = 10
 Skill_DemonicConjuring.BaseMaxDamage = 20
-Skill_DemonicConjuring.BaseArmor = 1
+Skill_DemonicConjuring.BaseArmor = 1.1
 Skill_DemonicConjuring.HealthPerLevel = 40
 Skill_DemonicConjuring.DamagePerLevel = 10
-Skill_DemonicConjuring.ArmorPerLevel = 1
+Skill_DemonicConjuring.ArmorPerLevel = 0.1
 Skill_DemonicConjuring.Limit = 1
 Skill_DemonicConjuring.LimitPerLevel = 0.05
 Skill_DemonicConjuring.Duration = 15
@@ -485,7 +485,7 @@ Skill_DemonicConjuring.SpecialMonster = Monsters[39]
 function Skill_DemonicConjuring.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
 
-	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon an ice imp\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level) .. "[c white] armor and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon an ice imp\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
@@ -542,7 +542,7 @@ Skill_RaiseDead.BaseArmor = 1
 Skill_RaiseDead.HealthPerLevel = 30
 Skill_RaiseDead.ManaPerLevel = 20
 Skill_RaiseDead.DamagePerLevel = 8
-Skill_RaiseDead.ArmorPerLevel = 0.25
+Skill_RaiseDead.ArmorPerLevel = 0.05
 Skill_RaiseDead.SpecialChance = 35
 Skill_RaiseDead.SpecialChancePerLevel = 0
 Skill_RaiseDead.Limit = 2
@@ -575,7 +575,7 @@ end
 function Skill_RaiseDead.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
 
-	return "Raise a skeleton from the dead that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP and does [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Raise a skeleton from a corpse with [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level) .. "[c white] armor and [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
