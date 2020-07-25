@@ -1048,6 +1048,9 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 		if(Object->Character->Battle->PVP)
 			continue;
 
+		if(Object->Character->Hardcore != Player->Character->Hardcore)
+			continue;
+
 		glm::vec2 Delta = Object->Position - Player->Position;
 		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
 			continue;
@@ -1086,6 +1089,10 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 
 		// Check for character
 		if(!Object->Character)
+			continue;
+
+		// Check hardcore
+		if(Object->Character->Hardcore != Attacker->Character->Hardcore)
 			continue;
 
 		// Check if target can PVP
@@ -1134,6 +1141,9 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 			continue;
 
 		if(Object->Character->TradePlayer)
+			continue;
+
+		if(Object->Character->Hardcore != Player->Character->Hardcore)
 			continue;
 
 		if(Object->Character->Rebirths != Player->Character->Rebirths)
