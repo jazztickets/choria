@@ -596,7 +596,7 @@ function Item_UnstablePotion.GetTargetCount(self, Level)
 end
 
 function Item_UnstablePotion.GetInfo(self, Source, Item)
-	return "Toss an unstable potion at your enemies, blinding them for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Toss an unstable potion at your enemies, blinding them by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_UnstablePotion.Use(self, Level, Duration, Source, Target, Result)
