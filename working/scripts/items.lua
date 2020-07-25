@@ -1058,7 +1058,7 @@ function RebirthText(UpgradeText, Source)
 	KeepText = KeepText .. "[c green]" .. Source.RebirthPower .. "[c white] item" .. Plural .." in your trade bag\n"
 	KeepText = "\n\n[c yellow]You will keep\n" .. KeepText
 
-	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText
+	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
 end
 
 Item_EternalStrength = { Value = 10 }
