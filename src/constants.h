@@ -109,7 +109,7 @@ const  int          PLAYER_MAX_GOLD                 =  1000000000;
 const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
 //     Game
 const  int          GAME_MAX_RESISTANCE             =  75;
-const  int          GAME_MIN_RESISTANCE             =  -100;
+const  int          GAME_MIN_RESISTANCE             =  -200;
 const  int          GAME_MAX_EVASION                =  90;
 const  int          GAME_BASE_DIFFICULTY            =  100;
 const  int          GAME_DIFFICULTY_PER_PLAYER      =  10;
