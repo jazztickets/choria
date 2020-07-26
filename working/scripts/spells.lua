@@ -716,13 +716,25 @@ Skill_Fracture.CostPerLevel = 5
 Skill_Fracture.ManaCostBase = 40 - Skill_Fracture.CostPerLevel
 Skill_Fracture.Armor = 5
 Skill_Fracture.ArmorPerLevel = 1
+Skill_Fracture.BaseTargets = 1
+Skill_Fracture.TargetsPerLevel = 0.1
 
 function Skill_Fracture.GetReduction(self, Level)
 	return math.floor(self.Armor + self.ArmorPerLevel * (Level - 1))
 end
 
+function Skill_Fracture.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+end
+
 function Skill_Fracture.GetInfo(self, Source, Item)
-	return "Decimate target's defenses, reducing their armor by [c green]" .. self:GetReduction(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
+	TargetCount = self:GetTargetCount(Item.Level)
+	Plural = "enemy"
+	if TargetCount ~= 1 then
+		Plural = "enemies"
+	end
+
+	return "Decimate the defenses of [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] " .. Plural .. ", reducing their armor by [c green]" .. self:GetReduction(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
 end
 
 function Skill_Fracture.Use(self, Level, Duration, Source, Target, Result)

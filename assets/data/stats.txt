@@ -1775,7 +1775,7 @@ INSERT INTO item VALUES(42,1,6,9,2,0,0,'Rupture','textures/skills/rupture.png','
 INSERT INTO item VALUES(43,1,0,5,3,0,0,'Sanctuary','textures/skills/sanctuary.png','Skill_Sanctuary',3,1800,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,10.0,0,0);
 INSERT INTO item VALUES(44,1,0,4,2,0,0,'Flay','textures/skills/flay.png','Skill_Flay',3,2500,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0,0,0);
 INSERT INTO item VALUES(45,1,6,2,2,0,0,'Poison Touch','textures/skills/poison_touch.png','Skill_PoisonTouch',3,225,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
-INSERT INTO item VALUES(46,1,0,2,2,0,0,'Fracture','textures/skills/fracture.png','Skill_Fracture',3,650,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0,0,0);
+INSERT INTO item VALUES(46,1,0,4,2,0,0,'Fracture','textures/skills/fracture.png','Skill_Fracture',3,650,0,0,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,5.0,0,0);
 INSERT INTO item VALUES(47,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(48,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(49,1,0,0,0,0,0,'','','',0,0,0,0,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
