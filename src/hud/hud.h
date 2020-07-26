@@ -239,6 +239,7 @@ class _HUD {
 		ae::_Element *StatusEffectsElement;
 		ae::_Element *ActionBarElement;
 		ae::_Element *ButtonBarElement;
+		ae::_Element *FullscreenElement;
 		ae::_Element *MinigameElement;
 		ae::_Element *PartyElement;
 		ae::_Element *TeleportElement;

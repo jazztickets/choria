@@ -95,6 +95,7 @@ _HUD::_HUD() {
 	MessageElement = ae::Assets.Elements["element_hud_message"];
 	MessageLabel = ae::Assets.Elements["label_hud_message"];
 	RespawnInstructions = ae::Assets.Elements["label_died_respawn"];
+	FullscreenElement = ae::Assets.Elements["button_fullscreen"];
 
 	DarkOverlayElement->SetActive(false);
 	ConfirmElement->SetActive(false);
@@ -112,6 +113,7 @@ _HUD::_HUD() {
 	GoldElement->SetActive(true);
 	MessageElement->SetActive(false);
 	RecentItemsElement->SetActive(false);
+	FullscreenElement->SetActive(true);
 
 	ae::Assets.Elements["label_hud_pvp"]->SetActive(true);
 	ae::Assets.Elements["element_hud"]->SetActive(true);
@@ -341,9 +343,9 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_menu") {
 				ToggleInGameMenu(true);
 			}
-			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_fullscreen") {
-				Menu.SetFullscreen(!Config.Fullscreen);
-			}
+		}
+		else if(FullscreenElement->GetClickedElement() && FullscreenElement->GetClickedElement()->Name == "button_fullscreen") {
+			Menu.SetFullscreen(!Config.Fullscreen);
 		}
 		// Check inventory tabs
 		else if(InventoryScreen->Element->GetClickedElement()) {
@@ -730,6 +732,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 	// Draw button bar
 	ButtonBarElement->Render();
+	FullscreenElement->Render();
 
 	// Draw hud elements while alive or in battle
 	if(Player->Character->IsAlive() || Player->Character->Battle) {

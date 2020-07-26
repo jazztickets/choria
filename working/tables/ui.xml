@@ -237,9 +237,9 @@
 			<element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
-		<element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" enabled="false">
-			<element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="48" size_y="48" enabled="false"/>
-		</element>
+	</element>
+	<element id="button_fullscreen" hover_style="style_menu_hover" size_x="24" size_y="24" alignment_x="2" alignment_y="0" clickable="true">
+		<element id="image_fullscreen" texture="textures/hud/fullscreen.png" size_x="24" size_y="24"/>
 	</element>
 	<element id="element_hud_statuseffects" offset_y="-138" size_x="512" size_y="48" alignment_y="2" index="2"/>
 	<element id="element_actionbar" offset_y="-20" size_x="512" size_y="64" alignment_y="2" index="3">
