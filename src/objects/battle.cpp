@@ -1096,7 +1096,7 @@ bool _Battle::ClientHandleInput(size_t Action, bool MouseCombat) {
 		break;
 	}
 
-	return true;
+	return false;
 }
 
 // Handle action from another player
