@@ -143,7 +143,7 @@ void _DedicatedState::ShowPlayers() {
 			if(Peer->Object->Map)
 				MapID = Peer->Object->Map->NetworkID;
 
-			std::cout << ", network_id=" << Peer->Object->NetworkID << ", map_id=" << MapID << ", name=" << Peer->Object->Name;
+			std::cout << ", network_id=" << Peer->Object->NetworkID << ", map_id=" << MapID << ", name=" << Peer->Object->Name << ", hardcore=" << (int)Peer->Object->Character->Hardcore;
 		}
 
 		std::cout << std::endl;
