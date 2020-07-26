@@ -68,7 +68,6 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 	Object = Manager->GetObject(NetworkID);
 	if(!Object) {
 		std::cout << "_StatChange::Unserialize BadObject NetworkID=" << NetworkID << std::endl;
-		return;
 	}
 
 	// Get change count
@@ -85,7 +84,8 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 		// Get data
 		if(Type == StatType::BUFF) {
 			uint16_t BuffID = Data.Read<uint16_t>();
-			Values[Type].Pointer = (void *)Object->Stats->BuffsIndex.at(BuffID);
+			if(Object)
+				Values[Type].Pointer = (void *)Object->Stats->BuffsIndex.at(BuffID);
 		}
 		else
 			Values[Type].Integer = Data.Read<int>();
