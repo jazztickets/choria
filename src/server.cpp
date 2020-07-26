@@ -1182,6 +1182,8 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	_Object *Player = Peer->Object;
+	if(!Player->Character->Trader)
+		return;
 
 	// Get trader information
 	std::vector<_Slot> RequiredItemSlots(Player->Character->Trader->Items.size());
