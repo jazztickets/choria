@@ -516,7 +516,7 @@ void _Character::CalculateStats() {
 	// Cap resistances
 	for(auto &Resist : Resistances) {
 		Resist.second = std::min(Resist.second, GAME_MAX_RESISTANCE);
-		Resist.second = std::max(Resist.second, -GAME_MAX_RESISTANCE);
+		Resist.second = std::max(Resist.second, GAME_MIN_RESISTANCE);
 	}
 
 	// Get physical resistance from armor
