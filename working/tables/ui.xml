@@ -193,6 +193,15 @@
 	</element>
 	<element id="element_hud_experience" offset_y="0" size_x="512" size_y="20" alignment_y="2">
 		<element id="image_hud_experience_bar_empty" texture="textures/hud_repeat/experience_empty.png" size_y="20" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch1" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="51" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch2" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="102" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch3" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="153" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch4" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="204" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch5" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="255" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch6" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="306" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch7" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="357" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch8" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="408" alignment_x="0" alignment_y="0"/>
+		<element id="image_hud_experience_bar_notch9" texture="textures/hud_repeat/experience_notch.png" size_x="1" size_y="20" offset_x="459" alignment_x="0" alignment_y="0"/>
 		<element id="image_hud_experience_bar_full" texture="textures/hud_repeat/experience_full.png" size_y="20" alignment_x="0" alignment_y="0"/>
 		<element id="label_hud_experience" font="hud_tiny" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
 	</element>
