@@ -519,7 +519,7 @@ function Skill_Whirlwind.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Slash all enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
+	return "Spin around and slash all enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
 end
 
 function Skill_Whirlwind.PlaySound(self, Level)
@@ -806,10 +806,7 @@ Skill_Flee.DurationPerLevel = -0.1
 Skill_Flee.Constant = 30
 Skill_Flee.BasePercent = 32
 Skill_Flee.Multiplier = 100
-
-function Skill_Flee.GetChance(self, Level)
-	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
-end
+Skill_Flee.MissMultiplier = 25
 
 function Skill_Flee.CanUse(self, Level, Source, Target)
 	if not Source.BossBattle then
@@ -819,8 +816,25 @@ function Skill_Flee.CanUse(self, Level, Source, Target)
 	return Source.BossBattle and Source.GoldStolen == 0
 end
 
-function Skill_Flee.GetChance(self, Level)
-	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
+function Skill_Flee.GetAttempts(self, Source)
+	if Source.Server == false then
+		return 0
+	end
+
+	if Source.BattleID ~= nil and Battles[Source.BattleID] ~= nil then
+		local Storage = Battles[Source.BattleID]
+		if Storage[Source.ID] ~= nil then
+			return Storage[Source.ID].FleeAttempts
+		end
+	end
+
+	return 0
+end
+
+function Skill_Flee.GetChance(self, Source, Level)
+	ExtraChance = self:GetAttempts(Source) * self.MissMultiplier
+	Chance = math.min(math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent) + ExtraChance, 100)
+	return Chance
 end
 
 function Skill_Flee.GetDuration(self, Level)
@@ -828,7 +842,7 @@ function Skill_Flee.GetDuration(self, Level)
 end
 
 function Skill_Flee.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to run away from battle\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n\n[c yellow]Unusable in boss battles after [c yellow]pickpocketing"
+	return "[c green]" .. self:GetChance(Source, Item.Level) .. "% [c white]chance to run away from battle\nChance to flee goes up by [c green]" .. self.MissMultiplier .. "%[c white] after a failed attempt\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n\n[c yellow]Unusable in boss battles after [c yellow]pickpocketing"
 end
 
 function Skill_Flee.ApplyCost(self, Source, Level, Result)
@@ -840,13 +854,22 @@ function Skill_Flee.ApplyCost(self, Source, Level, Result)
 end
 
 function Skill_Flee.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= self:GetChance(Level) then
+	local Storage = Battles[Source.BattleID]
+	if Storage[Source.ID] == nil then
+		Storage[Source.ID] = { FleeAttempts = 0 }
+	elseif Storage[Source.ID].FleeAttempts == nil then
+		Storage[Source.ID].FleeAttempts = 0
+	end
+
+	if Roll <= self:GetChance(Source, Level) then
 		Result.Target.Flee = true
 		Result.Target.Buff = Buff_Slowed.Pointer
 		Result.Target.BuffLevel = 35
 		Result.Target.BuffDuration = self.Duration
 		return true
 	end
+
+	Storage[Source.ID].FleeAttempts = Storage[Source.ID].FleeAttempts + 1
 
 	return false
 end

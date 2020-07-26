@@ -471,6 +471,12 @@ void _Scripting::PushObject(_Object *Object) {
 		lua_pushboolean(LuaState, false);
 	lua_setfield(LuaState, -2, "BossBattle");
 
+	if(Object->Server)
+		lua_pushboolean(LuaState, true);
+	else
+		lua_pushboolean(LuaState, false);
+	lua_setfield(LuaState, -2, "Server");
+
 	lua_pushinteger(LuaState, Object->Monster->DatabaseID);
 	lua_setfield(LuaState, -2, "MonsterID");
 
