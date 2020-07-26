@@ -1015,14 +1015,24 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 		if(!Object->Character)
 			continue;
 
+		// Skip self target
 		if(Object == Player)
 			continue;
 
+		// Check hardcore
+		if(Object->Character->Hardcore != Player->Character->Hardcore)
+			continue;
+
+		// Check level restrictions
 		if(Object->Character->Rebirths != Player->Character->Rebirths || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE)
 			continue;
 
+		// Check party name
+		if(Player->Character->PartyName != Object->Character->PartyName)
+			continue;
+
 		glm::vec2 Delta = Object->Position - Player->Position;
-		if(glm::dot(Delta, Delta) <= DistanceSquared && Object->Character->CanBattle() && Player->Character->PartyName == Object->Character->PartyName) {
+		if(glm::dot(Delta, Delta) <= DistanceSquared && Object->Character->CanBattle()) {
 			Players.push_back(Object);
 			if(Players.size() >= Max)
 				return;
