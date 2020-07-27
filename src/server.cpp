@@ -615,6 +615,7 @@ void _Server::HandleCharacterDelete(ae::_Buffer &Data, ae::_Peer *Peer) {
 void _Server::HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Read packet
+	bool Offline = Data.ReadBit();
 	uint32_t Slot = Data.Read<uint8_t>();
 
 	// Check for valid character id
@@ -628,11 +629,13 @@ void _Server::HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Send map and players to new player
+	Peer->Object->Character->Offline = Offline;
 	SpawnPlayer(Peer->Object, Peer->Object->Character->LoadMapID, _Map::EVENT_NONE);
 
 	// Broadcast message
 	std::string Message = Peer->Object->Name + " has joined the server";
-	BroadcastMessage(Peer, Message, "gray");
+	if(!Peer->Object->Character->Offline)
+		BroadcastMessage(Peer, Message, "gray");
 
 	// Log
 	Log << "[JOIN] Player " << Message << " ( character_id=" << Peer->CharacterID << " )" << std::endl;
@@ -701,7 +704,8 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Message.resize(HUD_CHAT_SIZE);
 
 	// Send message to other players
-	BroadcastMessage(nullptr, Player->Name + ": " + Message, "white");
+	if(!Player->Character->Offline)
+		BroadcastMessage(nullptr, Player->Name + ": " + Message, "white");
 
 	// Log
 	Log << "[CHAT] " << Player->Name + ": " + Message << std::endl;
@@ -1790,7 +1794,8 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Peer = nullptr;
 
 		if(Player->Map) {
-			BroadcastMessage(Peer, Player->Name + " has left the server", "gray");
+			if(!Player->Character->Offline)
+				BroadcastMessage(Peer, Player->Name + " has left the server", "gray");
 			Player->Character->LoadMapID = Player->GetMapID();
 		}
 
@@ -2112,8 +2117,13 @@ void _Server::SendMessage(ae::_Peer *Peer, const std::string &Message, const std
 // Broadcast message to all peers
 void _Server::BroadcastMessage(ae::_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName) {
 	for(auto &Peer : Network->GetPeers()) {
-		if(Peer != IgnorePeer)
-			SendMessage(Peer, Message, ColorName);
+		if(Peer == IgnorePeer)
+			continue;
+
+		if(Peer->Object->Character->Offline)
+			continue;
+
+		SendMessage(Peer, Message, ColorName);
 	}
 }
 

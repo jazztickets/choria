@@ -155,6 +155,7 @@ class _Character {
 		bool DiagonalMovement;
 		bool LavaProtection;
 		bool Hardcore;
+		bool Offline;
 		uint8_t Status;
 
 		// Records

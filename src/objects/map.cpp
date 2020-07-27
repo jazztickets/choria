@@ -1010,6 +1010,8 @@ void _Map::AddObject(_Object *Object) {
 
 // Returns a list of players close to a player that can battle
 void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players) {
+	if(Player && Player->Character->Offline)
+		return;
 
 	for(const auto &Object : Objects) {
 		if(!Object->Character)
@@ -1021,6 +1023,10 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 
 		// Check hardcore
 		if(Object->Character->Hardcore != Player->Character->Hardcore)
+			continue;
+
+		// Check offline mode
+		if(Object->Character->Offline)
 			continue;
 
 		// Check level restrictions
@@ -1042,6 +1048,9 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 
 // Returns a battle instance close to a player
 _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction) {
+	if(Player && Player->Character->Offline)
+		return nullptr;
+
 	for(const auto &Object : Objects) {
 		if(!Object->Character)
 			continue;
@@ -1050,6 +1059,9 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 			continue;
 
 		if(!Object->Character->IsAlive())
+			continue;
+
+		if(Object->Character->Offline)
 			continue;
 
 		if(!Object->Character->Battle)
@@ -1086,6 +1098,8 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 
 // Returns target players appropriate for pvp
 void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players, bool UsePVPZone) {
+	if(Attacker && Attacker->Character->Offline)
+		return;
 
 	// Attacker must be in PVP zone
 	if(UsePVPZone && !IsPVPZone(Attacker->Position))
@@ -1099,6 +1113,10 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 
 		// Check for character
 		if(!Object->Character)
+			continue;
+
+		// Check offline
+		if(Object->Character->Offline)
 			continue;
 
 		// Check hardcore
@@ -1137,6 +1155,8 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 
 // Returns the closest player
 _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) {
+	if(Player && Player->Character->Offline)
+		return nullptr;
 
 	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
@@ -1148,6 +1168,9 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 			continue;
 
 		if(!Object->Character->WaitingForTrade)
+			continue;
+
+		if(Object->Character->Offline)
 			continue;
 
 		if(Object->Character->TradePlayer)
@@ -1175,6 +1198,8 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 
 // Find a player that's dead in the world
 _Object *_Map::FindDeadPlayer(const _Object *Player, float MaxDistanceSquared) {
+	if(Player && Player->Character->Offline)
+		return nullptr;
 
 	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
@@ -1183,6 +1208,9 @@ _Object *_Map::FindDeadPlayer(const _Object *Player, float MaxDistanceSquared) {
 			continue;
 
 		if(Object->Character->IsAlive())
+			continue;
+
+		if(Object->Character->Offline)
 			continue;
 
 		if(Object->Character->Hardcore)

@@ -440,6 +440,7 @@ void _Menu::PlayCharacter(size_t Slot) {
 
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
+	Packet.WriteBit(Config.Offline);
 	Packet.Write<uint8_t>((uint8_t)Slot);
 	PlayState.Network->SendPacket(Packet);
 

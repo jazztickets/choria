@@ -62,6 +62,7 @@ class _Config {
 		size_t MaxClients;
 		double FakeLag;
 		double NetworkRate;
+		bool Offline;
 		uint16_t NetworkPort;
 
 		// Editor

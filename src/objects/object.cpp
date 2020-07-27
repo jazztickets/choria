@@ -310,6 +310,12 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	if(!ModelTexture)
 		return;
 
+	if(ClientPlayer && ClientPlayer->Character->Offline && ClientPlayer != this)
+		return;
+
+	if(Character->Offline && ClientPlayer != this)
+		return;
+
 	// Setup shader
 	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
 	glUniformMatrix4fv(ae::Assets.Programs["map"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
@@ -837,6 +843,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	Data.Write<int>(Character->Rebirths);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
+	Data.WriteBit(Character->Offline);
 }
 
 // Serialize for ObjectUpdate
@@ -977,6 +984,7 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Character->Rebirths = Data.Read<int>();
 	Light = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();
+	Character->Offline = Data.ReadBit();
 
 	Character->Portrait = Stats->GetPortraitImage(Character->PortraitID);
 	ModelTexture = Stats->Models.at(ModelID).Texture;

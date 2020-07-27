@@ -112,6 +112,7 @@ void _Config::SetDefaults() {
 	FakeLag = 0.0;
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
+	Offline = false;
 	ShowTutorial = 1;
 	RightClickSell = 0;
 	DesignToolURL = "http://localhost:8000";
@@ -252,6 +253,7 @@ void _Config::Load() {
 	GetValue("last_port", LastPort);
 	GetValue("autosave_period", AutoSavePeriod);
 	GetValue("rightclick_sell", RightClickSell);
+	GetValue("offline", Offline);
 
 	if(NetworkRate < 0.01)
 		NetworkRate = 0.01;
@@ -313,6 +315,7 @@ void _Config::Save() {
 	File << "last_port=" << LastPort << std::endl;
 	File << "autosave_period=" << AutoSavePeriod << std::endl;
 	File << "rightclick_sell=" << RightClickSell << std::endl;
+	File << "offline=" << Offline << std::endl;
 
 	// Write out input map
 	ae::Actions.Serialize(File, ae::_Input::KEYBOARD);

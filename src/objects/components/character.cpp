@@ -51,6 +51,7 @@ _Character::_Character(_Object *Object) :
 	DiagonalMovement(false),
 	LavaProtection(false),
 	Hardcore(false),
+	Offline(false),
 	Status(0),
 
 	PlayTime(0.0),
