@@ -554,7 +554,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		LightCount += AddLights(ClientPlayer, &Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
-		LightCount += AddLights(ClientPlayer, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		LightCount += AddLights(nullptr, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -738,11 +738,13 @@ int _Map::AddLights(_Object *ClientPlayer, const std::list<_Object *> *ObjectLis
 		if(!Object->Light)
 			continue;
 
-		if(ClientPlayer && ClientPlayer->Character->Offline && ClientPlayer != Object)
-			continue;
+		if(ClientPlayer) {
+			if(ClientPlayer->Character->Offline && ClientPlayer != Object)
+				continue;
 
-		if(ClientPlayer != Object && Object->Character->Offline)
-			continue;
+			if(ClientPlayer != Object && Object->Character->Offline)
+				continue;
+		}
 
 		// Check for valid light
 		const auto &Iterator = Stats->Lights.find(Object->Light);
