@@ -553,8 +553,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		int LightCount = 0;
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		LightCount += AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
-		LightCount += AddLights(&StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		LightCount += AddLights(ClientPlayer, &Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		LightCount += AddLights(ClientPlayer, &StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -728,7 +728,7 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 }
 
 // Add lights from objects
-int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
+int _Map::AddLights(_Object *ClientPlayer, const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
 	ae::Graphics.SetProgram(Program);
 	glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
@@ -736,6 +736,12 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 	int LightCount = 0;
 	for(const auto &Object : *ObjectList) {
 		if(!Object->Light)
+			continue;
+
+		if(ClientPlayer && ClientPlayer->Character->Offline && ClientPlayer != Object)
+			continue;
+
+		if(ClientPlayer != Object && Object->Character->Offline)
 			continue;
 
 		// Check for valid light
