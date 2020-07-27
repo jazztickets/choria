@@ -2120,7 +2120,7 @@ void _Server::BroadcastMessage(ae::_Peer *IgnorePeer, const std::string &Message
 		if(Peer == IgnorePeer)
 			continue;
 
-		if(Peer->Object->Character->Offline)
+		if(Peer->Object && Peer->Object->Character->Offline)
 			continue;
 
 		SendMessage(Peer, Message, ColorName);
