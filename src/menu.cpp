@@ -331,7 +331,7 @@ void _Menu::InitAccount() {
 	Button->SetEnabled(true);
 
 	// Set focus
-	ae::FocusedElement = Username;
+	ae::FocusedElement = Username->Text == "" ? Username : Password;
 	Username->ResetCursor();
 
 	State = STATE_ACCOUNT;
@@ -491,11 +491,14 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.Write<uint64_t>(0);
 	PlayState.Network->SendPacket(Packet);
 
+	DefaultUsername = Username->Text;
+
 	ae::FocusedElement = nullptr;
 }
 
 // Request character list from server
 void _Menu::RequestCharacterList() {
+	Config.LastUsername = DefaultUsername;
 
 	// Request character list
 	ae::_Buffer Packet;

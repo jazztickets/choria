@@ -116,6 +116,7 @@ void _Config::SetDefaults() {
 	ShowTutorial = 1;
 	RightClickSell = 0;
 	DesignToolURL = "http://localhost:8000";
+	LastUsername = "";
 	LastHost = "127.0.0.1";
 	LastPort = std::to_string(DEFAULT_NETWORKPORT);
 
@@ -249,6 +250,7 @@ void _Config::Load() {
 	GetValue("browser_command", BrowserCommand);
 	GetValue("designtool_url", DesignToolURL);
 	GetValue("showtutorial", ShowTutorial);
+	GetValue("last_username", LastUsername);
 	GetValue("last_host", LastHost);
 	GetValue("last_port", LastPort);
 	GetValue("autosave_period", AutoSavePeriod);
@@ -311,6 +313,7 @@ void _Config::Save() {
 	File << "browser_command=" << BrowserCommand << std::endl;
 	File << "designtool_url=" << DesignToolURL << std::endl;
 	File << "showtutorial=" << ShowTutorial << std::endl;
+	File << "last_username=" << LastUsername << std::endl;
 	File << "last_host=" << LastHost << std::endl;
 	File << "last_port=" << LastPort << std::endl;
 	File << "autosave_period=" << AutoSavePeriod << std::endl;

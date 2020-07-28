@@ -71,6 +71,7 @@ class _Config {
 
 		// Misc
 		int ShowTutorial;
+		std::string LastUsername;
 		std::string LastHost;
 		std::string LastPort;
 

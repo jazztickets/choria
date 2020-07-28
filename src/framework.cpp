@@ -58,6 +58,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	bool LoadClientAssets = true;
 	bool AudioEnabled = true;
 	DedicatedState.SetNetworkPort(Config.NetworkPort);
+	Menu.SetUsername(Config.LastUsername);
 
 	// Process arguments
 	std::string Token;
