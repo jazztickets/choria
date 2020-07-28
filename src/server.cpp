@@ -354,7 +354,7 @@ void _Server::HandleDisconnect(ae::_NetworkEvent &Event) {
 	Log << "[DISCONNECT] Disconnect from " << Buffer << ":" << Address->port << std::endl;
 
 	ae::_Buffer Data;
-	HandleExit(Data, Event.Peer);
+	HandleExit(Data, Event.Peer, true);
 
 	// Delete peer from network
 	Network->DeletePeer(Event.Peer);
@@ -1784,7 +1784,7 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 }
 
 // Handle client exit command
-void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
+void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1800,7 +1800,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 		}
 
 		// Penalize player for leaving battle
-		if(Player->Character->Battle) {
+		if(!FromDisconnect && Player->Character->Battle) {
 			Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
 			Player->Character->Health = 0;
 			Player->Character->Mana = Player->Character->MaxMana / 2;
