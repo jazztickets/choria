@@ -499,6 +499,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 // Request character list from server
 void _Menu::RequestCharacterList() {
 	Config.LastUsername = DefaultUsername;
+	Config.Save();
 
 	// Request character list
 	ae::_Buffer Packet;
