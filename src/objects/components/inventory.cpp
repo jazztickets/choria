@@ -279,15 +279,12 @@ void _Inventory::SpendItems(const _Item *Item, int Count) {
 
 // Find a suitable slot for an item
 _Slot _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
-	if(!Item)
-		return _Slot();
-
 	_Slot Slot = FindSlotForItemInBag(BagType::EQUIPMENT, Item, Upgrades, Count);
 	if(!IsValidSlot(Slot))
 		Slot = FindSlotForItemInBag(BagType::INVENTORY, Item, Upgrades, Count);
 
 	// Add key to keychain
-	if(!IsValidSlot(Slot) && Item->Type == ItemType::KEY && !GetBag(BagType::KEYS).HasItemID(Item->ID))
+	if(!IsValidSlot(Slot) && Item && Item->Type == ItemType::KEY && !GetBag(BagType::KEYS).HasItemID(Item->ID))
 		GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(Item, 1));
 
 	return Slot;
