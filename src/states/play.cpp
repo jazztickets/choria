@@ -94,6 +94,7 @@ void _PlayState::Init() {
 	HUD = nullptr;
 	Time = 0.0;
 	CoinSoundPlayed = false;
+	DoneOnDisconnect = false;
 
 	ae::Graphics.Element->SetActive(false);
 	ae::Graphics.Element->Active = true;
@@ -578,7 +579,10 @@ void _PlayState::HandleQuit() {
 	if(Network && Network->IsConnected()) {
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_EXIT);
+		Packet.WriteBit(1);
 		Network->SendPacket(Packet);
+
+		DoneOnDisconnect = true;
 	}
 	else
 		Framework.Done = true;
@@ -821,6 +825,9 @@ void _PlayState::HandleDisconnect() {
 
 	DeleteBattle();
 	DeleteMap();
+
+	if(DoneOnDisconnect)
+		Framework.Done = true;
 }
 
 // Handle packet from server

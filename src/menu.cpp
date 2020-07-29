@@ -273,6 +273,7 @@ void _Menu::ExitGame() {
 	// Notify server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_EXIT);
+	Packet.WriteBit(0);
 	PlayState.Network->SendPacket(Packet);
 
 	// Shutdown game

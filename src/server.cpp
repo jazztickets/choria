@@ -1788,6 +1788,8 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 	if(!Peer)
 	   return;
 
+	bool Disconnect = Data.ReadBit();
+
 	// Get object
 	_Object *Player = Peer->Object;
 	if(Player) {
@@ -1827,7 +1829,8 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 		Peer->Object = nullptr;
 	}
 
-	Network->DisconnectPeer(Peer);
+	if(Disconnect)
+		Network->DisconnectPeer(Peer);
 }
 
 // Handle console commands

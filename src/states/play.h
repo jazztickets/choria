@@ -121,6 +121,7 @@ class _PlayState : public ae::_State {
 		_Server *Server;
 		std::string HostAddress;
 		uint16_t ConnectPort;
+		bool DoneOnDisconnect;
 
 		// Menu
 		_Map *MenuMap;
