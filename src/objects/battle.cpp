@@ -315,6 +315,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		// Notify server
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACTION_USE);
+		Packet.WriteBit(1);
 		Packet.Write<uint8_t>(ActionBarSlot);
 		Packet.Write<uint8_t>((uint8_t)ClientPlayer->Character->Targets.size());
 		for(const auto &BattleTarget : ClientPlayer->Character->Targets)

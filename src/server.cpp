@@ -1925,7 +1925,9 @@ void _Server::HandleActionUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	// Set action used
-	Player->SetActionUsing(Data, ObjectManager);
+	bool WasSet = Player->SetActionUsing(Data, ObjectManager);
+	if(!WasSet)
+		return;
 
 	// Check for battle
 	if(Player->Character->Battle) {

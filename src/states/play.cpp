@@ -1783,6 +1783,7 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	// Send use to server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_USE);
+	Packet.WriteBit(Player->Character->Battle != nullptr);
 	Packet.Write<uint8_t>(Slot);
 	Packet.Write<uint8_t>(1);
 	Packet.Write<uint32_t>(Player->NetworkID);

@@ -111,7 +111,7 @@ class _Object : public ae::_BaseObject {
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
 
 		// Actions
-		void SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager);
+		bool SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager);
 
 		// Movement
 		void GetDirectionFromInput(int InputState, glm::ivec2 &Direction);

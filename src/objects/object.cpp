@@ -1491,37 +1491,42 @@ void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 	}
 }
 
-// Set action and targets
-void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager) {
+// Set action and targets, return false if no action set
+bool _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager) {
 
 	// Check for needed commands
 	if(!Character->Action.IsSet()) {
 
+		bool WasInBattle = Data.ReadBit();
 		uint8_t ActionBarSlot = Data.Read<uint8_t>();
 		int TargetCount = Data.Read<uint8_t>();
 		if(!TargetCount)
-			return;
+			return false;
+
+		// Check if action use is consistent to player state
+		if(WasInBattle != !!Character->Battle)
+			return false;
 
 		// Get skillbar action
 		if(!Character->GetActionFromActionBar(Character->Action, ActionBarSlot))
-			return;
+			return false;
 
 		// Handle corpse aoe
 		const _Item *Item = Character->Action.Item;
 		if(Item->TargetID == TargetType::ENEMY_CORPSE_AOE) {
 			Character->Targets.clear();
 			if(TargetCount != 1)
-				return;
+				return false;
 
 			// Get first target
 			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
 			if(!Target)
-				return;
+				return false;
 
 			_Battle *Battle = Target->Character->Battle;
 			if(!Battle)
-				return;
+				return false;
 
 			// Set initial target
 			if(Item->CanTarget(Scripting, this, Target))
@@ -1576,8 +1581,9 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 				}
 			}
 		}
-
 	}
+
+	return true;
 }
 
 // Accept a trade from a trader
