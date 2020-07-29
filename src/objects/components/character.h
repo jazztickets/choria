@@ -107,6 +107,7 @@ class _Character {
 		float GetDamagePower(int DamageTypeID);
 
 		// Actions
+		ScopeType GetScope() { return Battle ? ScopeType::BATTLE : ScopeType::WORLD; }
 		void RefreshActionBarCount();
 		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
 		void GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffect *> > &Summons);

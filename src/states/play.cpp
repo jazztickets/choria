@@ -1780,6 +1780,9 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	if(Player->Character->Minigame)
 		return;
 
+	if(!Player->Character->ActionBar[Slot].Item->CheckScope(Player->Character->GetScope()))
+		return;
+
 	// Send use to server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_USE);
