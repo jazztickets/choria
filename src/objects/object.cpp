@@ -1195,7 +1195,14 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Update gold
 	if(StatChange.HasStat(StatType::GOLD)) {
-		Character->UpdateGold(StatChange.Values[StatType::GOLD].Integer);
+		int GoldUpdate = StatChange.Values[StatType::GOLD].Integer;
+		if(Character->Battle && GoldUpdate < 0 && Fighter->GoldStolen) {
+			Fighter->GoldStolen += GoldUpdate;
+			if(Fighter->GoldStolen < 0)
+				Fighter->GoldStolen = 0;
+		}
+
+		Character->UpdateGold(GoldUpdate);
 	}
 
 	// Update gold stolen
