@@ -1785,7 +1785,7 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 // Handle client exit command
 void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect) {
-	if(!ValidatePeer(Peer))
+	if(!Peer)
 	   return;
 
 	// Get object
