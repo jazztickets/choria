@@ -1826,6 +1826,8 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 		Player->Deleted = true;
 		Peer->Object = nullptr;
 	}
+
+	Network->DisconnectPeer(Peer);
 }
 
 // Handle console commands
