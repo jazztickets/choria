@@ -789,17 +789,12 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 			uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
 
 			// Find item id in CDT
-			uint32_t ItemID = 0;
 			for(auto &MonsterDrop : PossibleItemDrops) {
 				if(RandomNumber <= MonsterDrop.Odds) {
-					ItemID = MonsterDrop.ItemID;
+					ItemDrops.push_back(MonsterDrop.ItemID);
 					break;
 				}
 			}
-
-			// Populate item list
-			if(ItemID)
-				ItemDrops.push_back(ItemID);
 		}
 	}
 }
