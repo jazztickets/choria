@@ -767,6 +767,10 @@ void _Battle::ServerEndBattle() {
 			}
 		}
 		else {
+
+			// Give stolen gold back if dead
+			Object->Character->UpdateGold(-Object->Fighter->GoldStolen);
+
 			if(PVP) {
 
 				// Fugitive was bounty hunted, apply regular death penalty
@@ -796,11 +800,12 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// Update stats
-		int CurrentLevel = Object->Character->Level;
+		Object->Fighter->GoldStolen = 0;
 		Object->Character->UpdateExperience(ExperienceEarned);
 		Object->Character->UpdateGold(GoldEarned);
 		Object->Character->CalculateStats();
 		int NewLevel = Object->Character->Level;
+		int CurrentLevel = Object->Character->Level;
 		if(NewLevel > CurrentLevel) {
 			if(Object->Peer)
 				Server->SendMessage(Object->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
