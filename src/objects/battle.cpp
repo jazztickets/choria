@@ -801,12 +801,12 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// Update stats
+		int CurrentLevel = Object->Character->Level;
 		Object->Fighter->GoldStolen = 0;
 		Object->Character->UpdateExperience(ExperienceEarned);
 		Object->Character->UpdateGold(GoldEarned);
 		Object->Character->CalculateStats();
 		int NewLevel = Object->Character->Level;
-		int CurrentLevel = Object->Character->Level;
 		if(NewLevel > CurrentLevel) {
 			if(Object->Peer)
 				Server->SendMessage(Object->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
