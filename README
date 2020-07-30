@@ -117,9 +117,11 @@ Hit G to join an existing battle.
 Hit P to set a private party name.
 Hit Enter to chat with other players.
 
+Save data is in ~/.local/share/choria for Linux and %APPDATA%/choria for Windows
+
 ----- MULTIPLAYER -----
 
-Singleplayer games will start a server in the background on port 31234 by default so other computers can connect to that without having to start a dedicated server.
+Singleplayer games will start a server in the background on port 31234 by default, so other computers can connect to that without having to start a dedicated server.
 
 ----- MAP EDITOR -----
 
@@ -145,7 +147,7 @@ Hit Ctrl+T to toggle day/night ambient light
 
 -- Mouse --
 Use Left-mouse button to apply the current brush
-Click and drag the Left-mouse  button to draw objects at different sizes
+Click and drag the Left-mouse button to draw objects at different sizes
 Use Right-mouse button to pan the camera
 
 Use Mousewheel to zoom the camera in or out
@@ -179,4 +181,3 @@ Hit L to load a map
 Hit S to save
 Hit A to set map info
 
-Save data is in ~/.local/share/choria for Linux and %APPDATA%/choria for Windows

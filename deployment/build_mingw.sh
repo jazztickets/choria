@@ -35,7 +35,7 @@ build() {
 	builddir="$projectdir/build/mingw$bits"
 	mkdir -p "$builddir"
 	pushd "$builddir"
-	cmake -DCMAKE_TOOLCHAIN_FILE=../../cmake/mingw${bits}.cmake ../../
+	cmake -DDISABLE_EDITOR=${DISABLE_EDITOR} -DCMAKE_TOOLCHAIN_FILE=../../cmake/mingw${bits}.cmake ../../
 
 	# build
 	make -j`nproc`
@@ -70,6 +70,7 @@ build() {
 	echo "${project}.exe -server -hardcore" > "${archive_base}"/run_hardcore_server.bat
 	echo "${project}.exe -hardcore" > "${archive_base}"/run_hardcore.bat
 	echo "${project}.exe -test" > "${archive_base}"/run_test.bat
+	echo "${project}.exe -connect host port -username myusername -password mypassword" > "${archive_base}"/run_connect.bat
 	echo -e "${project}.exe -benchmark\npause" > "${archive_base}"/run_benchmark.bat
 	chmod +x "${archive_base}"/*.bat
 

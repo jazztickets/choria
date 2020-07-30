@@ -17,13 +17,21 @@ if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 endif()
 
+# enable editor
+set("DISABLE_EDITOR=${DISABLE_EDITOR}")
+if(DISABLE_EDITOR)
+	add_definitions("-DENABLE_EDITOR=0")
+else()
+	add_definitions("-DENABLE_EDITOR=1")
+endif()
+
 # set default build type
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-result -Wno-unused-parameter -Wno-switch -pedantic -std=c++17 -msse -mfpmath=sse")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-result -Wno-switch -Wno-unused-parameter -pedantic -std=c++17 -msse -mfpmath=sse")
 
 # Set gl preference
 if(NOT DEFINED OpenGL_GL_PREFERENCE)
@@ -94,7 +102,10 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
 # set output path
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/working/)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_definitions("-DDEBUG_BUILD=1")
 	set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${CMAKE_PROJECT_NAME}_debug)
+else()
+	add_definitions("-DDEBUG_BUILD=0")
 endif()
 
 # add custom target to generate version.h
