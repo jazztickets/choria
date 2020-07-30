@@ -1599,7 +1599,7 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
 				uint32_t PortraitID = Buffer.Read<uint32_t>();
 				int Health = Buffer.Read<int>();
-				int Experience = Buffer.Read<int64_t>();
+				int64_t Experience = Buffer.Read<int64_t>();
 
 				// Set level
 				std::stringstream Buffer;
