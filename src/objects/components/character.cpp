@@ -84,6 +84,7 @@ _Character::_Character(_Object *Object) :
 
 	CalcLevelStats(true),
 	Level(0),
+	RebirthTier(0),
 	Experience(0),
 	ExperienceNeeded(0),
 	ExperienceNextLevel(0),
@@ -365,6 +366,7 @@ void _Character::CalculateStats() {
 	MinigameSpeed = 1;
 	ConsumeChance = 100;
 	Difficulty = EternalPain;
+	RebirthTier += RebirthPower;
 	Resistances.clear();
 
 	// Base resistances
@@ -383,10 +385,10 @@ void _Character::CalculateStats() {
 
 	// Eternal Guard
 	if(EternalGuard) {
-		Armor += EternalGuard;
 		DamageBlock += EternalGuard;
+		Armor += EternalGuard / 3;
 		for(int i = 3; i <= 7; i++)
-			Resistances[i] += EternalGuard;
+			Resistances[i] += EternalGuard / 4;
 	}
 
 	// Eternal Fortitude
@@ -568,15 +570,16 @@ void _Character::CalculateLevelStats() {
 	// Find current level
 	const _Level *LevelStat = Object->Stats->FindLevel(Experience);
 	Level = LevelStat->Level;
+	RebirthTier = LevelStat->RebirthTier;
 	ExperienceNextLevel = LevelStat->NextLevel;
 	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
 
 	// Set base attributes
 	BaseMaxHealth = LevelStat->Health;
 	BaseMaxMana = LevelStat->Mana;
-	BaseMinDamage = LevelStat->Damage;
-	BaseMaxDamage = LevelStat->Damage + 1;
-	BaseArmor = LevelStat->Armor;
+	BaseMinDamage = 1;
+	BaseMaxDamage = 2;
+	BaseArmor = 0;
 	BaseDamageBlock = 0;
 	SkillPoints = LevelStat->SkillPoints;
 }

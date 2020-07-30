@@ -1281,14 +1281,16 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->RebirthWisdom += StatChange.Values[StatType::REBIRTH_WISDOM].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_KNOWLEDGE))
 		Character->RebirthKnowledge += StatChange.Values[StatType::REBIRTH_KNOWLEDGE].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_POWER))
-		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_GIRTH))
 		Character->RebirthGirth += StatChange.Values[StatType::REBIRTH_GIRTH].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_PROFICIENCY))
 		Character->RebirthProficiency += StatChange.Values[StatType::REBIRTH_PROFICIENCY].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_INSIGHT))
 		Character->RebirthInsight += StatChange.Values[StatType::REBIRTH_INSIGHT].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_POWER)) {
+		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
+		Character->CalculateStats();
+	}
 
 	// Reset skills
 	if(StatChange.HasStat(StatType::RESPEC)) {
