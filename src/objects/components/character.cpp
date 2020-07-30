@@ -96,6 +96,7 @@ _Character::_Character(_Object *Object) :
 	BaseArmor(0),
 	BaseDamageBlock(0),
 	BaseBattleSpeed(100),
+	BaseSpellDamage(100),
 	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
 
 	Health(1),
@@ -344,6 +345,7 @@ void _Character::CalculateStats() {
 	MaxDamage = BaseMaxDamage;
 	Armor = BaseArmor;
 	DamageBlock = BaseDamageBlock;
+	SpellDamage = BaseSpellDamage;
 	HealthRegen = 0;
 	ManaRegen = 0;
 	HealthUpdateMultiplier = 1.0f;
@@ -352,7 +354,6 @@ void _Character::CalculateStats() {
 	MoveSpeed = 100;
 	Evasion = 0;
 	HitChance = 100;
-	SpellDamage = 100;
 	Pierce = 0;
 	AllSkills = 0;
 

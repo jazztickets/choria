@@ -206,6 +206,7 @@ class _Character {
 		int BaseArmor;
 		int BaseDamageBlock;
 		int BaseBattleSpeed;
+		int BaseSpellDamage;
 		double BaseAttackPeriod;
 
 		// Final attributes

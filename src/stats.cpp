@@ -549,6 +549,10 @@ void _Stats::LoadLights() {
 // Gets monsters stats from the database
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty) const {
 	float DifficultyMultiplier = (100 + Difficulty) * 0.01f;
+	float DamageMultiplier = 1.0f;
+	if(Difficulty >= BATTLE_DIFFICULTY_DAMAGE_START)
+		DamageMultiplier += (Difficulty - BATTLE_DIFFICULTY_DAMAGE_START) * BATTLE_DIFFICULTY_DAMAGE * 0.01f;
+
 	Object->Monster->DatabaseID = MonsterID;
 
 	// Run query
@@ -562,11 +566,12 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 		Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
 		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * DifficultyMultiplier);
 		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
-		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
-		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage");
+		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage") * DamageMultiplier;
+		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage") * DamageMultiplier;
 		Object->Character->BaseArmor = Database->GetInt<int>("armor");
 		Object->Character->BaseDamageBlock = Database->GetInt<int>("block");
 		Object->Character->BaseAttackPeriod = Database->GetReal("attackperiod");
+		Object->Character->BaseSpellDamage *= DamageMultiplier;
 		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience") * DifficultyMultiplier;
 		Object->Monster->GoldGiven = Database->GetInt<int>("gold") * DifficultyMultiplier;
 		Object->Monster->AI = Database->GetString("ai_name");
