@@ -716,7 +716,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->SkillPointsUnlocked = StatsNode["skillpoints_unlocked"].asInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
-	Character->Experience = StatsNode["experience"].asInt();
+	Character->Experience = StatsNode["experience"].asInt64();
 	Character->Gold = StatsNode["gold"].asInt();
 	Character->GoldLost = StatsNode["goldlost"].asInt();
 	Character->PlayTime = StatsNode["playtime"].asDouble();
@@ -873,7 +873,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
-	Data.Write<int>(Character->Experience);
+	Data.Write<int64_t>(Character->Experience);
 	Data.Write<int>(Character->Gold);
 	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
@@ -1003,7 +1003,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
-	Character->Experience = Data.Read<int>();
+	Character->Experience = Data.Read<int64_t>();
 	Character->Gold = Data.Read<int>();
 	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();

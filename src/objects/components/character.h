@@ -79,7 +79,7 @@ class _Character {
 		void UpdateHealth(int &Value);
 		void UpdateMana(int Value);
 		void UpdateGold(int Value);
-		void UpdateExperience(int Value);
+		void UpdateExperience(int64_t Value);
 		void UpdateStatus();
 
 		// Stats
@@ -192,9 +192,9 @@ class _Character {
 		// Levels
 		bool CalcLevelStats;
 		int Level;
-		int Experience;
-		int ExperienceNeeded;
-		int ExperienceNextLevel;
+		int64_t Experience;
+		int64_t ExperienceNeeded;
+		int64_t ExperienceNextLevel;
 
 		// Base attributes
 		int BaseMaxHealth;

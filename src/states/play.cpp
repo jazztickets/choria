@@ -441,7 +441,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 						Packet.WriteBit(1);
 					else
 						Packet.WriteBit(0);
-					Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+					Packet.Write<int64_t>(ae::ToNumber<int64_t>(Parameters[0]));
 					Network->SendPacket(Packet);
 				}
 			}
@@ -1674,7 +1674,7 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	Player->Character->Mana = Data.Read<int>();
 	Player->Character->MaxHealth = Data.Read<int>();
 	Player->Character->MaxMana = Data.Read<int>();
-	Player->Character->Experience = Data.Read<int>();
+	Player->Character->Experience = Data.Read<int64_t>();
 	Player->Character->Gold = Data.Read<int>();
 	Player->Character->Bounty = Data.Read<int>();
 	double Clock = Data.Read<double>();

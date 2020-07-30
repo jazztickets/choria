@@ -124,7 +124,7 @@ void _Stats::LoadLevels() {
 	_Level Level;
 	while(Database->FetchRow()) {
 		Level.Level = Database->GetInt<int>("level");
-		Level.Experience = Database->GetInt<int>("experience");
+		Level.Experience = Database->GetInt64("experience");
 		Level.SkillPoints = Database->GetInt<int>("skillpoints");
 		Level.Health = Database->GetInt<int>("health");
 		Level.Mana = Database->GetInt<int>("mana");
@@ -817,7 +817,7 @@ uint32_t _Stats::GetMapIDByPath(const std::string &Path) const {
 }
 
 // Find a level from the given experience number
-const _Level *_Stats::FindLevel(int Experience) const {
+const _Level *_Stats::FindLevel(int64_t Experience) const {
 
 	// Search through levels
 	for(size_t i = 1; i < Levels.size(); i++) {

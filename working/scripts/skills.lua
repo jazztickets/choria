@@ -529,7 +529,7 @@ end
 -- Toughness --
 
 Skill_Toughness = {}
-Skill_Toughness.HealthPerLevel = 60
+Skill_Toughness.HealthPerLevel = 50
 Skill_Toughness.Armor = 5
 Skill_Toughness.ArmorPerLevel = 0.5
 

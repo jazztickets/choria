@@ -69,8 +69,8 @@ struct _Script {
 
 struct _Level {
 	int Level;
-	int Experience;
-	int NextLevel;
+	int64_t Experience;
+	int64_t NextLevel;
 	int Health;
 	int Mana;
 	int Damage;
@@ -185,7 +185,7 @@ class _Stats {
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[(size_t)Level-1]; }
-		const _Level *FindLevel(int Experience) const;
+		const _Level *FindLevel(int64_t Experience) const;
 		int GetMaxLevel() const { return (int)Levels.size(); }
 
 		std::vector<_EventName> EventNames;

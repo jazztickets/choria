@@ -293,7 +293,7 @@ void _Character::UpdateGold(int Value) {
 }
 
 // Update experience
-void _Character::UpdateExperience(int Value) {
+void _Character::UpdateExperience(int64_t Value) {
 	Experience += Value;
 	if(Experience < 0)
 		Experience = 0;

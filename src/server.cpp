@@ -761,7 +761,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Player.Character->PortraitID);
 		Packet.Write<int>(Player.Character->Health);
-		Packet.Write<int>(Player.Character->Experience);
+		Packet.Write<int64_t>(Player.Character->Experience);
 	}
 	Save->Database->CloseQuery();
 
@@ -1856,8 +1856,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "bounty") {
 		bool Adjust = Data.ReadBit();
-		int Change = Data.Read<int>();
-		Player->Character->Bounty = std::max(0, Adjust ? Player->Character->Bounty + Change : Change);
+		int64_t Change = Data.Read<int64_t>();
+		Player->Character->Bounty = std::max(0L, Adjust ? Player->Character->Bounty + Change : Change);
 		SendHUD(Peer);
 	}
 	else if(Command == "clearunlocks") {
@@ -1881,8 +1881,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "experience") {
 		bool Adjust = Data.ReadBit();
-		int Change = Data.Read<int>();
-		Player->Character->Experience = std::max(0, Adjust ? Player->Character->Experience + Change : Change);
+		int64_t Change = Data.Read<int64_t>();
+		Player->Character->Experience = std::max(0L, Adjust ? Player->Character->Experience + Change : Change);
 		Player->Character->CalculateStats();
 		SendHUD(Peer);
 	}
@@ -1897,7 +1897,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "gold") {
 		bool Adjust = Data.ReadBit();
-		int Change = Data.Read<int>();
+		int64_t Change = Data.Read<int64_t>();
 		Player->Character->Gold = Adjust ? Player->Character->Gold + Change : Change;
 		if(Player->Character->Gold > PLAYER_MAX_GOLD)
 			Player->Character->Gold = PLAYER_MAX_GOLD;
@@ -1979,7 +1979,7 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<int>(Player->Character->Mana);
 	Packet.Write<int>(Player->Character->MaxHealth);
 	Packet.Write<int>(Player->Character->MaxMana);
-	Packet.Write<int>(Player->Character->Experience);
+	Packet.Write<int64_t>(Player->Character->Experience);
 	Packet.Write<int>(Player->Character->Gold);
 	Packet.Write<int>(Player->Character->Bounty);
 	Packet.Write<double>(Save->Clock);
