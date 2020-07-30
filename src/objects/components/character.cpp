@@ -540,6 +540,7 @@ void _Character::CalculateStats() {
 	if(CooldownMultiplier <= 0.0f)
 		CooldownMultiplier = 0.0f;
 
+	ManaReductionRatio = std::clamp(ManaReductionRatio, 0.0f, 1.0f);
 	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
 
 	MaxHealth *= MaxHealthMultiplier;

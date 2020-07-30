@@ -806,6 +806,25 @@ function Item_LuckyAmulet.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Warding Amulet--
+
+Item_WardingAmulet = { }
+Item_WardingAmulet.ReductionPerUpgrade = 1
+
+function Item_WardingAmulet.GetReduction(self, Item)
+	return Item.Level + Item.Upgrades * self.ReductionPerUpgrade
+end
+
+function Item_WardingAmulet.GetInfo(self, Source, Item)
+	return "Convert [c green]" .. self:GetReduction(Item) .. "%[c white] of damage taken to mana drain"
+end
+
+function Item_WardingAmulet.Stats(self, Item, Object, Change)
+	Change.ManaReductionRatio = self:GetReduction(Item) / 100.0
+
+	return Change
+end
+
 -- Consume Chance --
 
 Item_ConsumeChance = { }
