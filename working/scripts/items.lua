@@ -1047,15 +1047,16 @@ end
 -- Rebirth --
 
 function RebirthText(UpgradeText, Source)
+	Gold = math.floor(Source.RebirthWealth * 0.01 * Source.Experience)
 	KeepText = "\n\n[c yellow]You will keep\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthWealth .. "%[c white] of your current gold\n"
 	KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
 	Plural = ""
 	if Source.RebirthPower ~= 1 then
 		Plural = "s"
 	end
-	KeepText = KeepText .. "[c green]" .. Source.RebirthPower .. "[c white] item" .. Plural .." in your trade bag\n"
+	--KeepText = KeepText .. "[c green]" .. Source.RebirthPower .. "[c white] item" .. Plural .." in your trade bag\n"
 	KeepText = KeepText .. "\nYou will start at level [c green]" .. Source.RebirthWisdom + 1 .. "\n"
+	KeepText = KeepText .. "You will start with [c green]" .. Gold .. "[c white] gold\n"
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
 end
@@ -1244,7 +1245,7 @@ Item_RiteWealth = Base_Rite:New()
 Item_RiteWealth.Exponent = 1.25
 
 function Item_RiteWealth.GetInfo(self, Source, Item)
-	return self:GetRiteText("the amount of gold carried over after rebirth by [c green]" .. Item.Level .. "%[c white]")
+	return self:GetRiteText("the amount of experience converted into gold after rebirth by [c green]" .. Item.Level .. "%[c white]")
 end
 
 function Item_RiteWealth.GetCost(self, Source)
