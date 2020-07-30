@@ -148,6 +148,7 @@ class _Character {
 
 		// State
 		std::unordered_map<uint32_t, double> BattleCooldown;
+		std::unordered_map<uint32_t, int> BossKills;
 		std::string PartyName;
 		int Gold;
 		int NextBattle;

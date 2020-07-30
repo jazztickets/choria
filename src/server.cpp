@@ -2306,6 +2306,10 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			return;
 		}
 
+		int BossKillCount = 0;
+		if(Boss)
+			BossKillCount = BattleEvent.Object->Character->BossKills[BattleEvent.Zone];
+
 		// Create a new battle instance
 		_Battle *Battle = BattleManager->Create();
 		Battle->Manager = ObjectManager;
@@ -2324,13 +2328,15 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Players.sort(CompareObjects);
 
 		// Get difficulty
-		int Difficulty = 100;
+		int Difficulty = 0;
 		if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
 			Scripting->PushReal(Save->Clock);
 			Scripting->MethodCall(1, 1);
 			Difficulty = Scripting->GetInt(1);
 			Scripting->FinishMethodCall();
 		}
+
+		Difficulty += BossKillCount * BATTLE_BOSS_DIFFICULTY_PER_KILL;
 
 		// Get difficulty increase
 		int DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER;
@@ -2421,6 +2427,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
 	Character->Cooldowns.clear();
 	Character->BattleCooldown.clear();
+	Character->BossKills.clear();
 	Character->DeleteStatusEffects();
 
 	// Give bonus

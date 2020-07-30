@@ -687,6 +687,16 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		CooldownsNode.append(CooldownNode);
 	}
 	Data["cooldowns"] = CooldownsNode;
+
+	// Write boss kills
+	Json::Value BossKillsNode;
+	for(auto &BossKill : Character->BossKills) {
+		Json::Value BossKillNode;
+		BossKillNode["id"] = BossKill.first;
+		BossKillNode["count"] = BossKill.second;
+		BossKillsNode.append(BossKillNode);
+	}
+	Data["bosskills"] = BossKillsNode;
 }
 
 // Unserialize attributes from string
@@ -827,6 +837,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set cooldowns
 	for(const Json::Value &CooldownNode : Data["cooldowns"])
 		Character->BattleCooldown[CooldownNode["id"].asUInt()] = CooldownNode["duration"].asDouble();
+
+	// Set boss kills
+	for(const Json::Value &BossKillNode: Data["bosskills"])
+		Character->BossKills[BossKillNode["id"].asUInt()] = BossKillNode["count"].asInt();
 }
 
 // Serialize for ObjectCreate
