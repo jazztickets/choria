@@ -1028,7 +1028,7 @@ end
 -- Pet Power --
 
 Item_PetPower = { }
-Item_PetPower.PowerPerUpgrade = 1
+Item_PetPower.PowerPerUpgrade = 5
 
 function Item_PetPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade

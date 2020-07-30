@@ -2740,8 +2740,8 @@ INSERT INTO item VALUES(131,14,2,0,0,0,0,'Stiletto','textures/items/stiletto.png
 INSERT INTO item VALUES(132,10,0,1,3,0,0,'Death Potion','textures/items/death_potion.png','Item_DeathPotion',0,300,1,1000,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(133,10,2,2,2,0,0,'Throwing Knives','textures/items/throwing_knives.png','Item_ThrowingKnives',0,4,1,15,0,5.0,1,25,120,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(134,10,0,1,2,0,0,'Crab Legs','textures/items/crab_legs.png','Item_CrabLegs',0,20,1,25,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
-INSERT INTO item VALUES(135,7,0,0,0,0,0,'Wizard Book','textures/items/wizard_book.png','',0,320,1,0,20,0.0,1,0,0,0,3,0,0,25,50,0,2,0,0,0,0,0,0,0,'',0,0.0,0,0);
-INSERT INTO item VALUES(136,7,0,0,0,0,0,'Mage Book','textures/items/mage_book.png','',0,40,1,0,10,0.0,1,0,0,0,2,0,0,15,25,0,1,0,0,0,0,0,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(135,7,0,0,0,0,0,'Wizard Book','textures/items/wizard_book.png','',0,320,1,0,20,0.0,1,0,0,0,3,0,0,25,50,0,2,0,0,0,0,0,0,0,'',0,0.0,25,0);
+INSERT INTO item VALUES(136,7,0,0,0,0,0,'Mage Book','textures/items/mage_book.png','',0,40,1,0,10,0.0,1,0,0,0,2,0,0,15,25,0,1,0,0,0,0,0,0,0,'',0,0.0,10,0);
 INSERT INTO item VALUES(137,13,0,0,0,0,0,'Tower Key','textures/items/key0.png','',0,350,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(138,8,0,0,0,0,0,'Troll''s Ring','textures/items/ring.png','Item_HealPower',0,250,1,5,10,0.0,1,0,0,0,0,0,0,0,0,7,0,-25,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(139,11,0,0,0,0,0,'Crab Trophy','textures/items/crab_trophy.png','',0,300,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
@@ -2916,7 +2916,7 @@ INSERT INTO item VALUES(310,10,0,0,1,0,0,'Rite of Proficiency','textures/items/r
 INSERT INTO item VALUES(311,10,0,0,1,0,0,'Rite of Insight','textures/items/rite_insight.png','Item_RiteInsight',5,100000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(312,8,0,0,0,0,0,'Dark Ring','textures/items/dark_ring.png','Item_DarkRing',0,500,1,20,10,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(313,15,0,0,0,0,0,'Nocturnal Map','textures/items/map.png','',0,375,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'textures/map_nearest/bat.png',0,0.0,0,0);
-INSERT INTO item VALUES(314,7,0,0,0,0,0,'Arcane Book','textures/items/arcane_book.png','',0,7000,1,0,50,0.0,1,0,0,0,10,0,0,50,100,0,5,0,0,0,0,0,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(314,7,0,0,0,0,0,'Arcane Book','textures/items/arcane_book.png','',0,7000,1,0,50,0.0,1,0,0,0,10,0,0,50,100,0,5,0,0,0,0,0,0,0,'',0,0.0,50,0);
 INSERT INTO item VALUES(315,6,2,0,0,0,0,'Light Staff','textures/items/light_staff.png','Item_HealPower',0,15000,1,50,50,0.0,1,750,1000,0,20,0,0,0,250,2,8,15,0,0,0,15,0,0,'',0,-2.0,0,0);
 INSERT INTO item VALUES(316,9,0,0,0,0,0,'Lava Amulet','textures/items/amulet_orange.png','Item_LavaProtection',0,75000,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(317,6,2,0,0,0,0,'Diabolic Staff','textures/items/diabolic_staff.png','Item_PetPower',0,13000,1,80,50,0.0,1,600,800,0,10,0,0,0,350,0,10,0,0,0,0,15,0,0,'',0,0.0,0,0);
