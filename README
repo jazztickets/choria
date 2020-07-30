@@ -4,11 +4,13 @@ by Alan Witkowski
 Latest version can be found at:
 https://github.com/jazztickets/choria
 
-Save data is in ~/.local/share/choria2015 for linux and %APPDATA%/choria2015 for windows.
+----- CLONING THE REPOSITORY -----
 
------ BUILDING -----
+git clone --branch 2015 https://github.com/jazztickets/choria.git --recurse-submodule choria2015
 
--- Dependencies --
+----- BUILDING ON LINUX -----
+
+-- Dependencies required --
 CMake 2.8+
 OpenGL 3.3+
 SDL2
@@ -25,25 +27,54 @@ tinyxml2
 zlib
 pthreads
 
--- Ubuntu 18.04 --
+-- Installing dependencies on Ubuntu 20.04 --
 sudo apt install git cmake build-essential libsdl2-dev libsdl2-image-dev libopenal-dev libvorbis-dev liblua5.3-dev libfreetype6-dev libglm-dev libsqlite3-dev libjsoncpp-dev libtinyxml2-dev
 
--- Cloning --
-git clone --branch 2015 https://github.com/jazztickets/choria.git --recurse-submodule choria2015
+-- Installing dependencies on Arch Linux --
+sudo pacman -S base-devel git cmake sdl2 sdl2_image openal libvorbis libogg freetype2 lua glm sqlite tinyxml2 jsoncpp
 
--- Building and running --
+-- Building and running after a clone --
 cd choria2015
-mkdir build
-cd build
-cmake ..
+mkdir -p build/release
+cd build/release
+cmake ../../
 make -j`nproc`
-cd ../working && ./choria
+cd ../../working && ./choria
+
+-- Building a Debug build --
+cd choria2015
+mkdir -p build/debug
+cd build/debug
+cmake -DCMAKE_BUILD_TYPE=Debug ../../
+make -j`nproc`
+cd ../../working && ./choria_debug
 
 -- Installing --
-run "sudo make install" from the build directory.
+run "sudo make install" from the build directory
 
 -- Uninstall --
-cat install_manifest.txt | xargs sudo rm
+run "cat install_manifest.txt | xargs sudo rm" from the build directory
+
+----- BUILDING FOR WINDOWS ON LINUX -----
+
+-- Mingw-w64 dependencies required when building for Windows --
+mingw-w64-gcc
+mingw-w64-glm
+mingw-w64-sdl2
+mingw-w64-sdl2_image
+mingw-w64-freetype2
+mingw-w64-openal
+mingw-w64-libvorbis
+mingw-w64-libogg
+mingw-w64-lua
+mingw-w64-sqlite
+mingw-w64-jsoncpp
+mingw-w64-tinyxml2
+
+-- Building for Windows --
+cd deployment
+./build_mingw.sh
+ls out/
 
 ----- COMMAND-LINE ARGUMENTS -----
 
@@ -86,6 +117,8 @@ Hit G to join an existing battle.
 Hit P to set a private party name.
 Hit Enter to chat with other players.
 Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle.
+
+Save data is in ~/.local/share/choria2015 for Linux and %APPDATA%/choria2015 for Windows
 
 ----- MULTIPLAYER -----
 
