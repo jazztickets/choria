@@ -1119,8 +1119,17 @@ function RebirthText(UpgradeText, Source)
 	end
 
 	KeepText = KeepText .. "\n[c yellow]You will start with\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom + 1 .. "[c white] character level\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] keys\n"
+	Plural = ""
+	if Source.RebirthWisdom + 1 ~= 1 then
+		Plural = "s"
+	end
+	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom + 1 .. "[c white] character level" .. Plural .. "\n"
+
+	Plural = ""
+	if Source.RebirthPassage ~= 1 then
+		Plural = "s"
+	end
+	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] key" .. Plural .. "\n"
 	KeepText = KeepText .. "[c green]" .. Gold .. "[c white] gold\n"
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
