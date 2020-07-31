@@ -2475,7 +2475,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->RebirthInsight);
 
 	// Keep items from trade bag
-	int ItemCount = Character->RebirthPower;
+	int ItemCount = 0;
 	for(const auto &Slot : OldTradeBag.Slots) {
 		if(ItemCount && Slot.Item) {
 			Player->Inventory->AddItem(Slot.Item, Slot.Upgrades, Slot.Count);
@@ -2483,6 +2483,21 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 			if(ItemCount <= 0)
 				break;
 		}
+	}
+
+	// Unlock keys
+	const std::vector<const _Item *> KeyUnlocks = {
+		Stats->Items.at(251),
+		Stats->Items.at(268),
+		Stats->Items.at(112),
+		Stats->Items.at(137),
+		Stats->Items.at(267),
+		Stats->Items.at(239),
+		Stats->Items.at(238),
+	};
+	int KeyUnlockCount = std::clamp(Character->RebirthPassage, 0, (int)KeyUnlocks.size());
+	for(int i = 0; i < KeyUnlockCount; i++) {
+		Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(KeyUnlocks[i], 1));
 	}
 
 	// Get highest skills

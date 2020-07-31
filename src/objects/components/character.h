@@ -189,6 +189,7 @@ class _Character {
 		int RebirthGirth;
 		int RebirthProficiency;
 		int RebirthInsight;
+		int RebirthPassage;
 
 		// Levels
 		bool CalcLevelStats;

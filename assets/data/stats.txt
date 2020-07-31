@@ -149,9 +149,10 @@ INSERT INTO stattype VALUES(69,'RebirthPower',1.0);
 INSERT INTO stattype VALUES(70,'RebirthGirth',1.0);
 INSERT INTO stattype VALUES(71,'RebirthProficiency',1.0);
 INSERT INTO stattype VALUES(72,'RebirthInsight',1.0);
-INSERT INTO stattype VALUES(73,'Spell Damage',1.0);
-INSERT INTO stattype VALUES(74,'Minigame Speed',1.0);
-INSERT INTO stattype VALUES(75,'Consume Chance',1.0);
+INSERT INTO stattype VALUES(73,'RebirthPassage',1.0);
+INSERT INTO stattype VALUES(74,'Spell Damage',1.0);
+INSERT INTO stattype VALUES(75,'Minigame Speed',1.0);
+INSERT INTO stattype VALUES(76,'Consume Chance',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -1546,6 +1547,7 @@ INSERT INTO vendoritem VALUES(203,18,316);
 INSERT INTO vendoritem VALUES(204,16,317);
 INSERT INTO vendoritem VALUES(205,2,320);
 INSERT INTO vendoritem VALUES(206,24,300);
+INSERT INTO vendoritem VALUES(207,24,322);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -2928,6 +2930,7 @@ INSERT INTO item VALUES(318,11,0,0,0,0,0,'Dark Note','textures/items/note.png','
 INSERT INTO item VALUES(319,10,0,1,1,0,0,'Greater Battle Potion','textures/items/greater_battle_potion.png','Item_GreaterBattlePotion',0,1000,1,100,0,300.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(320,9,0,0,0,0,0,'Mundane Amulet','textures/items/amulet_green.png','Item_ConsumeChance',0,150,1,25,50,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 INSERT INTO item VALUES(321,9,0,0,0,0,0,'Warding Amulet','textures/items/amulet_blue.png','Item_WardingAmulet',0,250,1,15,20,0.0,1,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
+INSERT INTO item VALUES(322,10,0,0,1,0,0,'Rite of Passage','textures/items/rite_passage.png','Item_RitePassage',5,500000,0,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'',0,0.0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,

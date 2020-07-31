@@ -599,6 +599,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["rebirth_girth"] = Character->RebirthGirth;
 	StatsNode["rebirth_proficiency"] = Character->RebirthProficiency;
 	StatsNode["rebirth_insight"] = Character->RebirthInsight;
+	StatsNode["rebirth_passage"] = Character->RebirthPassage;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -762,6 +763,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->RebirthGirth = StatsNode["rebirth_girth"].asInt();
 	Character->RebirthProficiency = StatsNode["rebirth_proficiency"].asInt();
 	Character->RebirthInsight = StatsNode["rebirth_insight"].asInt();
+	Character->RebirthPassage = StatsNode["rebirth_passage"].asInt();
 
 	if(!Character->BeltSize)
 		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
@@ -926,6 +928,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->RebirthGirth);
 	Data.Write<int>(Character->RebirthProficiency);
 	Data.Write<int>(Character->RebirthInsight);
+	Data.Write<int>(Character->RebirthPassage);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -1056,6 +1059,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->RebirthGirth = Data.Read<int>();
 	Character->RebirthProficiency = Data.Read<int>();
 	Character->RebirthInsight = Data.Read<int>();
+	Character->RebirthPassage = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1313,6 +1317,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->RebirthProficiency += StatChange.Values[StatType::REBIRTH_PROFICIENCY].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_INSIGHT))
 		Character->RebirthInsight += StatChange.Values[StatType::REBIRTH_INSIGHT].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_PASSAGE))
+		Character->RebirthPassage += StatChange.Values[StatType::REBIRTH_PASSAGE].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_POWER)) {
 		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
 		Character->CalculateStats();

@@ -81,6 +81,7 @@ _Character::_Character(_Object *Object) :
 	RebirthGirth(0),
 	RebirthProficiency(0),
 	RebirthInsight(0),
+	RebirthPassage(0),
 
 	CalcLevelStats(true),
 	Level(0),

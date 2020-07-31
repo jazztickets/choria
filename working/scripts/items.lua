@@ -1118,8 +1118,9 @@ function RebirthText(UpgradeText, Source)
 		Plural = "s"
 	end
 
-	KeepText = KeepText .. "\n[c yellow]You start with\n"
-	KeepText = KeepText .. "Character level [c green]" .. Source.RebirthWisdom + 1 .. "\n"
+	KeepText = KeepText .. "\n[c yellow]You will start with\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom + 1 .. "[c white] character level\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] keys\n"
 	KeepText = KeepText .. "[c green]" .. Gold .. "[c white] gold\n"
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
@@ -1440,6 +1441,41 @@ end
 function Item_RiteInsight.Use(self, Level, Duration, Source, Target, Result)
 	if Target.RebirthInsight < MAX_SKILL_UNLOCKS then
 		Result.Target.RebirthInsight = Level
+	end
+
+	return Result
+end
+
+Item_RitePassage = Base_Rite:New()
+Item_RitePassage.Keys = {
+	{ "Graveyard Key", 500000 },
+	{ "Library Key", 1000000 },
+	{ "Cellar Key", 2500000 },
+	{ "Tower Key", 5000000 },
+	{ "City Key", 10000000 },
+	{ "Bridge Key", 25000000 },
+	{ "Lost Key", 50000000 },
+}
+
+function Item_RitePassage.GetInfo(self, Source, Item)
+	if Source.RebirthPassage >= #self.Keys then
+		AddedText = "\n\n[c red]Max passage attained"
+	else
+		AddedText = "\n\n[c yellow]Start with the " .. self.Keys[Source.RebirthPassage + 1][1]
+	end
+
+	return self:GetRiteText("the number of keys unlocked after rebirth by [c green]" .. Item.Level .. AddedText)
+end
+
+function Item_RitePassage.GetCost(self, Source)
+	Count = Source.GetInventoryItemCount(self.Item.Pointer)
+	KeyIndex = math.max(1, math.min(Source.RebirthPassage + Count + 1, #self.Keys))
+	return self.Keys[KeyIndex][2]
+end
+
+function Item_RitePassage.Use(self, Level, Duration, Source, Target, Result)
+	if Target.RebirthPassage < #self.Keys then
+		Result.Target.RebirthPassage = Level
 	end
 
 	return Result

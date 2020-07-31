@@ -513,6 +513,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->RebirthInsight);
 	lua_setfield(LuaState, -2, "RebirthInsight");
 
+	lua_pushinteger(LuaState, Object->Character->RebirthPassage);
+	lua_setfield(LuaState, -2, "RebirthPassage");
+
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
