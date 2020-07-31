@@ -51,7 +51,10 @@ class _StatusEffect {
 		ae::_Element *HUDElement;
 		_Object *Source;
 		double Time;
-		int Level;
 		double Duration;
 		double MaxDuration;
+		int Level;
+		bool Infinite;
+		bool Deleted;
+
 };

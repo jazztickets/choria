@@ -761,7 +761,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Player.Character->PortraitID);
 		Packet.Write<int>(Player.Character->Health);
-		Packet.Write<int>(Player.Character->Experience);
+		Packet.Write<int64_t>(Player.Character->Experience);
 	}
 	Save->Database->CloseQuery();
 
@@ -1617,10 +1617,10 @@ void _Server::HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer) {
 			if(StatusEffect->Buff->Dismiss == 2) {
 				StatusEffect->Level--;
 				if(StatusEffect->Level <= 0)
-					StatusEffect->Duration = 0.0;
+					StatusEffect->Deleted = true;
 			}
 			else
-				StatusEffect->Duration = 0.0;
+				StatusEffect->Deleted = true;
 
 			UpdateBuff(Player, StatusEffect);
 			break;
@@ -1856,8 +1856,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "bounty") {
 		bool Adjust = Data.ReadBit();
-		int Change = Data.Read<int>();
-		Player->Character->Bounty = std::max(0, Adjust ? Player->Character->Bounty + Change : Change);
+		int64_t Change = Data.Read<int64_t>();
+		Player->Character->Bounty = std::max(0L, Adjust ? Player->Character->Bounty + Change : Change);
 		SendHUD(Peer);
 	}
 	else if(Command == "clearunlocks") {
@@ -1881,8 +1881,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "experience") {
 		bool Adjust = Data.ReadBit();
-		int Change = Data.Read<int>();
-		Player->Character->Experience = std::max(0, Adjust ? Player->Character->Experience + Change : Change);
+		int64_t Change = Data.Read<int64_t>();
+		Player->Character->Experience = std::max(0L, Adjust ? Player->Character->Experience + Change : Change);
 		Player->Character->CalculateStats();
 		SendHUD(Peer);
 	}
@@ -1897,7 +1897,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "gold") {
 		bool Adjust = Data.ReadBit();
-		int Change = Data.Read<int>();
+		int64_t Change = Data.Read<int64_t>();
 		Player->Character->Gold = Adjust ? Player->Character->Gold + Change : Change;
 		if(Player->Character->Gold > PLAYER_MAX_GOLD)
 			Player->Character->Gold = PLAYER_MAX_GOLD;
@@ -1979,7 +1979,7 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<int>(Player->Character->Mana);
 	Packet.Write<int>(Player->Character->MaxHealth);
 	Packet.Write<int>(Player->Character->MaxMana);
-	Packet.Write<int>(Player->Character->Experience);
+	Packet.Write<int64_t>(Player->Character->Experience);
 	Packet.Write<int>(Player->Character->Gold);
 	Packet.Write<int>(Player->Character->Bounty);
 	Packet.Write<double>(Save->Clock);
@@ -2050,6 +2050,8 @@ void _Server::UpdateBuff(_Object *Player, _StatusEffect *StatusEffect) {
 	Packet.Write<PacketType>(PacketType::PLAYER_UPDATEBUFF);
 	Packet.Write<ae::NetworkIDType>(Player->NetworkID);
 	Packet.Write<uint32_t>(StatusEffect->Buff->ID);
+	Packet.WriteBit(StatusEffect->Deleted);
+	Packet.WriteBit(StatusEffect->Infinite);
 	Packet.Write<int>(StatusEffect->Level);
 	Packet.Write<float>(StatusEffect->Duration);
 
@@ -2205,7 +2207,7 @@ void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer, b
 			_StatusEffect *StatusEffect = Captain.Summons.back().second;
 			StatusEffect->Level--;
 			if(StatusEffect->Level <= 0)
-				StatusEffect->Duration = 0.0;
+				StatusEffect->Deleted = true;
 			else
 				StatusEffect->Duration = StatusEffect->MaxDuration;
 
@@ -2306,6 +2308,10 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			return;
 		}
 
+		int BossKillCount = 0;
+		if(Boss)
+			BossKillCount = BattleEvent.Object->Character->BossKills[BattleEvent.Zone];
+
 		// Create a new battle instance
 		_Battle *Battle = BattleManager->Create();
 		Battle->Manager = ObjectManager;
@@ -2324,13 +2330,15 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Players.sort(CompareObjects);
 
 		// Get difficulty
-		int Difficulty = 100;
+		int Difficulty = 0;
 		if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
 			Scripting->PushReal(Save->Clock);
 			Scripting->MethodCall(1, 1);
 			Difficulty = Scripting->GetInt(1);
 			Scripting->FinishMethodCall();
 		}
+
+		Difficulty += BossKillCount * BATTLE_BOSS_DIFFICULTY_PER_KILL;
 
 		// Get difficulty increase
 		int DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER;
@@ -2399,7 +2407,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MaxSkillLevels.clear();
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Gold = Character->Gold * Character->RebirthWealth * 0.01f;
+	Character->Gold = std::min((int64_t)(Character->Experience * Character->RebirthWealth * 0.01f), PLAYER_MAX_GOLD);
 	Character->Experience = Stats->GetLevel(Character->RebirthWisdom + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;
@@ -2421,6 +2429,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
 	Character->Cooldowns.clear();
 	Character->BattleCooldown.clear();
+	Character->BossKills.clear();
 	Character->DeleteStatusEffects();
 
 	// Give bonus
@@ -2466,7 +2475,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->RebirthInsight);
 
 	// Keep items from trade bag
-	int ItemCount = Character->RebirthPower;
+	int ItemCount = 0;
 	for(const auto &Slot : OldTradeBag.Slots) {
 		if(ItemCount && Slot.Item) {
 			Player->Inventory->AddItem(Slot.Item, Slot.Upgrades, Slot.Count);
@@ -2474,6 +2483,21 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 			if(ItemCount <= 0)
 				break;
 		}
+	}
+
+	// Unlock keys
+	const std::vector<const _Item *> KeyUnlocks = {
+		Stats->Items.at(251),
+		Stats->Items.at(268),
+		Stats->Items.at(112),
+		Stats->Items.at(137),
+		Stats->Items.at(267),
+		Stats->Items.at(239),
+		Stats->Items.at(238),
+	};
+	int KeyUnlockCount = std::clamp(Character->RebirthPassage, 0, (int)KeyUnlocks.size());
+	for(int i = 0; i < KeyUnlockCount; i++) {
+		Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(KeyUnlocks[i], 1));
 	}
 
 	// Get highest skills

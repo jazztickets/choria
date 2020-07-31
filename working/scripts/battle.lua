@@ -131,6 +131,8 @@ Base_SummonSpell = {
 	SkillLevelPower = 0.75,
 	SpecialChance = 0,
 	SpecialChancePerLevel = 0,
+	Duration = -1,
+	DurationPerLevel = 0,
 
 	New = function(self, Object)
 		Object = Object or {}

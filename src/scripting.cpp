@@ -121,6 +121,8 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "MAX_SKILLBAR_SIZE");
 	lua_pushinteger(LuaState, GAME_MAX_SKILL_UNLOCKS);
 	lua_setglobal(LuaState, "MAX_SKILL_UNLOCKS");
+	lua_pushinteger(LuaState, PLAYER_MAX_GOLD);
+	lua_setglobal(LuaState, "MAX_GOLD");
 	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_BELTSIZE);
 	lua_setglobal(LuaState, "DEFAULT_BELTSIZE");
 	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_SKILLBARSIZE);
@@ -513,11 +515,20 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->RebirthInsight);
 	lua_setfield(LuaState, -2, "RebirthInsight");
 
+	lua_pushinteger(LuaState, Object->Character->RebirthPassage);
+	lua_setfield(LuaState, -2, "RebirthPassage");
+
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
 	lua_pushinteger(LuaState, Object->Fighter->GoldStolen);
 	lua_setfield(LuaState, -2, "GoldStolen");
+
+	lua_pushinteger(LuaState, Object->Character->Experience);
+	lua_setfield(LuaState, -2, "Experience");
+
+	lua_pushinteger(LuaState, Object->Character->RebirthTier);
+	lua_setfield(LuaState, -2, "RebirthTier");
 
 	lua_pushinteger(LuaState, Object->Character->Health);
 	lua_setfield(LuaState, -2, "Health");

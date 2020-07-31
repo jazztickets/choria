@@ -124,11 +124,11 @@ void _Stats::LoadLevels() {
 	_Level Level;
 	while(Database->FetchRow()) {
 		Level.Level = Database->GetInt<int>("level");
-		Level.Experience = Database->GetInt<int>("experience");
+		Level.Experience = Database->GetInt64("experience");
 		Level.SkillPoints = Database->GetInt<int>("skillpoints");
 		Level.Health = Database->GetInt<int>("health");
 		Level.Mana = Database->GetInt<int>("mana");
-		Level.Damage = Database->GetInt<int>("damage");
+		Level.RebirthTier = Database->GetInt<int>("rebirth_tier");
 		Level.Armor = Database->GetInt<int>("armor");
 		Levels.push_back(Level);
 	}
@@ -549,6 +549,10 @@ void _Stats::LoadLights() {
 // Gets monsters stats from the database
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty) const {
 	float DifficultyMultiplier = (100 + Difficulty) * 0.01f;
+	float DamageMultiplier = 1.0f;
+	if(Difficulty >= BATTLE_DIFFICULTY_DAMAGE_START)
+		DamageMultiplier += (Difficulty - BATTLE_DIFFICULTY_DAMAGE_START) * BATTLE_DIFFICULTY_DAMAGE * 0.01f;
+
 	Object->Monster->DatabaseID = MonsterID;
 
 	// Run query
@@ -562,11 +566,12 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 		Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
 		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * DifficultyMultiplier);
 		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
-		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
-		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage");
+		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage") * DamageMultiplier;
+		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage") * DamageMultiplier;
 		Object->Character->BaseArmor = Database->GetInt<int>("armor");
 		Object->Character->BaseDamageBlock = Database->GetInt<int>("block");
 		Object->Character->BaseAttackPeriod = Database->GetReal("attackperiod");
+		Object->Character->BaseSpellDamage *= DamageMultiplier;
 		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience") * DifficultyMultiplier;
 		Object->Monster->GoldGiven = Database->GetInt<int>("gold") * DifficultyMultiplier;
 		Object->Monster->AI = Database->GetString("ai_name");
@@ -817,7 +822,7 @@ uint32_t _Stats::GetMapIDByPath(const std::string &Path) const {
 }
 
 // Find a level from the given experience number
-const _Level *_Stats::FindLevel(int Experience) const {
+const _Level *_Stats::FindLevel(int64_t Experience) const {
 
 	// Search through levels
 	for(size_t i = 1; i < Levels.size(); i++) {

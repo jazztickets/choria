@@ -370,6 +370,14 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Rebirth Passage
+	if(HUD->Player->Character->RebirthPassage > 0) {
+		Buffer << HUD->Player->Character->RebirthPassage;
+		Font->DrawText("Rebirth Passage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Separator
 	if(HasResist)

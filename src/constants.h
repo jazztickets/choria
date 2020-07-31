@@ -98,6 +98,9 @@ const  float        BATTLE_PVP_DISTANCE             =  1.42f*1.42f;
 const  float        BATTLE_JOIN_DISTANCE            =  1.42f*1.42f;
 const  float        BATTLE_COOP_DISTANCE            =  7.0f*7.0f;
 const  int          BATTLE_LEVEL_RANGE              =  10;
+const  int          BATTLE_BOSS_DIFFICULTY_PER_KILL =  50;
+const  int          BATTLE_DIFFICULTY_DAMAGE_START  =  100;
+const  float        BATTLE_DIFFICULTY_DAMAGE        =  0.1f;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
@@ -105,7 +108,7 @@ const  int          PLAYER_MIN_MOVESPEED            =  10;
 const  double       PLAYER_ATTACKTIME               =  1.0;
 const  int          PLAYER_NAME_SIZE                =  15;
 const  float        PLAYER_INVIS_ALPHA              =  0.27f;
-const  int          PLAYER_MAX_GOLD                 =  1000000000;
+const  int64_t      PLAYER_MAX_GOLD                 =  1000000000;
 const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
 //     Game
 const  int          GAME_MAX_RESISTANCE             =  75;

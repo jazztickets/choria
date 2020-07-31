@@ -599,6 +599,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["rebirth_girth"] = Character->RebirthGirth;
 	StatsNode["rebirth_proficiency"] = Character->RebirthProficiency;
 	StatsNode["rebirth_insight"] = Character->RebirthInsight;
+	StatsNode["rebirth_passage"] = Character->RebirthPassage;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -662,8 +663,13 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		Json::Value StatusEffectNode;
 		StatusEffectNode["id"] = StatusEffect->Buff->ID;
 		StatusEffectNode["level"] = StatusEffect->Level;
-		StatusEffectNode["duration"] = StatusEffect->Duration;
-		StatusEffectNode["maxduration"] = StatusEffect->MaxDuration;
+		if(StatusEffect->Infinite) {
+			StatusEffectNode["infinite"] = StatusEffect->Infinite;
+		}
+		else {
+			StatusEffectNode["duration"] = StatusEffect->Duration;
+			StatusEffectNode["maxduration"] = StatusEffect->MaxDuration;
+		}
 		StatusEffectsNode.append(StatusEffectNode);
 	}
 	Data["statuseffects"] = StatusEffectsNode;
@@ -687,6 +693,16 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		CooldownsNode.append(CooldownNode);
 	}
 	Data["cooldowns"] = CooldownsNode;
+
+	// Write boss kills
+	Json::Value BossKillsNode;
+	for(auto &BossKill : Character->BossKills) {
+		Json::Value BossKillNode;
+		BossKillNode["id"] = BossKill.first;
+		BossKillNode["count"] = BossKill.second;
+		BossKillsNode.append(BossKillNode);
+	}
+	Data["bosskills"] = BossKillsNode;
 }
 
 // Unserialize attributes from string
@@ -716,7 +732,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->SkillPointsUnlocked = StatsNode["skillpoints_unlocked"].asInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
-	Character->Experience = StatsNode["experience"].asInt();
+	Character->Experience = StatsNode["experience"].asInt64();
 	Character->Gold = StatsNode["gold"].asInt();
 	Character->GoldLost = StatsNode["goldlost"].asInt();
 	Character->PlayTime = StatsNode["playtime"].asDouble();
@@ -747,6 +763,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->RebirthGirth = StatsNode["rebirth_girth"].asInt();
 	Character->RebirthProficiency = StatsNode["rebirth_proficiency"].asInt();
 	Character->RebirthInsight = StatsNode["rebirth_insight"].asInt();
+	Character->RebirthPassage = StatsNode["rebirth_passage"].asInt();
 
 	if(!Character->BeltSize)
 		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
@@ -814,9 +831,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
 		StatusEffect->Buff = Stats->Buffs.at(StatusEffectNode["id"].asUInt());
 		StatusEffect->Level = StatusEffectNode["level"].asInt();
-		StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
-		StatusEffect->MaxDuration = StatusEffectNode["maxduration"].asDouble();
-		StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
+		StatusEffect->Infinite = StatusEffectNode["infinite"].asBool();
+		if(!StatusEffect->Infinite) {
+			StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
+			StatusEffect->MaxDuration = StatusEffectNode["maxduration"].asDouble();
+			StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
+		}
 		Character->StatusEffects.push_back(StatusEffect);
 	}
 
@@ -827,6 +847,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set cooldowns
 	for(const Json::Value &CooldownNode : Data["cooldowns"])
 		Character->BattleCooldown[CooldownNode["id"].asUInt()] = CooldownNode["duration"].asDouble();
+
+	// Set boss kills
+	for(const Json::Value &BossKillNode: Data["bosskills"])
+		Character->BossKills[BossKillNode["id"].asUInt()] = BossKillNode["count"].asInt();
 }
 
 // Serialize for ObjectCreate
@@ -873,7 +897,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
-	Data.Write<int>(Character->Experience);
+	Data.Write<int64_t>(Character->Experience);
 	Data.Write<int>(Character->Gold);
 	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
@@ -904,6 +928,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->RebirthGirth);
 	Data.Write<int>(Character->RebirthProficiency);
 	Data.Write<int>(Character->RebirthInsight);
+	Data.Write<int>(Character->RebirthPassage);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -1003,7 +1028,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
-	Character->Experience = Data.Read<int>();
+	Character->Experience = Data.Read<int64_t>();
 	Character->Gold = Data.Read<int>();
 	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
@@ -1034,6 +1059,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->RebirthGirth = Data.Read<int>();
 	Character->RebirthProficiency = Data.Read<int>();
 	Character->RebirthInsight = Data.Read<int>();
+	Character->RebirthPassage = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1167,6 +1193,10 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
 		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
 		StatusEffect->Source = Source;
+		if(StatusEffect->Duration < 0.0) {
+			StatusEffect->Infinite = true;
+			StatusEffect->Duration = 0.0;
+		}
 
 		if(Character->AddStatusEffect(StatusEffect)) {
 			if(Fighter->BattleElement)
@@ -1187,7 +1217,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		// Find existing buff
 		for(auto &ExistingEffect : Character->StatusEffects) {
 			if(ExistingEffect->Buff == ClearBuff) {
-				ExistingEffect->Duration = 0.0;
+				ExistingEffect->Deleted = true;
 				Server->UpdateBuff(this, ExistingEffect);
 			}
 		}
@@ -1281,14 +1311,18 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->RebirthWisdom += StatChange.Values[StatType::REBIRTH_WISDOM].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_KNOWLEDGE))
 		Character->RebirthKnowledge += StatChange.Values[StatType::REBIRTH_KNOWLEDGE].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_POWER))
-		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_GIRTH))
 		Character->RebirthGirth += StatChange.Values[StatType::REBIRTH_GIRTH].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_PROFICIENCY))
 		Character->RebirthProficiency += StatChange.Values[StatType::REBIRTH_PROFICIENCY].Integer;
 	if(StatChange.HasStat(StatType::REBIRTH_INSIGHT))
 		Character->RebirthInsight += StatChange.Values[StatType::REBIRTH_INSIGHT].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_PASSAGE))
+		Character->RebirthPassage += StatChange.Values[StatType::REBIRTH_PASSAGE].Integer;
+	if(StatChange.HasStat(StatType::REBIRTH_POWER)) {
+		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
+		Character->CalculateStats();
+	}
 
 	// Reset skills
 	if(StatChange.HasStat(StatType::RESPEC)) {

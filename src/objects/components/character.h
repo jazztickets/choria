@@ -79,7 +79,7 @@ class _Character {
 		void UpdateHealth(int &Value);
 		void UpdateMana(int Value);
 		void UpdateGold(int Value);
-		void UpdateExperience(int Value);
+		void UpdateExperience(int64_t Value);
 		void UpdateStatus();
 
 		// Stats
@@ -148,6 +148,7 @@ class _Character {
 
 		// State
 		std::unordered_map<uint32_t, double> BattleCooldown;
+		std::unordered_map<uint32_t, int> BossKills;
 		std::string PartyName;
 		int Gold;
 		int NextBattle;
@@ -188,13 +189,15 @@ class _Character {
 		int RebirthGirth;
 		int RebirthProficiency;
 		int RebirthInsight;
+		int RebirthPassage;
 
 		// Levels
 		bool CalcLevelStats;
 		int Level;
-		int Experience;
-		int ExperienceNeeded;
-		int ExperienceNextLevel;
+		int RebirthTier;
+		int64_t Experience;
+		int64_t ExperienceNeeded;
+		int64_t ExperienceNextLevel;
 
 		// Base attributes
 		int BaseMaxHealth;
@@ -204,6 +207,7 @@ class _Character {
 		int BaseArmor;
 		int BaseDamageBlock;
 		int BaseBattleSpeed;
+		int BaseSpellDamage;
 		double BaseAttackPeriod;
 
 		// Final attributes

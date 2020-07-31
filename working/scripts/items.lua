@@ -806,6 +806,25 @@ function Item_LuckyAmulet.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Warding Amulet--
+
+Item_WardingAmulet = { }
+Item_WardingAmulet.ReductionPerUpgrade = 1
+
+function Item_WardingAmulet.GetReduction(self, Item)
+	return Item.Level + Item.Upgrades * self.ReductionPerUpgrade
+end
+
+function Item_WardingAmulet.GetInfo(self, Source, Item)
+	return "Convert [c green]" .. self:GetReduction(Item) .. "%[c white] of damage taken to mana drain"
+end
+
+function Item_WardingAmulet.Stats(self, Item, Object, Change)
+	Change.ManaReductionRatio = self:GetReduction(Item) / 100.0
+
+	return Change
+end
+
 -- Consume Chance --
 
 Item_ConsumeChance = { }
@@ -831,6 +850,25 @@ Item_DarkNote = { }
 
 function Item_DarkNote.GetInfo(self, Source, Item)
 	return "[c gray]Great power lies within the tower..."
+end
+
+-- Heal Power --
+
+Item_HealthRing = { }
+Item_HealthRing.PowerPerUpgrade = 1
+
+function Item_HealthRing.GetPower(self, Item)
+	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
+end
+
+function Item_HealthRing.GetInfo(self, Source, Item)
+	return "Increases heal power by [c green]" .. self:GetPower(Item) .. "%"
+end
+
+function Item_HealthRing.Stats(self, Item, Object, Change)
+	Change.HealPower = self:GetPower(Item) * 0.01 + 0.00001
+
+	return Change
 end
 
 -- Dark Ring --
@@ -990,7 +1028,7 @@ end
 -- Heal Power --
 
 Item_HealPower = { }
-Item_HealPower.PowerPerUpgrade = 1
+Item_HealPower.PowerPerUpgrade = 5
 
 function Item_HealPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -1028,7 +1066,7 @@ end
 -- Pet Power --
 
 Item_PetPower = { }
-Item_PetPower.PowerPerUpgrade = 1
+Item_PetPower.PowerPerUpgrade = 5
 
 function Item_PetPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
@@ -1044,31 +1082,68 @@ function Item_PetPower.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Rebirth Token--
+
+Item_RebirthToken = { }
+
+function Item_RebirthToken.GetInfo(self, Source, Item)
+	Levels = 5
+	Tiers = 1
+
+	return "You are in rebirth tier [c green]" .. Source.RebirthTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] character levels gives [c green]" .. Tiers .. "[c white] tier\nEach tier increases your rebirth stat bonus"
+end
+
 -- Rebirth --
 
+function GetRebirthBonus(Source, Type)
+	if Source.RebirthTier == 0 then
+		return 0
+	end
+
+	if Type == 1 then
+		return math.floor(Source.RebirthTier) + 4
+	elseif Type == 2 then
+		return math.floor(Source.RebirthTier / 2) + 2
+	elseif Type == 3 then
+		return math.ceil(Source.RebirthTier / 5)
+	end
+end
+
 function RebirthText(UpgradeText, Source)
+	Gold = math.min(math.floor(Source.RebirthWealth * 0.01 * Source.Experience), MAX_GOLD)
 	KeepText = "\n\n[c yellow]You will keep\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthWealth .. "%[c white] of your current gold\n"
 	KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
 	Plural = ""
 	if Source.RebirthPower ~= 1 then
 		Plural = "s"
 	end
-	KeepText = KeepText .. "[c green]" .. Source.RebirthPower .. "[c white] item" .. Plural .." in your trade bag\n"
-	KeepText = KeepText .. "\nYou will start at level [c green]" .. Source.RebirthWisdom + 1 .. "\n"
+
+	KeepText = KeepText .. "\n[c yellow]You will start with\n"
+	Plural = ""
+	if Source.RebirthWisdom + 1 ~= 1 then
+		Plural = "s"
+	end
+	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom + 1 .. "[c white] character level" .. Plural .. "\n"
+
+	Plural = ""
+	if Source.RebirthPassage ~= 1 then
+		Plural = "s"
+	end
+	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] key" .. Plural .. "\n"
+	KeepText = KeepText .. "[c green]" .. Gold .. "[c white] gold\n"
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
 end
 
-Item_EternalStrength = { Value = 10 }
+Item_EternalStrength = { Type = 1 }
 
 function Item_EternalStrength.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] damage bonus", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] damage bonus", Source)
 end
 
 function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.MaxDamage = self.Value
+	Result.Target.MaxDamage = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1077,15 +1152,15 @@ function Item_EternalStrength.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalGuard = { Value = 5 }
+Item_EternalGuard = { Type = 1 }
 
 function Item_EternalGuard.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "[c white] armor, damage block, and resistance bonus", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "[c white] damage block, [c green]" .. math.floor(GetRebirthBonus(Source, self.Type) / 3) .. "[c white] armor, and [c green]" .. math.floor(GetRebirthBonus(Source, self.Type) / 4) .. "[c white] resistance bonus", Source)
 end
 
 function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Armor = self.Value
+	Result.Target.Armor = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1094,15 +1169,15 @@ function Item_EternalGuard.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalFortitude = { Value = 10 }
+Item_EternalFortitude = { Type = 1 }
 
 function Item_EternalFortitude.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] max health and heal power bonus", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] max health and heal power bonus", Source)
 end
 
 function Item_EternalFortitude.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Health = self.Value
+	Result.Target.Health = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1111,15 +1186,15 @@ function Item_EternalFortitude.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalSpirit = { Value = 10 }
+Item_EternalSpirit = { Type = 1 }
 
 function Item_EternalSpirit.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] max mana and mana power bonus", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] max mana and mana power bonus", Source)
 end
 
 function Item_EternalSpirit.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Mana = self.Value
+	Result.Target.Mana = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1128,15 +1203,15 @@ function Item_EternalSpirit.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalWisdom = { Value = 10 }
+Item_EternalWisdom = { Type = 1 }
 
 function Item_EternalWisdom.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] experience bonus", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] experience bonus", Source)
 end
 
 function Item_EternalWisdom.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Experience = self.Value
+	Result.Target.Experience = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1145,15 +1220,15 @@ function Item_EternalWisdom.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalWealth = { Value = 10 }
+Item_EternalWealth = { Type = 1 }
 
 function Item_EternalWealth.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] gold bonus", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] gold bonus", Source)
 end
 
 function Item_EternalWealth.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Gold = self.Value
+	Result.Target.Gold = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1162,15 +1237,15 @@ function Item_EternalWealth.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalAlacrity = { Value = 5 }
+Item_EternalAlacrity = { Type = 2 }
 
 function Item_EternalAlacrity.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "%[c white] battle speed bonus", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] battle speed bonus", Source)
 end
 
 function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.BattleSpeed = self.Value
+	Result.Target.BattleSpeed = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1179,15 +1254,15 @@ function Item_EternalAlacrity.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalKnowledge = { Value = 1 }
+Item_EternalKnowledge = { Type = 3 }
 
 function Item_EternalKnowledge.GetInfo(self, Source, Item)
-	return RebirthText("[c green]" .. self.Value .. "[c white] extra skill point", Source)
+	return RebirthText("[c green]" .. GetRebirthBonus(Source, self.Type) .. "[c white] extra skill point", Source)
 end
 
 function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.SkillPoint = self.Value
+	Result.Target.SkillPoint = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
@@ -1244,7 +1319,7 @@ Item_RiteWealth = Base_Rite:New()
 Item_RiteWealth.Exponent = 1.25
 
 function Item_RiteWealth.GetInfo(self, Source, Item)
-	return self:GetRiteText("the amount of gold carried over after rebirth by [c green]" .. Item.Level .. "%[c white]")
+	return self:GetRiteText("the amount of experience converted into gold after rebirth by [c green]" .. Item.Level .. "%[c white]")
 end
 
 function Item_RiteWealth.GetCost(self, Source)
@@ -1278,7 +1353,7 @@ Item_RiteKnowledge = Base_Rite:New()
 Item_RiteKnowledge.Exponent = 1.5
 
 function Item_RiteKnowledge.GetInfo(self, Source, Item)
-	return self:GetRiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+	return self:GetRiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]\n\nYour max levels will only be preserved for the skills carried over")
 end
 
 function Item_RiteKnowledge.GetCost(self, Source)
@@ -1295,7 +1370,7 @@ Item_RitePower = Base_Rite:New()
 Item_RitePower.Exponent = 2.0
 
 function Item_RitePower.GetInfo(self, Source, Item)
-	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+	return self:GetRiteText("your rebirth tier bonus by [c green]" .. Item.Level .. "[c white]")
 end
 
 function Item_RitePower.GetCost(self, Source)
@@ -1375,6 +1450,41 @@ end
 function Item_RiteInsight.Use(self, Level, Duration, Source, Target, Result)
 	if Target.RebirthInsight < MAX_SKILL_UNLOCKS then
 		Result.Target.RebirthInsight = Level
+	end
+
+	return Result
+end
+
+Item_RitePassage = Base_Rite:New()
+Item_RitePassage.Keys = {
+	{ "Graveyard Key", 500000 },
+	{ "Library Key", 1000000 },
+	{ "Cellar Key", 2500000 },
+	{ "Tower Key", 5000000 },
+	{ "City Key", 10000000 },
+	{ "Bridge Key", 25000000 },
+	{ "Lost Key", 50000000 },
+}
+
+function Item_RitePassage.GetInfo(self, Source, Item)
+	if Source.RebirthPassage >= #self.Keys then
+		AddedText = "\n\n[c red]Max passage attained"
+	else
+		AddedText = "\n\n[c yellow]Start with the " .. self.Keys[Source.RebirthPassage + 1][1]
+	end
+
+	return self:GetRiteText("the number of keys unlocked after rebirth by [c green]" .. Item.Level .. AddedText)
+end
+
+function Item_RitePassage.GetCost(self, Source)
+	Count = Source.GetInventoryItemCount(self.Item.Pointer)
+	KeyIndex = math.max(1, math.min(Source.RebirthPassage + Count + 1, #self.Keys))
+	return self.Keys[KeyIndex][2]
+end
+
+function Item_RitePassage.Use(self, Level, Duration, Source, Target, Result)
+	if Target.RebirthPassage < #self.Keys then
+		Result.Target.RebirthPassage = Level
 	end
 
 	return Result

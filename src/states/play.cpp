@@ -441,7 +441,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 						Packet.WriteBit(1);
 					else
 						Packet.WriteBit(0);
-					Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+					Packet.Write<int64_t>(ae::ToNumber<int64_t>(Parameters[0]));
 					Network->SendPacket(Packet);
 				}
 			}
@@ -1674,7 +1674,7 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	Player->Character->Mana = Data.Read<int>();
 	Player->Character->MaxHealth = Data.Read<int>();
 	Player->Character->MaxMana = Data.Read<int>();
-	Player->Character->Experience = Data.Read<int>();
+	Player->Character->Experience = Data.Read<int64_t>();
 	Player->Character->Gold = Data.Read<int>();
 	Player->Character->Bounty = Data.Read<int>();
 	double Clock = Data.Read<double>();
@@ -1715,6 +1715,8 @@ void _PlayState::HandleBuffUpdate(ae::_Buffer &Data) {
 	// Read packet
 	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	uint32_t BuffID = Data.Read<uint32_t>();
+	bool Deleted = Data.ReadBit();
+	bool Infinite = Data.ReadBit();
 	int Level = Data.Read<int>();
 	double Duration = (double)Data.Read<float>();
 
@@ -1727,6 +1729,8 @@ void _PlayState::HandleBuffUpdate(ae::_Buffer &Data) {
 	for(auto &StatusEffect : Object->Character->StatusEffects) {
 		if(StatusEffect->Buff->ID == BuffID) {
 			StatusEffect->Level = Level;
+			StatusEffect->Deleted = Deleted;
+			StatusEffect->Infinite = Infinite;
 			StatusEffect->Duration = Duration;
 		}
 	}

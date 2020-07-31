@@ -81,9 +81,11 @@ _Character::_Character(_Object *Object) :
 	RebirthGirth(0),
 	RebirthProficiency(0),
 	RebirthInsight(0),
+	RebirthPassage(0),
 
 	CalcLevelStats(true),
 	Level(0),
+	RebirthTier(0),
 	Experience(0),
 	ExperienceNeeded(0),
 	ExperienceNextLevel(0),
@@ -95,6 +97,7 @@ _Character::_Character(_Object *Object) :
 	BaseArmor(0),
 	BaseDamageBlock(0),
 	BaseBattleSpeed(100),
+	BaseSpellDamage(100),
 	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
 
 	Health(1),
@@ -224,12 +227,20 @@ void _Character::Update(double FrameTime) {
 			}
 		}
 
-		// Update duration
-		if(!StatusEffect->Buff->PauseDuringBattle || (StatusEffect->Buff->PauseDuringBattle && !Object->Character->Battle))
-			StatusEffect->Duration -= FrameTime;
+		// Update duration if not infinite
+		if(!StatusEffect->Infinite) {
 
-		// Remove when expired
-		if(StatusEffect->Duration <= 0 || !IsAlive()) {
+			// Don't update during battle if it pauses
+			if(!StatusEffect->Buff->PauseDuringBattle || (StatusEffect->Buff->PauseDuringBattle && !Object->Character->Battle))
+				StatusEffect->Duration -= FrameTime;
+
+			// Delete
+			if(StatusEffect->Duration <= 0.0)
+				StatusEffect->Deleted = true;
+		}
+
+		// Clean up
+		if(StatusEffect->Deleted || !IsAlive()) {
 			delete StatusEffect;
 			Iterator = StatusEffects.erase(Iterator);
 
@@ -293,7 +304,7 @@ void _Character::UpdateGold(int Value) {
 }
 
 // Update experience
-void _Character::UpdateExperience(int Value) {
+void _Character::UpdateExperience(int64_t Value) {
 	Experience += Value;
 	if(Experience < 0)
 		Experience = 0;
@@ -343,6 +354,7 @@ void _Character::CalculateStats() {
 	MaxDamage = BaseMaxDamage;
 	Armor = BaseArmor;
 	DamageBlock = BaseDamageBlock;
+	SpellDamage = BaseSpellDamage;
 	HealthRegen = 0;
 	ManaRegen = 0;
 	HealthUpdateMultiplier = 1.0f;
@@ -351,7 +363,6 @@ void _Character::CalculateStats() {
 	MoveSpeed = 100;
 	Evasion = 0;
 	HitChance = 100;
-	SpellDamage = 100;
 	Pierce = 0;
 	AllSkills = 0;
 
@@ -365,6 +376,7 @@ void _Character::CalculateStats() {
 	MinigameSpeed = 1;
 	ConsumeChance = 100;
 	Difficulty = EternalPain;
+	RebirthTier += RebirthPower;
 	Resistances.clear();
 
 	// Base resistances
@@ -383,10 +395,10 @@ void _Character::CalculateStats() {
 
 	// Eternal Guard
 	if(EternalGuard) {
-		Armor += EternalGuard;
 		DamageBlock += EternalGuard;
+		Armor += EternalGuard / 3;
 		for(int i = 3; i <= 7; i++)
-			Resistances[i] += EternalGuard;
+			Resistances[i] += EternalGuard / 4;
 	}
 
 	// Eternal Fortitude
@@ -537,6 +549,7 @@ void _Character::CalculateStats() {
 	if(CooldownMultiplier <= 0.0f)
 		CooldownMultiplier = 0.0f;
 
+	ManaReductionRatio = std::clamp(ManaReductionRatio, 0.0f, 1.0f);
 	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
 
 	MaxHealth *= MaxHealthMultiplier;
@@ -568,15 +581,16 @@ void _Character::CalculateLevelStats() {
 	// Find current level
 	const _Level *LevelStat = Object->Stats->FindLevel(Experience);
 	Level = LevelStat->Level;
+	RebirthTier = LevelStat->RebirthTier;
 	ExperienceNextLevel = LevelStat->NextLevel;
 	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
 
 	// Set base attributes
 	BaseMaxHealth = LevelStat->Health;
 	BaseMaxMana = LevelStat->Mana;
-	BaseMinDamage = LevelStat->Damage;
-	BaseMaxDamage = LevelStat->Damage + 1;
-	BaseArmor = LevelStat->Armor;
+	BaseMinDamage = 1;
+	BaseMaxDamage = 2;
+	BaseArmor = 0;
 	BaseDamageBlock = 0;
 	SkillPoints = LevelStat->SkillPoints;
 }

@@ -474,8 +474,6 @@ Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 0.1
 Skill_DemonicConjuring.Limit = 1
 Skill_DemonicConjuring.LimitPerLevel = 0.05
-Skill_DemonicConjuring.Duration = 15
-Skill_DemonicConjuring.DurationPerLevel = 5
 Skill_DemonicConjuring.DamageScale = 0.30
 Skill_DemonicConjuring.SpecialChance = 35
 Skill_DemonicConjuring.SpecialChancePerLevel = 0
@@ -549,8 +547,6 @@ Skill_RaiseDead.Limit = 2
 Skill_RaiseDead.LimitPerLevel = 0.1
 Skill_RaiseDead.SkillLevel = 1
 Skill_RaiseDead.SkillLevelPerLevel = 0.5
-Skill_RaiseDead.Duration = 30
-Skill_RaiseDead.DurationPerLevel = 5
 Skill_RaiseDead.SpecialDamage = 0.85
 Skill_RaiseDead.DamageScale = 0.25
 Skill_RaiseDead.Monster = Monsters[20]
@@ -604,7 +600,6 @@ function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 		Result.Summon.ID = self.SpecialMonster.ID
 		Result.Summon.Mana = self:GetMana(Source, Level)
 		Result.Summon.SummonBuff = Buff_SummonSkeletonPriest.Pointer
-		Result.Summon.Duration = Result.Summon.Duration * 2
 		Result.Summon.MinDamage = math.ceil(Result.Summon.MinDamage * self.SpecialDamage)
 		Result.Summon.MaxDamage = math.ceil(Result.Summon.MaxDamage * self.SpecialDamage)
 	end

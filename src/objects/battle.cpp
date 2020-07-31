@@ -746,9 +746,19 @@ void _Battle::ServerEndBattle() {
 					GoldEarned *= Object->Character->GoldMultiplier;
 				}
 
-				// Start cooldown timer
-				if(Cooldown > 0.0 && Zone)
-					Object->Character->BattleCooldown[Zone] = Cooldown;
+				if(Zone) {
+
+					// Start cooldown timer
+					if(Cooldown > 0.0)
+						Object->Character->BattleCooldown[Zone] = Cooldown;
+
+					// Add to kill count
+					if(Boss) {
+						Object->Character->BossKills[Zone]++;
+						if(Cooldown <= 1000000)
+							Server->SendMessage(Object->Peer, std::string("The soul grows stronger"), "yellow");
+					}
+				}
 			}
 
 			// Handle pickpocket
