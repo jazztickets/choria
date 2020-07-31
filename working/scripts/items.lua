@@ -1110,7 +1110,7 @@ function GetRebirthBonus(Source, Type)
 end
 
 function RebirthText(UpgradeText, Source)
-	Gold = math.floor(Source.RebirthWealth * 0.01 * Source.Experience)
+	Gold = math.min(math.floor(Source.RebirthWealth * 0.01 * Source.Experience), MAX_GOLD)
 	KeepText = "\n\n[c yellow]You will keep\n"
 	KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
 	Plural = ""
