@@ -958,9 +958,15 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 		// If buff exists, refresh duration
 		if(StatusEffect->Buff == ExistingEffect->Buff) {
 			if(StatusEffect->Level >= ExistingEffect->Level) {
-				ExistingEffect->MaxDuration = ExistingEffect->Duration = StatusEffect->Duration;
+				double ExistingRemainder = std::fmod(ExistingEffect->Duration, 1.0);
+				double Offset = 0.0;
+				if(ExistingRemainder > 0.0 && ExistingRemainder < 1.0)
+					Offset = 1.0 - ExistingRemainder;
+
+				ExistingEffect->MaxDuration = StatusEffect->MaxDuration;
+				ExistingEffect->Duration = StatusEffect->Duration - Offset;
 				ExistingEffect->Level = StatusEffect->Level;
-				ExistingEffect->Time = 0.0;
+				ExistingEffect->Time = Offset;
 				ExistingEffect->Source = StatusEffect->Source;
 			}
 
