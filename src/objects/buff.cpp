@@ -31,8 +31,7 @@
 #include <iomanip>
 
 // Draw tooltip
-void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration, int DismissLevel) const {
-	std::stringstream Buffer;
+void _Buff::DrawTooltip(_Scripting *Scripting, int Level, bool Infinite, double Duration, int DismissLevel) const {
 
 	ae::_Element *TooltipElement = ae::Assets.Elements["element_buffs_tooltip"];
 	ae::_Element *TooltipName = ae::Assets.Elements["label_buffs_tooltip_name"];
@@ -40,8 +39,10 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration, int D
 	TooltipElement->SetActive(true);
 
 	// Set label values
+	std::stringstream Buffer;
 	TooltipName->Text = Name;
-	Buffer << std::fixed << std::setprecision(1) << ae::Round((float)Duration) << "s";
+	if(!Infinite)
+		Buffer << std::fixed << std::setprecision(1) << ae::Round((float)Duration) << "s";
 	TooltipDuration->Text = Buffer.str();
 	Buffer.str("");
 

@@ -36,9 +36,11 @@ _StatusEffect::_StatusEffect() :
 	HUDElement(nullptr),
 	Source(nullptr),
 	Time(0.0),
-	Level(0),
 	Duration(0.0),
-	MaxDuration(0.0) {
+	MaxDuration(0.0),
+	Level(0),
+	Infinite(false),
+	Deleted(false) {
 
 }
 
@@ -62,23 +64,30 @@ _StatusEffect::~_StatusEffect() {
 // Serialize for network
 void _StatusEffect::Serialize(ae::_Buffer &Data) {
 	Data.Write<uint32_t>(Buff->ID);
+	Data.WriteBit(Deleted);
+	Data.WriteBit(Infinite);
 	Data.Write<int>(Level);
-	Data.Write<float>((float)Duration);
-	Data.Write<float>((float)MaxDuration);
+	if(!Infinite) {
+		Data.Write<float>((float)Duration);
+		Data.Write<float>((float)MaxDuration);
+	}
 }
 
 // Unserialize from network
 void _StatusEffect::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	uint32_t BuffID = Data.Read<uint32_t>();
 	Buff = Stats->Buffs.at(BuffID);
+	Deleted = Data.ReadBit();
+	Infinite = Data.ReadBit();
 	Level = Data.Read<int>();
-	Duration = Data.Read<float>();
-	MaxDuration = Data.Read<float>();
+	if(!Infinite) {
+		Duration = Data.Read<float>();
+		MaxDuration = Data.Read<float>();
+	}
 }
 
 // Create element for hud
 ae::_Element *_StatusEffect::CreateUIElement(ae::_Element *Parent) {
-
 	ae::_Element *Element = new ae::_Element();
 	Element->BaseSize = glm::vec2(Buff->Texture->Size);
 	Element->Alignment = ae::LEFT_TOP;
@@ -105,8 +114,10 @@ void _StatusEffect::Render(ae::_Element *Element, const glm::vec4 &Color) {
 	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
 
 	// Draw dark percentage bg
-	float OverlayHeight = (Duration / MaxDuration) * (Element->Bounds.End.y - Element->Bounds.Start.y);
-	ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, OverlayHeight), Element->Bounds.End, true);
+	if(MaxDuration) {
+		float OverlayHeight = (Duration / MaxDuration) * (Element->Bounds.End.y - Element->Bounds.Start.y);
+		ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, OverlayHeight), Element->Bounds.End, true);
+	}
 
 	// Draw level
 	if(Level && (Buff->ShowLevel || ae::Input.ModKeyDown(KMOD_ALT)))

@@ -226,12 +226,20 @@ void _Character::Update(double FrameTime) {
 			}
 		}
 
-		// Update duration
-		if(!StatusEffect->Buff->PauseDuringBattle || (StatusEffect->Buff->PauseDuringBattle && !Object->Character->Battle))
-			StatusEffect->Duration -= FrameTime;
+		// Update duration if not infinite
+		if(!StatusEffect->Infinite) {
 
-		// Remove when expired
-		if(StatusEffect->Duration <= 0 || !IsAlive()) {
+			// Don't update during battle if it pauses
+			if(!StatusEffect->Buff->PauseDuringBattle || (StatusEffect->Buff->PauseDuringBattle && !Object->Character->Battle))
+				StatusEffect->Duration -= FrameTime;
+
+			// Delete
+			if(StatusEffect->Duration <= 0.0)
+				StatusEffect->Deleted = true;
+		}
+
+		// Clean up
+		if(StatusEffect->Deleted || !IsAlive()) {
 			delete StatusEffect;
 			Iterator = StatusEffects.erase(Iterator);
 

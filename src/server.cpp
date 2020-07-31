@@ -1617,10 +1617,10 @@ void _Server::HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer) {
 			if(StatusEffect->Buff->Dismiss == 2) {
 				StatusEffect->Level--;
 				if(StatusEffect->Level <= 0)
-					StatusEffect->Duration = 0.0;
+					StatusEffect->Deleted = true;
 			}
 			else
-				StatusEffect->Duration = 0.0;
+				StatusEffect->Deleted = true;
 
 			UpdateBuff(Player, StatusEffect);
 			break;
@@ -2050,6 +2050,8 @@ void _Server::UpdateBuff(_Object *Player, _StatusEffect *StatusEffect) {
 	Packet.Write<PacketType>(PacketType::PLAYER_UPDATEBUFF);
 	Packet.Write<ae::NetworkIDType>(Player->NetworkID);
 	Packet.Write<uint32_t>(StatusEffect->Buff->ID);
+	Packet.WriteBit(StatusEffect->Deleted);
+	Packet.WriteBit(StatusEffect->Infinite);
 	Packet.Write<int>(StatusEffect->Level);
 	Packet.Write<float>(StatusEffect->Duration);
 
@@ -2205,7 +2207,7 @@ void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer, b
 			_StatusEffect *StatusEffect = Captain.Summons.back().second;
 			StatusEffect->Level--;
 			if(StatusEffect->Level <= 0)
-				StatusEffect->Duration = 0.0;
+				StatusEffect->Deleted = true;
 			else
 				StatusEffect->Duration = StatusEffect->MaxDuration;
 

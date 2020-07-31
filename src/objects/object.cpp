@@ -662,8 +662,13 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		Json::Value StatusEffectNode;
 		StatusEffectNode["id"] = StatusEffect->Buff->ID;
 		StatusEffectNode["level"] = StatusEffect->Level;
-		StatusEffectNode["duration"] = StatusEffect->Duration;
-		StatusEffectNode["maxduration"] = StatusEffect->MaxDuration;
+		if(StatusEffect->Infinite) {
+			StatusEffectNode["infinite"] = StatusEffect->Infinite;
+		}
+		else {
+			StatusEffectNode["duration"] = StatusEffect->Duration;
+			StatusEffectNode["maxduration"] = StatusEffect->MaxDuration;
+		}
 		StatusEffectsNode.append(StatusEffectNode);
 	}
 	Data["statuseffects"] = StatusEffectsNode;
@@ -824,9 +829,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
 		StatusEffect->Buff = Stats->Buffs.at(StatusEffectNode["id"].asUInt());
 		StatusEffect->Level = StatusEffectNode["level"].asInt();
-		StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
-		StatusEffect->MaxDuration = StatusEffectNode["maxduration"].asDouble();
-		StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
+		StatusEffect->Infinite = StatusEffectNode["infinite"].asBool();
+		if(!StatusEffect->Infinite) {
+			StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
+			StatusEffect->MaxDuration = StatusEffectNode["maxduration"].asDouble();
+			StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
+		}
 		Character->StatusEffects.push_back(StatusEffect);
 	}
 
@@ -1181,6 +1189,10 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
 		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
 		StatusEffect->Source = Source;
+		if(StatusEffect->Duration < 0.0) {
+			StatusEffect->Infinite = true;
+			StatusEffect->Duration = 0.0;
+		}
 
 		if(Character->AddStatusEffect(StatusEffect)) {
 			if(Fighter->BattleElement)
@@ -1201,7 +1213,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		// Find existing buff
 		for(auto &ExistingEffect : Character->StatusEffects) {
 			if(ExistingEffect->Buff == ClearBuff) {
-				ExistingEffect->Duration = 0.0;
+				ExistingEffect->Deleted = true;
 				Server->UpdateBuff(this, ExistingEffect);
 			}
 		}

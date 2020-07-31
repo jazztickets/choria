@@ -1715,6 +1715,8 @@ void _PlayState::HandleBuffUpdate(ae::_Buffer &Data) {
 	// Read packet
 	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	uint32_t BuffID = Data.Read<uint32_t>();
+	bool Deleted = Data.ReadBit();
+	bool Infinite = Data.ReadBit();
 	int Level = Data.Read<int>();
 	double Duration = (double)Data.Read<float>();
 
@@ -1727,6 +1729,8 @@ void _PlayState::HandleBuffUpdate(ae::_Buffer &Data) {
 	for(auto &StatusEffect : Object->Character->StatusEffects) {
 		if(StatusEffect->Buff->ID == BuffID) {
 			StatusEffect->Level = Level;
+			StatusEffect->Deleted = Deleted;
+			StatusEffect->Infinite = Infinite;
 			StatusEffect->Duration = Duration;
 		}
 	}
