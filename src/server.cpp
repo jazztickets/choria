@@ -354,6 +354,8 @@ void _Server::HandleDisconnect(ae::_NetworkEvent &Event) {
 	Log << "[DISCONNECT] Disconnect from " << Buffer << ":" << Address->port << std::endl;
 
 	ae::_Buffer Data;
+	Data.WriteBit(1);
+	Data.StartRead();
 	HandleExit(Data, Event.Peer, true);
 
 	// Delete peer from network
@@ -945,7 +947,9 @@ _Object *_Server::CreateBot() {
 
 	// Simulate packet
 	ae::_Buffer Packet;
+	Packet.WriteBit(false);
 	Packet.Write<uint8_t>(0);
+	Packet.StartRead();
 	HandleCharacterPlay(Packet, Bot->Peer);
 
 	return Bot;
