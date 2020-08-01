@@ -1857,7 +1857,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "bounty") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Player->Character->Bounty = std::max(0L, Adjust ? Player->Character->Bounty + Change : Change);
+		Player->Character->Bounty = std::max((int64_t)0, Adjust ? Player->Character->Bounty + Change : Change);
 		SendHUD(Peer);
 	}
 	else if(Command == "clearunlocks") {
@@ -1882,7 +1882,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "experience") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Player->Character->Experience = std::max(0L, Adjust ? Player->Character->Experience + Change : Change);
+		Player->Character->Experience = std::max((int64_t)0, Adjust ? Player->Character->Experience + Change : Change);
 		Player->Character->CalculateStats();
 		SendHUD(Peer);
 	}
