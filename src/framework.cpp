@@ -23,6 +23,7 @@
 #include <states/test.h>
 #include <states/benchmark.h>
 #include <ae/network.h>
+#include <ae/clientnetwork.h>
 #include <ae/graphics.h>
 #include <ae/input.h>
 #include <ae/random.h>
@@ -34,6 +35,7 @@
 #include <ae/console.h>
 #include <ae/framelimit.h>
 #include <config.h>
+#include <save.h>
 #include <constants.h>
 #include <menu.h>
 #include <SDL.h>
@@ -182,6 +184,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			Console->CommandList.push_back("gold");
 			Console->CommandList.push_back("map");
 			Console->CommandList.push_back("move");
+			Console->CommandList.push_back("paste");
 			Console->CommandList.push_back("search");
 			Console->CommandList.push_back("save");
 		}
@@ -402,6 +405,23 @@ void _Framework::HandleCommand(ae::_Console *Console) {
 		else {
 			Console->AddMessage("maxfps = " + std::to_string(Config.MaxFPS));
 			Console->AddMessage("usage: maxfps [value]");
+		}
+	}
+	else if(Console->Command == "paste") {
+		if(Parameters.size() == 1 && PlayState.Network->IsDisconnected()) {
+			uint32_t CharacterID = ae::ToNumber<int>(Console->Parameters);
+
+			char *PastedText = SDL_GetClipboardText();
+			if(PastedText) {
+				_Save *Save = new _Save();
+				Save->SetData(PastedText, CharacterID);
+				delete Save;
+			}
+
+			SDL_free(PastedText);
+		}
+		else {
+			Console->AddMessage("usage: paste [character_id]");
 		}
 	}
 	else if(Console->Command == "volume") {

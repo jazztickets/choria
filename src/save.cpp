@@ -294,6 +294,17 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	return Object.Character->CharacterID;
 }
 
+// Set player save data
+void _Save::SetData(const char *JsonString, uint32_t CharacterID) {
+	std::string Data(JsonString);
+
+	Database->PrepareQuery("UPDATE character SET data = @data WHERE id = @character_id");
+	Database->BindString(1, Data);
+	Database->BindInt(2, CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
+}
+
 // Saves the player
 void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogFile *Log) {
 	if(Player->Character->CharacterID == 0)

@@ -59,6 +59,7 @@ class _Save {
 		uint32_t CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
 
 		// Objects
+		void SetData(const char *JsonString, uint32_t CharacterID);
 		void SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogFile *Log);
 		void LoadPlayer(const _Stats *Stats, _Object *Player);
 
