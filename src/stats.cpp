@@ -397,7 +397,6 @@ void _Stats::LoadEnchanters() {
 	Database->CloseQuery();
 }
 
-
 // Load minigames
 void _Stats::LoadMinigames() {
 	Minigames.clear();
