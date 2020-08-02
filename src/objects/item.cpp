@@ -516,7 +516,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetCooldownReduction(Upgrades), CompareInventory.Item->GetCooldownReduction(CompareInventory.Upgrades));
+			Color = GetCompareColor(-GetCooldownReduction(Upgrades), -CompareInventory.Item->GetCooldownReduction(CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Cooldowns", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
