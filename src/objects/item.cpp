@@ -103,6 +103,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		Size.y += SpacingY;
 	if(Player->Character->IsTrading())
 		Size.y += SpacingY;
+	if(Type == ItemType::MAP)
+		Size.y = INVENTORY_TOOLTIP_MAP_HEIGHT;
 
 	// Increase size for description
 	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, 50, 50, Size.x - SidePadding * 2);
