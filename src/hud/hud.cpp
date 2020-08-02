@@ -1229,10 +1229,16 @@ void _HUD::DrawActionBar() {
 				float OverlayHeight = (1.0 - CooldownPercent) * (Button->Bounds.End.y - Button->Bounds.Start.y);
 				ae::Graphics.DrawRectangle(Button->Bounds.Start + glm::vec2(0, OverlayHeight), Button->Bounds.End, true);
 
-				// Draw timer
+				// Get size
 				std::stringstream Buffer;
 				Buffer << std::fixed << std::setprecision(1) << ae::Round((float)CooldownIterator->second.Duration);
-				ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE);
+				ae::_TextBounds TextBounds;
+				ae::Assets.Fonts["hud_small"]->GetStringDimensions(Buffer.str(), TextBounds);
+				glm::vec2 TextSize(TextBounds.Width + 3, TextBounds.AboveBase + TextBounds.BelowBase + 3);
+
+				// Draw timer and overlay
+				ae::Graphics.DrawRectangle(glm::ivec2(DrawPosition - TextSize * 0.5f), glm::ivec2(DrawPosition + TextSize * 0.5f), true);
+				ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + glm::vec2(0, 7) * ae::_Element::GetUIScale()), ae::CENTER_BASELINE);
 			}
 
 			// Draw item count
