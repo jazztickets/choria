@@ -159,6 +159,15 @@ class _Object : public ae::_BaseObject {
 		uint32_t ModelID;
 		int Light;
 
+		// Compression
+		uint8_t UpdateID;
+		bool Changed;
+		glm::ivec2 OldPosition;
+		int OldStatus;
+		int OldInvisible;
+		int OldBounty;
+		int OldLight;
+
 	private:
 
 };

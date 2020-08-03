@@ -180,6 +180,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		std::list<_Object *> Objects;
 		std::list<_Object *> StaticObjects;
 		double ObjectUpdateTime;
+		uint8_t UpdateID;
 
 		// Stats
 		const _Stats *Stats;

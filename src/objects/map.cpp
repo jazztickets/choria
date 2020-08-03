@@ -94,6 +94,7 @@ _Map::_Map() :
 	BackgroundOffset(0.0f),
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
+	UpdateID(0),
 	Stats(nullptr),
 	Server(nullptr),
 	MaxZoneColors(sizeof(ZoneColors) / sizeof(glm::vec4)),
@@ -1304,9 +1305,23 @@ void _Map::SendObjectList(ae::_Peer *Peer) {
 // Sends object position information to all the clients in the map
 void _Map::SendObjectUpdates() {
 
+	// See if at least one object was changed
+	bool Changed = false;
+	for(auto &Object : Objects) {
+		if(Object->Changed) {
+			Object->Changed = false;
+			Changed = true;
+		}
+	}
+
+	// Increment update id
+	if(Changed)
+		UpdateID++;
+
 	// Create packet
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_OBJECTUPDATES);
+	Packet.Write<uint8_t>(UpdateID);
 	Packet.Write<uint8_t>((uint8_t)NetworkID);
 
 	// Write object count
@@ -1318,7 +1333,11 @@ void _Map::SendObjectUpdates() {
 	}
 
 	// Send packet to players in map
-	BroadcastPacket(Packet, ae::_Network::UNSEQUENCED);
+	for(auto &Object : Objects) {
+		if(!Object->Deleted && Object->Peer && Object->Peer->ENetPeer && Object->UpdateID != UpdateID) {
+			Server->Network->SendPacket(Packet, Object->Peer, ae::_Network::UNSEQUENCED, 1);
+		}
+	}
 }
 
 // Broadcast a packet to all peers in the map

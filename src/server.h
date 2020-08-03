@@ -133,6 +133,7 @@ class _Server {
 		void HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect=false);
 		void HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleUpdateID(ae::_Buffer &Data, ae::_Peer *Peer);
 
 		// Parameters
 		bool IsTesting;

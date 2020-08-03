@@ -1059,6 +1059,20 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 	if(!Player || !Map)
 		return;
 
+	// Get update id
+	uint8_t UpdateID = Data.Read<uint8_t>();
+	if(Map->UpdateID == UpdateID)
+		return;
+
+	// Send update id back to server
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_UPDATEID);
+	Packet.Write<uint8_t>(UpdateID);
+	Network->SendPacket(Packet, ae::_Network::UNSEQUENCED, 1);
+
+	// Save update id in map
+	Map->UpdateID = UpdateID;
+
 	// Check map id
 	ae::NetworkIDType MapID = Data.Read<uint8_t>();
 	if(MapID != Map->NetworkID)

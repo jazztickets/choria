@@ -397,6 +397,9 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case PacketType::WORLD_EXIT:
 			HandleExit(Data, Peer);
 		break;
+		case PacketType::WORLD_UPDATEID:
+			HandleUpdateID(Data, Peer);
+		break;
 		case PacketType::ACTION_USE:
 			HandleActionUse(Data, Peer);
 		break;
@@ -1930,6 +1933,14 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "save") {
 		SaveTime = Config.AutoSavePeriod;
 	}
+}
+
+// Handle last update id from player
+void _Server::HandleUpdateID(ae::_Buffer &Data, ae::_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	Peer->Object->UpdateID = Data.Read<uint8_t>();
 }
 
 // Handle action use by player

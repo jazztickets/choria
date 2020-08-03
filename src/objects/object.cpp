@@ -73,7 +73,15 @@ _Object::_Object() :
 
 	ModelTexture(nullptr),
 	ModelID(0),
-	Light(0) {
+	Light(0),
+
+	UpdateID(0),
+	Changed(false),
+	OldPosition(0, 0),
+	OldStatus(0),
+	OldInvisible(0),
+	OldBounty(0),
+	OldLight(0) {
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);
@@ -207,8 +215,27 @@ void _Object::Update(double FrameTime) {
 		Map->CheckEvents(this, Scripting);
 
 	// Update status
-	if(Character)
+	if(Character && !Monster->DatabaseID)
 		Character->UpdateStatus();
+
+	if(Server) {
+		if(Position != OldPosition)
+			Changed = true;
+		if(Character->Status != OldStatus)
+			Changed = true;
+		if(OldInvisible != Character->Invisible)
+			Changed = true;
+		if(Light != OldLight)
+			Changed = true;
+		if(Character->Bounty != OldBounty)
+			Changed = true;
+	}
+
+	OldPosition = Position;
+	OldStatus = Character->Status;
+	OldInvisible = Character->Invisible;
+	OldBounty = Character->Bounty;
+	OldLight = Light;
 }
 
 // Update bot AI
