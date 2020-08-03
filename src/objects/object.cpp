@@ -595,7 +595,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["skillpoints_unlocked"] = Character->SkillPointsUnlocked;
 	StatsNode["health"] = Character->Health;
 	StatsNode["mana"] = Character->Mana;
-	StatsNode["experience"] = Character->Experience;
+	StatsNode["experience"] = (Json::Value::Int64)Character->Experience;
 	StatsNode["gold"] = Character->Gold;
 	StatsNode["goldlost"] = Character->GoldLost;
 	StatsNode["playtime"] = Character->PlayTime;
