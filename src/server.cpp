@@ -1806,12 +1806,20 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 		}
 
 		// Penalize player for leaving battle
-		if(!FromDisconnect && Player->Character->Battle) {
-			Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
-			Player->Character->Health = 0;
-			Player->Character->Mana = Player->Character->MaxMana / 2;
-			Player->Character->LoadMapID = 0;
-			Player->Character->DeleteStatusEffects();
+		if(Player->Character->Battle) {
+
+			// Remove stolen gold
+			if(Player->Fighter->GoldStolen)
+				Player->Character->Gold -= Player->Fighter->GoldStolen;
+
+			// Apply penalty
+			if(!FromDisconnect) {
+				Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
+				Player->Character->Health = 0;
+				Player->Character->Mana = Player->Character->MaxMana / 2;
+				Player->Character->LoadMapID = 0;
+				Player->Character->DeleteStatusEffects();
+			}
 		}
 
 		// Leave trading screen
