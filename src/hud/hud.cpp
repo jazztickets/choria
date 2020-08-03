@@ -728,6 +728,10 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer << PlayState.Network->GetRTT() << "ms";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 3)));
 		Buffer.str("");
+
+		Buffer << PlayState.Network->GetPacketsLost() << "/" << PlayState.Network->GetPacketsSent() << "";
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 4)));
+		Buffer.str("");
 	}
 
 	// Draw button bar

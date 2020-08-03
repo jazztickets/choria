@@ -1646,7 +1646,7 @@ enet_protocol_send_outgoing_commands (ENetHost * host, ENetEvent * event, int ch
         if (currentPeer -> packetLossEpoch == 0)
           currentPeer -> packetLossEpoch = host -> serviceTime;
         else
-        if (ENET_TIME_DIFFERENCE (host -> serviceTime, currentPeer -> packetLossEpoch) >= ENET_PEER_PACKET_LOSS_INTERVAL &&
+        if (0 && ENET_TIME_DIFFERENCE (host -> serviceTime, currentPeer -> packetLossEpoch) >= ENET_PEER_PACKET_LOSS_INTERVAL &&
             currentPeer -> packetsSent > 0)
         {
            enet_uint32 packetLoss = currentPeer -> packetsLost * ENET_PEER_PACKET_LOSS_SCALE / currentPeer -> packetsSent;
