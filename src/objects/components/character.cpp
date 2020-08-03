@@ -375,7 +375,7 @@ void _Character::CalculateStats() {
 	SummonLimit = 0;
 	MinigameSpeed = 1;
 	ConsumeChance = 100;
-	Difficulty = EternalPain;
+	Difficulty = EternalPain + Rebirths;
 	RebirthTier += RebirthPower;
 	Resistances.clear();
 

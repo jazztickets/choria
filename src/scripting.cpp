@@ -494,6 +494,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Fighter->Corpse);
 	lua_setfield(LuaState, -2, "Corpse");
 
+	lua_pushinteger(LuaState, Object->Character->Rebirths);
+	lua_setfield(LuaState, -2, "Rebirths");
+
 	lua_pushinteger(LuaState, Object->Character->RebirthWealth);
 	lua_setfield(LuaState, -2, "RebirthWealth");
 
@@ -517,6 +520,9 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->Character->RebirthPassage);
 	lua_setfield(LuaState, -2, "RebirthPassage");
+
+	lua_pushinteger(LuaState, Object->Character->EternalPain);
+	lua_setfield(LuaState, -2, "EternalPain");
 
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");
