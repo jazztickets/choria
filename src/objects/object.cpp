@@ -873,7 +873,8 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 // Serialize for ObjectUpdate
 void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
-	Data.Write<glm::ivec2>(Position);
+	Data.Write<uint8_t>(Position.x);
+	Data.Write<uint8_t>(Position.y);
 	Data.Write<uint8_t>(Character->Status);
 	Data.WriteBit(Light);
 	Data.WriteBit(Character->Invisible);

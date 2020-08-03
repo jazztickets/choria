@@ -1072,7 +1072,9 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 
 		// Read packet
 		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
-		glm::ivec2 Position = Data.Read<glm::ivec2>();
+		glm::ivec2 Position;
+		Position.x = Data.Read<uint8_t>();
+		Position.y = Data.Read<uint8_t>();
 		uint8_t Status = Data.Read<uint8_t>();
 		int Light = Data.ReadBit();
 		int Invisible = Data.ReadBit();
