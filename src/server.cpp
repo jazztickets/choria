@@ -2025,10 +2025,9 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 		StatChange.Object = Object;
 		if(Scripting->StartMethodCall(Script.Name, "Activate")) {
 			Scripting->PushInt(Script.Level);
-			Scripting->PushReal(Script.Cooldown);
 			Scripting->PushObject(StatChange.Object);
 			Scripting->PushStatChange(&StatChange);
-			Scripting->MethodCall(4, 1);
+			Scripting->MethodCall(3, 1);
 			Scripting->GetStatChange(1, StatChange);
 			Scripting->FinishMethodCall();
 

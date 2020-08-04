@@ -516,7 +516,6 @@ void _Stats::LoadScripts() {
 		Script.ID = Database->GetInt<uint32_t>("id");
 		Script.Name = Database->GetString("name");
 		Script.Level = Database->GetInt<int>("level");
-		Script.Cooldown = Database->GetReal("cooldown");
 
 		Scripts[Script.ID] = Script;
 	}
@@ -560,7 +559,6 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 
 	// Get data
 	if(Database->FetchRow()) {
-		Object->Character->Level = Database->GetInt<int>("level");
 		Object->Name = Database->GetString("name");
 		Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
 		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * DifficultyMultiplier);

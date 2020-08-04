@@ -1,6 +1,6 @@
 Script_Rejuv = { BaseHealth = 5, BaseMana = 5 }
 
-function Script_Rejuv.Activate(self, Level, Cooldown, Object, Change)
+function Script_Rejuv.Activate(self, Level, Object, Change)
 	Change.Health = self.BaseHealth * Level
 	Change.Mana = self.BaseMana * Level
 	Change.Buff = Buff_Sanctuary.Pointer
@@ -12,7 +12,7 @@ end
 
 Script_Lava = { BaseHealth = -10 }
 
-function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
+function Script_Lava.Activate(self, Level, Object, Change)
 	if Object.LavaProtection == 1 then
 		Change.ClearBuff = Buff_Invis.Pointer
 		return Change
@@ -41,7 +41,7 @@ end
 
 Script_Boss = {}
 
-function Script_Boss.Activate(self, Level, Cooldown, Object, Change)
+function Script_Boss.Activate(self, Level, Object, Change)
 	Change.Battle = Level
 
 	return Change
@@ -49,7 +49,7 @@ end
 
 Script_Fall = { }
 
-function Script_Fall.Activate(self, Level, Cooldown, Object, Change)
+function Script_Fall.Activate(self, Level, Object, Change)
 	Change.Health = -1000
 	Change.Buff = Buff_Bleeding.Pointer
 	Change.BuffLevel = 100
@@ -65,7 +65,7 @@ end
 
 Script_Slow = { }
 
-function Script_Slow.Activate(self, Level, Cooldown, Object, Change)
+function Script_Slow.Activate(self, Level, Object, Change)
 	Change.Buff = Buff_Slowed.Pointer
 	Change.BuffLevel = Level
 	Change.BuffDuration = 5

@@ -64,7 +64,6 @@ struct _Script {
 	uint32_t ID;
 	std::string Name;
 	int Level;
-	double Cooldown;
 };
 
 struct _Level {
