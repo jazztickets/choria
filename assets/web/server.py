@@ -93,7 +93,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		params = {}
 		for var in query:
 			params[var] = query[var][0]
-		tablename = params['table']
+		tablename = '"' + params['table'] + '"'
 
 		if parts.path == "/save":
 			columns = get_column_names(tablename)
@@ -211,8 +211,10 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 		response = None
 		if parts.path == "/data":
+			tablename = '"' + params['table'] + '"'
+
 			results = {}
-			results['column_names'] = get_column_names(params['table'])
+			results['column_names'] = get_column_names(tablename)
 			references = get_references(params['table'])
 			children = get_children(params['table'])
 
@@ -234,7 +236,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 			# get table data
 			try:
-				sql = "SELECT * FROM {0} {1}".format(params['table'], where)
+				sql = "SELECT * FROM {0} {1}".format(tablename, where)
 				query = cursor.execute(sql);
 			except sqlite3.Error as e:
 				self.write_json_response({'message':sql + ": " + str(e)})
@@ -269,7 +271,8 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			self.write_json_response(results)
 			return True
 		elif parts.path == "/columns":
-			query = cursor.execute("pragma table_info(" + params['table'] + ")")
+			tablename = '"' + params['table'] + '"'
+			query = cursor.execute("pragma table_info(" + tablename + ")")
 			results = query.fetchall()
 			names = []
 			for row in results:
