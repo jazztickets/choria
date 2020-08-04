@@ -1913,6 +1913,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "gold") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
+		Change = std::clamp(Change, -(int64_t)PLAYER_MAX_GOLD, (int64_t)PLAYER_MAX_GOLD);
 		Player->Character->Gold = Adjust ? Player->Character->Gold + Change : Change;
 		if(Player->Character->Gold > PLAYER_MAX_GOLD)
 			Player->Character->Gold = PLAYER_MAX_GOLD;
@@ -2430,7 +2431,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MaxSkillLevels.clear();
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Gold = std::min((int64_t)(Character->Experience * Character->RebirthWealth * 0.01f), PLAYER_MAX_GOLD);
+	Character->Gold = std::min((int64_t)(Character->Experience * Character->RebirthWealth * 0.01f), (int64_t)PLAYER_MAX_GOLD);
 	Character->Experience = Stats->GetLevel(Character->RebirthWisdom + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;
