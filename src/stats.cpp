@@ -129,7 +129,6 @@ void _Stats::LoadLevels() {
 		Level.Health = Database->GetInt<int>("health");
 		Level.Mana = Database->GetInt<int>("mana");
 		Level.RebirthTier = Database->GetInt<int>("rebirth_tier");
-		Level.Armor = Database->GetInt<int>("armor");
 		Levels.push_back(Level);
 	}
 	Database->CloseQuery();

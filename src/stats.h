@@ -73,7 +73,6 @@ struct _Level {
 	int Health;
 	int Mana;
 	int RebirthTier;
-	int Armor;
 	int SkillPoints;
 };
 
