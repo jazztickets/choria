@@ -13,12 +13,13 @@ Base_Set = {
 	GetInfo = function(self, Source, Item)
 		SortedAttributes = {}
 		for Key, Value in pairs(self.Attributes) do
-			SortedAttributes[Value[1]] = { Value[2], Value[3] }
+			SortedAttributes[Value[1]] = { Key, Value[2] }
 		end
 
 		Text = ""
 		for Key, Value in ipairs(SortedAttributes) do
-			Text = Text .. "[c white]" .. Value[1] .. "[c white] " .. Value[2] .. "\n"
+			AttributeName = Value[1]:gsub("([a-z])([A-Z])", "%1 %2")
+			Text = Text .. "[c white]" .. AttributeName .. "[c white] " .. Value[2] .. "\n"
 		end
 
 		return Text
@@ -26,7 +27,7 @@ Base_Set = {
 
 	Stats = function(self, Object, Upgrades, Count, Change)
 		for Key, Value in pairs(self.Attributes) do
-			Number = string.gsub(Value[3], "%%", "")
+			Number = string.gsub(Value[2], "%%", "")
 			Change[Key] = tonumber(Number)
 		end
 
@@ -38,9 +39,9 @@ Base_Set = {
 
 Set_Mage = Base_Set:New()
 Set_Mage.Attributes = {
-	AllSkills           = { 1, "All Skills",               "+1"   },
-	SpellDamage         = { 2, "Spell Damage",             "+25%" },
-	ElementalResistance = { 3, "Elemental Resistance",     "+20%" },
-	MaxMana             = { 4, "Max Mana",                 "+75"  },
-	ManaRegen           = { 5, "Mana Regen",               "+2"   },
+	AllSkills           = { 1, "+1" },
+	SpellDamage         = { 2, "+25%" },
+	ElementalResistance = { 3, "+20%" },
+	MaxMana             = { 4, "+75" },
+	ManaRegen           = { 5, "+2" },
 }
