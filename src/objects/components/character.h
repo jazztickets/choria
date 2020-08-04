@@ -252,6 +252,7 @@ class _Character {
 		float CooldownMultiplier;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;
+		std::unordered_map<uint32_t, int> Sets;
 
 		// Status effects
 		std::list<_StatusEffect *> StatusEffects;

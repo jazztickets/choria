@@ -66,6 +66,13 @@ struct _Script {
 	int Level;
 };
 
+struct _Set {
+	uint32_t ID;
+	std::string Name;
+	std::string Script;
+	int Count;
+};
+
 struct _Level {
 	int Level;
 	int64_t Experience;
@@ -196,6 +203,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _Enchanter> Enchanters;
 		std::unordered_map<uint32_t, _MinigameType> Minigames;
 		std::unordered_map<uint32_t, _Script> Scripts;
+		std::unordered_map<uint32_t, _Set> Sets;
 		std::unordered_map<uint32_t, _Model> Models;
 		std::unordered_map<uint32_t, _LightType> Lights;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
@@ -229,6 +237,7 @@ class _Stats {
 		void LoadModels();
 		void LoadBuilds();
 		void LoadScripts();
+		void LoadSets();
 		void LoadLights();
 
 };

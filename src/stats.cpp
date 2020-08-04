@@ -53,6 +53,7 @@ _Stats::_Stats(bool Headless) :
 	LoadModels();
 	LoadBuilds();
 	LoadScripts();
+	LoadSets();
 	LoadLights();
 }
 
@@ -254,6 +255,7 @@ void _Stats::LoadItems() {
 		Item->Cooldown = Database->GetReal("cooldown");
 		Item->Cost = Database->GetInt<int>("cost");
 		Item->DamageTypeID = Database->GetInt<uint32_t>("damagetype_id");
+		Item->SetID = Database->GetInt<uint32_t>("set_id");
 		Item->MinDamage = Database->GetInt<int>("mindamage");
 		Item->MaxDamage = Database->GetInt<int>("maxdamage");
 		Item->Armor = Database->GetInt<int>("armor");
@@ -517,6 +519,26 @@ void _Stats::LoadScripts() {
 		Script.Level = Database->GetInt<int>("level");
 
 		Scripts[Script.ID] = Script;
+	}
+	Database->CloseQuery();
+}
+
+// Load sets
+void _Stats::LoadSets() {
+	Sets.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM \"set\"");
+
+	// Get data
+	_Set Set;
+	while(Database->FetchRow()) {
+		Set.ID = Database->GetInt<uint32_t>("id");
+		Set.Name = Database->GetString("name");
+		Set.Script = Database->GetString("script");
+		Set.Count = Database->GetInt<int>("count");
+
+		Sets[Set.ID] = Set;
 	}
 	Database->CloseQuery();
 }

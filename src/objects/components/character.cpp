@@ -378,6 +378,7 @@ void _Character::CalculateStats() {
 	Difficulty = EternalPain + Rebirths;
 	RebirthTier += RebirthPower;
 	Resistances.clear();
+	Sets.clear();
 
 	// Base resistances
 	for(int i = 3; i <= 8; i++)
@@ -424,53 +425,79 @@ void _Character::CalculateStats() {
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
 	std::vector<int> ItemMaxDamage(Object->Stats->DamageTypes.size(), 0);
-	int ItemArmor = 0;
-	int ItemDamageBlock = 0;
 	_Bag &EquipmentBag = Object->Inventory->GetBag(BagType::EQUIPMENT);
 	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
-
-		// Check each item
 		const _Item *Item = EquipmentBag.Slots[i].Item;
+		if(!Item)
+			continue;
+
+		// Get upgrade count
 		int Upgrades = EquipmentBag.Slots[i].Upgrades;
-		if(Item) {
+
+		// Get stat bonuses
+		_ActionResult ActionResult;
+		ActionResult.ActionUsed.Level = Upgrades;
+		ActionResult.Source.Object = Object;
+		Item->GetStats(Object->Scripting, ActionResult);
+		CalculateStatBonuses(ActionResult.Source);
+
+		// Add damage
+		if(Item->Type != ItemType::SHIELD) {
+			ItemMinDamage[Item->DamageTypeID] += Item->GetMinDamage(Upgrades);
+			ItemMaxDamage[Item->DamageTypeID] += Item->GetMaxDamage(Upgrades);
+		}
+
+		// Stat changes
+		Armor += Item->GetArmor(Upgrades);
+		DamageBlock += Item->GetDamageBlock(Upgrades);
+		Pierce += Item->GetPierce(Upgrades);
+		MaxHealth += Item->GetMaxHealth(Upgrades);
+		MaxMana += Item->GetMaxMana(Upgrades);
+		HealthRegen += Item->GetHealthRegen(Upgrades);
+		ManaRegen += Item->GetManaRegen(Upgrades);
+		BattleSpeed += Item->GetBattleSpeed(Upgrades);
+		MoveSpeed += Item->GetMoveSpeed(Upgrades);
+		Evasion += Item->GetEvasion(Upgrades);
+		AllSkills += Item->GetAllSkills(Upgrades);
+		SpellDamage += Item->GetSpellDamage(Upgrades);
+		CooldownMultiplier += Item->GetCooldownReduction(Upgrades) / 100.0f;
+		GoldMultiplier += Item->GetGoldBonus(Upgrades) / 100.0f;
+		ExperienceMultiplier += Item->GetExpBonus(Upgrades) / 100.0f;
+
+		// Handle all resist
+		if(Item->ResistanceTypeID == 1) {
+			for(int i = 3; i <= 7; i++)
+				Resistances[i] += Item->GetResistance(Upgrades);
+		}
+		else
+			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
+
+		// Increment set count
+		if(Item->SetID)
+			Sets[Item->SetID]++;
+	}
+
+	// Add set bonus
+	for(const auto &SetData : Sets) {
+		const _Set &Set = Object->Stats->Sets.at(SetData.first);
+
+		// Get stat bonuses when set is complete
+		if(SetData.second >= Set.Count) {
 			_ActionResult ActionResult;
-			ActionResult.ActionUsed.Level = Upgrades;
+			ActionResult.ActionUsed.Level = 0;
 			ActionResult.Source.Object = Object;
-			Item->GetStats(Object->Scripting, ActionResult);
+			_Scripting *Scripting = Object->Scripting;
+			if(Scripting->StartMethodCall(Set.Script, "Stats")) {
+				Scripting->PushObject(ActionResult.Source.Object);
+				Scripting->PushInt(ActionResult.ActionUsed.Level);
+				Scripting->PushInt(SetData.second);
+				Scripting->PushStatChange(&ActionResult.Source);
+				Scripting->MethodCall(4, 1);
+				Scripting->GetStatChange(1, ActionResult.Source);
+				Scripting->FinishMethodCall();
+			}
+
 			CalculateStatBonuses(ActionResult.Source);
-
-			// Add damage
-			if(Item->Type != ItemType::SHIELD) {
-				ItemMinDamage[Item->DamageTypeID] += Item->GetMinDamage(Upgrades);
-				ItemMaxDamage[Item->DamageTypeID] += Item->GetMaxDamage(Upgrades);
-			}
-			Pierce += Item->GetPierce(Upgrades);
-
-			// Add defense
-			ItemArmor += Item->GetArmor(Upgrades);
-			ItemDamageBlock += Item->GetDamageBlock(Upgrades);
-
-			// Stat changes
-			MaxHealth += Item->GetMaxHealth(Upgrades);
-			MaxMana += Item->GetMaxMana(Upgrades);
-			HealthRegen += Item->GetHealthRegen(Upgrades);
-			ManaRegen += Item->GetManaRegen(Upgrades);
-			BattleSpeed += Item->GetBattleSpeed(Upgrades);
-			MoveSpeed += Item->GetMoveSpeed(Upgrades);
-			Evasion += Item->GetEvasion(Upgrades);
-			AllSkills += Item->GetAllSkills(Upgrades);
-			SpellDamage += Item->GetSpellDamage(Upgrades);
-			CooldownMultiplier += Item->GetCooldownReduction(Upgrades) / 100.0f;
-			GoldMultiplier += Item->GetGoldBonus(Upgrades) / 100.0f;
-			ExperienceMultiplier += Item->GetExpBonus(Upgrades) / 100.0f;
-
-			// Handle all resist
-			if(Item->ResistanceTypeID == 1) {
-				for(int i = 3; i <= 7; i++)
-					Resistances[i] += Item->GetResistance(Upgrades);
-			}
-			else
-				Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
 		}
 	}
 
@@ -517,14 +544,6 @@ void _Character::CalculateStats() {
 		MinDamage += (int)std::roundf(ItemMinDamage[i] * AttackPower * GetDamagePower(i));
 		MaxDamage += (int)std::roundf(ItemMaxDamage[i] * AttackPower * GetDamagePower(i));
 	}
-	MinDamage = std::max(MinDamage, 0);
-	MaxDamage = std::max(MaxDamage, 0);
-	Pierce = std::max(Pierce, 0);
-
-	// Get defense
-	Armor += ItemArmor;
-	DamageBlock += ItemDamageBlock;
-	DamageBlock = std::max(DamageBlock, 0);
 
 	// Cap resistances
 	for(auto &Resist : Resistances) {
@@ -545,10 +564,13 @@ void _Character::CalculateStats() {
 		BattleSpeed = BATTLE_MIN_SPEED;
 	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
 		MoveSpeed = PLAYER_MIN_MOVESPEED;
-
 	if(CooldownMultiplier <= 0.0f)
 		CooldownMultiplier = 0.0f;
 
+	MinDamage = std::max(MinDamage, 0);
+	MaxDamage = std::max(MaxDamage, 0);
+	Pierce = std::max(Pierce, 0);
+	DamageBlock = std::max(DamageBlock, 0);
 	ManaReductionRatio = std::clamp(ManaReductionRatio, 0.0f, 1.0f);
 	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
 
@@ -632,6 +654,8 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		ManaPower += StatChange.Values[StatType::MANAPOWER].Float;
 	if(StatChange.HasStat(StatType::SUMMONLIMIT))
 		SummonLimit += StatChange.Values[StatType::SUMMONLIMIT].Integer;
+	if(StatChange.HasStat(StatType::SPELL_DAMAGE))
+		SpellDamage += StatChange.Values[StatType::SPELL_DAMAGE].Integer;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
 		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
@@ -650,6 +674,11 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		}
 		else
 			Resistances[ResistType] += StatChange.Values[StatType::RESIST].Integer;
+	}
+
+	if(StatChange.HasStat(StatType::ELEMENTAL_RESISTANCE)) {
+		for(int i = 3; i <= 5; i++)
+			Resistances[i] += StatChange.Values[StatType::ELEMENTAL_RESISTANCE].Integer;
 	}
 
 	if(StatChange.HasStat(StatType::MINDAMAGE))
@@ -684,6 +713,9 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::CONSUME_CHANCE))
 		ConsumeChance += StatChange.Values[StatType::CONSUME_CHANCE].Integer;
+
+	if(StatChange.HasStat(StatType::ALLSKILLS))
+		AllSkills += StatChange.Values[StatType::ALLSKILLS].Integer;
 }
 
 // Get percentage to next level

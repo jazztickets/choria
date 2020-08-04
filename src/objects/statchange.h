@@ -120,6 +120,7 @@ enum class StatType : int {
 	SPELL_DAMAGE,
 	MINIGAME_SPEED,
 	CONSUME_CHANCE,
+	ELEMENTAL_RESISTANCE,
 	COUNT,
 };
 
@@ -213,6 +214,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "SpellDamage",            { StatType::SPELL_DAMAGE           , StatValueType::INTEGER } },
 	{ "MinigameSpeed",          { StatType::MINIGAME_SPEED         , StatValueType::INTEGER } },
 	{ "ConsumeChance",          { StatType::CONSUME_CHANCE         , StatValueType::INTEGER } },
+	{ "ElementalResistance",    { StatType::ELEMENTAL_RESISTANCE   , StatValueType::INTEGER } },
 };
 
 union _Value {

@@ -107,7 +107,9 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		Size.y = INVENTORY_TOOLTIP_MAP_HEIGHT;
 
 	// Increase size for description
-	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, 50, 50, Size.x - SidePadding * 2);
+	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, Script, 50, 50, Size.x - SidePadding * 2);
+	if(SetID)
+		DescriptionLines += 1 + GetDescriptionLineCount(Scripting, Player, Stats->Sets.at(SetID).Script, 50, 50, Size.x - SidePadding * 2);
 	float DescriptionSizeY = DescriptionLines * INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 	Size.y += DescriptionSizeY;
 
@@ -255,6 +257,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Draw description
+	DrawSetDescription(Player, DrawPosition, Upgrades, Size.x - SidePadding * 2, SpacingY);
 	DrawDescription(Player, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
@@ -738,6 +741,49 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 	}
 }
 
+// Draw set description
+void _Item::DrawSetDescription(_Object *Object, glm::vec2 &DrawPosition, int Upgrades, float Width, float SpacingY) const {
+	if(!SetID)
+		return;
+
+	_Scripting *Scripting = Object->Scripting;
+	const _Set &Set = Object->Stats->Sets.at(SetID);
+
+	// Check for scripting function
+	std::string Info = "";
+	if(Scripting->StartMethodCall(Set.Script, "GetInfo")) {
+		int SetCount = Object->Character->Sets[SetID];
+
+		// Get description from script
+		Scripting->PushObject(Object);
+		Scripting->PushInt(Upgrades);
+		Scripting->PushInt(SetCount);
+		Scripting->MethodCall(3, 1);
+		Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+
+		std::stringstream Buffer(Info);
+		std::string Token;
+		float TextSpacingY = INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
+
+		// Draw header
+		ae::Assets.Fonts["hud_small"]->DrawTextFormatted("[c light_green]" + Set.Name + " Set Bonus" + " (" + std::to_string(SetCount) + "/" + std::to_string(Set.Count) + ")", DrawPosition, ae::CENTER_BASELINE);
+		DrawPosition.y += TextSpacingY;
+
+		// Draw description
+		while(std::getline(Buffer, Token, '\n')) {
+			std::list<std::string> Strings;
+			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
+			for(const auto &LineToken : Strings) {
+				ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
+				DrawPosition.y += TextSpacingY;
+			}
+		}
+
+		DrawPosition.y += SpacingY;
+	}
+}
+
 // Get target count based on target type
 int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTarget) const {
 
@@ -922,11 +968,11 @@ int _Item::GetAttributeCount(int Upgrades) const {
 }
 
 // Get number of lines in a description
-int _Item::GetDescriptionLineCount(_Scripting *Scripting, _Object *Object, int DrawLevel, int Upgrades, float Width) const {
+int _Item::GetDescriptionLineCount(_Scripting *Scripting, _Object *Object, const std::string &Function, int DrawLevel, int Upgrades, float Width) const {
 
 	// Check for scripting function
 	int Lines = 0;
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+	if(Scripting->StartMethodCall(Function, "GetInfo")) {
 
 		// Get description from script
 		Scripting->PushObject(Object);
@@ -1119,6 +1165,7 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 	}
 }
 
+// Get average damage
 float _Item::GetAverageDamage(int Upgrades) const {
 	return (GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
 }
