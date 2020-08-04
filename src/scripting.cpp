@@ -104,13 +104,20 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	// Add damage types
 	lua_newtable(LuaState);
 	for(const auto &Iterator : Stats->DamageTypes) {
-
-		// Add pointer to table
 		lua_pushstring(LuaState, Iterator.second.Name.c_str());
 		lua_pushinteger(LuaState, Iterator.first);
 		lua_settable(LuaState, -3);
 	}
 	lua_setglobal(LuaState, "DamageType");
+
+	// Add upgrade scale
+	lua_newtable(LuaState);
+	for(const auto &Iterator : StatStringToType) {
+		lua_pushstring(LuaState, Iterator.first.c_str());
+		lua_pushnumber(LuaState, Stats->UpgradeScale.at(Iterator.second.Type));
+		lua_settable(LuaState, -3);
+	}
+	lua_setglobal(LuaState, "UpgradeScale");
 
 	// Push limits
 	lua_pushinteger(LuaState, BATTLE_MAX_OBJECTS_PER_SIDE);
