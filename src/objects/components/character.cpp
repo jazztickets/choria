@@ -473,8 +473,17 @@ void _Character::CalculateStats() {
 			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
 
 		// Increment set count
-		if(Item->SetID)
-			Sets[Item->SetID]++;
+		if(Item->SetID) {
+			auto SetIterator = Sets.find(Item->SetID);
+			if(SetIterator == Sets.end()) {
+				Sets[Item->SetID].Count = 1;
+				Sets[Item->SetID].Level = Upgrades;
+			}
+			else {
+				SetIterator->second.Count++;
+				SetIterator->second.Level = std::min(Upgrades, Sets[Item->SetID].Level);
+			}
+		}
 	}
 
 	// Add set bonus
@@ -482,22 +491,21 @@ void _Character::CalculateStats() {
 		const _Set &Set = Object->Stats->Sets.at(SetData.first);
 
 		// Get stat bonuses when set is complete
-		if(SetData.second >= Set.Count) {
-			_ActionResult ActionResult;
-			ActionResult.ActionUsed.Level = 0;
-			ActionResult.Source.Object = Object;
+		if(SetData.second.Count >= Set.Count) {
+			_StatChange StatChange;
+			StatChange.Object = Object;
 			_Scripting *Scripting = Object->Scripting;
 			if(Scripting->StartMethodCall(Set.Script, "Stats")) {
-				Scripting->PushObject(ActionResult.Source.Object);
-				Scripting->PushInt(ActionResult.ActionUsed.Level);
-				Scripting->PushInt(SetData.second);
-				Scripting->PushStatChange(&ActionResult.Source);
+				Scripting->PushObject(StatChange.Object);
+				Scripting->PushInt(SetData.second.Level);
+				Scripting->PushInt(SetData.second.Count);
+				Scripting->PushStatChange(&StatChange);
 				Scripting->MethodCall(4, 1);
-				Scripting->GetStatChange(1, ActionResult.Source);
+				Scripting->GetStatChange(1, StatChange);
 				Scripting->FinishMethodCall();
 			}
 
-			CalculateStatBonuses(ActionResult.Source);
+			CalculateStatBonuses(StatChange);
 		}
 	}
 

@@ -44,6 +44,13 @@ struct _Unlock {
 	int Level;
 };
 
+struct _SetData {
+	_SetData() : Count(0), Level(0) { }
+
+	int Count;
+	int Level;
+};
+
 struct _Cooldown {
 	_Cooldown() : Duration(0), MaxDuration(0) { }
 
@@ -252,7 +259,7 @@ class _Character {
 		float CooldownMultiplier;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;
-		std::unordered_map<uint32_t, int> Sets;
+		std::unordered_map<uint32_t, _SetData> Sets;
 
 		// Status effects
 		std::list<_StatusEffect *> StatusEffects;
