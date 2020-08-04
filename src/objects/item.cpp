@@ -257,7 +257,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Draw description
-	DrawSetDescription(Player, DrawPosition, Size.x - SidePadding * 2, SpacingY);
+	DrawSetDescription(Player, DrawPosition, Tooltip.Window == _HUD::WINDOW_BLACKSMITH, Size.x - SidePadding * 2, SpacingY);
 	DrawDescription(Player, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
@@ -742,7 +742,7 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 }
 
 // Draw set description
-void _Item::DrawSetDescription(_Object *Object, glm::vec2 &DrawPosition, float Width, float SpacingY) const {
+void _Item::DrawSetDescription(_Object *Object, glm::vec2 &DrawPosition, bool BlackSmith, float Width, float SpacingY) const {
 	if(!SetID)
 		return;
 
@@ -753,13 +753,12 @@ void _Item::DrawSetDescription(_Object *Object, glm::vec2 &DrawPosition, float W
 	std::string Info = "";
 	if(Scripting->StartMethodCall(Set.Script, "GetInfo")) {
 		int SetCount = Object->Character->Sets[SetID].Count;
-		int SetLevel = Object->Character->Sets[SetID].Level;
+		int SetLevel = Object->Character->Sets[SetID].Level + BlackSmith;
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushInt(SetLevel);
-		Scripting->PushInt(SetCount);
-		Scripting->MethodCall(3, 1);
+		Scripting->PushItemParameters(0, 0, 0, SetLevel);
+		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
 
