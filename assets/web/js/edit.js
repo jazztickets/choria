@@ -342,9 +342,13 @@ function save() {
 
 	// Convert dropdowns back to ids
 	var headers = hot.getColHeader();
-	var data = hot.getSourceData();
+	var data = hot.getData();
+	remove_row = -1;
 	for(var row in data) {
-
+		if(data[row][0] == "sum") {
+			remove_row = row;
+			continue;
+		}
 		for(var col in headers) {
 
 			// Remove empty columns from data array
@@ -366,15 +370,15 @@ function save() {
 		}
 	}
 
-	// Remove last row
-	save_data = data;
-	save_data.splice(data.length-1, 1);
+	// Remove sum row
+	if(remove_row != -1)
+		data.splice(remove_row, 1);
 
 	// Send request
 	var request = $.ajax({
 		type: "POST",
 		url: "/save" + querystring,
-		data: jQuery.param({'data': save_data}),
+		data: jQuery.param({'data': data}),
 		dataType: "html",
 		success: function(response, text_status, jqxhr) {
 			ajax_success(response, text_status, jqxhr);
