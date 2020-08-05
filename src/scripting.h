@@ -59,7 +59,7 @@ class _Scripting {
 		void PushStatusEffect(_StatusEffect *StatusEffect);
 		void PushObjectList(std::list<_Object *> &Objects);
 		void PushObjectStatusEffects(_Object *Object);
-		void PushItemParameters(int Chance, int Level, double Duration, int Upgrades);
+		void PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel);
 		void PushBoolean(bool Value);
 		void PushInt(int Value);
 		void PushReal(double Value);
@@ -85,7 +85,7 @@ class _Scripting {
 
 	private:
 
-		static void PushItem(lua_State *LuaState, const _Item *Item, int Upgrades);
+		static void PushItem(lua_State *LuaState, const _Stats *Stats, const _Item *Item, int Upgrades);
 
 		static int RandomGetInt(lua_State *LuaState);
 		static int AudioPlay(lua_State *LuaState);

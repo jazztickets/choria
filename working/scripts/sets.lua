@@ -10,6 +10,10 @@ Base_Set = {
 	end,
 
 	GetInfo = function(self, Source, Item)
+		return "[c light_green]Added Set Bonus\n" .. self:GetSetInfo(Source, Item.SetLevel)
+	end,
+
+	GetSetInfo = function(self, Source, Upgrades)
 
 		-- Sort attributes by name
 		SortedAttributes = {}
@@ -28,7 +32,7 @@ Base_Set = {
 				Percent = "%"
 			end
 
-			UpgradedValue = self:GetUpgradedValue(Key, Value, Item.Upgrades)
+			UpgradedValue = self:GetUpgradedValue(Key, Value, Upgrades)
 
 			Sign = "+"
 			if UpgradedValue < 0 then
@@ -48,7 +52,7 @@ Base_Set = {
 		return UpgradedValue
 	end,
 
-	Stats = function(self, Object, Upgrades, Count, Change)
+	SetStats = function(self, Object, Upgrades, Count, Change)
 		for Key, Value in pairs(self.Attributes) do
 			Change[Key] = self:GetUpgradedValue(Key, Value, Upgrades)
 		end
@@ -56,6 +60,8 @@ Base_Set = {
 		return Change
 	end
 }
+
+-- Base Bonus
 
 Set_Mage = Base_Set:New()
 Set_Mage.UpgradeRate = 0.1
@@ -82,4 +88,16 @@ Set_Leather.Attributes = {
 	BleedResist = "20%",
 	MaxHealth = "75",
 	PhysicalPower = "25%",
+}
+
+-- Added Bonus --
+
+SetBonus_Stick = Base_Set:New()
+SetBonus_Stick.Attributes = {
+	SpellDamage = "10%",
+}
+
+SetBonus_MageBook = Base_Set:New()
+SetBonus_MageBook.Attributes = {
+	SpellDamage = "10%",
 }

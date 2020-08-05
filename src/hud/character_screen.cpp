@@ -52,7 +52,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 
 	// Damage
 	Buffer << HUD->Player->Character->MinDamage << " - " << HUD->Player->Character->MaxDamage;
-	Font->DrawText("Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText("Weapon Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;

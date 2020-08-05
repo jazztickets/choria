@@ -165,7 +165,7 @@ end
 Buff_Mighty = Base_Buff:New()
 
 function Buff_Mighty.GetInfo(self, Level)
-	return "Attack damage increased by [c green]" .. Level
+	return "Weapon damage increased by [c green]" .. Level
 end
 
 function Buff_Mighty.Stats(self, Level, Source, Change)

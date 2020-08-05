@@ -209,7 +209,7 @@ void _Scripting::InjectItemPointers(const _Stats *Stats) {
 		}
 
 		// Add item pointer
-		PushItem(LuaState, Item, 0);
+		PushItem(LuaState, Stats, Item, 0);
 		lua_setfield(LuaState, -2, "Item");
 
 		lua_pop(LuaState, 1);
@@ -632,11 +632,14 @@ void _Scripting::PushObject(_Object *Object) {
 }
 
 // Push item onto stack
-void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) {
+void _Scripting::PushItem(lua_State *LuaState, const _Stats *Stats, const _Item *Item, int Upgrades) {
 	if(!Item) {
 		lua_pushnil(LuaState);
 		return;
 	}
+
+	if(!Stats)
+		throw std::runtime_error("PushItem: Stats is null!");
 
 	lua_newtable(LuaState);
 
@@ -656,6 +659,20 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 
 	lua_pushinteger(LuaState, (int)Item->ID);
 	lua_setfield(LuaState, -2, "ID");
+
+	if(Stats->Sets.find(Item->SetID) != Stats->Sets.end()) {
+		const _Set &Set = Stats->Sets.at(Item->SetID);
+		lua_newtable(LuaState);
+
+		lua_pushinteger(LuaState, Set.Count);
+		lua_setfield(LuaState, -2, "Count");
+
+		lua_pushstring(LuaState, Set.Name.c_str());
+		lua_setfield(LuaState, -2, "Name");
+	}
+	else
+		lua_pushnil(LuaState);
+	lua_setfield(LuaState, -2, "Set");
 
 	lua_pushinteger(LuaState, Item->Level);
 	lua_setfield(LuaState, -2, "Level");
@@ -768,7 +785,7 @@ void _Scripting::PushObjectStatusEffects(_Object *Object) {
 }
 
 // Push varying parameters for an item
-void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int Upgrades) {
+void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel) {
 	lua_newtable(LuaState);
 
 	lua_pushinteger(LuaState, Chance);
@@ -782,6 +799,9 @@ void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int 
 
 	lua_pushinteger(LuaState, Upgrades);
 	lua_setfield(LuaState, -2, "Upgrades");
+
+	lua_pushinteger(LuaState, SetLevel);
+	lua_setfield(LuaState, -2, "SetLevel");
 }
 
 // Push boolean value
@@ -1088,7 +1108,7 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 	}
 
 	// Push item
-	PushItem(LuaState, Item, Upgrades);
+	PushItem(LuaState, Object->Stats, Item, Upgrades);
 
 	return 1;
 }

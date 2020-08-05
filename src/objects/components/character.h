@@ -45,9 +45,9 @@ struct _Unlock {
 };
 
 struct _SetData {
-	_SetData() : Count(0), Level(0) { }
+	_SetData() : EquippedCount(0), Level(0) { }
 
-	int Count;
+	int EquippedCount;
 	int Level;
 };
 

@@ -78,6 +78,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	// Set up window size
 	std::list<std::string> HelpTextList;
 	glm::vec2 Size;
+	glm::vec2 DrawPosition;
 	Size.x = INVENTORY_TOOLTIP_WIDTH * ae::_Element::GetUIScale();
 	float SidePadding = 36 * ae::_Element::GetUIScale();
 	float SpacingY = 36 * ae::_Element::GetUIScale();
@@ -107,16 +108,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		Size.y = INVENTORY_TOOLTIP_MAP_HEIGHT;
 
 	// Increase size for description
-	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, Script, 50, 50, Size.x - SidePadding * 2);
-	if(DescriptionLines && SetID)
-		DescriptionLines++;
+	int DescriptionWidth = Size.x - SidePadding * 2;
+	int DescriptionLines = DrawDescription(false, Player, Script, DrawPosition, false, 0, 0, 0, 0, true, DescriptionWidth, 0);
 	if(!Proc.empty()) {
-		DescriptionLines += GetDescriptionLineCount(Scripting, Player, Proc, 50, 50, Size.x - SidePadding * 2);
-		if(SetID)
-			DescriptionLines++;
+		DescriptionLines += DrawDescription(false, Player, Proc, DrawPosition, false, 0, 0, 0, 0, false, DescriptionWidth, 0);
 	}
 	if(SetID)
-		DescriptionLines += GetDescriptionLineCount(Scripting, Player, Stats->Sets.at(SetID).Script, 50, 50, Size.x - SidePadding * 2) + 1;
+		DescriptionLines += DrawSetDescription(false, Player, DrawPosition, false, DescriptionWidth, 0);
 	float DescriptionSizeY = DescriptionLines * INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 	Size.y += DescriptionSizeY;
 
@@ -157,7 +155,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	TooltipElement->SetActive(false);
 
 	// Set draw position to center of window
-	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
+	DrawPosition = glm::vec2((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
 	DrawPosition.y += LargeSpacingY;
 
 	// Draw map
@@ -264,18 +262,18 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Draw proc info
-	int DescriptionWidth = Size.x - SidePadding * 2;
-	DrawDescription(Player, Proc, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
+	bool Blacksmith = (Tooltip.Window == _HUD::WINDOW_BLACKSMITH);
+	DrawDescription(true, Player, Proc, DrawPosition, Blacksmith, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
 
 	// Draw set info
-	DrawSetDescription(Player, DrawPosition, Tooltip.Window == _HUD::WINDOW_BLACKSMITH, DescriptionWidth, SpacingY);
+	DrawSetDescription(true, Player, DrawPosition, Blacksmith, DescriptionWidth, SpacingY);
 
 	// Draw item info
-	DrawDescription(Player, Script, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
+	DrawDescription(true, Player, Script, DrawPosition, Blacksmith, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
-		DrawDescription(Player, Script, DrawPosition, DrawLevel+1, PlayerMaxSkillLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(true, Player, Script, DrawPosition, false, DrawLevel+1, PlayerMaxSkillLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -699,16 +697,20 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 }
 
 // Draw item description
-void _Item::DrawDescription(_Object *Object, const std::string &Function, glm::vec2 &DrawPosition, int DrawLevel, int PlayerMaxSkillLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
+int _Item::DrawDescription(bool Render, _Object *Object, const std::string &Function, glm::vec2 &DrawPosition, bool Blacksmith, int DrawLevel, int PlayerMaxSkillLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
 	_Scripting *Scripting = Object->Scripting;
+	int LineCount = 0;
 
 	// Check for scripting function
 	std::string Info = "";
 	if(Scripting->StartMethodCall(Function, "GetInfo")) {
+		int SetLevel = 0;
+		if(SetID)
+			SetLevel = Object->Character->Sets[SetID].Level + Blacksmith;
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades);
+		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades, SetLevel);
 		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -727,13 +729,15 @@ void _Item::DrawDescription(_Object *Object, const std::string &Function, glm::v
 			}
 			else if(!EnchanterMaxLevel && DrawLevel >= PlayerMaxSkillLevel) {
 				if(DrawLevel > MaxLevel)
-					return;
+					return LineCount;
 
 				Text = "Enchanter required for level " + std::to_string(DrawLevel);
 				Color = ae::Assets.Colors["red"];
 			}
-			ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, Color);
-			DrawPosition.y += SpacingY;
+			if(Render) {
+				ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, Color);
+				DrawPosition.y += SpacingY;
+			}
 		}
 
 		std::stringstream Buffer(Info);
@@ -745,32 +749,41 @@ void _Item::DrawDescription(_Object *Object, const std::string &Function, glm::v
 			std::list<std::string> Strings;
 			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
 			for(const auto &LineToken : Strings) {
-				ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
-				DrawPosition.y += TextSpacingY;
+				if(Render) {
+					ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
+					DrawPosition.y += TextSpacingY;
+				}
+				LineCount++;
 			}
 		}
 
-		DrawPosition.y += SpacingY;
+		if(Render)
+			DrawPosition.y += SpacingY;
+
+		LineCount++;
 	}
+
+	return LineCount;
 }
 
 // Draw set description
-void _Item::DrawSetDescription(_Object *Object, glm::vec2 &DrawPosition, bool BlackSmith, float Width, float SpacingY) const {
+int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosition, bool Blacksmith, float Width, float SpacingY) const {
+	int LineCount = 0;
 	if(!SetID)
-		return;
+		return LineCount;
 
 	_Scripting *Scripting = Object->Scripting;
 	const _Set &Set = Object->Stats->Sets.at(SetID);
 
 	// Check for scripting function
 	std::string Info = "";
-	if(Scripting->StartMethodCall(Set.Script, "GetInfo")) {
-		int SetCount = Object->Character->Sets[SetID].Count;
-		int SetLevel = Object->Character->Sets[SetID].Level + BlackSmith;
+	if(Scripting->StartMethodCall(Set.Script, "GetSetInfo")) {
+		int EquippedCount = Object->Character->Sets[SetID].EquippedCount;
+		int Upgrades = Object->Character->Sets[SetID].Level + Blacksmith;
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(0, 0, 0, SetLevel);
+		Scripting->PushInt(Upgrades);
 		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -780,21 +793,29 @@ void _Item::DrawSetDescription(_Object *Object, glm::vec2 &DrawPosition, bool Bl
 		float TextSpacingY = INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 
 		// Draw header
-		ae::Assets.Fonts["hud_small"]->DrawTextFormatted("[c light_green]" + Set.Name + " Set Bonus" + " (" + std::to_string(SetCount) + "/" + std::to_string(Set.Count) + ")", DrawPosition, ae::CENTER_BASELINE);
-		DrawPosition.y += TextSpacingY;
+		if(Render) {
+			ae::Assets.Fonts["hud_small"]->DrawTextFormatted("[c light_green]" + Set.Name + " Set Bonus" + " (" + std::to_string(EquippedCount) + "/" + std::to_string(Set.Count) + ")", DrawPosition, ae::CENTER_BASELINE);
+			DrawPosition.y += TextSpacingY;
+		}
+		LineCount++;
 
 		// Draw description
 		while(std::getline(Buffer, Token, '\n')) {
 			std::list<std::string> Strings;
 			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
 			for(const auto &LineToken : Strings) {
-				ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
-				DrawPosition.y += TextSpacingY;
+				if(Render) {
+					ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
+					DrawPosition.y += TextSpacingY;
+				}
+				LineCount++;
 			}
 		}
 
 		DrawPosition.y += SpacingY;
 	}
+
+	return LineCount;
 }
 
 // Get target count based on target type
@@ -980,33 +1001,6 @@ int _Item::GetAttributeCount(int Upgrades) const {
 	return Count;
 }
 
-// Get number of lines in a description
-int _Item::GetDescriptionLineCount(_Scripting *Scripting, _Object *Object, const std::string &Function, int DrawLevel, int Upgrades, float Width) const {
-
-	// Check for scripting function
-	int Lines = 0;
-	if(Scripting->StartMethodCall(Function, "GetInfo")) {
-
-		// Get description from script
-		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades);
-		Scripting->MethodCall(2, 1);
-		std::string Info = Scripting->GetString(1);
-		Scripting->FinishMethodCall();
-
-		// Get line count
-		std::stringstream Buffer(Info);
-		std::string Token;
-		while(std::getline(Buffer, Token, '\n')) {
-			std::list<std::string> Strings;
-			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
-			Lines += Strings.size();
-		}
-	}
-
-	return Lines;
-}
-
 // Return true if the item can be used
 bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	_Object *Object = ActionResult.Source.Object;
@@ -1156,12 +1150,12 @@ void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Get passive stats
-void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel) const {
 	if(Scripting->StartMethodCall(Script, "Stats")) {
 		if(IsSkill())
 			Scripting->PushInt(ActionResult.ActionUsed.Level);
 		else
-			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level);
+			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level, SetLevel);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushStatChange(&ActionResult.Source);
 		Scripting->MethodCall(3, 1);
