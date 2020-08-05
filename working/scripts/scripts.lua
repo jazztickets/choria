@@ -10,7 +10,7 @@ function Script_Rejuv.Activate(self, Level, Object, Change)
 	return Change
 end
 
-Script_Lava = { BaseHealth = -10 }
+Script_Lava = { BaseDamage = 10 }
 
 function Script_Lava.Activate(self, Level, Object, Change)
 	if Object.LavaProtection == 1 then
@@ -18,11 +18,8 @@ function Script_Lava.Activate(self, Level, Object, Change)
 		return Change
 	end
 
-	Damage = -self.BaseHealth * Level * Object.GetDamageReduction(DamageType["Fire"])
-
-	Update = ResolveManaReductionRatio(Object, Damage)
-	Change.Health = Update.Health
-	Change.Mana = Update.Mana
+	Damage = self.BaseDamage * Level * Object.GetDamageReduction(DamageType["Fire"])
+	Change.Health = -Damage
 	Change.Buff = Buff_Burning.Pointer
 	Change.BuffLevel = Level * 2
 	Change.BuffDuration = 10

@@ -816,7 +816,7 @@ function Item_WardingAmulet.GetReduction(self, Item)
 end
 
 function Item_WardingAmulet.GetInfo(self, Source, Item)
-	return "Convert [c green]" .. self:GetReduction(Item) .. "%[c white] of damage taken to mana drain"
+	return "Convert [c green]" .. self:GetReduction(Item) .. "%[c white] of attack damage taken to mana drain"
 end
 
 function Item_WardingAmulet.Stats(self, Item, Object, Change)

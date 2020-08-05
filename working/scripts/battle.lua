@@ -109,10 +109,7 @@ Base_Spell = {
 		Change.Damage = math.max(Change.Damage, 0)
 
 		Result.Target.DamageType = self.Item.DamageType
-
-		Update = ResolveManaReductionRatio(Target, Change.Damage)
-		Result.Target.Health = Update.Health
-		Result.Target.Mana = Update.Mana
+		Result.Target.Health = -Change.Damage
 
 		self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 		WeaponProc(Source, Target, Result, true)

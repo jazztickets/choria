@@ -622,7 +622,7 @@ function Skill_EnergyField.GetReduction(self, Level)
 end
 
 function Skill_EnergyField.GetInfo(self, Source, Item)
-	return "Convert [c green]" .. self:GetReduction(Item.Level) .. "%[c white] of damage taken to mana drain"
+	return "Convert [c green]" .. self:GetReduction(Item.Level) .. "%[c white] of attack damage taken to mana drain"
 end
 
 function Skill_EnergyField.Stats(self, Level, Object, Change)
