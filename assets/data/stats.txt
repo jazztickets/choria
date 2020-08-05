@@ -1352,31 +1352,31 @@ CREATE TABLE IF NOT EXISTS "vendor" (
 	"name" TEXT,
 	"buy_percent" REAL DEFAULT(1.0),
 	"sell_percent" REAL DEFAULT(0.5)
-);
-INSERT INTO vendor VALUES(1,'ham_skills',1.0,0.5);
-INSERT INTO vendor VALUES(2,'ham_supplies',1.0,0.5);
-INSERT INTO vendor VALUES(3,'ham_weapon',1.0,0.5);
-INSERT INTO vendor VALUES(4,'ham_armor',1.0,0.5);
-INSERT INTO vendor VALUES(5,'ham_special',1.0,0.5500000000000000444);
-INSERT INTO vendor VALUES(6,'fem_magic',1.0,0.5);
-INSERT INTO vendor VALUES(7,'san_shop',1.0,0.5);
-INSERT INTO vendor VALUES(8,'san_skills',1.0,0.5);
-INSERT INTO vendor VALUES(9,'san_weapon',1.0,0.5);
-INSERT INTO vendor VALUES(10,'san_armor',1.0,0.5);
-INSERT INTO vendor VALUES(11,'ruins_vendor',1.0,0.59999999999999997779);
-INSERT INTO vendor VALUES(12,'ham_game',1.0,0.5);
-INSERT INTO vendor VALUES(13,'lighthouse_vendor',1.0,0.5);
-INSERT INTO vendor VALUES(14,'dungeon_vendor',1.0,0.5);
-INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5);
-INSERT INTO vendor VALUES(16,'wym_gear',1.0,0.5);
-INSERT INTO vendor VALUES(17,'graveyard_skills',1.0,0.5500000000000000444);
-INSERT INTO vendor VALUES(18,'ancient_vendor',1.0,0.5);
-INSERT INTO vendor VALUES(19,'hideout_shop',1.0,0.5);
-INSERT INTO vendor VALUES(20,'ruins_skills',1.0,0.5);
-INSERT INTO vendor VALUES(21,'library_vendor',1.0,0.5);
-INSERT INTO vendor VALUES(22,'garden_vendor',1.0,0.75);
-INSERT INTO vendor VALUES(23,'chamber_vendor',1.0,0.5);
-INSERT INTO vendor VALUES(24,'rebirth_vendor',1.0,0.5);
+, sort TEXT);
+INSERT INTO vendor VALUES(1,'ham_skills',1.0,0.5,'');
+INSERT INTO vendor VALUES(2,'ham_supplies',1.0,0.5,'');
+INSERT INTO vendor VALUES(3,'ham_weapon',1.0,0.5,'');
+INSERT INTO vendor VALUES(4,'ham_armor',1.0,0.5,'');
+INSERT INTO vendor VALUES(5,'ham_special',1.0,0.5500000000000000444,'');
+INSERT INTO vendor VALUES(6,'fem_magic',1.0,0.5,'');
+INSERT INTO vendor VALUES(7,'san_shop',1.0,0.5,'');
+INSERT INTO vendor VALUES(8,'san_skills',1.0,0.5,'');
+INSERT INTO vendor VALUES(9,'san_weapon',1.0,0.5,'');
+INSERT INTO vendor VALUES(10,'san_armor',1.0,0.5,'');
+INSERT INTO vendor VALUES(11,'ruins_vendor',1.0,0.59999999999999997779,'');
+INSERT INTO vendor VALUES(12,'ham_game',1.0,0.5,'');
+INSERT INTO vendor VALUES(13,'lighthouse_vendor',1.0,0.5,'');
+INSERT INTO vendor VALUES(14,'dungeon_vendor',1.0,0.5,'');
+INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5,'');
+INSERT INTO vendor VALUES(16,'wym_gear',1.0,0.5,'');
+INSERT INTO vendor VALUES(17,'graveyard_skills',1.0,0.5500000000000000444,'');
+INSERT INTO vendor VALUES(18,'ancient_vendor',1.0,0.5,'');
+INSERT INTO vendor VALUES(19,'hideout_shop',1.0,0.5,'');
+INSERT INTO vendor VALUES(20,'ruins_skills',1.0,0.5,'');
+INSERT INTO vendor VALUES(21,'library_vendor',1.0,0.5,'');
+INSERT INTO vendor VALUES(22,'garden_vendor',1.0,0.75,'');
+INSERT INTO vendor VALUES(23,'chamber_vendor',1.0,0.5,'');
+INSERT INTO vendor VALUES(24,'rebirth_vendor',1.0,0.5,'');
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,

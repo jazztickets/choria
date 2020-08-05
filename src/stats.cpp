@@ -312,12 +312,18 @@ void _Stats::LoadVendors() {
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt<uint32_t>("id");
 		Vendor.Name = Database->GetString("name");
+		Vendor.Sort = Database->GetString("sort");
 		Vendor.BuyPercent = (float)Database->GetReal("buy_percent");
 		Vendor.SellPercent = (float)Database->GetReal("sell_percent");
 		Vendor.Items.clear();
 
+		// Set order by for items
+		std::string OrderBy = "i.cost";
+		if(Vendor.Sort == "set")
+			OrderBy = "i.set_id, i.cost";
+
 		// Get items
-		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
+		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i WHERE vi.vendor_id = @vendor_id AND i.id = vi.item_id ORDER BY " + OrderBy, 1);
 		Database->BindInt(1, Vendor.ID, 1);
 		while(Database->FetchRow(1)) {
 			Vendor.Items.push_back(Items[Database->GetInt<uint32_t>("item_id", 1)]);
