@@ -487,7 +487,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Add set bonus
-	for(const auto &SetData : Sets) {
+	for(auto &SetData : Sets) {
 		const _Set &Set = Object->Stats->Sets.at(SetData.first);
 
 		// Get stat bonuses when set is complete
@@ -507,6 +507,8 @@ void _Character::CalculateStats() {
 
 			CalculateStatBonuses(StatChange);
 		}
+		else
+			SetData.second.Level = 0;
 	}
 
 	// Set max skill levels if necessary

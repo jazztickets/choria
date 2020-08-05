@@ -361,7 +361,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetMaxHealth(Upgrades), CompareInventory.Item->GetMaxHealth(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Health", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Max Health", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -377,7 +377,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetMaxMana(Upgrades), CompareInventory.Item->GetMaxMana(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Mana", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Max Mana", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;

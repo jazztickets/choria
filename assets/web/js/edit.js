@@ -1,3 +1,4 @@
+var use_sum = false;
 var hot = null;
 var last_search = "";
 var container = null;
@@ -90,7 +91,7 @@ $(document).ready(function() {
 			},
 			afterChange: function(changes, source) {
 				update_buttons(0);
-				if(source != "external" && source != "loadData" && changes) {
+				if(use_sum && source != "external" && source != "loadData" && changes) {
 
 					// Get unique columns to update
 					column_updates = [];
@@ -145,12 +146,18 @@ function link_renderer(instance, td, row, col, prop, value, cellProperties) {
 
 // Calculate sum for each column
 function calculate_all_sum(data) {
+	if(!use_sum)
+		return;
+
 	for(col in column_names)
 		calculate_sum(data, col);
 }
 
 // Calculate sum for each column
 function calculate_sum(data, col, load=false) {
+	if(!use_sum)
+		return;
+
 	if(col == 0 || column_names[col] == "" || references.hasOwnProperty(column_names[col]))
 		return;
 

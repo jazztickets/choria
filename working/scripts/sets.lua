@@ -1,8 +1,6 @@
-SET_UPGRADE_SCALE = 0.1
-
--- Base Set --
 
 Base_Set = {
+	UpgradeRate = 0.1,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -42,7 +40,7 @@ Base_Set = {
 	GetUpgradedValue = function(self, Key, Value, Upgrades)
 		UpgradedValue = string.gsub(Value, "%%", "")
 		UpgradedValue = tonumber(UpgradedValue)
-		UpgradedValue = math.floor(UpgradedValue + UpgradedValue * UpgradeScale[Key] * Upgrades * SET_UPGRADE_SCALE)
+		UpgradedValue = math.floor(UpgradedValue + UpgradedValue * UpgradeScale[Key] * Upgrades * self.UpgradeRate)
 
 		return UpgradedValue
 	end,
@@ -56,13 +54,22 @@ Base_Set = {
 	end
 }
 
--- Mage Set --
-
 Set_Mage = Base_Set:New()
+Set_Mage.UpgradeRate = 0.1
 Set_Mage.Attributes = {
-	AllSkills           = { 1, "1" },
+	AllSkills           = { 1, "1"   },
 	SpellDamage         = { 2, "25%" },
 	ElementalResistance = { 3, "20%" },
-	MaxMana             = { 4, "75" },
-	ManaRegen           = { 5, "2" },
+	MaxMana             = { 4, "75"  },
+	ManaRegen           = { 5, "2"   },
+}
+
+Set_Wizard = Base_Set:New()
+Set_Wizard.UpgradeRate = 0.05
+Set_Wizard.Attributes = {
+	AllSkills           = { 1, "2"   },
+	SpellDamage         = { 2, "50%" },
+	ElementalResistance = { 3, "35%" },
+	MaxMana             = { 4, "150" },
+	ManaRegen           = { 5, "5"   },
 }
