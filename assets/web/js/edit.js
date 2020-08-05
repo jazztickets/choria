@@ -342,7 +342,7 @@ function save() {
 
 	// Convert dropdowns back to ids
 	var headers = hot.getColHeader();
-	var data = hot.getData();
+	var data = hot.getSourceData();
 	for(var row in data) {
 
 		for(var col in headers) {
