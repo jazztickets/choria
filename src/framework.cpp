@@ -408,7 +408,7 @@ void _Framework::HandleCommand(ae::_Console *Console) {
 		}
 	}
 	else if(Console->Command == "paste") {
-		if(Parameters.size() == 1 && PlayState.Network->IsDisconnected()) {
+		if(SDL_HasClipboardText() && Parameters.size() == 1 && PlayState.Network->IsDisconnected()) {
 			uint32_t CharacterID = ae::ToNumber<int>(Console->Parameters);
 
 			char *PastedText = SDL_GetClipboardText();
