@@ -640,13 +640,19 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 
 	lua_newtable(LuaState);
 
-	lua_checkstack(LuaState, 0);
 	lua_getglobal(LuaState, Item->Script.c_str());
 	if(!lua_istable(LuaState, -1)) {
 		lua_pop(LuaState, 1);
 		lua_pushnil(LuaState);
 	}
 	lua_setfield(LuaState, -2, "Script");
+
+	lua_getglobal(LuaState, Item->Proc.c_str());
+	if(!lua_istable(LuaState, -1)) {
+		lua_pop(LuaState, 1);
+		lua_pushnil(LuaState);
+	}
+	lua_setfield(LuaState, -2, "Proc");
 
 	lua_pushinteger(LuaState, (int)Item->ID);
 	lua_setfield(LuaState, -2, "ID");

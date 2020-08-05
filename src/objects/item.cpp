@@ -108,8 +108,15 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Increase size for description
 	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, Script, 50, 50, Size.x - SidePadding * 2);
+	if(DescriptionLines && SetID)
+		DescriptionLines++;
+	if(!Proc.empty()) {
+		DescriptionLines += GetDescriptionLineCount(Scripting, Player, Proc, 50, 50, Size.x - SidePadding * 2);
+		if(SetID)
+			DescriptionLines++;
+	}
 	if(SetID)
-		DescriptionLines += 1 + GetDescriptionLineCount(Scripting, Player, Stats->Sets.at(SetID).Script, 50, 50, Size.x - SidePadding * 2);
+		DescriptionLines += GetDescriptionLineCount(Scripting, Player, Stats->Sets.at(SetID).Script, 50, 50, Size.x - SidePadding * 2) + 1;
 	float DescriptionSizeY = DescriptionLines * INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 	Size.y += DescriptionSizeY;
 
@@ -256,13 +263,19 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		}
 	}
 
-	// Draw description
-	DrawSetDescription(Player, DrawPosition, Tooltip.Window == _HUD::WINDOW_BLACKSMITH, Size.x - SidePadding * 2, SpacingY);
-	DrawDescription(Player, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
+	// Draw proc info
+	int DescriptionWidth = Size.x - SidePadding * 2;
+	DrawDescription(Player, Proc, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
+
+	// Draw set info
+	DrawSetDescription(Player, DrawPosition, Tooltip.Window == _HUD::WINDOW_BLACKSMITH, DescriptionWidth, SpacingY);
+
+	// Draw item info
+	DrawDescription(Player, Script, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
-		DrawDescription(Player, DrawPosition, DrawLevel+1, PlayerMaxSkillLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(Player, Script, DrawPosition, DrawLevel+1, PlayerMaxSkillLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -686,12 +699,12 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 }
 
 // Draw item description
-void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int PlayerMaxSkillLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
+void _Item::DrawDescription(_Object *Object, const std::string &Function, glm::vec2 &DrawPosition, int DrawLevel, int PlayerMaxSkillLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
 	_Scripting *Scripting = Object->Scripting;
 
 	// Check for scripting function
 	std::string Info = "";
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+	if(Scripting->StartMethodCall(Function, "GetInfo")) {
 
 		// Get description from script
 		Scripting->PushObject(Object);

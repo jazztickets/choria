@@ -290,24 +290,24 @@ function WeaponProc(Source, Target, Result, IsSpell)
 
 	-- Check for main weapon
 	Weapon = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-	if Weapon == nil or Weapon.Script == nil or (IsSpell == true and Weapon.SpellProc == 0) then
+	if Weapon == nil or Weapon.Proc == nil or (IsSpell == true and Weapon.SpellProc == 0) then
 		return
 	end
 
 	-- Proc main weapon
-	if (Weapon.Script.SpellOnly == true and IsSpell == true) or (Weapon.Script.SpellOnly == false and IsSpell == false) then
-		Weapon.Script:Proc(Random.GetInt(1, 100), Weapon, Source, Target, Result)
+	if (Weapon.Proc.SpellOnly == true and IsSpell == true) or (Weapon.Proc.SpellOnly == false and IsSpell == false) then
+		Weapon.Proc:Proc(Random.GetInt(1, 100), Weapon, Source, Target, Result)
 	end
 
 	-- Check for off-hand
 	WeaponOffHand = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-	if WeaponOffHand == nil or WeaponOffHand.Script == nil or (IsSpell == true and WeaponOffHand.SpellProc == 0) then
+	if WeaponOffHand == nil or WeaponOffHand.Proc == nil or (IsSpell == true and WeaponOffHand.SpellProc == 0) then
 		return
 	end
 
 	-- Proc off-hand weapon
-	if (WeaponOffHand.Script.SpellOnly == true and IsSpell == true) or (WeaponOffHand.Script.SpellOnly == false and IsSpell == false) then
-		WeaponOffHand.Script:Proc(Random.GetInt(1, 100), WeaponOffHand, Source, Target, Result)
+	if (WeaponOffHand.Proc.SpellOnly == true and IsSpell == true) or (WeaponOffHand.Proc.SpellOnly == false and IsSpell == false) then
+		WeaponOffHand.Proc:Proc(Random.GetInt(1, 100), WeaponOffHand, Source, Target, Result)
 	end
 end
 
