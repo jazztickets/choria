@@ -398,7 +398,7 @@ void _Character::CalculateStats() {
 	if(EternalGuard) {
 		DamageBlock += EternalGuard;
 		Armor += EternalGuard / 3;
-		for(int i = 3; i <= 7; i++)
+		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
 			Resistances[i] += EternalGuard / 4;
 	}
 
@@ -466,7 +466,7 @@ void _Character::CalculateStats() {
 
 		// Handle all resist
 		if(Item->ResistanceTypeID == 1) {
-			for(int i = 3; i <= 7; i++)
+			for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
 				Resistances[i] += Item->GetResistance(Upgrades);
 		}
 		else
@@ -679,16 +679,38 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::RESISTTYPE) && StatChange.HasStat(StatType::RESIST)) {
 		uint32_t ResistType = (uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer;
 		if(ResistType == 1) {
-			for(int i = 3; i <= 7; i++)
+			for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
+				Resistances[i] += StatChange.Values[StatType::RESIST].Integer;
+		}
+		else if(ResistType == 9) {
+			for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
 				Resistances[i] += StatChange.Values[StatType::RESIST].Integer;
 		}
 		else
 			Resistances[ResistType] += StatChange.Values[StatType::RESIST].Integer;
 	}
 
-	if(StatChange.HasStat(StatType::ELEMENTAL_RESISTANCE)) {
-		for(int i = 3; i <= 5; i++)
-			Resistances[i] += StatChange.Values[StatType::ELEMENTAL_RESISTANCE].Integer;
+	if(StatChange.HasStat(StatType::ALL_RESIST)) {
+		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
+			Resistances[i] += StatChange.Values[StatType::ALL_RESIST].Integer;
+	}
+	if(StatChange.HasStat(StatType::PHYSICAL_RESIST))
+		Resistances[2] += StatChange.Values[StatType::PHYSICAL_RESIST].Integer;
+	if(StatChange.HasStat(StatType::FIRE_RESIST))
+		Resistances[3] += StatChange.Values[StatType::FIRE_RESIST].Integer;
+	if(StatChange.HasStat(StatType::COLD_RESIST))
+		Resistances[4] += StatChange.Values[StatType::COLD_RESIST].Integer;
+	if(StatChange.HasStat(StatType::LIGHTNING_RESIST))
+		Resistances[5] += StatChange.Values[StatType::LIGHTNING_RESIST].Integer;
+	if(StatChange.HasStat(StatType::POISON_RESIST))
+		Resistances[6] += StatChange.Values[StatType::POISON_RESIST].Integer;
+	if(StatChange.HasStat(StatType::BLEED_RESIST))
+		Resistances[7] += StatChange.Values[StatType::BLEED_RESIST].Integer;
+	if(StatChange.HasStat(StatType::STUN_RESIST))
+		Resistances[8] += StatChange.Values[StatType::STUN_RESIST].Integer;
+	if(StatChange.HasStat(StatType::ELEMENTAL_RESIST)) {
+		for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
+			Resistances[i] += StatChange.Values[StatType::ELEMENTAL_RESIST].Integer;
 	}
 
 	if(StatChange.HasStat(StatType::MINDAMAGE))

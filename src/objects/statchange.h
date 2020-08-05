@@ -120,7 +120,15 @@ enum class StatType : int {
 	SPELL_DAMAGE,
 	MINIGAME_SPEED,
 	CONSUME_CHANCE,
-	ELEMENTAL_RESISTANCE,
+	ALL_RESIST,
+	PHYSICAL_RESIST,
+	FIRE_RESIST,
+	COLD_RESIST,
+	LIGHTNING_RESIST,
+	POISON_RESIST,
+	BLEED_RESIST,
+	STUN_RESIST,
+	ELEMENTAL_RESIST,
 	COUNT,
 };
 
@@ -214,7 +222,15 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "SpellDamage",            { StatType::SPELL_DAMAGE           , StatValueType::INTEGER } },
 	{ "MinigameSpeed",          { StatType::MINIGAME_SPEED         , StatValueType::INTEGER } },
 	{ "ConsumeChance",          { StatType::CONSUME_CHANCE         , StatValueType::INTEGER } },
-	{ "ElementalResistance",    { StatType::ELEMENTAL_RESISTANCE   , StatValueType::INTEGER } },
+	{ "AllResist",              { StatType::ALL_RESIST             , StatValueType::INTEGER } },
+	{ "PhysicalResist",         { StatType::PHYSICAL_RESIST        , StatValueType::INTEGER } },
+	{ "FireResist",             { StatType::FIRE_RESIST            , StatValueType::INTEGER } },
+	{ "ColdResist",             { StatType::COLD_RESIST            , StatValueType::INTEGER } },
+	{ "LightningResist",        { StatType::LIGHTNING_RESIST       , StatValueType::INTEGER } },
+	{ "PoisonResist",           { StatType::POISON_RESIST          , StatValueType::INTEGER } },
+	{ "BleedResist",            { StatType::BLEED_RESIST           , StatValueType::INTEGER } },
+	{ "StunResist",             { StatType::STUN_RESIST            , StatValueType::INTEGER } },
+	{ "ElementalResist",        { StatType::ELEMENTAL_RESIST       , StatValueType::INTEGER } },
 };
 
 union _Value {

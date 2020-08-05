@@ -279,8 +279,7 @@ function Buff_BleedResist.GetInfo(self, Level)
 end
 
 function Buff_BleedResist.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["Bleed"]
-	Change.Resist = Level
+	Change.BleedResist = Level
 
 	return Change
 end
@@ -294,8 +293,7 @@ function Buff_PoisonResist.GetInfo(self, Level)
 end
 
 function Buff_PoisonResist.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["Poison"]
-	Change.Resist = Level
+	Change.PoisonResist = Level
 
 	return Change
 end
@@ -309,8 +307,7 @@ function Buff_ColdResist.GetInfo(self, Level)
 end
 
 function Buff_ColdResist.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["Cold"]
-	Change.Resist = Level
+	Change.ColdResist = Level
 
 	return Change
 end
@@ -338,8 +335,7 @@ function Buff_Flayed.GetInfo(self, Level)
 end
 
 function Buff_Flayed.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["All"]
-	Change.Resist = -Level
+	Change.AllResist = -Level
 
 	return Change
 end

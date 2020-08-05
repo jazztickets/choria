@@ -71,6 +71,7 @@ INSERT INTO damagetype VALUES(5,'Lightning','light_yellow');
 INSERT INTO damagetype VALUES(6,'Poison','light_green');
 INSERT INTO damagetype VALUES(7,'Bleed','white');
 INSERT INTO damagetype VALUES(8,'Stun','white');
+INSERT INTO damagetype VALUES(9,'Elemental','white');
 CREATE TABLE IF NOT EXISTS "stattype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -153,7 +154,15 @@ INSERT INTO stattype VALUES(73,'RebirthPassage',1.0);
 INSERT INTO stattype VALUES(74,'SpellDamage',1.0);
 INSERT INTO stattype VALUES(75,'MinigameSpeed',1.0);
 INSERT INTO stattype VALUES(76,'ConsumeChance',1.0);
-INSERT INTO stattype VALUES(77,'ElementalResistance',0.10000000000000000555);
+INSERT INTO stattype VALUES(77,'AllResistance',0.10000000000000000555);
+INSERT INTO stattype VALUES(78,'PhysicalResistance',0.10000000000000000555);
+INSERT INTO stattype VALUES(79,'FireResistance',0.25);
+INSERT INTO stattype VALUES(80,'ColdResistance',0.25);
+INSERT INTO stattype VALUES(81,'LightningResistance',0.25);
+INSERT INTO stattype VALUES(82,'PoisonResistance',0.25);
+INSERT INTO stattype VALUES(83,'BleedResistance',0.25);
+INSERT INTO stattype VALUES(84,'StunResistance',0.25);
+INSERT INTO stattype VALUES(85,'ElementalResistance',0.10000000000000000555);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -2614,8 +2623,8 @@ CREATE TABLE IF NOT EXISTS "set" (
 INSERT INTO "set" VALUES(0,'None','',0);
 INSERT INTO "set" VALUES(1,'Mage','Set_Mage',3);
 INSERT INTO "set" VALUES(2,'Wizard','Set_Wizard',3);
-INSERT INTO "set" VALUES(3,'Leather','Set_Leather',4);
-INSERT INTO "set" VALUES(4,'Reinforced Leather','Set_ReinforcedLeather',4);
+INSERT INTO "set" VALUES(3,'Leather','Set_Leather',3);
+INSERT INTO "set" VALUES(4,'Reinforced Leather','Set_ReinforcedLeather',3);
 INSERT INTO "set" VALUES(5,'Cloth','Set_Cloth',3);
 INSERT INTO "set" VALUES(6,'Black','Set_Black',3);
 INSERT INTO "set" VALUES(7,'Bronze','Set_Bronze',4);

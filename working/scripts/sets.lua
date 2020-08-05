@@ -61,7 +61,7 @@ Set_Mage = Base_Set:New()
 Set_Mage.UpgradeRate = 0.1
 Set_Mage.Attributes = {
 	AllSkills = "1",
-	ElementalResistance = "20%",
+	ElementalResist = "20%",
 	ManaRegen = "2",
 	MaxMana = "75",
 }
@@ -70,7 +70,7 @@ Set_Wizard = Base_Set:New()
 Set_Wizard.UpgradeRate = 0.05
 Set_Wizard.Attributes = {
 	AllSkills = "2",
-	ElementalResistance = "35%",
+	ElementalResist = "35%",
 	ManaRegen = "5",
 	MaxMana = "150",
 }
@@ -79,7 +79,7 @@ Set_Leather = Base_Set:New()
 Set_Leather.UpgradeRate = 0.05
 Set_Leather.Attributes = {
 	Armor = "5",
---	BleedResistance = "20%",
+	BleedResist = "20%",
 	MaxHealth = "75",
 	PhysicalPower = "25%",
 }
