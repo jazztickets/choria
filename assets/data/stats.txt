@@ -1483,7 +1483,6 @@ INSERT INTO vendoritem VALUES(121,5,225);
 INSERT INTO vendoritem VALUES(122,14,8);
 INSERT INTO vendoritem VALUES(123,6,26);
 INSERT INTO vendoritem VALUES(124,1,226);
-INSERT INTO vendoritem VALUES(129,21,27);
 INSERT INTO vendoritem VALUES(130,14,191);
 INSERT INTO vendoritem VALUES(131,14,97);
 INSERT INTO vendoritem VALUES(132,21,31);
@@ -2957,7 +2956,7 @@ INSERT INTO item VALUES(317,6,2,0,0,0,0,0,'Diabolic Staff','textures/items/diabo
 INSERT INTO item VALUES(318,11,0,0,0,0,0,0,'Dark Note','textures/items/note.png','','Item_DarkNote','',0,5000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(319,10,0,1,1,0,0,0,'Greater Battle Potion','textures/items/greater_battle_potion.png','','Item_GreaterBattlePotion','',0,1000,1,100,0,0,300.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(320,9,0,0,0,0,0,0,'Mundane Amulet','textures/items/amulet_green.png','','Item_ConsumeChance','',0,150,1,25,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(321,9,0,0,0,0,0,0,'Warding Amulet','textures/items/amulet_blue.png','','Item_WardingAmulet','',0,250,1,10,20,0,0.0,0.0,1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(321,9,0,0,0,0,0,0,'Warding Amulet','textures/items/amulet_blue.png','','Item_WardingAmulet','',0,250,1,5,20,0,0.0,0.0,1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(322,10,0,0,1,0,0,0,'Rite of Passage','textures/items/rite_passage.png','','Item_RitePassage','',5,500000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
