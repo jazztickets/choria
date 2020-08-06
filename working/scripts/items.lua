@@ -20,12 +20,12 @@ Base_Potion = {
 Item_HealingSalve = Base_Potion:New()
 
 function Item_HealingSalve.GetInfo(self, Source, Item)
-	return "Restore [c green]" .. math.floor(math.floor(Buff_Healing.Heal * Item.Level * Source.HealPower) * Item.Duration) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Restore [c green]" .. math.floor(math.floor(Buff_Healing.Heal * Item.Level * Source.HealPower * 0.01) * Item.Duration) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_HealingSalve.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Healing.Pointer
-	Result.Target.BuffLevel = Level * Source.HealPower
+	Result.Target.BuffLevel = Level * Source.HealPower * 0.01
 	Result.Target.BuffDuration = Duration
 
 	return Result
@@ -482,7 +482,7 @@ end
 Item_Ankh = { }
 
 function Item_Ankh.GetHeal(self, Source, Level)
-	return math.floor(Level * Source.HealPower + 0.001)
+	return math.floor(Level * Source.HealPower * 0.01)
 end
 
 function Item_Ankh.GetInfo(self, Source, Item)
@@ -852,7 +852,7 @@ function Item_DarkNote.GetInfo(self, Source, Item)
 	return "[c gray]Great power lies within the tower..."
 end
 
--- Heal Power --
+-- Health Ring --
 
 Item_HealthRing = { }
 Item_HealthRing.PowerPerUpgrade = 1
@@ -866,7 +866,7 @@ function Item_HealthRing.GetInfo(self, Source, Item)
 end
 
 function Item_HealthRing.Stats(self, Item, Object, Change)
-	Change.HealPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.HealPower = self:GetPower(Item)
 
 	return Change
 end
@@ -1039,7 +1039,7 @@ function Item_HealPower.GetInfo(self, Source, Item)
 end
 
 function Item_HealPower.Stats(self, Item, Object, Change)
-	Change.HealPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.HealPower = self:GetPower(Item)
 
 	return Change
 end

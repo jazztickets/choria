@@ -182,7 +182,7 @@ function Proc_Bloodlet.GetHealingTotal(self, Source, Item)
 end
 
 function Proc_Bloodlet.GetHealingLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.HealPower * 0.5)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.HealPower * 0.01 * 0.5)
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)
@@ -302,7 +302,7 @@ function Proc_Health.GetInfo(self, Source, Item)
 end
 
 function Proc_Health.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.HealPower)
+	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.HealPower * 0.01)
 end
 
 function Proc_Health.Proc(self, Roll, Item, Source, Target, Result)

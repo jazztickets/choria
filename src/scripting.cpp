@@ -582,7 +582,7 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->PetPower);
 	lua_setfield(LuaState, -2, "PetPower");
 
-	lua_pushnumber(LuaState, Object->Character->HealPower);
+	lua_pushinteger(LuaState, Object->Character->HealPower);
 	lua_setfield(LuaState, -2, "HealPower");
 
 	lua_pushinteger(LuaState, Object->Character->ManaPower);

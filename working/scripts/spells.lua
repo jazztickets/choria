@@ -11,7 +11,7 @@ function Skill_Rejuvenation.GetHeal(self, Source, Level)
 end
 
 function Skill_Rejuvenation.GetLevel(self, Source, Level)
-	return math.floor(10 * Level * Source.HealPower)
+	return math.floor(10 * Level * Source.HealPower * 0.01)
 end
 
 function Skill_Rejuvenation.GetInfo(self, Source, Item)
@@ -40,7 +40,7 @@ Skill_Heal.CostPerLevel = 15
 Skill_Heal.ManaCostBase = 15 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetHeal(self, Source, Level)
-	return math.floor((self.HealBase + self.HealPerLevel * Level) * Source.HealPower + 0.001)
+	return math.floor((self.HealBase + self.HealPerLevel * Level) * Source.HealPower * 0.01)
 end
 
 function Skill_Heal.GetInfo(self, Source, Item)
@@ -67,7 +67,7 @@ Skill_Resurrect.CostPerLevel = 20
 Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
 function Skill_Resurrect.GetHeal(self, Source, Level)
-	return math.floor((self.HealBase + self.HealPerLevel * Level) * Source.HealPower + 0.001)
+	return math.floor((self.HealBase + self.HealPerLevel * Level) * Source.HealPower * 0.01)
 end
 
 function Skill_Resurrect.GetInfo(self, Source, Item)
@@ -848,7 +848,7 @@ function Skill_Sanctuary.GetDamageBlock(self, Source, Level)
 end
 
 function Skill_Sanctuary.GetLevel(self, Source, Level)
-	return math.floor((self.Level + self.LevelPerLevel * (Level - 1)) * Source.HealPower)
+	return math.floor((self.Level + self.LevelPerLevel * (Level - 1)) * Source.HealPower * 0.01)
 end
 
 function Skill_Sanctuary.GetInfo(self, Source, Item)

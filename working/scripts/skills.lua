@@ -766,7 +766,7 @@ function Skill_HealMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_HealMastery.Stats(self, Level, Object, Change)
-	Change.HealPower = self:GetPower(Level) / 100.0
+	Change.HealPower = self:GetPower(Level)
 
 	return Change
 end

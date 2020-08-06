@@ -238,7 +238,7 @@ class _Character {
 		float BleedPower;
 		float PoisonPower;
 		float PetPower;
-		float HealPower;
+		int HealPower;
 		int ManaPower;
 		int MinDamage;
 		int MaxDamage;

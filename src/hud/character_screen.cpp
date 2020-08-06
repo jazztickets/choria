@@ -203,8 +203,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Heal Power
-	if(HUD->Player->Character->HealPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->HealPower * 100) << "%";
+	if(HUD->Player->Character->HealPower != 100) {
+		Buffer << HUD->Player->Character->HealPower << "%";
 		Font->DrawText("Heal Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
