@@ -37,7 +37,7 @@ def get_column_names(tablename):
 	return names
 
 def get_children(tablename):
-	query = cursor.execute("SELECT sql FROM sqlite_master WHERE sql LIKE '%REFERENCES {0}(%'".format(tablename))
+	query = cursor.execute("SELECT sql FROM sqlite_master WHERE sql LIKE '%REFERENCES \"{0}\"(%'".format(tablename))
 	results = query.fetchall()
 	children = {}
 	for row in results:
@@ -48,7 +48,7 @@ def get_children(tablename):
 		children[related_table] = []
 
 		# get foreign key fields
-		matches = re.findall("(.*?) INTEGER.*?REFERENCES {0}\(".format(tablename), row[0])
+		matches = re.findall("(.*?) INTEGER.*?REFERENCES \"{0}\"\(".format(tablename), row[0])
 		for match in matches:
 			field = match.strip().replace('"', '')
 			children[related_table].append(field)
@@ -64,7 +64,7 @@ def get_references(tablename):
 
 		for match in matches:
 			field = match[0].strip().replace('"', '')
-			id = re.search('(.*?)\((.*?)\)', match[1])
+			id = re.search('\"(.*?)\"\((.*?)\)', match[1])
 			if id:
 				references[field] = [ id.group(1), id.group(2) ]
 
@@ -251,8 +251,8 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 			# get references
 			for key, value in references.items():
-				ref_table = value[0]
-				ref_id = value[1]
+				ref_table = '"' + value[0] + '"'
+				ref_id = '"' + value[1] + '"'
 				try:
 					sql = "SELECT {0}, name FROM {1}".format(ref_id, ref_table)
 					query = cursor.execute(sql);
