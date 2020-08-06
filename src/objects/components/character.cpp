@@ -342,6 +342,7 @@ void _Character::UpdateStatus() {
 
 // Calculates all of the player stats
 void _Character::CalculateStats() {
+	_Scripting *Scripting = Object->Scripting;
 
 	// Get base stats
 	CalculateLevelStats();
@@ -439,7 +440,7 @@ void _Character::CalculateStats() {
 		_ActionResult ActionResult;
 		ActionResult.ActionUsed.Level = Upgrades;
 		ActionResult.Source.Object = Object;
-		Item->GetStats(Object->Scripting, ActionResult, 0);
+		Item->GetStats(Scripting, ActionResult, 0);
 		CalculateStatBonuses(ActionResult.Source);
 
 		// Add damage
@@ -490,27 +491,25 @@ void _Character::CalculateStats() {
 	// Add set bonus
 	for(auto &SetData : Sets) {
 		const _Set &Set = Object->Stats->Sets.at(SetData.first);
+		if(SetData.second.EquippedCount < Set.Count) {
+			SetData.second.Level = 0;
+			continue;
+		}
 
 		// Get stat bonuses when set is complete
-		if(SetData.second.EquippedCount >= Set.Count) {
-			_StatChange StatChange;
-			StatChange.Object = Object;
+		_StatChange StatChange;
+		StatChange.Object = Object;
+		if(Scripting->StartMethodCall(Set.Script, "SetStats")) {
+			Scripting->PushObject(StatChange.Object);
+			Scripting->PushInt(SetData.second.Level);
+			Scripting->PushInt(SetData.second.EquippedCount);
+			Scripting->PushStatChange(&StatChange);
+			Scripting->MethodCall(4, 1);
+			Scripting->GetStatChange(1, StatChange);
+			Scripting->FinishMethodCall();
 
-			_Scripting *Scripting = Object->Scripting;
-			if(Scripting->StartMethodCall(Set.Script, "SetStats")) {
-				Scripting->PushObject(StatChange.Object);
-				Scripting->PushInt(SetData.second.Level);
-				Scripting->PushInt(SetData.second.EquippedCount);
-				Scripting->PushStatChange(&StatChange);
-				Scripting->MethodCall(4, 1);
-				Scripting->GetStatChange(1, StatChange);
-				Scripting->FinishMethodCall();
-
-				CalculateStatBonuses(StatChange);
-			}
+			CalculateStatBonuses(StatChange);
 		}
-		else
-			SetData.second.Level = 0;
 	}
 
 	// Get added set bonus
@@ -519,9 +518,13 @@ void _Character::CalculateStats() {
 		if(!Item || !Item->SetID)
 			continue;
 
+		const _SetData &SetData = Sets.at(Item->SetID);
+		const _Set &Set = Object->Stats->Sets.at(Item->SetID);
+		if(SetData.EquippedCount < Set.Count)
+			continue;
+
 		_StatChange StatChange;
 		StatChange.Object = Object;
-		_Scripting *Scripting = Object->Scripting;
 		if(Scripting->StartMethodCall(Item->Script, "SetStats")) {
 			const _SetData &SetData = Sets.at(Item->SetID);
 
@@ -571,7 +574,7 @@ void _Character::CalculateStats() {
 	for(const auto &StatusEffect : StatusEffects) {
 		_StatChange StatChange;
 		StatChange.Object = Object;
-		StatusEffect->Buff->ExecuteScript(Object->Scripting, "Stats", StatusEffect->Level, StatChange);
+		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
 		CalculateStatBonuses(StatChange);
 	}
 
