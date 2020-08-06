@@ -313,7 +313,7 @@ function Buff_Weak.GetInfo(self, Level)
 end
 
 function Buff_Weak.Stats(self, Level, Source, Change)
-	Change.AttackPower = -Level / 100.0
+	Change.AttackPower = -Level
 
 	return Change
 end
@@ -398,7 +398,7 @@ function Buff_Empowered.GetInfo(self, Level)
 end
 
 function Buff_Empowered.Stats(self, Level, Source, Change)
-	Change.AttackPower = Level / 100.0
+	Change.AttackPower = Level
 
 	return Change
 end

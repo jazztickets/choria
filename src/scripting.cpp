@@ -558,28 +558,28 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->ManaReductionRatio);
 	lua_setfield(LuaState, -2, "ManaReductionRatio");
 
-	lua_pushnumber(LuaState, Object->Character->AttackPower);
+	lua_pushinteger(LuaState, Object->Character->AttackPower);
 	lua_setfield(LuaState, -2, "AttackPower");
 
-	lua_pushnumber(LuaState, Object->Character->PhysicalPower);
+	lua_pushinteger(LuaState, Object->Character->PhysicalPower);
 	lua_setfield(LuaState, -2, "PhysicalPower");
 
-	lua_pushnumber(LuaState, Object->Character->FirePower);
+	lua_pushinteger(LuaState, Object->Character->FirePower);
 	lua_setfield(LuaState, -2, "FirePower");
 
-	lua_pushnumber(LuaState, Object->Character->ColdPower);
+	lua_pushinteger(LuaState, Object->Character->ColdPower);
 	lua_setfield(LuaState, -2, "ColdPower");
 
-	lua_pushnumber(LuaState, Object->Character->LightningPower);
+	lua_pushinteger(LuaState, Object->Character->LightningPower);
 	lua_setfield(LuaState, -2, "LightningPower");
 
-	lua_pushnumber(LuaState, Object->Character->BleedPower);
+	lua_pushinteger(LuaState, Object->Character->BleedPower);
 	lua_setfield(LuaState, -2, "BleedPower");
 
-	lua_pushnumber(LuaState, Object->Character->PoisonPower);
+	lua_pushinteger(LuaState, Object->Character->PoisonPower);
 	lua_setfield(LuaState, -2, "PoisonPower");
 
-	lua_pushnumber(LuaState, Object->Character->PetPower);
+	lua_pushinteger(LuaState, Object->Character->PetPower);
 	lua_setfield(LuaState, -2, "PetPower");
 
 	lua_pushinteger(LuaState, Object->Character->HealPower);
@@ -1423,7 +1423,7 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 	if(!Object)
 		return 0;
 
-	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)) * Object->Character->GetDamagePower(Item->DamageTypeID));
+	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
 
 	return 1;
 }

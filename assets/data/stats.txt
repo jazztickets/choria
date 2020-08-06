@@ -1682,7 +1682,7 @@ INSERT INTO buff VALUES(22,'Sanctuary','Buff_Sanctuary','textures/buffs/sanctuar
 INSERT INTO buff VALUES(23,'Demons','Buff_SummonDemon','textures/buffs/summon_demon.png',1,1,2);
 INSERT INTO buff VALUES(24,'Skeletons','Buff_SummonSkeleton','textures/buffs/summon_skeleton.png',1,1,2);
 INSERT INTO buff VALUES(25,'Skeleton Priests','Buff_SummonSkeletonPriest','textures/buffs/summon_skeleton_priest.png',1,1,2);
-INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0,0,0);
+INSERT INTO buff VALUES(26,'Flayed','Buff_Flayed','textures/buffs/flayed.png',0,1,0);
 INSERT INTO buff VALUES(27,'Fractured','Buff_Fractured','textures/buffs/fractured.png',0,1,0);
 INSERT INTO buff VALUES(28,'Poison Resist','Buff_PoisonResist','textures/buffs/poison_resist.png',0,1,1);
 INSERT INTO buff VALUES(29,'Cold Resist','Buff_ColdResist','textures/buffs/cold_resist.png',0,1,1);

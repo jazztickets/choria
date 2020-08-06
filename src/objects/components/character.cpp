@@ -112,14 +112,14 @@ _Character::_Character(_Object *Object) :
 	MaxManaMultiplier(1.0f),
 	ManaReductionRatio(0.0f),
 	HealthUpdateMultiplier(0.0f),
-	AttackPower(0.0f),
-	PhysicalPower(0.0f),
-	FirePower(0.0f),
-	ColdPower(0.0f),
-	LightningPower(0.0f),
-	BleedPower(0.0f),
-	PoisonPower(0.0f),
-	PetPower(0.0f),
+	AttackPower(100),
+	PhysicalPower(100),
+	FirePower(100),
+	ColdPower(100),
+	LightningPower(100),
+	BleedPower(100),
+	PoisonPower(100),
+	PetPower(100),
 	HealPower(100),
 	ManaPower(100),
 	MinDamage(0),
@@ -359,7 +359,7 @@ void _Character::CalculateStats() {
 	ManaRegen = 0;
 	HealthUpdateMultiplier = 1.0f;
 	ManaReductionRatio = 0.0f;
-	AttackPower = 1.0f;
+	AttackPower = 100;
 	HealPower = 100;
 	ManaPower = 100;
 	MoveSpeed = 100;
@@ -387,14 +387,13 @@ void _Character::CalculateStats() {
 		Resistances[i] = BaseResistances[i];
 
 	// Eternal Strength
-	float AllDamage = EternalStrength / 100.0f;
-	PhysicalPower = 1.0f + AllDamage;
-	FirePower = 1.0f + AllDamage;
-	ColdPower = 1.0f + AllDamage;
-	LightningPower = 1.0f + AllDamage;
-	BleedPower = 1.0f + AllDamage;
-	PoisonPower = 1.0f + AllDamage;
-	PetPower = 1.0f + AllDamage;
+	PhysicalPower = 100 + EternalStrength;
+	FirePower = 100 + EternalStrength;
+	ColdPower = 100 + EternalStrength;
+	LightningPower = 100 + EternalStrength;
+	BleedPower = 100 + EternalStrength;
+	PoisonPower = 100 + EternalStrength;
+	PetPower = 100 + EternalStrength;
 
 	// Eternal Guard
 	if(EternalGuard) {
@@ -578,8 +577,8 @@ void _Character::CalculateStats() {
 
 	// Get damage
 	for(size_t i = 0; i < ItemMinDamage.size(); i++) {
-		MinDamage += (int)std::roundf(ItemMinDamage[i] * AttackPower * GetDamagePower(i));
-		MaxDamage += (int)std::roundf(ItemMaxDamage[i] * AttackPower * GetDamagePower(i));
+		MinDamage += (int)std::roundf(ItemMinDamage[i] * AttackPower * 0.01f * GetDamagePowerMultiplier(i));
+		MaxDamage += (int)std::roundf(ItemMaxDamage[i] * AttackPower * 0.01f * GetDamagePowerMultiplier(i));
 	}
 
 	// Cap resistances
@@ -670,21 +669,21 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::HEALTHUPDATEMULTIPLIER))
 		HealthUpdateMultiplier += StatChange.Values[StatType::HEALTHUPDATEMULTIPLIER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
-		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
+		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Integer;
 	if(StatChange.HasStat(StatType::PHYSICALPOWER))
-		PhysicalPower += StatChange.Values[StatType::PHYSICALPOWER].Float;
+		PhysicalPower += StatChange.Values[StatType::PHYSICALPOWER].Integer;
 	if(StatChange.HasStat(StatType::FIREPOWER))
-		FirePower += StatChange.Values[StatType::FIREPOWER].Float;
+		FirePower += StatChange.Values[StatType::FIREPOWER].Integer;
 	if(StatChange.HasStat(StatType::COLDPOWER))
-		ColdPower += StatChange.Values[StatType::COLDPOWER].Float;
+		ColdPower += StatChange.Values[StatType::COLDPOWER].Integer;
 	if(StatChange.HasStat(StatType::LIGHTNINGPOWER))
-		LightningPower += StatChange.Values[StatType::LIGHTNINGPOWER].Float;
+		LightningPower += StatChange.Values[StatType::LIGHTNINGPOWER].Integer;
 	if(StatChange.HasStat(StatType::BLEEDPOWER))
-		BleedPower += StatChange.Values[StatType::BLEEDPOWER].Float;
+		BleedPower += StatChange.Values[StatType::BLEEDPOWER].Integer;
 	if(StatChange.HasStat(StatType::POISONPOWER))
-		PoisonPower += StatChange.Values[StatType::POISONPOWER].Float;
+		PoisonPower += StatChange.Values[StatType::POISONPOWER].Integer;
 	if(StatChange.HasStat(StatType::PETPOWER))
-		PetPower += StatChange.Values[StatType::PETPOWER].Float;
+		PetPower += StatChange.Values[StatType::PETPOWER].Integer;
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Integer;
 	if(StatChange.HasStat(StatType::MANAPOWER))
@@ -827,15 +826,15 @@ int _Character::GenerateDamage() {
 }
 
 // Get damage power from a type
-float _Character::GetDamagePower(int DamageTypeID) {
+float _Character::GetDamagePowerMultiplier(int DamageTypeID) {
 
 	switch(DamageTypeID) {
-		case 2: return PhysicalPower;
-		case 3: return FirePower;
-		case 4: return ColdPower;
-		case 5: return LightningPower;
-		case 6: return PoisonPower;
-		case 7: return BleedPower;
+		case 2: return PhysicalPower * 0.01f;
+		case 3: return FirePower * 0.01f;
+		case 4: return ColdPower * 0.01f;
+		case 5: return LightningPower * 0.01f;
+		case 6: return PoisonPower * 0.01f;
+		case 7: return BleedPower * 0.01f;
 	}
 
 	return 1.0f;

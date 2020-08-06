@@ -101,7 +101,7 @@ Skill_Spark.ChancePerLevel = 0.2
 Skill_Spark.CostScale = 0.08
 
 function Skill_Spark.GetDamagePower(self, Source, Level)
-	return Source.LightningPower * Source.SpellDamage * 0.01
+	return Source.LightningPower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_Spark.GetDuration(self, Level)
@@ -146,7 +146,7 @@ Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
 Skill_Icicle.CostScale = 0.08
 
 function Skill_Icicle.GetDamagePower(self, Source, Level)
-	return Source.ColdPower * Source.SpellDamage * 0.01
+	return Source.ColdPower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_Icicle.GetSlow(self, Level)
@@ -190,7 +190,7 @@ function Skill_PoisonTouch.GetDamage(self, Source, Level)
 end
 
 function Skill_PoisonTouch.GetDamagePower(self, Source, Level)
-	return Source.PoisonPower * Source.SpellDamage * 0.01
+	return Source.PoisonPower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_PoisonTouch.GetInfo(self, Source, Item)
@@ -229,7 +229,7 @@ function Skill_FireBlast.GetTargetCount(self, Level)
 end
 
 function Skill_FireBlast.GetDamagePower(self, Source, Level)
-	return Source.FirePower * Source.SpellDamage * 0.01
+	return Source.FirePower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_FireBlast.GetBurnLevel(self, Source, Level)
@@ -276,7 +276,7 @@ function Skill_IceNova.GetTargetCount(self, Level)
 end
 
 function Skill_IceNova.GetDamagePower(self, Source, Level)
-	return Source.ColdPower * Source.SpellDamage * 0.01
+	return Source.ColdPower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_IceNova.GetSlow(self, Level)
@@ -319,7 +319,7 @@ function Skill_ChainLightning.GetTargetCount(self, Level)
 end
 
 function Skill_ChainLightning.GetDamagePower(self, Source, Level)
-	return Source.LightningPower * Source.SpellDamage * 0.01
+	return Source.LightningPower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_ChainLightning.GetDuration(self, Level)
@@ -373,7 +373,7 @@ function Skill_Rupture.GetPoisonDamage(self, Source, Level)
 end
 
 function Skill_Rupture.GetDamagePower(self, Source, Level)
-	return Source.PoisonPower * Source.SpellDamage * 0.01
+	return Source.PoisonPower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_Rupture.GetLevel(self, Source, Level)
@@ -440,7 +440,7 @@ function Skill_Ignite.GetDamage(self, Source, Level)
 end
 
 function Skill_Ignite.GetDamagePower(self, Source, Level)
-	return Source.FirePower * Source.SpellDamage * 0.01
+	return Source.FirePower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_Ignite.GetInfo(self, Source, Item)

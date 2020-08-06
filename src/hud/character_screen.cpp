@@ -186,7 +186,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 
 	// Spell Damage
 	if(HUD->Player->Character->SpellDamage != 100) {
-		Buffer << (int)(HUD->Player->Character->SpellDamage) << "%";
+		Buffer << HUD->Player->Character->SpellDamage << "%";
 		Font->DrawText("Spell Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -194,8 +194,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Attack Power
-	if(HUD->Player->Character->AttackPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->AttackPower * 100) << "%";
+	if(HUD->Player->Character->AttackPower != 100) {
+		Buffer << HUD->Player->Character->AttackPower << "%";
 		Font->DrawText("Attack Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -221,8 +221,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Physical Power
-	if(HUD->Player->Character->PhysicalPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->PhysicalPower * 100) << "%";
+	if(HUD->Player->Character->PhysicalPower != 100) {
+		Buffer << HUD->Player->Character->PhysicalPower << "%";
 		Font->DrawText("Physical Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -230,8 +230,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Fire Power
-	if(HUD->Player->Character->FirePower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->FirePower * 100) << "%";
+	if(HUD->Player->Character->FirePower != 100) {
+		Buffer << HUD->Player->Character->FirePower << "%";
 		Font->DrawText("Fire Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -239,8 +239,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Cold Power
-	if(HUD->Player->Character->ColdPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->ColdPower * 100) << "%";
+	if(HUD->Player->Character->ColdPower != 100) {
+		Buffer << HUD->Player->Character->ColdPower << "%";
 		Font->DrawText("Cold Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -248,8 +248,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Lightning Power
-	if(HUD->Player->Character->LightningPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->LightningPower * 100) << "%";
+	if(HUD->Player->Character->LightningPower != 100) {
+		Buffer << HUD->Player->Character->LightningPower << "%";
 		Font->DrawText("Lightning Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -257,8 +257,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Bleed Power
-	if(HUD->Player->Character->BleedPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->BleedPower * 100) << "%";
+	if(HUD->Player->Character->BleedPower != 100) {
+		Buffer << HUD->Player->Character->BleedPower << "%";
 		Font->DrawText("Bleed Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -266,8 +266,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Poison Power
-	if(HUD->Player->Character->PoisonPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->PoisonPower * 100) << "%";
+	if(HUD->Player->Character->PoisonPower != 100) {
+		Buffer << HUD->Player->Character->PoisonPower << "%";
 		Font->DrawText("Poison Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -275,8 +275,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Pet Power
-	if(HUD->Player->Character->PetPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->PetPower * 100) << "%";
+	if(HUD->Player->Character->PetPower != 100) {
+		Buffer << HUD->Player->Character->PetPower << "%";
 		Font->DrawText("Pet Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");

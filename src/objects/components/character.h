@@ -111,7 +111,7 @@ class _Character {
 		bool IsZoneOnCooldown(uint32_t Zone) { return BattleCooldown.find(Zone) != BattleCooldown.end(); }
 		void GenerateNextBattle();
 		int GenerateDamage();
-		float GetDamagePower(int DamageTypeID);
+		float GetDamagePowerMultiplier(int DamageTypeID);
 
 		// Actions
 		ScopeType GetScope() { return Battle ? ScopeType::BATTLE : ScopeType::WORLD; }
@@ -230,14 +230,14 @@ class _Character {
 		float MaxManaMultiplier;
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
-		float AttackPower;
-		float PhysicalPower;
-		float FirePower;
-		float ColdPower;
-		float LightningPower;
-		float BleedPower;
-		float PoisonPower;
-		float PetPower;
+		int AttackPower;
+		int PhysicalPower;
+		int FirePower;
+		int ColdPower;
+		int LightningPower;
+		int BleedPower;
+		int PoisonPower;
+		int PetPower;
 		int HealPower;
 		int ManaPower;
 		int MinDamage;

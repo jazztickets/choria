@@ -161,15 +161,15 @@ Base_SummonSpell = {
 	end,
 
 	GetHealth = function(self, Source, Level)
-		return math.floor((self.BaseHealth + (Level - 1) * self.HealthPerLevel) * Source.PetPower)
+		return math.floor((self.BaseHealth + (Level - 1) * self.HealthPerLevel) * Source.PetPower * 0.01)
 	end,
 
 	GetMana = function(self, Source, Level)
-		return math.floor((self.BaseMana + (Level - 1) * self.ManaPerLevel) * Source.PetPower)
+		return math.floor((self.BaseMana + (Level - 1) * self.ManaPerLevel) * Source.PetPower * 0.01)
 	end,
 
 	GetArmor = function(self, Source, Level)
-		return math.floor((self.BaseArmor + (Level - 1) * self.ArmorPerLevel) * Source.PetPower)
+		return math.floor((self.BaseArmor + (Level - 1) * self.ArmorPerLevel) * Source.PetPower * 0.01)
 	end,
 
 	GetLimit = function(self, Source, Level)
@@ -177,7 +177,7 @@ Base_SummonSpell = {
 	end,
 
 	GetSkillLevel = function(self, Source, Level)
-		return math.max(math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower * self.SkillLevelPower), 1)
+		return math.max(math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower * 0.01 * self.SkillLevelPower), 1)
 	end,
 
 	GetDuration = function(self, Source, Level)
@@ -186,7 +186,7 @@ Base_SummonSpell = {
 
 	GetDamage = function(self, Source, Level)
 		AddedDamage = math.floor((Level - 1) * self.DamagePerLevel) + Level * Level * self.DamageScale
-		return math.floor((self.BaseMinDamage + AddedDamage) * Source.PetPower), math.floor((self.BaseMaxDamage + AddedDamage) * Source.PetPower)
+		return math.floor((self.BaseMinDamage + AddedDamage) * Source.PetPower * 0.01), math.floor((self.BaseMaxDamage + AddedDamage) * Source.PetPower * 0.01)
 	end
 }
 

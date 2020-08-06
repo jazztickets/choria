@@ -114,7 +114,7 @@ function Proc_Poison.GetInfo(self, Source, Item)
 end
 
 function Proc_Poison.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.PoisonPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.PoisonPower * 0.01)
 end
 
 -- Slow --
@@ -143,7 +143,7 @@ function Proc_Ignite.GetInfo(self, Source, Item)
 end
 
 function Proc_Ignite.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.FirePower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.FirePower * 0.01)
 end
 
 -- Bleed --
@@ -159,7 +159,7 @@ function Proc_Bleed.GetInfo(self, Source, Item)
 end
 
 function Proc_Bleed.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower * 0.01)
 end
 
 -- Bloodlet --
@@ -186,7 +186,7 @@ function Proc_Bloodlet.GetHealingLevel(self, Source, Item)
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower * 0.01)
 end
 
 function Proc_Bloodlet.Proc(self, Roll, Item, Source, Target, Result)

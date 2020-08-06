@@ -123,12 +123,12 @@ end
 Item_PoisonPotion = Base_Potion:New()
 
 function Item_PoisonPotion.GetInfo(self, Source, Item)
-	return "Poison a target for [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Poison a target for [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower * 0.01) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Poisoned.Pointer
-	Result.Target.BuffLevel = Level * Source.PoisonPower
+	Result.Target.BuffLevel = Level * Source.PoisonPower * 0.01
 	Result.Target.BuffDuration = Duration
 
 	return Result
@@ -253,7 +253,7 @@ function Item_ThrowingKnives.GetDamageType(self, Source)
 end
 
 function Item_ThrowingKnives.GetInfo(self, Source, Item)
-	return "Throw a knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.BleedPower) * Item.Duration) .. "[c white] bleed damage over [c green]" .. Item.Duration .. "[c white] seconds"
+	return "Throw a knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.BleedPower * 0.01) * Item.Duration) .. "[c white] bleed damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_ThrowingKnives.Use(self, Level, Duration, Source, Target, Result)
@@ -265,7 +265,7 @@ end
 
 function Item_ThrowingKnives.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Bleeding.Pointer
-	Result.Target.BuffLevel = Level * Source.BleedPower
+	Result.Target.BuffLevel = Level * Source.BleedPower * 0.01
 	Result.Target.BuffDuration = Duration
 
 	return true
@@ -280,7 +280,7 @@ end
 Item_PoisonKnives = Base_Attack:New()
 
 function Item_PoisonKnives.GetInfo(self, Source, Item)
-	return "Throw a poison-tipped knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower) * Item.Duration) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
+	return "Throw a poison-tipped knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower * 0.01) * Item.Duration) .. "[c white] poison damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_PoisonKnives.GetDamageType(self, Source)
@@ -293,7 +293,7 @@ end
 
 function Item_PoisonKnives.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Poisoned.Pointer
-	Result.Target.BuffLevel = Level * Source.PoisonPower
+	Result.Target.BuffLevel = Level * Source.PoisonPower * 0.01
 	Result.Target.BuffDuration = Duration
 
 	return true
@@ -550,7 +550,7 @@ end
 Item_LavaSludge = { }
 
 function Item_LavaSludge.GetInfo(self, Source, Item)
-	return "Ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]weakness[c white]\n\n[c red]Damages yourself when used"
+	return "Ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower * 0.01) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]weakness[c white]\n\n[c red]Damages yourself when used"
 end
 
 function Item_LavaSludge.GetDamageType(self, Source)
@@ -559,7 +559,7 @@ end
 
 function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Burning.Pointer
-	Result.Target.BuffLevel = Level * Source.FirePower
+	Result.Target.BuffLevel = Level * Source.FirePower * 0.01
 	Result.Target.BuffDuration = Duration
 	Result.Target.ClearBuff = Buff_Weak.Pointer
 
@@ -594,14 +594,14 @@ function Item_Firebomb.GetTargetCount(self, Level)
 end
 
 function Item_Firebomb.GetInfo(self, Source, Item)
-	return "Toss an exploding potion at your enemies, dealing [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower) * Item.Duration) .. "[c white] burning damage over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Toss an exploding potion at your enemies, dealing [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower * 0.01) * Item.Duration) .. "[c white] burning damage over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
 function Item_Firebomb.Use(self, Level, Duration, Source, Target, Result)
 	Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buff_Burning.Pointer
-	Result.Target.BuffLevel = Level * Source.FirePower
+	Result.Target.BuffLevel = Level * Source.FirePower * 0.01
 	Result.Target.BuffDuration = Duration
 
 	return Result
@@ -910,7 +910,7 @@ function Item_DarkRing.GetInfo(self, Source, Item)
 end
 
 function Item_DarkRing.Stats(self, Item, Object, Change)
-	Change.PetPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.PetPower = self:GetPower(Item)
 	Change.SummonLimit = 1
 
 	return Change
@@ -930,7 +930,7 @@ function Item_AttackPower.GetInfo(self, Source, Item)
 end
 
 function Item_AttackPower.Stats(self, Item, Object, Change)
-	Change.AttackPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.AttackPower = self:GetPower(Item)
 
 	return Change
 end
@@ -949,7 +949,7 @@ function Item_PhysicalPower.GetInfo(self, Source, Item)
 end
 
 function Item_PhysicalPower.Stats(self, Item, Object, Change)
-	Change.PhysicalPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.PhysicalPower = self:GetPower(Item)
 
 	return Change
 end
@@ -968,7 +968,7 @@ function Item_FirePower.GetInfo(self, Source, Item)
 end
 
 function Item_FirePower.Stats(self, Item, Object, Change)
-	Change.FirePower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.FirePower = self:GetPower(Item)
 
 	return Change
 end
@@ -987,7 +987,7 @@ function Item_ColdPower.GetInfo(self, Source, Item)
 end
 
 function Item_ColdPower.Stats(self, Item, Object, Change)
-	Change.ColdPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.ColdPower = self:GetPower(Item)
 
 	return Change
 end
@@ -1006,7 +1006,7 @@ function Item_LightningPower.GetInfo(self, Source, Item)
 end
 
 function Item_LightningPower.Stats(self, Item, Object, Change)
-	Change.LightningPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.LightningPower = self:GetPower(Item)
 
 	return Change
 end
@@ -1025,7 +1025,7 @@ function Item_BleedPower.GetInfo(self, Source, Item)
 end
 
 function Item_BleedPower.Stats(self, Item, Object, Change)
-	Change.BleedPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.BleedPower = self:GetPower(Item)
 
 	return Change
 end
@@ -1044,7 +1044,7 @@ function Item_PoisonPower.GetInfo(self, Source, Item)
 end
 
 function Item_PoisonPower.Stats(self, Item, Object, Change)
-	Change.PoisonPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.PoisonPower = self:GetPower(Item)
 
 	return Change
 end
@@ -1101,7 +1101,7 @@ function Item_PetPower.GetInfo(self, Source, Item)
 end
 
 function Item_PetPower.Stats(self, Item, Object, Change)
-	Change.PetPower = self:GetPower(Item) * 0.01 + 0.00001
+	Change.PetPower = self:GetPower(Item)
 
 	return Change
 end

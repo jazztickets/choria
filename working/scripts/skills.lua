@@ -384,7 +384,7 @@ function Skill_Gash.GetBleedDamage(self, Source, Level)
 end
 
 function Skill_Gash.GetBleedLevel(self, Source, Level)
-	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower)
+	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower * 0.01)
 end
 
 function Skill_Gash.GetInfo(self, Source, Item)
@@ -646,7 +646,7 @@ function Skill_PhysicalMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_PhysicalMastery.Stats(self, Level, Object, Change)
-	Change.PhysicalPower = self:GetPower(Level) / 100.0
+	Change.PhysicalPower = self:GetPower(Level)
 
 	return Change
 end
@@ -666,7 +666,7 @@ function Skill_FireMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_FireMastery.Stats(self, Level, Object, Change)
-	Change.FirePower = self:GetPower(Level) / 100.0
+	Change.FirePower = self:GetPower(Level)
 
 	return Change
 end
@@ -686,7 +686,7 @@ function Skill_ColdMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_ColdMastery.Stats(self, Level, Object, Change)
-	Change.ColdPower = self:GetPower(Level) / 100.0
+	Change.ColdPower = self:GetPower(Level)
 
 	return Change
 end
@@ -706,7 +706,7 @@ function Skill_LightningMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_LightningMastery.Stats(self, Level, Object, Change)
-	Change.LightningPower = self:GetPower(Level) / 100.0
+	Change.LightningPower = self:GetPower(Level)
 
 	return Change
 end
@@ -726,7 +726,7 @@ function Skill_BleedMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_BleedMastery.Stats(self, Level, Object, Change)
-	Change.BleedPower = self:GetPower(Level) / 100.0
+	Change.BleedPower = self:GetPower(Level)
 
 	return Change
 end
@@ -746,7 +746,7 @@ function Skill_PoisonMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_PoisonMastery.Stats(self, Level, Object, Change)
-	Change.PoisonPower = self:GetPower(Level) / 100.0
+	Change.PoisonPower = self:GetPower(Level)
 
 	return Change
 end
@@ -792,7 +792,7 @@ function Skill_PetMastery.GetInfo(self, Source, Item)
 end
 
 function Skill_PetMastery.Stats(self, Level, Object, Change)
-	Change.PetPower = self:GetPower(Level) / 100.0
+	Change.PetPower = self:GetPower(Level)
 	Change.SummonLimit = self:GetSummonLimit(Level)
 
 	return Change
@@ -1209,7 +1209,7 @@ function Skill_BladeDance.GetBleedDamage(self, Source, Level)
 end
 
 function Skill_BladeDance.GetBleedLevel(self, Source, Level)
-	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower)
+	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower * 0.01)
 end
 
 function Skill_BladeDance.GetTargetCount(self, Level)
