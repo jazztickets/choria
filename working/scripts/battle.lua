@@ -193,7 +193,8 @@ Base_SummonSpell = {
 -- Calculate basic weapon damage vs target's armor
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
-	if Random.GetInt(1, 100) <= (Source.HitChance - Target.Evasion) then
+	-- Check for hit
+	if Random.GetInt(1, 100) <= Source.HitChance - Target.Evasion then
 
 		-- Get damage
 		Change = {}
@@ -233,10 +234,7 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
 		-- Apply resistance
 		Result.Target.DamageType = Action:GetDamageType(Source)
-		Change.Damage = Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source)) + Action:GetPierce(Source)
-
-		-- Update health
-		Change.Damage = math.floor(Change.Damage)
+		Change.Damage = math.floor(Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source)) + Action:GetPierce(Source))
 
 		-- Handle mana damage reduction
 		Update = ResolveManaReductionRatio(Target, Change.Damage)
