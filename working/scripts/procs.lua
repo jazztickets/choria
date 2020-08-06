@@ -168,6 +168,7 @@ Proc_Bloodlet = Base_Proc:New()
 Proc_Bloodlet.ChancePerLevel = 1
 Proc_Bloodlet.PercentPerLevel = 10
 Proc_Bloodlet.DurationPerLevel = 0
+Proc_Bloodlet.HealMultiplier = 0.25
 
 function Proc_Bloodlet.GetInfo(self, Source, Item)
 	Bleeding = self:GetTotal(Source, Item)
@@ -182,7 +183,7 @@ function Proc_Bloodlet.GetHealingTotal(self, Source, Item)
 end
 
 function Proc_Bloodlet.GetHealingLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.HealPower * 0.01 * 0.5)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.HealPower * 0.01 * self.HealMultiplier)
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)

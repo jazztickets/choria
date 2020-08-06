@@ -1,6 +1,6 @@
 
 Base_Set = {
-	UpgradeRate = 0.1,
+	UpgradeRate = 0.05,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -63,8 +63,25 @@ Base_Set = {
 
 -- Base Bonus
 
+Set_Cloth = Base_Set:New()
+Set_Cloth.Attributes = {
+	BattleSpeed = "10%",
+	BleedPower = "25%",
+	BleedResist = "10%",
+	Evasion = "5%",
+	PoisonResist = "20%",
+}
+
+Set_Black = Base_Set:New()
+Set_Black.Attributes = {
+	BattleSpeed = "15%",
+	BleedPower = "50%",
+	BleedResist = "17%",
+	Evasion = "10%",
+	PoisonResist = "35%",
+}
+
 Set_Mage = Base_Set:New()
-Set_Mage.UpgradeRate = 0.1
 Set_Mage.Attributes = {
 	AllSkills = "1",
 	ElementalResist = "20%",
@@ -72,8 +89,15 @@ Set_Mage.Attributes = {
 	MaxMana = "75",
 }
 
+Set_Bronze = Base_Set:New()
+Set_Bronze.Attributes = {
+	Armor = "10",
+	AllResist = "10%",
+	DamageBlock = "20",
+	MaxHealth = "100",
+}
+
 Set_Wizard = Base_Set:New()
-Set_Wizard.UpgradeRate = 0.05
 Set_Wizard.Attributes = {
 	AllSkills = "2",
 	ElementalResist = "35%",
@@ -82,13 +106,21 @@ Set_Wizard.Attributes = {
 }
 
 Set_Leather = Base_Set:New()
-Set_Leather.UpgradeRate = 0.05
 Set_Leather.Attributes = {
 	Armor = "5",
 	BleedResist = "20%",
 	ColdResist = "20%",
 	MaxHealth = "75",
 	PhysicalPower = "35%",
+}
+
+Set_ReinforcedLeather = Base_Set:New()
+Set_ReinforcedLeather.Attributes = {
+	Armor = "10",
+	BleedResist = "35%",
+	ColdResist = "35%",
+	MaxHealth = "150",
+	PhysicalPower = "50%",
 }
 
 -- Added Bonus --
