@@ -436,6 +436,14 @@ function Item_Fang.GetInfo(self, Source, Item)
 	return "If poisoned, gain [c green]" .. Item.Level .. "% [c yellow]poison [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]poisoned"
 end
 
+function Item_Fang.CanUse(self, Level, Source, Target)
+	if Target.HasBuff(Buff_Poisoned.Pointer) then
+		return true
+	end
+
+	return false
+end
+
 function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
 	if Source.HasBuff(Buff_Poisoned.Pointer) then
 		Result.Target.Buff = Buff_PoisonResist.Pointer
