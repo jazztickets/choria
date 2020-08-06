@@ -99,7 +99,7 @@ const  float        BATTLE_JOIN_DISTANCE            =  1.42f*1.42f;
 const  float        BATTLE_COOP_DISTANCE            =  7.0f*7.0f;
 const  int          BATTLE_LEVEL_RANGE              =  10;
 const  int          BATTLE_BOSS_DIFFICULTY_PER_KILL =  50;
-const  int          BATTLE_DIFFICULTY_DAMAGE_START  =  100;
+const  int          BATTLE_DIFFICULTY_DAMAGE_START  =  0;
 const  float        BATTLE_DIFFICULTY_DAMAGE        =  0.1f;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
