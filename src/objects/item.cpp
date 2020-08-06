@@ -768,12 +768,16 @@ int _Item::DrawDescription(bool Render, _Object *Object, const std::string &Func
 
 // Draw set description
 int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosition, bool Blacksmith, float Width, float SpacingY) const {
-	int LineCount = 0;
 	if(!SetID)
-		return LineCount;
+		return 0;
+
+	// Don't draw full set description for added bonus items
+	if(Script.find("SetBonus") == 0)
+		return 0;
 
 	_Scripting *Scripting = Object->Scripting;
 	const _Set &Set = Object->Stats->Sets.at(SetID);
+	int LineCount = 0;
 
 	// Check for scripting function
 	std::string Info = "";

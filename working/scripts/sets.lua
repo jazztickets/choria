@@ -10,7 +10,7 @@ Base_Set = {
 	end,
 
 	GetInfo = function(self, Source, Item)
-		return "[c light_green]Added Set Bonus\n" .. self:GetSetInfo(Source, Item.SetLevel)
+		return "[c light_green]Added " .. self.Item.Set.Name .. " Set Bonus\n" .. self:GetSetInfo(Source, Item.SetLevel)
 	end,
 
 	GetSetInfo = function(self, Source, Upgrades)
@@ -92,6 +92,7 @@ Set_Leather.Attributes = {
 }
 
 -- Added Bonus --
+-- Names need to start with SetBonus for the tooltip description to work correctly --
 
 SetBonus_Stick = Base_Set:New()
 SetBonus_Stick.Attributes = {
