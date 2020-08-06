@@ -44,6 +44,7 @@ _Character::_Character(_Object *Object) :
 	Portrait(nullptr),
 	PortraitID(0),
 
+	IdleTime(0.0),
 	Gold(0),
 	NextBattle(0),
 	Invisible(0),
@@ -251,14 +252,16 @@ void _Character::Update(double FrameTime) {
 	}
 
 	// Update battle cooldowns
-	for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
-		Iterator->second -= FrameTime;
+	if(IdleTime <= PLAYER_IDLE_TIME) {
+		for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
+			Iterator->second -= FrameTime;
 
-		// Remove cooldown
-		if(Iterator->second <= 0.0)
-			Iterator = BattleCooldown.erase(Iterator);
-		else
-			++Iterator;
+			// Remove cooldown
+			if(Iterator->second <= 0.0)
+				Iterator = BattleCooldown.erase(Iterator);
+			else
+				++Iterator;
+		}
 	}
 
 	// Update cooldowns

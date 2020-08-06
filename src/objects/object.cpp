@@ -191,6 +191,7 @@ void _Object::Update(double FrameTime) {
 		Character->Update(FrameTime);
 
 		// Update playtime
+		Character->IdleTime += FrameTime;
 		Character->PlayTime += FrameTime;
 		Character->RebirthTime += FrameTime;
 		if(Character->Battle)
@@ -251,6 +252,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 	// Set input
 	if(Character->AcceptingMoveInput()) {
+		Character->IdleTime = 0.0;
 		int InputState = 0;
 
 		// Call ai input script

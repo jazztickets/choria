@@ -655,6 +655,7 @@ void _Server::HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!Player->Character->IsAlive())
 		return;
 
+	Player->Character->IdleTime = 0.0;
 	Player->Controller->InputStates.push_back(Data.Read<char>());
 }
 
@@ -1714,6 +1715,7 @@ void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Update stats
 	Player->Character->GamesPlayed++;
+	Player->Character->IdleTime = 0.0;
 }
 
 // Give player minigame reward

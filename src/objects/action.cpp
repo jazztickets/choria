@@ -170,6 +170,8 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		Source->Fighter->FleeBattle = false;
 	}
 
+	Source->Character->IdleTime = 0;
+
 	return true;
 }
 

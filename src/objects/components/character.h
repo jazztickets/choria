@@ -157,6 +157,7 @@ class _Character {
 		std::unordered_map<uint32_t, double> BattleCooldown;
 		std::unordered_map<uint32_t, int> BossKills;
 		std::string PartyName;
+		double IdleTime;
 		int Gold;
 		int NextBattle;
 		int Invisible;
