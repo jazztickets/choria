@@ -330,7 +330,7 @@ function Proc_Mana.GetInfo(self, Source, Item)
 end
 
 function Proc_Mana.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.ManaPower)
+	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.ManaPower * 0.01)
 end
 
 function Proc_Mana.Proc(self, Roll, Item, Source, Target, Result)

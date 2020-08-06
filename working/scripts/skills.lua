@@ -571,7 +571,7 @@ end
 
 function Skill_ArcaneMastery.Stats(self, Level, Object, Change)
 	Change.MaxMana = self.PerLevel * Level
-	Change.ManaPower = self:GetPower(Level) / 100.0
+	Change.ManaPower = self:GetPower(Level)
 
 	return Change
 end

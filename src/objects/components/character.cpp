@@ -121,7 +121,7 @@ _Character::_Character(_Object *Object) :
 	PoisonPower(0.0f),
 	PetPower(0.0f),
 	HealPower(0.0f),
-	ManaPower(0.0f),
+	ManaPower(100),
 	MinDamage(0),
 	MaxDamage(0),
 	Armor(0),
@@ -360,6 +360,7 @@ void _Character::CalculateStats() {
 	HealthUpdateMultiplier = 1.0f;
 	ManaReductionRatio = 0.0f;
 	AttackPower = 1.0f;
+	ManaPower = 100;
 	MoveSpeed = 100;
 	Evasion = 0;
 	HitChance = 100;
@@ -408,7 +409,7 @@ void _Character::CalculateStats() {
 
 	// Eternal Spirit
 	MaxManaMultiplier = 1.0f + EternalSpirit / 100.0f;
-	ManaPower = 1.0f + EternalSpirit / 100.0f;
+	ManaPower += EternalSpirit;
 
 	// Eternal Wisdom
 	ExperienceMultiplier = 1.0f + EternalWisdom / 100.0f;
@@ -616,7 +617,7 @@ void _Character::CalculateStats() {
 	if(HealthRegen > 0)
 		HealthRegen *= HealPower;
 	if(ManaRegen > 0)
-		ManaRegen *= ManaPower;
+		ManaRegen *= ManaPower * 0.01f;
 
 	RefreshActionBarCount();
 }
@@ -686,7 +687,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 	if(StatChange.HasStat(StatType::MANAPOWER))
-		ManaPower += StatChange.Values[StatType::MANAPOWER].Float;
+		ManaPower += StatChange.Values[StatType::MANAPOWER].Integer;
 	if(StatChange.HasStat(StatType::SUMMONLIMIT))
 		SummonLimit += StatChange.Values[StatType::SUMMONLIMIT].Integer;
 	if(StatChange.HasStat(StatType::SPELL_DAMAGE))

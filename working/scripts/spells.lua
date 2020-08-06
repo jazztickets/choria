@@ -799,7 +799,7 @@ Skill_MagicBarrier.Duration = 10
 Skill_MagicBarrier.DurationPerLevel = 0.5
 
 function Skill_MagicBarrier.GetLevel(self, Source, Level)
-	return math.floor((self.BaseBlock + self.BlockPerLevel * (Level - 1)) * Source.ManaPower)
+	return math.floor((self.BaseBlock + self.BlockPerLevel * (Level - 1)) * Source.ManaPower * 0.01)
 end
 
 function Skill_MagicBarrier.GetInfo(self, Source, Item)

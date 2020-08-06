@@ -99,5 +99,5 @@ SetBonus_Stick.Attributes = {
 
 SetBonus_MageBook = Base_Set:New()
 SetBonus_MageBook.Attributes = {
-	SpellDamage = "10%",
+	ManaPower = "10%",
 }

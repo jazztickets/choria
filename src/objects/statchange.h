@@ -197,7 +197,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "PoisonPower",            { StatType::POISONPOWER            , StatValueType::FLOAT   } },
 	{ "PetPower",               { StatType::PETPOWER               , StatValueType::FLOAT   } },
 	{ "HealPower",              { StatType::HEALPOWER              , StatValueType::FLOAT   } },
-	{ "ManaPower",              { StatType::MANAPOWER              , StatValueType::FLOAT   } },
+	{ "ManaPower",              { StatType::MANAPOWER              , StatValueType::INTEGER } },
 	{ "Respec",                 { StatType::RESPEC                 , StatValueType::BOOLEAN } },
 	{ "Corpse",                 { StatType::CORPSE                 , StatValueType::INTEGER } },
 	{ "SummonLimit",            { StatType::SUMMONLIMIT            , StatValueType::INTEGER } },

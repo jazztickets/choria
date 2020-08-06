@@ -212,8 +212,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Mana Power
-	if(HUD->Player->Character->ManaPower != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->ManaPower * 100) << "%";
+	if(HUD->Player->Character->ManaPower != 100) {
+		Buffer << HUD->Player->Character->ManaPower << "%";
 		Font->DrawText("Mana Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
