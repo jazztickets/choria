@@ -322,6 +322,14 @@ function Item_SlimyGlob.GetInfo(self, Source, Item)
 	return "If bleeding, gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]bleeding"
 end
 
+function Item_SlimyGlob.CanUse(self, Level, Source, Target)
+	if Target.HasBuff(Buff_Bleeding.Pointer) then
+		return true
+	end
+
+	return false
+end
+
 function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result)
 	if Source.HasBuff(Buff_Bleeding.Pointer) then
 		Result.Target.Buff = Buff_BleedResist.Pointer
