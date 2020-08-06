@@ -89,14 +89,6 @@ Set_Mage.Attributes = {
 	MaxMana = "75",
 }
 
-Set_Bronze = Base_Set:New()
-Set_Bronze.Attributes = {
-	Armor = "10",
-	AllResist = "10%",
-	DamageBlock = "20",
-	MaxHealth = "100",
-}
-
 Set_Wizard = Base_Set:New()
 Set_Wizard.Attributes = {
 	AllSkills = "2",
@@ -121,6 +113,22 @@ Set_ReinforcedLeather.Attributes = {
 	ColdResist = "35%",
 	MaxHealth = "150",
 	PhysicalPower = "50%",
+}
+
+Set_Bronze = Base_Set:New()
+Set_Bronze.Attributes = {
+	Armor = "10",
+	AllResist = "10%",
+	DamageBlock = "20",
+	MaxHealth = "100",
+}
+
+Set_Iron = Base_Set:New()
+Set_Iron.Attributes = {
+	Armor = "20",
+	AllResist = "15%",
+	DamageBlock = "40",
+	MaxHealth = "200",
 }
 
 -- Added Bonus --
