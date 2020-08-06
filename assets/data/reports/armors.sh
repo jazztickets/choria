@@ -40,3 +40,5 @@ post=" ORDER BY cost, name"
 
 print_data "$pre name LIKE '%mage%' $post"
 print_data "$pre name LIKE '%wizard%' $post"
+print_data "$pre name LIKE '%leather%' $post"
+print_data "$pre name LIKE '%reinforced%' $post"

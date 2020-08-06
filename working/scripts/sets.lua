@@ -86,8 +86,9 @@ Set_Leather.UpgradeRate = 0.05
 Set_Leather.Attributes = {
 	Armor = "5",
 	BleedResist = "20%",
+	ColdResist = "20%",
 	MaxHealth = "75",
-	PhysicalPower = "25%",
+	PhysicalPower = "35%",
 }
 
 -- Added Bonus --
@@ -100,4 +101,19 @@ SetBonus_Stick.Attributes = {
 SetBonus_MageBook = Base_Set:New()
 SetBonus_MageBook.Attributes = {
 	ManaPower = "10%",
+}
+
+SetBonus_LeatherBuckler = Base_Set:New()
+SetBonus_LeatherBuckler.Attributes = {
+	DamageBlock = "10",
+}
+
+SetBonus_ShortSword = Base_Set:New()
+SetBonus_ShortSword.Attributes = {
+	AttackPower = "15%",
+}
+
+SetBonus_Sword = Base_Set:New()
+SetBonus_Sword.Attributes = {
+	AttackPower = "20%",
 }
