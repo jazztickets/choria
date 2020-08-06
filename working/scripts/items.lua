@@ -413,6 +413,14 @@ function Item_SpiderLeg.GetInfo(self, Source, Item)
 	return "If slowed, increase battle speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds\n\nPurges [c yellow]slowness"
 end
 
+function Item_SpiderLeg.CanUse(self, Level, Source, Target)
+	if Target.HasBuff(Buff_Slowed.Pointer) then
+		return true
+	end
+
+	return false
+end
+
 function Item_SpiderLeg.Use(self, Level, Duration, Source, Target, Result)
 	if Source.HasBuff(Buff_Slowed.Pointer) then
 		Result.Target.Buff = Buff_Hasted.Pointer
