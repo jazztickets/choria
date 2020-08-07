@@ -531,11 +531,11 @@ void _EditorState::Render(double BlendFactor) {
 	if(Map) {
 		int RenderFilter = Filter | MAP_RENDER_BOUNDARY | MAP_RENDER_EDGE_BOUNDARY;
 
-		if(!ShowBackgroundMap)
-			RenderFilter |= MAP_RENDER_NOBACKGROUND;
-
 		if(MapView)
 			RenderFilter = MAP_RENDER_MAP_VIEW;
+
+		if(!ShowBackgroundMap)
+			RenderFilter |= MAP_RENDER_NOBACKGROUND;
 
 		if(!UseClockAmbientLight)
 			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
