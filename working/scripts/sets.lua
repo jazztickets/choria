@@ -134,9 +134,31 @@ Set_Iron.Attributes = {
 -- Added Bonus --
 -- Names need to start with SetBonus for the tooltip description to work correctly --
 
+-- One-Handed Weapons --
+
 SetBonus_Stick = Base_Set:New()
 SetBonus_Stick.Attributes = {
 	SpellDamage = "10%",
+}
+
+SetBonus_ShortSword = Base_Set:New()
+SetBonus_ShortSword.Attributes = {
+	AttackPower = "15%",
+}
+
+SetBonus_Sword = Base_Set:New()
+SetBonus_Sword.Attributes = {
+	AttackPower = "20%",
+}
+
+-- Two-Handed Weapons --
+
+-- Shields --
+
+SetBonus_Gauntlet = Base_Set:New()
+SetBonus_Gauntlet.Attributes = {
+	AttackPower = "10%",
+	DamageBlock = "5",
 }
 
 SetBonus_MageBook = Base_Set:New()
@@ -149,12 +171,22 @@ SetBonus_LeatherBuckler.Attributes = {
 	DamageBlock = "10",
 }
 
-SetBonus_ShortSword = Base_Set:New()
-SetBonus_ShortSword.Attributes = {
-	AttackPower = "15%",
+SetBonus_BronzeShield = Base_Set:New()
+SetBonus_BronzeShield.Attributes = {
+	DamageBlock = "20",
 }
 
-SetBonus_Sword = Base_Set:New()
-SetBonus_Sword.Attributes = {
-	AttackPower = "20%",
+SetBonus_ReinforcedBuckler = Base_Set:New()
+SetBonus_ReinforcedBuckler.Attributes = {
+	DamageBlock = "20",
+}
+
+SetBonus_WizardBook = Base_Set:New()
+SetBonus_WizardBook.Attributes = {
+	ManaPower = "20%",
+}
+
+SetBonus_IronShield = Base_Set:New()
+SetBonus_IronShield.Attributes = {
+	DamageBlock = "30",
 }
