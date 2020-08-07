@@ -85,7 +85,7 @@ class _Item {
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel) const;
+		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel, int MaxSetLevel) const;
 		void PlaySound(_Scripting *Scripting) const;
 
 		float GetAverageDamage(int Upgrades) const;

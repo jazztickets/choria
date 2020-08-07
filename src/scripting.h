@@ -59,7 +59,7 @@ class _Scripting {
 		void PushStatusEffect(_StatusEffect *StatusEffect);
 		void PushObjectList(std::list<_Object *> &Objects);
 		void PushObjectStatusEffects(_Object *Object);
-		void PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel);
+		void PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel, int MaxSetLevel, int MoreInfo);
 		void PushBoolean(bool Value);
 		void PushInt(int Value);
 		void PushReal(double Value);

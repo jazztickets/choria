@@ -785,7 +785,7 @@ void _Scripting::PushObjectStatusEffects(_Object *Object) {
 }
 
 // Push varying parameters for an item
-void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel) {
+void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel, int MaxSetLevel, int MoreInfo) {
 	lua_newtable(LuaState);
 
 	lua_pushinteger(LuaState, Chance);
@@ -802,6 +802,12 @@ void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int 
 
 	lua_pushinteger(LuaState, SetLevel);
 	lua_setfield(LuaState, -2, "SetLevel");
+
+	lua_pushinteger(LuaState, MaxSetLevel);
+	lua_setfield(LuaState, -2, "MaxSetLevel");
+
+	lua_pushboolean(LuaState, MoreInfo);
+	lua_setfield(LuaState, -2, "MoreInfo");
 }
 
 // Push boolean value

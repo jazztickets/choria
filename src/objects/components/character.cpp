@@ -443,7 +443,7 @@ void _Character::CalculateStats() {
 		_ActionResult ActionResult;
 		ActionResult.ActionUsed.Level = Upgrades;
 		ActionResult.Source.Object = Object;
-		Item->GetStats(Scripting, ActionResult, 0);
+		Item->GetStats(Scripting, ActionResult, 0, 0);
 		CalculateStatBonuses(ActionResult.Source);
 
 		// Add damage
@@ -483,10 +483,12 @@ void _Character::CalculateStats() {
 			if(SetIterator == Sets.end()) {
 				Sets[Item->SetID].EquippedCount = 1;
 				Sets[Item->SetID].Level = Upgrades;
+				Sets[Item->SetID].MaxLevel = Item->MaxLevel;
 			}
 			else {
 				SetIterator->second.EquippedCount++;
 				SetIterator->second.Level = std::min(Upgrades, Sets[Item->SetID].Level);
+				SetIterator->second.MaxLevel = std::min(SetIterator->second.MaxLevel, Item->MaxLevel);
 			}
 		}
 	}
@@ -505,7 +507,7 @@ void _Character::CalculateStats() {
 		if(Scripting->StartMethodCall(Set.Script, "SetStats")) {
 			Scripting->PushObject(StatChange.Object);
 			Scripting->PushInt(SetData.second.Level);
-			Scripting->PushInt(SetData.second.EquippedCount);
+			Scripting->PushInt(SetData.second.MaxLevel);
 			Scripting->PushStatChange(&StatChange);
 			Scripting->MethodCall(4, 1);
 			Scripting->GetStatChange(1, StatChange);
@@ -533,7 +535,7 @@ void _Character::CalculateStats() {
 
 			Scripting->PushObject(StatChange.Object);
 			Scripting->PushInt(SetData.Level);
-			Scripting->PushInt(SetData.EquippedCount);
+			Scripting->PushInt(SetData.MaxLevel);
 			Scripting->PushStatChange(&StatChange);
 			Scripting->MethodCall(4, 1);
 			Scripting->GetStatChange(1, StatChange);
@@ -564,7 +566,7 @@ void _Character::CalculateStats() {
 			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
 
 				// Get passive stat changes
-				Skill->GetStats(Object->Scripting, ActionResult, 0);
+				Skill->GetStats(Object->Scripting, ActionResult, 0, 0);
 				CalculateStatBonuses(ActionResult.Source);
 			}
 		}

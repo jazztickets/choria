@@ -114,7 +114,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		DescriptionLines += DrawDescription(false, Player, Proc, DrawPosition, false, 0, 0, 0, 0, false, DescriptionWidth, 0);
 	}
 	if(SetID)
-		DescriptionLines += DrawSetDescription(false, Player, DrawPosition, false, DescriptionWidth, 0);
+		DescriptionLines += DrawSetDescription(false, Player, DrawPosition, false, DescriptionWidth, 0) + 1;
 	float DescriptionSizeY = DescriptionLines * INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 	Size.y += DescriptionSizeY;
 
@@ -689,6 +689,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(Tooltip.InventorySlot.Count > 1)
 		HelpTextList.push_back("Ctrl+click to split");
 
+	// Set hint
+	if(SetID || Script.find("SetBonus") == 0)
+		HelpTextList.push_back("Hold Alt for more info");
+
 	// Draw ui hints
 	for(const auto &Text : HelpTextList) {
 		ae::Assets.Fonts["hud_small"]->DrawText(Text, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
@@ -705,12 +709,15 @@ int _Item::DrawDescription(bool Render, _Object *Object, const std::string &Func
 	std::string Info = "";
 	if(Scripting->StartMethodCall(Function, "GetInfo")) {
 		int SetLevel = 0;
-		if(SetID)
+		int MaxSetLevel = 0;
+		if(SetID) {
 			SetLevel = std::min(Object->Character->Sets[SetID].Level + Blacksmith, MaxLevel);
+			MaxSetLevel = Object->Character->Sets[SetID].MaxLevel;
+		}
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades, SetLevel);
+		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades, SetLevel, MaxSetLevel, ae::Input.ModKeyDown(KMOD_ALT));
 		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -784,11 +791,14 @@ int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosit
 	if(Scripting->StartMethodCall(Set.Script, "GetSetInfo")) {
 		int EquippedCount = Object->Character->Sets[SetID].EquippedCount;
 		int Upgrades = std::min(Object->Character->Sets[SetID].Level + Blacksmith, MaxLevel);
+		int MaxSetLevel = Object->Character->Sets[SetID].MaxLevel;
 
 		// Get description from script
 		Scripting->PushObject(Object);
 		Scripting->PushInt(Upgrades);
-		Scripting->MethodCall(2, 1);
+		Scripting->PushInt(MaxSetLevel);
+		Scripting->PushBoolean(ae::Input.ModKeyDown(KMOD_ALT));
+		Scripting->MethodCall(4, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
 
@@ -952,13 +962,13 @@ int _Item::GetUpgradeCost(int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
-	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_BASE_UPGRADE_COST));
+	return (int)(std::floor(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_UPGRADE_BASE_COST));
 }
 
 // Get enchant cost
 int _Item::GetEnchantCost(int Level) {
 	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1;
-	return std::max(0, (int)(std::ceil(Index * (GAME_ENCHANT_BASE_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
+	return std::max(0, (int)(std::floor(Index * (GAME_ENCHANT_BASE_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
 }
 
 // Get count of drawable attributes
@@ -1154,12 +1164,12 @@ void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Get passive stats
-void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel) const {
+void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel, int MaxSetLevel) const {
 	if(Scripting->StartMethodCall(Script, "Stats")) {
 		if(IsSkill())
 			Scripting->PushInt(ActionResult.ActionUsed.Level);
 		else
-			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level, SetLevel);
+			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level, SetLevel, MaxSetLevel, 0);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushStatChange(&ActionResult.Source);
 		Scripting->MethodCall(3, 1);
