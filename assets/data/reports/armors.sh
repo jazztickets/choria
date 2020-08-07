@@ -28,7 +28,7 @@ function print_data() {
 					printf("%s|", sum[column])
 			}
 		}
-	' | column -t -s '|' 
+	' | column -t -s '|'
 
 	echo
 }
@@ -46,5 +46,4 @@ print_data "$pre name LIKE '%cloth%' $post"
 print_data "$pre name LIKE '%black%' $post"
 print_data "$pre name LIKE '%bronze%' $post"
 print_data "$pre name LIKE '%iron%' $post"
-print_data "$pre name LIKE '%metal%' $post"
 print_data "$pre name LIKE '%steel%' $post"

@@ -706,7 +706,7 @@ int _Item::DrawDescription(bool Render, _Object *Object, const std::string &Func
 	if(Scripting->StartMethodCall(Function, "GetInfo")) {
 		int SetLevel = 0;
 		if(SetID)
-			SetLevel = Object->Character->Sets[SetID].Level + Blacksmith;
+			SetLevel = std::min(Object->Character->Sets[SetID].Level + Blacksmith, MaxLevel);
 
 		// Get description from script
 		Scripting->PushObject(Object);
@@ -783,7 +783,7 @@ int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosit
 	std::string Info = "";
 	if(Scripting->StartMethodCall(Set.Script, "GetSetInfo")) {
 		int EquippedCount = Object->Character->Sets[SetID].EquippedCount;
-		int Upgrades = Object->Character->Sets[SetID].Level + Blacksmith;
+		int Upgrades = std::min(Object->Character->Sets[SetID].Level + Blacksmith, MaxLevel);
 
 		// Get description from script
 		Scripting->PushObject(Object);
