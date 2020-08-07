@@ -54,6 +54,7 @@ _Stats::_Stats(bool Headless) :
 	LoadBuilds();
 	LoadScripts();
 	LoadSets();
+	LoadUnlocks();
 	LoadLights();
 }
 
@@ -546,6 +547,23 @@ void _Stats::LoadSets() {
 		Set.Count = Database->GetInt<int>("count");
 
 		Sets[Set.ID] = Set;
+	}
+	Database->CloseQuery();
+}
+
+// Load unlocks
+void _Stats::LoadUnlocks() {
+	Unlocks.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM unlock");
+
+	// Get data
+	while(Database->FetchRow()) {
+		uint32_t ID = Database->GetInt<uint32_t>("id");
+		std::string Name = Database->GetString("name");
+
+		Unlocks[ID] = Name;
 	}
 	Database->CloseQuery();
 }

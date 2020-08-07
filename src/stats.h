@@ -205,6 +205,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _MinigameType> Minigames;
 		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, _Set> Sets;
+		std::unordered_map<uint32_t, std::string> Unlocks;
 		std::unordered_map<uint32_t, _Model> Models;
 		std::unordered_map<uint32_t, _LightType> Lights;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
@@ -239,6 +240,7 @@ class _Stats {
 		void LoadBuilds();
 		void LoadScripts();
 		void LoadSets();
+		void LoadUnlocks();
 		void LoadLights();
 
 };
