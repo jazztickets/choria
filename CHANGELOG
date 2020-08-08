@@ -15,9 +15,11 @@ choria 0.5.1 -
 - Added enchanter for increasing max skill levels
 - Added rebirthing: restart your character with a permanent upgrade
 - Added ability to manually dismiss buffs
+- Added set bonuses for all armor and most weapons
 - Newly learned skills start with a max level of 5
 - Summons are now stored in buffs outside of battle
 - Direction of party members now show on current map
+- Added tab to inventory to show unlocks
 - Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle
 - Added shift-click to transfer items between bags
 - Skills are now sorted by category
@@ -25,10 +27,12 @@ choria 0.5.1 -
 - Resurrect spell can now be cast in the world
 - Various items can now purge debuffs
 - Torches now pause during battle
+- Bosses grow stronger after each kill
 - Trader items now only search through inventory bag
 - Fixed inventory bugs
 - Fixed crash with fleeing enemies
 - Host field can be pasted on the connect screen
+- Optimized network packets
 - Many balance and map updates
 
 choria 0.5.0 - 2019-09-27
