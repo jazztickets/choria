@@ -64,7 +64,7 @@ Base_Set = {
 		Range = MaxValue - Value;
 
 		UpgradeProgression = Upgrades / MaxUpgrades
-		UpgradedValue = math.floor(Value + math.floor(Range * UpgradeProgression))
+		UpgradedValue = math.floor(Value + Range * UpgradeProgression)
 
 		return UpgradedValue
 	end,
@@ -108,10 +108,10 @@ Set_Mage.Attributes = {
 
 Set_Wizard = Base_Set:New()
 Set_Wizard.Attributes = {
-	AllSkills = { "2", "2" },
-	ElementalResist = { "35%", "35%" },
-	ManaRegen = { "5", "5" },
-	MaxMana = { "150", "150" },
+	AllSkills = { "0.5", "2" },
+	ElementalResist = { "15%", "30%" },
+	ManaRegen = { "3", "8" },
+	MaxMana = { "100", "300" },
 }
 
 Set_Leather = Base_Set:New()
@@ -153,13 +153,13 @@ Set_Iron.Attributes = {
 
 -- One-Handed Weapons --
 
-SetBonus_Stick = Base_Set:New()
-SetBonus_Stick.Attributes = {
+SetBonus_MageWand = Base_Set:New()
+SetBonus_MageWand.Attributes = {
 	SpellDamage = { "10%", "25%" },
 }
 
-SetBonus_MagicStick = Base_Set:New()
-SetBonus_MagicStick.Attributes = {
+SetBonus_WizardWand = Base_Set:New()
+SetBonus_WizardWand.Attributes = {
 	SpellDamage = { "25%", "50%" },
 }
 
