@@ -86,6 +86,7 @@ Set_Cloth.Attributes = {
 	BleedPower = { "10%", "50%" },
 	BleedResist = { "10%", "25%" },
 	Evasion = { "5%", "15%" },
+	MaxHealth = { "10", "100" },
 	PoisonResist = { "10%", "25%" },
 }
 
@@ -95,6 +96,7 @@ Set_Black.Attributes = {
 	BleedPower = { "25%", "100%" },
 	BleedResist = { "15%", "45%" },
 	Evasion = { "10%", "30%" },
+	MaxHealth = { "50", "200" },
 	PoisonResist = { "15%", "45%" },
 }
 
@@ -103,6 +105,7 @@ Set_Mage.Attributes = {
 	AllSkills = { "0", "1" },
 	ElementalResist = { "5%", "25%" },
 	ManaRegen = { "2", "4" },
+	MaxHealth = { "5", "50" },
 	MaxMana = { "50", "150" },
 }
 
@@ -111,6 +114,7 @@ Set_Wizard.Attributes = {
 	AllSkills = { "0.5", "2" },
 	ElementalResist = { "15%", "30%" },
 	ManaRegen = { "3", "8" },
+	MaxHealth = { "25", "100" },
 	MaxMana = { "100", "300" },
 }
 
