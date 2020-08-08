@@ -82,20 +82,20 @@ Base_Set = {
 
 Set_Cloth = Base_Set:New()
 Set_Cloth.Attributes = {
-	BattleSpeed = { "10%", "10%" },
-	BleedPower = { "25%", "25%" },
-	BleedResist = { "10%", "10%" },
-	Evasion = { "5%", "5%" },
-	PoisonResist = { "20%", "20%" },
+	BattleSpeed = { "5%", "20%" },
+	BleedPower = { "10%", "50%" },
+	BleedResist = { "10%", "25%" },
+	Evasion = { "5%", "15%" },
+	PoisonResist = { "10%", "25%" },
 }
 
 Set_Black = Base_Set:New()
 Set_Black.Attributes = {
-	BattleSpeed = { "15%", "15%" },
-	BleedPower = { "50%", "50%" },
-	BleedResist = { "17%", "17%" },
-	Evasion = { "10%", "10%" },
-	PoisonResist = { "35%", "35%" },
+	BattleSpeed = { "15%", "35%" },
+	BleedPower = { "25%", "100%" },
+	BleedResist = { "15%", "45%" },
+	Evasion = { "10%", "30%" },
+	PoisonResist = { "15%", "45%" },
 }
 
 Set_Mage = Base_Set:New()
@@ -297,17 +297,17 @@ SetBonus_Icebrand.Attributes = {
 
 SetBonus_SmallKnife = Base_Set:New()
 SetBonus_SmallKnife.Attributes = {
-	BleedPower = { "15%", "15%" },
+	BleedPower = { "15%", "30%" },
 }
 
 SetBonus_Dagger = Base_Set:New()
 SetBonus_Dagger.Attributes = {
-	BleedPower = { "25%", "25%" },
+	BleedPower = { "20%", "35%" },
 }
 
 SetBonus_Stiletto = Base_Set:New()
 SetBonus_Stiletto.Attributes = {
-	BleedPower = { "40%", "40%" },
+	BleedPower = { "25%", "40%" },
 }
 
 SetBonus_SwiftKnife = Base_Set:New()
