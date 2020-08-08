@@ -1557,7 +1557,7 @@ void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 
 			Server->SendPlayerPosition(Peer);
 			Server->SendMessage(Peer, std::string(Text + "and lost " + std::to_string(GoldPenalty) + " gold"), "red");
-			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Deaths << " )" << std::endl;
+			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Deaths << " hardcore=" << Character->Hardcore << " )" << std::endl;
 		}
 	}
 }
