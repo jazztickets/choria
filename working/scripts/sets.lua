@@ -116,20 +116,20 @@ Set_Wizard.Attributes = {
 
 Set_Leather = Base_Set:New()
 Set_Leather.Attributes = {
-	Armor = { "5", "5" },
-	BleedResist = { "20%", "20%" },
-	ColdResist = { "20%", "20%" },
-	MaxHealth = { "75", "75" },
-	PhysicalPower = { "35%", "35%" },
+	Armor = { "2", "10" },
+	BleedResist = { "10%", "25%" },
+	ColdResist = { "10%", "25%" },
+	MaxHealth = { "25", "250" },
+	PhysicalPower = { "10%", "50%" },
 }
 
 Set_ReinforcedLeather = Base_Set:New()
 Set_ReinforcedLeather.Attributes = {
-	Armor = { "10", "10" },
-	BleedResist = { "35%", "35%" },
-	ColdResist = { "35%", "35%" },
-	MaxHealth = { "150", "150" },
-	PhysicalPower = { "50%", "50%" },
+	Armor = { "6", "20" },
+	BleedResist = { "15%", "45%" },
+	ColdResist = { "15%", "45%" },
+	MaxHealth = { "125", "500" },
+	PhysicalPower = { "25%", "100%" },
 }
 
 Set_Bronze = Base_Set:New()
@@ -170,44 +170,44 @@ SetBonus_ArcaneWand.Attributes = {
 
 SetBonus_ShortSword = Base_Set:New()
 SetBonus_ShortSword.Attributes = {
-	AttackPower = { "15%", "15%" },
+	AttackPower = { "15%", "30%" },
 }
 
 SetBonus_Sword = Base_Set:New()
 SetBonus_Sword.Attributes = {
-	AttackPower = { "20%", "20%" },
+	AttackPower = { "20%", "35%" },
 }
 
 SetBonus_SpiderSword = Base_Set:New()
 SetBonus_SpiderSword.Attributes = {
-	BattleSpeed = { "20%", "20%" },
+	BattleSpeed = { "10%", "25%" },
 }
 
 SetBonus_Scimitar = Base_Set:New()
 SetBonus_Scimitar.Attributes = {
-	AttackPower = { "30%", "30%" },
+	AttackPower = { "25%", "45%" },
 }
 
 SetBonus_VenomBlade = Base_Set:New()
 SetBonus_VenomBlade.Attributes = {
-	AttackPower = { "30%", "30%" },
-	PoisonPower = { "25%", "25%" },
+	AttackPower = { "25%", "45%" },
+	PoisonPower = { "25%", "50%" },
 }
 
 SetBonus_SilverEdge = Base_Set:New()
 SetBonus_SilverEdge.Attributes = {
-	AttackPower = { "50%", "50%" },
+	AttackPower = { "25%", "75%" },
 }
 
 SetBonus_LightBlade = Base_Set:New()
 SetBonus_LightBlade.Attributes = {
-	AttackPower = { "50%", "50%" },
+	AttackPower = { "30%", "100%" },
 }
 
 SetBonus_Flamuss = Base_Set:New()
 SetBonus_Flamuss.Attributes = {
-	AttackPower = { "50%", "50%" },
-	FirePower = { "50%", "50%" },
+	AttackPower = { "25%", "75%" },
+	FirePower = { "25%", "75%" },
 }
 
 SetBonus_Mace = Base_Set:New()
@@ -330,8 +330,8 @@ SetBonus_Bloodletter.Attributes = {
 
 SetBonus_Gauntlet = Base_Set:New()
 SetBonus_Gauntlet.Attributes = {
-	AttackPower = { "10%", "10%" },
-	DamageBlock = { "5", "5" },
+	AttackPower = { "10%", "25%" },
+	DamageBlock = { "5", "25" },
 }
 
 SetBonus_MageBook = Base_Set:New()
@@ -341,7 +341,7 @@ SetBonus_MageBook.Attributes = {
 
 SetBonus_WizardBook = Base_Set:New()
 SetBonus_WizardBook.Attributes = {
-	ManaPower = { "30%", "30%" },
+	ManaPower = { "15%", "50%" },
 }
 
 SetBonus_ArcaneBook = Base_Set:New()
@@ -351,12 +351,12 @@ SetBonus_ArcaneBook.Attributes = {
 
 SetBonus_LeatherBuckler = Base_Set:New()
 SetBonus_LeatherBuckler.Attributes = {
-	DamageBlock = { "10", "10" },
+	DamageBlock = { "5", "50" },
 }
 
 SetBonus_ReinforcedBuckler = Base_Set:New()
 SetBonus_ReinforcedBuckler.Attributes = {
-	DamageBlock = { "20", "20" },
+	DamageBlock = { "25", "100" },
 }
 
 SetBonus_BronzeShield = Base_Set:New()
