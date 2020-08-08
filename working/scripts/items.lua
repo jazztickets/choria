@@ -753,7 +753,7 @@ end
 Item_Torch = { }
 
 function Item_Torch.GetDuration(self, Source, Duration)
-	return math.floor(Duration * Source.FirePower)
+	return math.floor(Duration * Source.FirePower * 0.01)
 end
 
 function Item_Torch.GetInfo(self, Source, Item)
