@@ -111,7 +111,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		}
 
 		// Set cooldown
-		if(ItemUsed->Cooldown > 0.0) {
+		if(!SkillUnlocked && ItemUsed->Cooldown > 0.0) {
 			Source->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown * Source->Character->CooldownMultiplier;
 			Source->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown * Source->Character->CooldownMultiplier;
 		}
