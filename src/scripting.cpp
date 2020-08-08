@@ -588,6 +588,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->ManaPower);
 	lua_setfield(LuaState, -2, "ManaPower");
 
+	lua_pushinteger(LuaState, Object->Character->ShieldDamage);
+	lua_setfield(LuaState, -2, "ShieldDamage");
+
 	lua_pushinteger(LuaState, Object->Character->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 

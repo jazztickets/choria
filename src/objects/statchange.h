@@ -129,6 +129,7 @@ enum class StatType : int {
 	BLEED_RESIST,
 	STUN_RESIST,
 	ELEMENTAL_RESIST,
+	SHIELD_DAMAGE,
 	COUNT,
 };
 
@@ -231,6 +232,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "BleedResist",            { StatType::BLEED_RESIST           , StatValueType::INTEGER } },
 	{ "StunResist",             { StatType::STUN_RESIST            , StatValueType::INTEGER } },
 	{ "ElementalResist",        { StatType::ELEMENTAL_RESIST       , StatValueType::INTEGER } },
+	{ "ShieldDamage",           { StatType::SHIELD_DAMAGE          , StatValueType::INTEGER } },
 };
 
 union _Value {

@@ -283,6 +283,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Shield Damage
+	if(HUD->Player->Character->ShieldDamage != 100) {
+		Buffer << HUD->Player->Character->ShieldDamage << "%";
+		Font->DrawText("Shield Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Difficulty
 	if(HUD->Player->Character->Difficulty != 0) {
 		Buffer << HUD->Player->Character->Difficulty << "%";

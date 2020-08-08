@@ -163,6 +163,7 @@ INSERT INTO stattype VALUES(82,'PoisonResistance',0.25);
 INSERT INTO stattype VALUES(83,'BleedResistance',0.25);
 INSERT INTO stattype VALUES(84,'StunResistance',0.25);
 INSERT INTO stattype VALUES(85,'ElementalResistance',0.25);
+INSERT INTO stattype VALUES(86,'ShieldDamage',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT

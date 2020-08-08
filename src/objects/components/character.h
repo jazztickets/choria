@@ -242,6 +242,7 @@ class _Character {
 		int PetPower;
 		int HealPower;
 		int ManaPower;
+		int ShieldDamage;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;

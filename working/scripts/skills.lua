@@ -449,7 +449,7 @@ function Skill_ShieldBash.GenerateDamage(self, Level, Source)
 		return 0
 	end
 
-	return math.floor(Shield.GenerateDamage(Source.Pointer, Shield.Upgrades) * (self:GetDamage(Level) / 100))
+	return math.floor(Shield.GenerateDamage(Source.Pointer, Shield.Upgrades) * (self:GetDamage(Level) * 0.01) * Source.ShieldDamage * 0.01)
 end
 
 function Skill_ShieldBash.CanUse(self, Level, Source, Target)

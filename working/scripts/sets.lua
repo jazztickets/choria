@@ -112,7 +112,7 @@ Set_Mage.Attributes = {
 Set_Wizard = Base_Set:New()
 Set_Wizard.Attributes = {
 	AllSkills = { "0.5", "2" },
-	ElementalResist = { "15%", "30%" },
+	ElementalResist = { "15%", "40%" },
 	ManaRegen = { "3", "8" },
 	MaxHealth = { "25", "100" },
 	MaxMana = { "100", "300" },
@@ -130,26 +130,28 @@ Set_Leather.Attributes = {
 Set_ReinforcedLeather = Base_Set:New()
 Set_ReinforcedLeather.Attributes = {
 	Armor = { "6", "20" },
-	BleedResist = { "15%", "45%" },
-	ColdResist = { "15%", "45%" },
+	BleedResist = { "15%", "50%" },
+	ColdResist = { "15%", "50%" },
 	MaxHealth = { "125", "500" },
 	PhysicalPower = { "25%", "100%" },
 }
 
 Set_Bronze = Base_Set:New()
 Set_Bronze.Attributes = {
-	Armor = { "10", "10" },
-	AllResist = { "10%", "10%" },
-	DamageBlock = { "20", "20" },
-	MaxHealth = { "100", "100" },
+	Armor = { "5", "15" },
+	AllResist = { "10%", "20%" },
+	DamageBlock = { "5", "25" },
+	MaxHealth = { "50", "400" },
+	ShieldDamage = { "10%", "50%" },
 }
 
 Set_Iron = Base_Set:New()
 Set_Iron.Attributes = {
-	Armor = { "20", "20" },
-	AllResist = { "15%", "15%" },
-	DamageBlock = { "40", "40" },
-	MaxHealth = { "200", "200" },
+	Armor = { "10", "30" },
+	AllResist = { "15%", "40%" },
+	DamageBlock = { "15", "50" },
+	MaxHealth = { "200", "800" },
+	ShieldDamage = { "25%", "100%" },
 }
 
 -- Added Bonus --
@@ -164,12 +166,12 @@ SetBonus_MageWand.Attributes = {
 
 SetBonus_WizardWand = Base_Set:New()
 SetBonus_WizardWand.Attributes = {
-	SpellDamage = { "25%", "50%" },
+	SpellDamage = { "15%", "50%" },
 }
 
 SetBonus_ArcaneWand = Base_Set:New()
 SetBonus_ArcaneWand.Attributes = {
-	SpellDamage = { "50%", "100%" },
+	SpellDamage = { "25%", "100%" },
 }
 
 SetBonus_ShortSword = Base_Set:New()
@@ -216,22 +218,22 @@ SetBonus_Flamuss.Attributes = {
 
 SetBonus_Mace = Base_Set:New()
 SetBonus_Mace.Attributes = {
-	AttackPower = { "25%", "25%" },
+	AttackPower = { "20%", "50%" },
 }
 
 SetBonus_MorningStar = Base_Set:New()
 SetBonus_MorningStar.Attributes = {
-	AttackPower = { "50%", "50%" },
+	AttackPower = { "25%", "65%" },
 }
 
 SetBonus_FlangedMace = Base_Set:New()
 SetBonus_FlangedMace.Attributes = {
-	AttackPower = { "75%", "75%" },
+	AttackPower = { "30%", "80%" },
 }
 
 SetBonus_ShiningStar = Base_Set:New()
 SetBonus_ShiningStar.Attributes = {
-	AttackPower = { "100%", "100%" },
+	AttackPower = { "50%", "100%" },
 }
 
 -- Two-Handed Weapons --
@@ -355,25 +357,25 @@ SetBonus_ArcaneBook.Attributes = {
 
 SetBonus_LeatherBuckler = Base_Set:New()
 SetBonus_LeatherBuckler.Attributes = {
-	DamageBlock = { "5", "50" },
+	DamageBlock = { "5", "25" },
 }
 
 SetBonus_ReinforcedBuckler = Base_Set:New()
 SetBonus_ReinforcedBuckler.Attributes = {
-	DamageBlock = { "25", "100" },
+	DamageBlock = { "15", "50" },
 }
 
 SetBonus_BronzeShield = Base_Set:New()
 SetBonus_BronzeShield.Attributes = {
-	DamageBlock = { "20", "20" },
+	DamageBlock = { "10", "50" },
 }
 
 SetBonus_IronShield = Base_Set:New()
 SetBonus_IronShield.Attributes = {
-	DamageBlock = { "35", "35" },
+	DamageBlock = { "25", "100" },
 }
 
 SetBonus_SteelShield = Base_Set:New()
 SetBonus_SteelShield.Attributes = {
-	DamageBlock = { "50", "50" },
+	DamageBlock = { "50", "150" },
 }

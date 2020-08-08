@@ -123,6 +123,7 @@ _Character::_Character(_Object *Object) :
 	PetPower(100),
 	HealPower(100),
 	ManaPower(100),
+	ShieldDamage(100),
 	MinDamage(0),
 	MaxDamage(0),
 	Armor(0),
@@ -369,6 +370,7 @@ void _Character::CalculateStats() {
 	MoveSpeed = 100;
 	Evasion = 0;
 	HitChance = 100;
+	ShieldDamage = 100;
 	Pierce = 0;
 	AllSkills = 0;
 
@@ -755,6 +757,8 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		Armor += StatChange.Values[StatType::ARMOR].Integer;
 	if(StatChange.HasStat(StatType::DAMAGEBLOCK))
 		DamageBlock += StatChange.Values[StatType::DAMAGEBLOCK].Integer;
+	if(StatChange.HasStat(StatType::SHIELD_DAMAGE))
+		ShieldDamage += StatChange.Values[StatType::SHIELD_DAMAGE].Integer;
 
 	if(StatChange.HasStat(StatType::MOVESPEED))
 		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
