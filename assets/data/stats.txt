@@ -2672,11 +2672,11 @@ CREATE TABLE IF NOT EXISTS "item" (
 INSERT INTO item VALUES(0,0,0,0,0,0,0,0,'None','','','','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(1,1,2,2,2,0,0,0,'Attack','textures/skills/attack.png','','Skill_Attack','',2,50,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(2,1,0,1,2,0,0,0,'Flee','textures/skills/flee.png','','Skill_Flee','',4,75,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(3,1,5,2,2,0,0,0,'Spark','textures/skills/spark.png','','Skill_Spark','',3,150,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(3,1,5,2,2,0,0,0,'Spark','textures/skills/spark.png','','Skill_Spark','',3,275,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(4,1,0,3,3,0,0,0,'Heal','textures/skills/heal.png','','Skill_Heal','',3,350,0,0,50,0,0.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(5,1,0,0,0,0,0,0,'Toughness','textures/skills/toughness.png','','Skill_Toughness','',1,500,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(6,1,0,0,0,0,0,0,'Arcane Mastery','textures/skills/arcanemastery.png','','Skill_ArcaneMastery','',1,600,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(7,1,0,2,2,0,0,0,'Shield Bash','textures/skills/shield_bash.png','','Skill_ShieldBash','',2,100,0,0,50,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(7,1,0,2,2,0,0,0,'Shield Bash','textures/skills/shield_bash.png','','Skill_ShieldBash','',2,175,0,0,50,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(8,1,0,6,2,0,0,0,'Whirlwind','textures/skills/whirlwind.png','','Skill_Whirlwind','',2,2000,0,0,50,0,0.0,8.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(9,1,3,4,2,0,0,0,'Fire Blast','textures/skills/fireblast.png','','Skill_FireBlast','',3,750,0,0,50,0,0.0,6.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(10,1,2,2,2,0,0,0,'Gash','textures/skills/gash.png','','Skill_Gash','',2,250,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -2687,7 +2687,7 @@ INSERT INTO item VALUES(14,1,0,4,2,0,0,0,'Taunt','textures/skills/taunt.png','',
 INSERT INTO item VALUES(15,1,3,2,2,0,0,0,'Ignite','textures/skills/ignite.png','','Skill_Ignite','',3,500,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(16,1,2,2,2,0,0,0,'Backstab','textures/skills/backstab.png','','Skill_Backstab','',2,500,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(17,1,0,3,3,0,0,0,'Resurrect','textures/skills/resurrect.png','','Skill_Resurrect','',3,1000,0,0,50,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(18,1,0,3,3,0,0,0,'Rejuvenation','textures/skills/rejuvenation.png','','Skill_Rejuvenation','',3,200,0,0,50,0,0.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(18,1,0,3,3,0,0,0,'Rejuvenation','textures/skills/rejuvenation.png','','Skill_Rejuvenation','',3,300,0,0,50,0,0.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(19,1,4,2,2,0,0,0,'Icicle','textures/skills/icicle.png','','Skill_Icicle','',3,175,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(20,1,2,2,2,0,0,0,'Fury','textures/skills/fury.png','','Skill_Fury','',2,1200,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(21,1,0,1,2,0,0,0,'Demonic Conjuring','textures/skills/demonic_conjuring.png','','Skill_DemonicConjuring','',3,400,0,0,50,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -2745,7 +2745,7 @@ INSERT INTO item VALUES(97,12,0,0,1,2,0,0,'Skill Slot II','textures/items/skills
 INSERT INTO item VALUES(98,12,0,0,1,3,0,0,'Skill Slot III','textures/items/skillslot3.png','','Item_SkillSlot','',0,50000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(99,12,0,0,1,4,0,0,'Skill Slot IV','textures/items/skillslot4.png','','Item_SkillSlot','',0,500000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(100,5,2,0,0,0,0,3,'Short Sword','textures/items/short_sword.png','','SetBonus_ShortSword','Proc_Haste',0,50,1,20,10,15,3.0,0.0,1,20,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(101,5,2,0,0,0,0,2,'Mage Wand','textures/items/mage_wand.png','','SetBonus_MageStick','Proc_Mana',0,60,1,10,10,15,0.0,0.0,1,5,15,0,0,0,0,0,20,0,1,0,0,0,0,1,0,0,10,0);
+INSERT INTO item VALUES(101,5,2,0,0,0,0,2,'Mage Wand','textures/items/mage_wand.png','','SetBonus_MageWand','Proc_Mana',0,60,1,10,10,15,0.0,0.0,1,5,15,0,0,0,0,0,20,0,1,0,0,0,0,1,0,0,10,0);
 INSERT INTO item VALUES(102,5,2,0,0,0,0,4,'Mace','textures/items/mace.png','','SetBonus_Mace','Proc_Stun',0,40,1,1,10,15,1.5,0.0,1,10,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(103,14,2,0,0,0,0,1,'Dagger','textures/items/dagger.png','','SetBonus_Dagger','Proc_Bleed',0,25,1,10,10,20,5.0,0.0,1,20,20,0,2,10,0,0,0,0,0,20,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(104,3,0,0,0,0,0,2,'Mage Robes','textures/items/mage_robes.png','','','',0,150,1,0,10,0,0.0,0.0,1,0,0,2,0,0,0,0,12,0,1,0,0,0,0,0,0,0,0,0);
@@ -2786,7 +2786,7 @@ INSERT INTO item VALUES(138,8,0,0,0,0,0,0,'Troll''s Ring','textures/items/ring.p
 INSERT INTO item VALUES(139,11,0,0,0,0,0,0,'Crab Trophy','textures/items/crab_trophy.png','','','',0,300,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(140,11,0,0,0,0,0,0,'Slime Trophy','textures/items/slime_trophy.png','','','',0,750,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(141,5,2,0,0,0,0,7,'Scimitar','textures/items/scimitar.png','','SetBonus_Scimitar','Proc_Haste',0,750,1,30,20,15,3.0,0.0,1,90,170,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(142,5,2,0,0,0,0,6,'Wizard Wand','textures/items/wizard_wand.png','','SetBonus_WizardStick','Proc_Mana',0,600,1,30,20,15,0.0,0.0,1,10,30,0,0,0,0,0,40,0,2,0,0,0,0,1,0,0,20,0);
+INSERT INTO item VALUES(142,5,2,0,0,0,0,6,'Wizard Wand','textures/items/wizard_wand.png','','SetBonus_WizardWand','Proc_Mana',0,600,1,30,20,15,0.0,0.0,1,10,30,0,0,0,0,0,40,0,2,0,0,0,0,1,0,0,20,0);
 INSERT INTO item VALUES(143,3,0,0,0,0,6,1,'Cloth Vest','textures/items/cloth_vest.png','','','',0,120,1,0,10,0,0.0,0.0,1,0,0,1,0,0,5,0,0,0,0,7,4,0,0,0,0,3,0,0);
 INSERT INTO item VALUES(144,3,0,0,0,0,0,6,'Wizard Robes','textures/items/wizard_robes.png','','','',0,1500,1,0,20,0,0.0,0.0,1,0,0,3,0,0,0,0,25,0,2,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(145,8,0,0,0,0,0,0,'Ring of Health','textures/items/ring.png','','Item_HealthRing','',0,125,1,5,10,0,0.0,0.0,1,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,0,0,0);
