@@ -967,8 +967,8 @@ int _Item::GetUpgradeCost(int Level) const {
 
 // Get enchant cost
 int _Item::GetEnchantCost(int Level) {
-	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1;
-	return std::max(0, (int)(std::floor(Index * (GAME_ENCHANT_BASE_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
+	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL;
+	return std::floor(std::pow(Index, GAME_ENCHANT_COST_POWER) + Index * GAME_ENCHANT_COST_RATE + GAME_ENCHANT_COST_BASE);
 }
 
 // Get count of drawable attributes
