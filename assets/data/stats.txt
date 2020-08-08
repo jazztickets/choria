@@ -1419,7 +1419,7 @@ INSERT INTO vendoritem VALUES(31,4,122);
 INSERT INTO vendoritem VALUES(32,10,123);
 INSERT INTO vendoritem VALUES(33,6,109);
 INSERT INTO vendoritem VALUES(34,4,136);
-INSERT INTO vendoritem VALUES(36,6,142);
+INSERT INTO vendoritem VALUES(36,21,142);
 INSERT INTO vendoritem VALUES(37,4,143);
 INSERT INTO vendoritem VALUES(38,21,144);
 INSERT INTO vendoritem VALUES(39,10,207);
@@ -1460,7 +1460,7 @@ INSERT INTO vendoritem VALUES(92,19,194);
 INSERT INTO vendoritem VALUES(93,19,205);
 INSERT INTO vendoritem VALUES(94,19,197);
 INSERT INTO vendoritem VALUES(95,21,210);
-INSERT INTO vendoritem VALUES(96,6,135);
+INSERT INTO vendoritem VALUES(96,21,135);
 INSERT INTO vendoritem VALUES(97,10,129);
 INSERT INTO vendoritem VALUES(98,16,208);
 INSERT INTO vendoritem VALUES(100,2,211);
@@ -2194,7 +2194,7 @@ INSERT INTO traderitem VALUES(115,23,139,1);
 INSERT INTO traderitem VALUES(116,23,140,1);
 INSERT INTO traderitem VALUES(117,23,161,1);
 INSERT INTO traderitem VALUES(118,47,26,1);
-INSERT INTO traderitem VALUES(119,47,135,1);
+INSERT INTO traderitem VALUES(119,47,146,5);
 INSERT INTO traderitem VALUES(120,46,172,1);
 INSERT INTO traderitem VALUES(121,44,249,1);
 INSERT INTO traderitem VALUES(122,48,215,2);
@@ -2299,6 +2299,7 @@ INSERT INTO traderitem VALUES(227,77,109,1);
 INSERT INTO traderitem VALUES(228,78,29,1);
 INSERT INTO traderitem VALUES(229,78,320,1);
 INSERT INTO traderitem VALUES(230,78,129,1);
+INSERT INTO traderitem VALUES(231,47,136,1);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2694,7 +2695,7 @@ INSERT INTO item VALUES(22,1,0,4,2,0,0,0,'Enfeeble','textures/skills/enfeeble.pn
 INSERT INTO item VALUES(23,1,2,4,2,0,0,0,'Cleave','textures/skills/cleave.png','','Skill_Cleave','',2,750,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(24,1,0,0,1,0,0,0,'Hunt','textures/skills/hunt.png','','Skill_Hunt','',4,500,0,0,50,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(25,1,0,0,1,0,0,0,'Bounty Hunt','textures/skills/bounty_hunt.png','','Skill_BountyHunt','',4,100,0,0,1,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(26,1,0,1,1,0,0,0,'Light','textures/skills/light.png','','Skill_Light','',3,200,0,0,50,0,0.0,1.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(26,1,0,1,1,0,0,0,'Light','textures/skills/light.png','','Skill_Light','',3,250,0,0,50,0,0.0,1.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(27,1,0,0,0,0,0,0,'Energy Field','textures/skills/energy_field.png','','Skill_EnergyField','',1,900,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(28,1,2,4,2,0,0,0,'Blade Dance','textures/skills/blade_dance.png','','Skill_BladeDance','',2,900,0,0,50,0,0.0,7.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(29,1,0,3,3,0,0,0,'Magic Barrier','textures/skills/magic_barrier.png','','Skill_MagicBarrier','',3,500,0,0,50,0,0.0,2.5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
