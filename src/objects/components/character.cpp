@@ -432,6 +432,7 @@ void _Character::CalculateStats() {
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
 	std::vector<int> ItemMaxDamage(Object->Stats->DamageTypes.size(), 0);
+	std::unordered_map<uint32_t, std::vector<int>> SetPieceLevels;
 	_Bag &EquipmentBag = Object->Inventory->GetBag(BagType::EQUIPMENT);
 	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
 		const _Item *Item = EquipmentBag.Slots[i].Item;
@@ -484,24 +485,31 @@ void _Character::CalculateStats() {
 			auto SetIterator = Sets.find(Item->SetID);
 			if(SetIterator == Sets.end()) {
 				Sets[Item->SetID].EquippedCount = 1;
-				Sets[Item->SetID].Level = Upgrades;
 				Sets[Item->SetID].MaxLevel = Item->MaxLevel;
 			}
 			else {
 				SetIterator->second.EquippedCount++;
-				SetIterator->second.Level = std::min(Upgrades, Sets[Item->SetID].Level);
 				SetIterator->second.MaxLevel = std::min(SetIterator->second.MaxLevel, Item->MaxLevel);
 			}
+
+			SetPieceLevels[Item->SetID].push_back(Upgrades);
 		}
 	}
 
 	// Add set bonus
 	for(auto &SetData : Sets) {
+
+		// Check for completed set
 		const _Set &Set = Object->Stats->Sets.at(SetData.first);
 		if(SetData.second.EquippedCount < Set.Count) {
 			SetData.second.Level = 0;
 			continue;
 		}
+
+		// Get set level from nth highest level piece, where n is the set count
+		auto SetPieceLevelsArray = SetPieceLevels[SetData.first];
+		std::sort(SetPieceLevelsArray.begin(), SetPieceLevelsArray.end(), std::greater());
+		SetData.second.Level = SetPieceLevelsArray[Set.Count-1];
 
 		// Get stat bonuses when set is complete
 		_StatChange StatChange;
