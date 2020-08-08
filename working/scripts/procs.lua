@@ -30,10 +30,9 @@ Base_Proc = {
 		return math.floor(self:GetLevel(Source, Item) * self:GetDuration(Item))
 	end,
 
-	AddBuff = function(self, Change, Buff, Source, Item)
+	AddBuff = function(self, Change, Buff, Source, Item, Level)
 
 		-- Get stats from item
-		Level = self:GetLevel(Source, Item)
 		Duration = self:GetDuration(Item)
 
 		-- Check for existing buff
@@ -49,20 +48,30 @@ Base_Proc = {
 			return
 		end
 
-		-- Take better level or duration
-		if Level > Change.BuffLevel then
-			Change.BuffLevel = Level
-		elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
-			Change.BuffDuration = Duration
+		if self.Additive == true then
+
+			-- Add to buff level
+			Change.BuffLevel = Change.BuffLevel + Level
+			if Duration >= Change.BuffDuration then
+				Change.BuffDuration = Duration
+			end
+		else
+
+			-- Take better level or duration
+			if Level > Change.BuffLevel then
+				Change.BuffLevel = Level
+			elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
+				Change.BuffDuration = Duration
+			end
 		end
 	end,
 
 	Proc = function(self, Roll, Item, Source, Target, Result)
 		if Roll <= self:GetChance(Item) then
 			if self.OnSelf == true then
-				self:AddBuff(Result.Source, self.Buff.Pointer, Source, Item)
+				self:AddBuff(Result.Source, self.Buff.Pointer, Source, Item, self:GetLevel(Source, Item))
 			else
-				self:AddBuff(Result.Target, self.Buff.Pointer, Source, Item)
+				self:AddBuff(Result.Target, self.Buff.Pointer, Source, Item, self:GetLevel(Source, Item))
 			end
 
 			return true
@@ -75,6 +84,7 @@ Base_Proc = {
 	OnSelf = false,
 	SpellOnly = false,
 	MaxLevel = nil,
+	Additive = false,
 	ChancePerLevel = 0,
 	LevelPerLevel = 0,
 	DurationPerLevel = 0
@@ -150,6 +160,7 @@ end
 
 Proc_Bleed = Base_Proc:New()
 Proc_Bleed.Buff = Buff_Bleeding
+Proc_Bleed.Additive = true
 Proc_Bleed.ChancePerLevel = 1
 Proc_Bleed.PercentPerLevel = 10
 Proc_Bleed.DurationPerLevel = 0
@@ -165,6 +176,7 @@ end
 -- Bloodlet --
 
 Proc_Bloodlet = Base_Proc:New()
+Proc_Bloodlet.Additive = true
 Proc_Bloodlet.ChancePerLevel = 1
 Proc_Bloodlet.PercentPerLevel = 10
 Proc_Bloodlet.DurationPerLevel = 0
@@ -199,32 +211,6 @@ function Proc_Bloodlet.Proc(self, Roll, Item, Source, Target, Result)
 	end
 
 	return false
-end
-
-function Proc_Bloodlet.AddBuff(self, Change, Buff, Source, Item, Level)
-
-	-- Get stats from item
-	Duration = self:GetDuration(Item)
-
-	-- Check for existing buff
-	if Change.Buff == nil then
-		Change.Buff = Buff
-		Change.BuffLevel = Level
-		Change.BuffDuration = Duration
-		return
-	end
-
-	-- Buff exists, but is different
-	if Change.Buff ~= Buff then
-		return
-	end
-
-	-- Take better level or duration
-	if Level > Change.BuffLevel then
-		Change.BuffLevel = Level
-	elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
-		Change.BuffDuration = Duration
-	end
 end
 
 -- Haste --
