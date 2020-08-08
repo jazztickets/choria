@@ -596,9 +596,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 	else if(Player->Character->Blacksmith) {
 		std::stringstream Buffer;
-		if(Player->Character->Blacksmith && Upgrades < MaxLevel && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
+		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
+			glm::vec4 Color = ae::Assets.Colors["gold"];
+			if(Tooltip.Cost > Player->Character->Gold)
+				Color = ae::Assets.Colors["red"];
+
 			Buffer << "Upgrade for " << Tooltip.Cost << " gold";
-			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
+			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 			DrawPosition.y += SpacingY;
 			HelpTextList.push_back("Ctrl+click to buy upgrade");
 		}
