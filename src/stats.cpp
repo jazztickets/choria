@@ -889,3 +889,20 @@ size_t _Vendor::GetSlotFromID(uint32_t ID) const {
 
 	return NOSLOT;
 }
+
+// Determine if a blacksmith can upgrade an item
+bool _Blacksmith::CanUpgrade(const _Item *Item, int Upgrades) const {
+	if(!Item)
+	   return false;
+
+	if(!Item->IsEquippable())
+		return false;
+
+	if(Upgrades >= Item->MaxLevel)
+		return false;
+
+	if(Upgrades >= Level)
+		return false;
+
+	return true;
+}

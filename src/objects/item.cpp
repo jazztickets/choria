@@ -104,6 +104,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		Size.y += SpacingY;
 	if(Player->Character->IsTrading())
 		Size.y += SpacingY;
+	if(Player->Character->Blacksmith)
+		Size.y += SpacingY + LargeSpacingY;
 	if(Type == ItemType::MAP)
 		Size.y = INVENTORY_TOOLTIP_MAP_HEIGHT;
 
@@ -590,6 +592,15 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				HelpTextList.push_back("Right-click to sell");
 			else
 				HelpTextList.push_back("Shift+Right-click to sell");
+		}
+	}
+	else if(Player->Character->Blacksmith) {
+		std::stringstream Buffer;
+		if(Player->Character->Blacksmith && Upgrades < MaxLevel && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
+			Buffer << "Upgrade for " << Tooltip.Cost << " gold";
+			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
+			DrawPosition.y += SpacingY;
+			HelpTextList.push_back("Ctrl+click to buy upgrade");
 		}
 	}
 

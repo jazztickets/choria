@@ -239,8 +239,16 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(ae::Input.ModKeyDown(KMOD_CTRL))
-							SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
+						if(ae::Input.ModKeyDown(KMOD_CTRL)) {
+							if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, Tooltip.InventorySlot.Upgrades)) {
+								ae::_Buffer Packet;
+								Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
+								Tooltip.Slot.Serialize(Packet);
+								PlayState.Network->SendPacket(Packet);
+							}
+							else
+								SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
+						}
 						else if(ae::Input.ModKeyDown(KMOD_SHIFT))
 							Transfer(Tooltip.Slot);
 						else
@@ -552,8 +560,15 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_TRADEYOURS: {
 				if(Player->Inventory->IsValidSlot(Tooltip.Slot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
-					if(Tooltip.InventorySlot.Item && Player->Character->Vendor)
-						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Scripting, Player, Player->Character->Vendor, Tooltip.InventorySlot.Count, false, Tooltip.InventorySlot.Upgrades);
+					if(Tooltip.InventorySlot.Item) {
+						if(Player->Character->Vendor) {
+							Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Scripting, Player, Player->Character->Vendor, Tooltip.InventorySlot.Count, false, Tooltip.InventorySlot.Upgrades);
+						}
+						else if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, Tooltip.InventorySlot.Upgrades)) {
+							Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
+							Tooltip.Cost = Tooltip.InventorySlot.Item->GetUpgradeCost(Tooltip.InventorySlot.Upgrades + 1);
+						}
+					}
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
@@ -584,8 +599,9 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_BLACKSMITH: {
 				if(Player->Character->Blacksmith && Player->Inventory->IsValidSlot(BlacksmithScreen->UpgradeSlot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(BlacksmithScreen->UpgradeSlot);
-					if(Tooltip.InventorySlot.Item && Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
+					if(Tooltip.InventorySlot.Item && Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel) {
 						Tooltip.InventorySlot.Upgrades++;
+					}
 				}
 			} break;
 			case WINDOW_SKILLS:

@@ -128,6 +128,8 @@ struct _Trader {
 };
 
 struct _Blacksmith {
+	bool CanUpgrade(const _Item *Item, int Upgrades) const;
+
 	uint32_t ID;
 	std::string Name;
 	int Level;
