@@ -20,7 +20,7 @@ choria 0.5.1 -
 - Summons are now stored in buffs outside of battle
 - Direction of party members now show on current map
 - Added tab to inventory to show unlocks
-- Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle
+- Hold alt to view more info on certain skills, item levels in inventory, base skill levels on skill screen, or player levels during battle
 - Added shift-click to transfer items between bags
 - Skills are now sorted by category
 - Added password hashing to server

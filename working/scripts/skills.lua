@@ -437,6 +437,10 @@ function Skill_ShieldBash.GetDamage(self, Level)
 	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
 end
 
+function Skill_ShieldBash.GetDamageMultiplier(self, Source, Level)
+	return (self:GetDamage(Level) * 0.01) * (Source.ShieldDamage * 0.01) * (Source.AttackPower * 0.01)
+end
+
 function Skill_ShieldBash.GetDuration(self, Level)
 	return math.floor(10 * (self.Duration + self.DurationPerLevel * (Level - 1))) / 10
 end
@@ -447,7 +451,20 @@ function Skill_ShieldBash.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Bash your enemy with a shield for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]shield damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c " .. TextColor .. "]Requires a shield"
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+
+	Shield = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if Shield == nil then
+		AverageDamage = 0
+	else
+		AverageDamage = Shield.GetAverageDamage(Source.Pointer, Shield.Upgrades)
+	end
+
+	if Item.MoreInfo == true then
+		DamageValue = Round(AverageDamage) * self:GetDamageMultiplier(Source, Item.Level) .. " [c green]avg[c white]"
+	end
+
+	return "Bash your enemy with a shield for [c green]" .. DamageValue .. "[c white] shield damage and a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a shield"
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
@@ -456,7 +473,7 @@ function Skill_ShieldBash.GenerateDamage(self, Level, Source)
 		return 0
 	end
 
-	return math.floor(Shield.GenerateDamage(Source.Pointer, Shield.Upgrades) * (self:GetDamage(Level) * 0.01) * Source.ShieldDamage * 0.01)
+	return math.floor(Shield.GenerateDamage(Source.Pointer, Shield.Upgrades)) * self:GetDamageMultiplier(Source, Level)
 end
 
 function Skill_ShieldBash.CanUse(self, Level, Source, Target)

@@ -114,6 +114,7 @@ class _Scripting {
 		static int ObjectHasBuff(lua_State *LuaState);
 
 		static int ItemGenerateDamage(lua_State *LuaState);
+		static int ItemGetAverageDamage(lua_State *LuaState);
 
 		lua_State *LuaState;
 		int CurrentTableIndex;

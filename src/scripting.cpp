@@ -706,6 +706,10 @@ void _Scripting::PushItem(lua_State *LuaState, const _Stats *Stats, const _Item 
 	lua_pushcclosure(LuaState, &ItemGenerateDamage, 1);
 	lua_setfield(LuaState, -2, "GenerateDamage");
 
+	lua_pushlightuserdata(LuaState, (void *)Item);
+	lua_pushcclosure(LuaState, &ItemGetAverageDamage, 1);
+	lua_setfield(LuaState, -2, "GetAverageDamage");
+
 	lua_pushinteger(LuaState, Item->DamageTypeID);
 	lua_setfield(LuaState, -2, "DamageType");
 
@@ -1446,6 +1450,21 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 		return 0;
 
 	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
+
+	return 1;
+}
+
+// Get average item damage
+int _Scripting::ItemGetAverageDamage(lua_State *LuaState) {
+
+	// Get self pointer
+	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	_Object *Object = (_Object *)lua_touserdata(LuaState, 1);
+	int Upgrades = (int)lua_tointeger(LuaState, 2);
+	if(!Object)
+		return 0;
+
+	lua_pushnumber(LuaState, (Item->GetMinDamage(Upgrades) + Item->GetMaxDamage(Upgrades)) * 0.5f * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
 
 	return 1;
 }
