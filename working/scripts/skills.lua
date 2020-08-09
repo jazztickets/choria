@@ -613,9 +613,9 @@ end
 -- Energy Field --
 
 Skill_EnergyField = {}
-Skill_EnergyField.BasePercent = 19
-Skill_EnergyField.Constant = 15
-Skill_EnergyField.Multiplier = 99
+Skill_EnergyField.Constant = 28
+Skill_EnergyField.BasePercent = 6
+Skill_EnergyField.Multiplier = 100
 
 function Skill_EnergyField.GetReduction(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
