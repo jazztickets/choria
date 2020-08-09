@@ -355,9 +355,9 @@ Skill_Gash.DamagePerLevel = 0.5
 Skill_Gash.BaseChance = 36
 Skill_Gash.ChancePerLevel = 1
 Skill_Gash.Duration = 5
-Skill_Gash.IncreasePerLevel = 1
 Skill_Gash.BleedingLevel = 10
-Skill_Gash.BleedScale = 1.1
+Skill_Gash.IncreasePerLevel = 3
+Skill_Gash.BleedScale = 0.03
 
 function Skill_Gash.CanUse(self, Level, Source, Target)
 	OffHandCount = 0
@@ -379,7 +379,7 @@ function Skill_Gash.GetDamage(self, Level)
 end
 
 function Skill_Gash.GenerateDamage(self, Level, Source)
-	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) * 0.01))
 end
 
 function Skill_Gash.GetChance(self, Level)
@@ -391,7 +391,7 @@ function Skill_Gash.GetBleedDamage(self, Source, Level)
 end
 
 function Skill_Gash.GetBleedLevel(self, Source, Level)
-	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower * 0.01)
+	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * Level * self.BleedScale) * Source.BleedPower * 0.01)
 end
 
 function Skill_Gash.GetInfo(self, Source, Item)
@@ -400,7 +400,12 @@ function Skill_Gash.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Slice your enemy, dealing [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires at least one off-hand weapon"
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+	if Item.MoreInfo == true then
+		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " [c green]avg[c white]"
+	end
+
+	return "Slice your enemy, dealing [c green]" .. DamageValue .. "[c white] weapon damage with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires at least one off-hand weapon"
 end
 
 function Skill_Gash.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1210,14 +1215,14 @@ end
 Skill_BladeDance = Base_Attack:New()
 Skill_BladeDance.BaseChance = 75
 Skill_BladeDance.ChancePerLevel = 0
-Skill_BladeDance.Duration = 5
-Skill_BladeDance.IncreasePerLevel = 10
-Skill_BladeDance.BleedingLevel = 100
 Skill_BladeDance.BaseTargets = 4
 Skill_BladeDance.TargetsPerLevel = 0.08
 Skill_BladeDance.DamageBase = 75
 Skill_BladeDance.DamagePerLevel = 2
+Skill_BladeDance.BleedingLevel = 20
+Skill_BladeDance.IncreasePerLevel = 10
 Skill_BladeDance.BleedScale = 2
+Skill_BladeDance.Duration = 5
 
 function Skill_BladeDance.CanUse(self, Level, Source, Target)
 	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
