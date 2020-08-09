@@ -898,7 +898,7 @@ end
 -- Dark Ring --
 
 Item_DarkRing = { }
-Item_DarkRing.PowerPerUpgrade = 2
+Item_DarkRing.PowerPerUpgrade = 1
 Item_DarkRing.SummonLimit = 1
 
 function Item_DarkRing.GetPower(self, Item)
