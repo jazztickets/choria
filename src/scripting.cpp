@@ -415,6 +415,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GenerateDamage");
 
 	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetAverageDamage, 1);
+	lua_setfield(LuaState, -2, "GetAverageDamage");
+
+	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectGetDamageReduction, 1);
 	lua_setfield(LuaState, -2, "GetDamageReduction");
 
@@ -1204,6 +1208,15 @@ int _Scripting::ObjectGenerateDamage(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	lua_pushinteger(LuaState, Object->Character->GenerateDamage());
+
+	return 1;
+}
+
+// Get average weapon damage
+int _Scripting::ObjectGetAverageDamage(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	lua_pushnumber(LuaState, Object->Character->GetAverageDamage());
 
 	return 1;
 }

@@ -112,6 +112,7 @@ class _Character {
 		bool IsZoneOnCooldown(uint32_t Zone) { return BattleCooldown.find(Zone) != BattleCooldown.end(); }
 		void GenerateNextBattle();
 		int GenerateDamage();
+		float GetAverageDamage() const { return (MinDamage + MaxDamage) / 2.0f; }
 		float GetDamagePowerMultiplier(int DamageTypeID);
 
 		// Actions

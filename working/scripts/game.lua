@@ -21,3 +21,7 @@ function Game.GetDifficulty(self, Clock)
 
 	return 0
 end
+
+function Round(Value)
+	return math.floor(Value * 10) / 10.0
+end

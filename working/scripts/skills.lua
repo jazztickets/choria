@@ -284,7 +284,14 @@ function Skill_Attack.GetChance(self, Level)
 end
 
 function Skill_Attack.GetInfo(self, Source, Item)
-	return "Attack for [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]" .. self:GetCritMultiplier(Item.Level) .. "x[c white] damage"
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+	CritValue = self:GetCritMultiplier(Item.Level) .. "x"
+	if Item.MoreInfo == true then
+		DamageValue = Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)
+		CritValue = Round(DamageValue * self:GetCritMultiplier(Item.Level)) .. " avg"
+		DamageValue = Round(DamageValue) .. " avg"
+	end
+	return "Attack for [c green]" .. DamageValue .. "[c white] weapon damage\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]" .. CritValue .. "[c white] damage"
 end
 
 function Skill_Attack.PlaySound(self, Level)
@@ -292,7 +299,7 @@ function Skill_Attack.PlaySound(self, Level)
 end
 
 function Skill_Attack.GenerateDamage(self, Level, Source)
-	Damage = math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+	Damage = math.floor(Source.GenerateDamage() * (self:GetDamage(Level) * 0.01))
 
 	Crit = false
 	if Random.GetInt(1, 100) <= self:GetChance(Level) then

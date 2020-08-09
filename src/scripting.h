@@ -99,6 +99,7 @@ class _Scripting {
 		static int ObjectSpendSkillPoints(lua_State *LuaState);
 		static int ObjectSetAction(lua_State *LuaState);
 		static int ObjectGenerateDamage(lua_State *LuaState);
+		static int ObjectGetAverageDamage(lua_State *LuaState);
 		static int ObjectGetDamageReduction(lua_State *LuaState);
 		static int ObjectFindPath(lua_State *LuaState);
 		static int ObjectFindEvent(lua_State *LuaState);
