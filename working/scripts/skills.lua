@@ -500,6 +500,121 @@ function Skill_ShieldBash.PlaySound(self, Level)
 	Audio.Play("bash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Backstab --
+
+Skill_Backstab = Base_Attack:New()
+Skill_Backstab.BaseDamage = 50
+Skill_Backstab.DamagePerLevel = 20
+Skill_Backstab.Stamina = 90
+Skill_Backstab.DamageMultiplier = 300 - Skill_Backstab.DamagePerLevel
+
+function Skill_Backstab.GetDamage(self, Level)
+	return self.DamageMultiplier + self.DamagePerLevel * Level
+end
+
+function Skill_Backstab.GetInfo(self, Source, Item)
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source, nil) then
+		TextColor = "red"
+	end
+
+	BaseDamageValue = math.floor(self.BaseDamage) .. "%"
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+	if Item.MoreInfo == true then
+		BaseDamageValue = Round(Source.GetAverageDamage() * (self.BaseDamage * 0.01)) .. " avg"
+		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
+	end
+
+	return "Attack for [c green]" .. BaseDamageValue .. "[c white] weapon damage\nDeal [c green]" .. DamageValue .. "[c white] damage to stunned enemies\nGain [c green]" .. self.Stamina .. "%[c white] [c yellow]stamina[c white] for a kill\n[c " .. TextColor .. "]Can only use off-hand weapons"
+end
+
+function Skill_Backstab.CanUse(self, Level, Source, Target)
+	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if WeaponMain == nil then
+		WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+		if WeaponOff ~= nil and WeaponOff.Type == ITEM_OFFHAND then
+			return true
+		end
+
+		return false
+	end
+
+	return WeaponMain.Type == ITEM_OFFHAND
+end
+
+function Skill_Backstab.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	for i = 1, #Target.StatusEffects do
+		Effect = Target.StatusEffects[i]
+		if Effect.Buff == Buff_Stunned then
+			Result.Target.Health = math.floor(Result.Target.Health * (self:GetDamage(Level) * 0.01))
+			if Target.Health + Result.Target.Health < 0 then
+				Result.Source.Stamina = self.Stamina * 0.01
+			end
+			Result.Target.Crit = true
+			return true
+		end
+	end
+
+	Result.Target.Health = math.floor(Result.Target.Health * self.BaseDamage * 0.01)
+	return false
+end
+
+function Skill_Backstab.PlaySound(self, Level)
+	Audio.Play("gash0.ogg")
+end
+
+-- Cleave --
+
+Skill_Cleave = Base_Attack:New()
+Skill_Cleave.DamageBase = 50
+Skill_Cleave.DamagePerLevel = 1.75
+Skill_Cleave.BaseTargets = 3
+Skill_Cleave.TargetsPerLevel = 0
+
+function Skill_Cleave.CanUse(self, Level, Source, Target)
+	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if WeaponMain == nil then
+		return false
+	end
+
+	WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if WeaponOff == nil then
+		return WeaponMain.Type ~= ITEM_OFFHAND
+	end
+
+	return WeaponMain.Type ~= ITEM_OFFHAND and WeaponOff.Type ~= ITEM_OFFHAND
+end
+
+function Skill_Cleave.GetDamage(self, Level)
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
+end
+
+function Skill_Cleave.GenerateDamage(self, Level, Source)
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+end
+
+function Skill_Cleave.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+end
+
+function Skill_Cleave.GetInfo(self, Source, Item)
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source, nil) then
+		TextColor = "red"
+	end
+
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+	if Item.MoreInfo == true then
+		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
+	end
+
+	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with [c green]" .. DamageValue .. "[c white] weapon damage\n[c " .. TextColor .. "]Cannot use with off-hand weapons"
+end
+
+function Skill_Cleave.PlaySound(self, Level)
+	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Whirlwind --
 
 Skill_Whirlwind = Base_Attack:New()
@@ -1054,109 +1169,6 @@ function Skill_Taunt.PlaySound(self, Level)
 	Audio.Play("taunt" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
--- Backstab --
-
-Skill_Backstab = Base_Attack:New()
-Skill_Backstab.BaseDamage = 50
-Skill_Backstab.DamagePerLevel = 20
-Skill_Backstab.Stamina = 90
-Skill_Backstab.DamageMultiplier = 300 - Skill_Backstab.DamagePerLevel
-
-function Skill_Backstab.GetDamage(self, Level)
-	return self.DamageMultiplier + self.DamagePerLevel * Level
-end
-
-function Skill_Backstab.GetInfo(self, Source, Item)
-	TextColor = "yellow"
-	if not self:CanUse(Item.Level, Source, nil) then
-		TextColor = "red"
-	end
-
-	return "Attack for [c green]" .. math.floor(self.BaseDamage) .. "% [c white]weapon damage\nDeal [c green]" .. self:GetDamage(Item.Level) .. "% [c white]damage to stunned enemies\nGain [c green]" .. self.Stamina .. "%[c white] [c yellow]stamina[c white] for a kill\n[c " .. TextColor .. "]Can only use off-hand weapons"
-end
-
-function Skill_Backstab.CanUse(self, Level, Source, Target)
-	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-	if WeaponMain == nil then
-		WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-		if WeaponOff ~= nil and WeaponOff.Type == ITEM_OFFHAND then
-			return true
-		end
-
-		return false
-	end
-
-	return WeaponMain.Type == ITEM_OFFHAND
-end
-
-function Skill_Backstab.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	for i = 1, #Target.StatusEffects do
-		Effect = Target.StatusEffects[i]
-		if Effect.Buff == Buff_Stunned then
-			Result.Target.Health = math.floor(Result.Target.Health * (self:GetDamage(Level) / 100.0))
-			if Target.Health + Result.Target.Health < 0 then
-				Result.Source.Stamina = self.Stamina * 0.01
-			end
-			Result.Target.Crit = true
-			return true
-		end
-	end
-
-	Result.Target.Health = math.floor(Result.Target.Health * self.BaseDamage / 100.0)
-	return false
-end
-
-function Skill_Backstab.PlaySound(self, Level)
-	Audio.Play("gash0.ogg")
-end
-
--- Cleave --
-
-Skill_Cleave = Base_Attack:New()
-Skill_Cleave.DamageBase = 50
-Skill_Cleave.DamagePerLevel = 1.75
-Skill_Cleave.BaseTargets = 3
-Skill_Cleave.TargetsPerLevel = 0
-
-function Skill_Cleave.CanUse(self, Level, Source, Target)
-	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-	if WeaponMain == nil then
-		return false
-	end
-
-	WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-	if WeaponOff == nil then
-		return WeaponMain.Type ~= ITEM_OFFHAND
-	end
-
-	return WeaponMain.Type ~= ITEM_OFFHAND and WeaponOff.Type ~= ITEM_OFFHAND
-end
-
-function Skill_Cleave.GetDamage(self, Level)
-	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
-end
-
-function Skill_Cleave.GenerateDamage(self, Level, Source)
-	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
-end
-
-function Skill_Cleave.GetTargetCount(self, Level)
-	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
-end
-
-function Skill_Cleave.GetInfo(self, Source, Item)
-	TextColor = "yellow"
-	if not self:CanUse(Item.Level, Source, nil) then
-		TextColor = "red"
-	end
-
-	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\n[c " .. TextColor .. "]Cannot use with off-hand weapons"
-end
-
-function Skill_Cleave.PlaySound(self, Level)
-	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
-end
-
 -- Hunt --
 
 Skill_Hunt = Base_Attack:New()
@@ -1230,7 +1242,7 @@ function Skill_BladeDance.GetChance(self, Level)
 end
 
 function Skill_BladeDance.GenerateDamage(self, Level, Source)
-	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) * 0.01))
 end
 
 function Skill_BladeDance.GetBleedDamage(self, Source, Level)
@@ -1251,7 +1263,12 @@ function Skill_BladeDance.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. self:GetDamage(Item.Level) .. "%[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires two off-hand weapons"
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+	if Item.MoreInfo == true then
+		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
+	end
+
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. DamageValue .. "[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires two off-hand weapons"
 end
 
 function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
