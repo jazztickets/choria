@@ -30,6 +30,16 @@ Base_Proc = {
 		return math.floor(self:GetLevel(Source, Item) * self:GetDuration(Item))
 	end,
 
+	GetDamageText = function(self, Source, Item)
+		if Item.MoreInfo == true then
+			Text = "[c green]" .. self:GetLevel(Source, Item) .. "[c white] " .. self.DamageTypeName .. " DPS"
+		else
+			Text = "[c green]" .. self:GetTotal(Source, Item) .. "[c white] " .. self.DamageTypeName .. " damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+		end
+
+		return Text
+	end,
+
 	AddBuff = function(self, Change, Buff, Source, Item, Level)
 
 		-- Get stats from item
@@ -87,7 +97,8 @@ Base_Proc = {
 	Additive = false,
 	ChancePerLevel = 0,
 	LevelPerLevel = 0,
-	DurationPerLevel = 0
+	DurationPerLevel = 0,
+	DamageTypeName = "",
 }
 
 -- Stun --
@@ -118,9 +129,10 @@ Proc_Poison.Buff = Buff_Poisoned
 Proc_Poison.ChancePerLevel = 1
 Proc_Poison.PercentPerLevel = 10
 Proc_Poison.DurationPerLevel = 0
+Proc_Poison.DamageTypeName = "poison"
 
 function Proc_Poison.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for " .. self:GetDamageText(Source, Item)
 end
 
 function Proc_Poison.GetLevel(self, Source, Item)
@@ -147,9 +159,10 @@ Proc_Ignite.Buff = Buff_Burning
 Proc_Ignite.ChancePerLevel = 1
 Proc_Ignite.PercentPerLevel = 10
 Proc_Ignite.DurationPerLevel = 0
+Proc_Ignite.DamageTypeName = "fire"
 
 function Proc_Ignite.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] fire damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for " .. self:GetDamageText(Source, Item)
 end
 
 function Proc_Ignite.GetLevel(self, Source, Item)
@@ -164,9 +177,10 @@ Proc_Bleed.Additive = true
 Proc_Bleed.ChancePerLevel = 1
 Proc_Bleed.PercentPerLevel = 10
 Proc_Bleed.DurationPerLevel = 0
+Proc_Bleed.DamageTypeName = "bleeding"
 
 function Proc_Bleed.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] bleeding damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for " .. self:GetDamageText(Source, Item)
 end
 
 function Proc_Bleed.GetLevel(self, Source, Item)
@@ -181,13 +195,24 @@ Proc_Bloodlet.ChancePerLevel = 1
 Proc_Bloodlet.PercentPerLevel = 10
 Proc_Bloodlet.DurationPerLevel = 0
 Proc_Bloodlet.HealMultiplier = 0.25
+Proc_Bloodlet.DamageTypeName = "bleeding"
 
 function Proc_Bloodlet.GetInfo(self, Source, Item)
-	Bleeding = self:GetTotal(Source, Item)
-	Duration = self:GetDuration(Item)
 	Chance = self:GetChance(Item)
-	Healing = self:GetHealingTotal(Source, Item)
-	return "[c green]" .. Chance .. "%[c white] chance for [c green]" .. Bleeding .. "[c white] bleeding damage and [c green]" .. Healing .. "[c white] healing over [c green]" .. Duration .. "[c white] seconds"
+
+	return "[c green]" .. Chance .. "%[c white] chance for " .. self:GetDamageText(Source, Item) .. " and " .. self:GetHealingText(Source, Item)
+end
+
+function Proc_Bloodlet.GetHealingText(self, Source, Item)
+	if Item.MoreInfo == true then
+		Text = "[c green]" .. self:GetHealingLevel(Source, Item) .. "[c white] HPS"
+	else
+		Healing = self:GetHealingTotal(Source, Item)
+		Duration = self:GetDuration(Item)
+		Text = "[c green]" .. Healing .. "[c white] healing over [c green]" .. Duration .. "[c white] seconds"
+	end
+
+	return Text
 end
 
 function Proc_Bloodlet.GetHealingTotal(self, Source, Item)
