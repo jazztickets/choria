@@ -522,7 +522,7 @@ function Skill_Whirlwind.GetDamage(self, Level)
 end
 
 function Skill_Whirlwind.GenerateDamage(self, Level, Source)
-	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) * 0.01))
 end
 
 function Skill_Whirlwind.GetDuration(self, Level)
@@ -543,7 +543,12 @@ function Skill_Whirlwind.GetInfo(self, Source, Item)
 		TextColor = "red"
 	end
 
-	return "Spin around and slash all enemies with [c green]" .. self:GetDamage(Item.Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+	if Item.MoreInfo == true then
+		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
+	end
+
+	return "Spin around and slash all enemies with [c green]" .. DamageValue .. "[c white] weapon damage\nCauses [c yellow]fatigue[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
 end
 
 function Skill_Whirlwind.PlaySound(self, Level)

@@ -22,9 +22,12 @@
 #include <ae/ui.h>
 #include <ae/assets.h>
 #include <ae/font.h>
+#include <ae/input.h>
+#include <ae/util.h>
 #include <stats.h>
 #include <glm/vec2.hpp>
 #include <sstream>
+#include <SDL_keycode.h>
 
 // Constructor
 _CharacterScreen::_CharacterScreen(_HUD *HUD, ae::_Element *Element) :
@@ -51,7 +54,10 @@ void _CharacterScreen::Render(double BlendFactor) {
 	std::stringstream Buffer;
 
 	// Damage
-	Buffer << HUD->Player->Character->MinDamage << " - " << HUD->Player->Character->MaxDamage;
+	if(ae::Input.ModKeyDown(KMOD_ALT))
+		Buffer << ae::Round((HUD->Player->Character->MinDamage + HUD->Player->Character->MaxDamage) * 0.5f);
+	else
+		Buffer << HUD->Player->Character->MinDamage << " - " << HUD->Player->Character->MaxDamage;
 	Font->DrawText("Weapon Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
