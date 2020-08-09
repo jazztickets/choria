@@ -620,6 +620,87 @@ function Skill_Cleave.PlaySound(self, Level)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Blade Dance --
+
+Skill_BladeDance = Base_Attack:New()
+Skill_BladeDance.BaseChance = 75
+Skill_BladeDance.ChancePerLevel = 0
+Skill_BladeDance.BaseTargets = 4
+Skill_BladeDance.TargetsPerLevel = 0.08
+Skill_BladeDance.DamageBase = 75
+Skill_BladeDance.DamagePerLevel = 2
+Skill_BladeDance.BleedingLevel = 20
+Skill_BladeDance.IncreasePerLevel = 10
+Skill_BladeDance.BleedScale = 2
+Skill_BladeDance.Duration = 5
+
+function Skill_BladeDance.CanUse(self, Level, Source, Target)
+	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+	if WeaponMain == nil then
+		return false
+	end
+
+	WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
+	if WeaponOff == nil then
+		return false
+	end
+
+	return WeaponMain.Type == ITEM_OFFHAND and WeaponOff.Type == ITEM_OFFHAND
+end
+
+function Skill_BladeDance.GetDamage(self, Level)
+	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
+end
+
+function Skill_BladeDance.GetChance(self, Level)
+	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
+end
+
+function Skill_BladeDance.GenerateDamage(self, Level, Source)
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) * 0.01))
+end
+
+function Skill_BladeDance.GetBleedDamage(self, Source, Level)
+	return self.Duration * self:GetBleedLevel(Source, Level)
+end
+
+function Skill_BladeDance.GetBleedLevel(self, Source, Level)
+	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower * 0.01)
+end
+
+function Skill_BladeDance.GetTargetCount(self, Level)
+	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
+end
+
+function Skill_BladeDance.GetInfo(self, Source, Item)
+	TextColor = "yellow"
+	if not self:CanUse(Item.Level, Source, nil) then
+		TextColor = "red"
+	end
+
+	DamageValue = self:GetDamage(Item.Level) .. "%"
+	if Item.MoreInfo == true then
+		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
+	end
+
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. DamageValue .. "[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires two off-hand weapons"
+end
+
+function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= self:GetChance(Level) then
+		Result.Target.Buff = Buff_Bleeding.Pointer
+		Result.Target.BuffLevel = self:GetBleedLevel(Source, Level)
+		Result.Target.BuffDuration = self.Duration
+		return true
+	end
+
+	return false
+end
+
+function Skill_BladeDance.PlaySound(self, Level)
+	Audio.Play("gash0.ogg")
+end
+
 -- Whirlwind --
 
 Skill_Whirlwind = Base_Attack:New()
@@ -1208,85 +1289,4 @@ function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.BountyHunt = 1.0
 
 	return Result
-end
-
--- Blade Dance --
-
-Skill_BladeDance = Base_Attack:New()
-Skill_BladeDance.BaseChance = 75
-Skill_BladeDance.ChancePerLevel = 0
-Skill_BladeDance.BaseTargets = 4
-Skill_BladeDance.TargetsPerLevel = 0.08
-Skill_BladeDance.DamageBase = 75
-Skill_BladeDance.DamagePerLevel = 2
-Skill_BladeDance.BleedingLevel = 20
-Skill_BladeDance.IncreasePerLevel = 10
-Skill_BladeDance.BleedScale = 2
-Skill_BladeDance.Duration = 5
-
-function Skill_BladeDance.CanUse(self, Level, Source, Target)
-	WeaponMain = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
-	if WeaponMain == nil then
-		return false
-	end
-
-	WeaponOff = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-	if WeaponOff == nil then
-		return false
-	end
-
-	return WeaponMain.Type == ITEM_OFFHAND and WeaponOff.Type == ITEM_OFFHAND
-end
-
-function Skill_BladeDance.GetDamage(self, Level)
-	return math.floor(self.DamageBase + self.DamagePerLevel * (Level - 1))
-end
-
-function Skill_BladeDance.GetChance(self, Level)
-	return math.min(self.BaseChance + self.ChancePerLevel * (Level - 1), 100)
-end
-
-function Skill_BladeDance.GenerateDamage(self, Level, Source)
-	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) * 0.01))
-end
-
-function Skill_BladeDance.GetBleedDamage(self, Source, Level)
-	return self.Duration * self:GetBleedLevel(Source, Level)
-end
-
-function Skill_BladeDance.GetBleedLevel(self, Source, Level)
-	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower * 0.01)
-end
-
-function Skill_BladeDance.GetTargetCount(self, Level)
-	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
-end
-
-function Skill_BladeDance.GetInfo(self, Source, Item)
-	TextColor = "yellow"
-	if not self:CanUse(Item.Level, Source, nil) then
-		TextColor = "red"
-	end
-
-	DamageValue = self:GetDamage(Item.Level) .. "%"
-	if Item.MoreInfo == true then
-		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
-	end
-
-	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. DamageValue .. "[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds\n[c " .. TextColor .. "]Requires two off-hand weapons"
-end
-
-function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
-	if Roll <= self:GetChance(Level) then
-		Result.Target.Buff = Buff_Bleeding.Pointer
-		Result.Target.BuffLevel = self:GetBleedLevel(Source, Level)
-		Result.Target.BuffDuration = self.Duration
-		return true
-	end
-
-	return false
-end
-
-function Skill_BladeDance.PlaySound(self, Level)
-	Audio.Play("gash0.ogg")
 end
