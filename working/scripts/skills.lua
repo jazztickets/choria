@@ -461,7 +461,7 @@ function Skill_ShieldBash.GetInfo(self, Source, Item)
 	end
 
 	if Item.MoreInfo == true then
-		DamageValue = Round(AverageDamage) * self:GetDamageMultiplier(Source, Item.Level) .. " [c green]avg[c white]"
+		DamageValue = Round(AverageDamage * self:GetDamageMultiplier(Source, Item.Level)) .. " [c green]avg[c white]"
 	end
 
 	return "Bash your enemy with a shield for [c green]" .. DamageValue .. "[c white] shield damage and a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a shield"
