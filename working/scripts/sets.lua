@@ -240,63 +240,63 @@ SetBonus_ShiningStar.Attributes = {
 
 SetBonus_QuarterStaff = Base_Set:New()
 SetBonus_QuarterStaff.Attributes = {
-	HealPower = { "25%", "25%" },
+	HealPower = { "15%", "50%" },
 }
 
 SetBonus_HolyStaff = Base_Set:New()
 SetBonus_HolyStaff.Attributes = {
-	HealPower = { "50%", "50%" },
+	HealPower = { "25%", "75%" },
 }
 
 SetBonus_LightStaff = Base_Set:New()
 SetBonus_LightStaff.Attributes = {
-	HealPower = { "100%", "100%" },
+	HealPower = { "50%", "100%" },
 }
 
 SetBonus_MysticStaff = Base_Set:New()
 SetBonus_MysticStaff.Attributes = {
-	HealPower = { "50%", "50%" },
-	Evasion = { "5%", "5%" },
+	HealPower = { "25%", "50%" },
+	Evasion = { "5%", "10%" },
 }
 
 SetBonus_DarkStaff = Base_Set:New()
 SetBonus_DarkStaff.Attributes = {
-	PetPower = { "25%", "25%" },
+	PetPower = { "15%", "50%" },
 }
 
 SetBonus_DemonStick = Base_Set:New()
 SetBonus_DemonStick.Attributes = {
-	PetPower = { "50%", "50%" },
+	PetPower = { "25%", "75%" },
 }
 
 SetBonus_DiabolicStaff = Base_Set:New()
 SetBonus_DiabolicStaff.Attributes = {
-	PetPower = { "100%", "100%" },
+	PetPower = { "50%", "100%" },
 }
 
 SetBonus_Axe = Base_Set:New()
 SetBonus_Axe.Attributes = {
-	AttackPower = { "25%", "25%" },
+	Armor = { "1", "5" },
 }
 
 SetBonus_BattleAxe = Base_Set:New()
 SetBonus_BattleAxe.Attributes = {
-	AttackPower = { "35%", "35%" },
+	Armor = { "3", "10" },
 }
 
 SetBonus_Claymore = Base_Set:New()
 SetBonus_Claymore.Attributes = {
-	AttackPower = { "50%", "50%" },
+	Armor = { "5", "15" },
 }
 
 SetBonus_Greatsword = Base_Set:New()
 SetBonus_Greatsword.Attributes = {
-	AttackPower = { "75%", "75%" },
+	Armor = { "10", "20" },
 }
 
 SetBonus_Icebrand = Base_Set:New()
 SetBonus_Icebrand.Attributes = {
-	AttackPower = { "100%", "100%" },
+	Armor = { "10", "20" },
 }
 
 -- Off-Hand Weapons --
@@ -308,28 +308,28 @@ SetBonus_SmallKnife.Attributes = {
 
 SetBonus_Dagger = Base_Set:New()
 SetBonus_Dagger.Attributes = {
-	BleedPower = { "20%", "35%" },
+	BleedPower = { "20%", "40%" },
 }
 
 SetBonus_Stiletto = Base_Set:New()
 SetBonus_Stiletto.Attributes = {
-	BleedPower = { "25%", "40%" },
+	BleedPower = { "25%", "50%" },
 }
 
 SetBonus_SwiftKnife = Base_Set:New()
 SetBonus_SwiftKnife.Attributes = {
-	BleedPower = { "75%", "75%" },
+	BleedPower = { "30%", "75%" },
 }
 
 SetBonus_MoonBlade = Base_Set:New()
 SetBonus_MoonBlade.Attributes = {
-	BleedPower = { "100%", "100%" },
+	BleedPower = { "50%", "100%" },
 }
 
 SetBonus_Bloodletter = Base_Set:New()
 SetBonus_Bloodletter.Attributes = {
-	BleedPower = { "25%", "25%" },
-	HealPower = { "25%", "25%" },
+	BleedPower = { "25%", "50%" },
+	HealPower = { "10%", "25%" },
 }
 
 -- Shields --
@@ -352,7 +352,7 @@ SetBonus_WizardBook.Attributes = {
 
 SetBonus_ArcaneBook = Base_Set:New()
 SetBonus_ArcaneBook.Attributes = {
-	ManaPower = { "50%", "50%" },
+	ManaPower = { "25%", "75%" },
 }
 
 SetBonus_LeatherBuckler = Base_Set:New()
@@ -378,4 +378,11 @@ SetBonus_IronShield.Attributes = {
 SetBonus_SteelShield = Base_Set:New()
 SetBonus_SteelShield.Attributes = {
 	DamageBlock = { "50", "150" },
+}
+
+-- Helmet --
+
+SetBonus_Cap = Base_Set:New()
+SetBonus_Cap.Attributes = {
+	HealPower = { "5%", "25%" },
 }
