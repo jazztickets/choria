@@ -225,11 +225,11 @@ end
 -- Poisoned --
 
 Buff_Poisoned = {}
-Buff_Poisoned.HealthUpdateMultiplier = -0.5
+Buff_Poisoned.HealthUpdateMultiplier = -50
 Buff_Poisoned.DamageType = DamageType["Poison"]
 
 function Buff_Poisoned.GetInfo(self, Level)
-	return "Healing reduced by [c red]" .. math.abs(math.floor(self.HealthUpdateMultiplier * 100)) .. "%[c white] and taking [c red]" .. Level .. " [c white]damage"
+	return "Healing reduced by [c red]" .. math.abs(self.HealthUpdateMultiplier) .. "%[c white] and taking [c red]" .. Level .. " [c white]damage"
 end
 
 function Buff_Poisoned.Update(self, Level, Source, Change)

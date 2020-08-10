@@ -229,7 +229,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				PlayerMaxSkillLevel = Player->Character->MaxSkillLevels[ID];
 				DrawLevel = SkillIterator->second;
 				if(!(Tooltip.Window == _HUD::WINDOW_SKILLS && ae::Input.ModKeyDown(KMOD_ALT)) && SkillIterator->second > 0) {
-					DrawLevel += Player->Character->AllSkills;
+					DrawLevel += Player->Character->Attributes["AllSkills"].Integer;
 					DrawLevel = std::min(DrawLevel, PlayerMaxSkillLevel);
 				}
 			}
@@ -509,14 +509,14 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Experience bonus
-	int DrawExpBonus = (int)GetExpBonus(Upgrades);
+	int DrawExpBonus = (int)GetExperienceBonus(Upgrades);
 	if(DrawExpBonus != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawExpBonus < 0 ? "" : "+") << DrawExpBonus << "%";
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetExpBonus(Upgrades), CompareInventory.Item->GetExpBonus(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetExperienceBonus(Upgrades), CompareInventory.Item->GetExperienceBonus(CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("XP Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -868,7 +868,7 @@ int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTa
 				int SkillLevel = 1;
 				auto SkillIterator = Object->Character->Skills.find(ID);
 				if(SkillIterator != Object->Character->Skills.end()) {
-					SkillLevel = SkillIterator->second + Object->Character->AllSkills;
+					SkillLevel = SkillIterator->second + Object->Character->Attributes["AllSkills"].Integer;
 					if(Object->Character->MaxSkillLevels.find(ID) != Object->Character->MaxSkillLevels.end())
 						SkillLevel = std::min(SkillLevel, Object->Character->MaxSkillLevels.at(ID));
 				}
@@ -1018,7 +1018,7 @@ int _Item::GetAttributeCount(int Upgrades) const {
 		Count++;
 	if((int)GetGoldBonus(Upgrades) != 0)
 		Count++;
-	if((int)GetExpBonus(Upgrades) != 0)
+	if((int)GetExperienceBonus(Upgrades) != 0)
 		Count++;
 	if(IsEquippable() && (int)GetCooldownReduction(Upgrades) != 0)
 		Count++;
@@ -1282,8 +1282,8 @@ float _Item::GetGoldBonus(int Upgrades) const {
 }
 
 // Get experience bonus
-float _Item::GetExpBonus(int Upgrades) const {
-	return GetUpgradedValue<float>("ExpBonus", Upgrades, ExpBonus);
+float _Item::GetExperienceBonus(int Upgrades) const {
+	return GetUpgradedValue<float>("ExperienceBonus", Upgrades, ExpBonus);
 }
 
 // Get cooldown reduction

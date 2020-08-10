@@ -81,20 +81,24 @@ void _CharacterScreen::Render(double BlendFactor) {
 		}
 	}
 
-	// Separator
-	if(HUD->Player->Character->Resistances.size())
-		DrawPosition.y += SpacingY;
-
 	// Resistances
+	bool First = true;
 	for(auto &Resistance : HUD->Player->Character->Resistances) {
 		if(Resistance.first == 0 || Resistance.second == 0)
 			continue;
 
+		// Separator
+		if(First)
+			DrawPosition.y += SpacingY;
+
+		// Draw
 		Buffer << Resistance.second << "%";
 		Font->DrawText(HUD->Player->Stats->DamageTypes.at(Resistance.first).Name + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
+
+		First = false;
 	}
 
 	// Separator

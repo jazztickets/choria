@@ -2380,7 +2380,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Difficulty += DifficultyAdjust;
 
 			// Increase by each player's difficulty stat
-			Difficulty += PartyPlayer->Character->Difficulty;
+			Difficulty += PartyPlayer->Character->Attributes["Difficulty"].Integer;
 		}
 
 		// Add summons

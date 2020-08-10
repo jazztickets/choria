@@ -104,7 +104,7 @@ class _Item {
 		float GetSpellDamage(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
 		float GetGoldBonus(int Upgrades) const;
-		float GetExpBonus(int Upgrades) const;
+		float GetExperienceBonus(int Upgrades) const;
 		float GetCooldownReduction(int Upgrades) const;
 		float GetAllSkills(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(const std::string &AttributeName, int Upgrades, T Value) const;

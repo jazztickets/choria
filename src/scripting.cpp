@@ -570,9 +570,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->ManaReductionRatio);
 	lua_setfield(LuaState, -2, "ManaReductionRatio");
 
-	lua_pushinteger(LuaState, Object->Character->Pierce);
-	lua_setfield(LuaState, -2, "Pierce");
-
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
 

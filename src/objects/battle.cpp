@@ -742,8 +742,8 @@ void _Battle::ServerEndBattle() {
 
 				// Boost xp/gold gain
 				if(!PVP) {
-					ExperienceEarned *= Object->Character->ExperienceMultiplier * 0.01f;
-					GoldEarned *= Object->Character->GoldMultiplier * 0.01f;
+					ExperienceEarned *= Object->Character->Attributes["ExperienceBonus"].Integer * 0.01f;
+					GoldEarned *= Object->Character->Attributes["GoldBonus"].Integer * 0.01f;
 				}
 
 				if(Zone) {

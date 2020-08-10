@@ -251,8 +251,8 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 			int DrawLevel = HUD->Player->Character->Skills[SkillID];
 			int MaxSkillLevel = HUD->Player->Character->MaxSkillLevels[SkillID];
 			glm::vec4 LevelColor = glm::vec4(1.0f);
-			if(ShowBonusPoints && DrawLevel > 0 && HUD->Player->Character->AllSkills) {
-				DrawLevel += HUD->Player->Character->AllSkills;
+			if(ShowBonusPoints && DrawLevel > 0 && HUD->Player->Character->Attributes["AllSkills"].Integer) {
+				DrawLevel += HUD->Player->Character->Attributes["AllSkills"].Integer;
 				if(DrawLevel > MaxSkillLevel)
 					LevelColor = ae::Assets.Colors["red"];
 				else if(DrawLevel == MaxSkillLevel)
@@ -262,7 +262,7 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 				DrawLevel = std::min(DrawLevel, MaxSkillLevel);
 			}
 
-			if(!HUD->Player->Character->AllSkills) {
+			if(!HUD->Player->Character->Attributes["AllSkills"].Integer) {
 				if(DrawLevel == MaxSkillLevel)
 					LevelColor = ae::Assets.Colors["yellow"];
 			}

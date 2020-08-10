@@ -171,7 +171,6 @@ class _Character {
 		int Gold;
 		int NextBattle;
 		int Invisible;
-		bool DiagonalMovement;
 		bool Hardcore;
 		bool Offline;
 		uint8_t Status;
@@ -232,20 +231,12 @@ class _Character {
 		int MaxHealth;
 		int Mana;
 		int MaxMana;
-		int HealthRegen;
-		int ManaRegen;
-		int ExperienceMultiplier;
-		int GoldMultiplier;
 		int MaxHealthMultiplier;
 		int MaxManaMultiplier;
 		float ManaReductionRatio;
 		int MinDamage;
 		int MaxDamage;
-		int Armor;
-		int Pierce;
 		int EquipmentBattleSpeed;
-		int AllSkills;
-		int Difficulty;
 		float CooldownMultiplier;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;

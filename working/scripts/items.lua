@@ -780,7 +780,7 @@ function Item_Diagonal.GetInfo(self, Source, Item)
 end
 
 function Item_Diagonal.Stats(self, Item, Object, Change)
-	Change.DiagonalMovement = 1
+	Change.DiagonalMovement = true
 
 	return Change
 end
