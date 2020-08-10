@@ -251,8 +251,6 @@ class _Character {
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
 		int AttackPower;
-		int HealPower;
-		int ManaPower;
 		int ShieldDamage;
 		int MinDamage;
 		int MaxDamage;

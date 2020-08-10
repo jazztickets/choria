@@ -217,24 +217,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	// Heal Power
-	if(HUD->Player->Character->HealPower != 100) {
-		Buffer << HUD->Player->Character->HealPower << "%";
-		Font->DrawText("Heal Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Mana Power
-	if(HUD->Player->Character->ManaPower != 100) {
-		Buffer << HUD->Player->Character->ManaPower << "%";
-		Font->DrawText("Mana Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
 	for(const auto &Attribute : _Character::AttributeData) {
 		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[Attribute.Name];
 		if(AttributeStorage.Integer != 100) {

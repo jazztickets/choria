@@ -566,15 +566,26 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "AttackPower");
 
 	for(const auto &Attribute : _Character::AttributeData) {
-		lua_pushinteger(LuaState, Object->Character->Attributes[Attribute.Name].Integer);
+		_AttributeStorage &AttributeStorage = Object->Character->Attributes[Attribute.Name];
+		switch(Attribute.ValueType) {
+			case StatValueType::BOOLEAN:
+				lua_pushboolean(LuaState, AttributeStorage.Integer);
+			break;
+			case StatValueType::INTEGER:
+				lua_pushinteger(LuaState, AttributeStorage.Integer);
+			break;
+			case StatValueType::FLOAT:
+				lua_pushnumber(LuaState, AttributeStorage.Float);
+			break;
+			case StatValueType::POINTER:
+				if(AttributeStorage.Pointer)
+					lua_pushlightuserdata(LuaState, AttributeStorage.Pointer);
+				else
+					lua_pushnil(LuaState);
+			break;
+		}
 		lua_setfield(LuaState, -2, Attribute.Name.c_str());
 	}
-
-	lua_pushinteger(LuaState, Object->Character->HealPower);
-	lua_setfield(LuaState, -2, "HealPower");
-
-	lua_pushinteger(LuaState, Object->Character->ManaPower);
-	lua_setfield(LuaState, -2, "ManaPower");
 
 	lua_pushinteger(LuaState, Object->Character->ShieldDamage);
 	lua_setfield(LuaState, -2, "ShieldDamage");
