@@ -317,20 +317,15 @@ void _Character::CalculateStats() {
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
-	BattleSpeed = BaseBattleSpeed;
 	MinDamage = BaseMinDamage;
 	MaxDamage = BaseMaxDamage;
 	Armor = BaseArmor;
-	DamageBlock = BaseDamageBlock;
-	SpellDamage = BaseSpellDamage;
+	Attributes["DamageBlock"].Integer = BaseDamageBlock;
+	Attributes["SpellDamage"].Integer = BaseSpellDamage;
 	HealthRegen = 0;
 	ManaRegen = 0;
 	HealthUpdateMultiplier = 1.0f;
 	ManaReductionRatio = 1.0f;
-	MoveSpeed = 100;
-	Evasion = 0;
-	HitChance = 100;
-	ShieldDamage = 100;
 	Pierce = 0;
 	AllSkills = 0;
 
@@ -363,7 +358,7 @@ void _Character::CalculateStats() {
 
 	// Eternal Guard
 	if(EternalGuard) {
-		DamageBlock += EternalGuard;
+		Attributes["DamageBlock"].Integer += EternalGuard;
 		Armor += EternalGuard / 3;
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
 			Resistances[i] += EternalGuard / 4;
@@ -384,7 +379,7 @@ void _Character::CalculateStats() {
 	GoldMultiplier = 100 + EternalWealth;
 
 	// Eternal Alacrity
-	BattleSpeed = 100 + EternalAlacrity;
+	Attributes["BattleSpeed"].Integer = BaseBattleSpeed + EternalAlacrity;
 
 	// Eternal Knowledge
 	SkillPoints += EternalKnowledge;
@@ -417,17 +412,17 @@ void _Character::CalculateStats() {
 
 		// Stat changes
 		Armor += Item->GetArmor(Upgrades);
-		DamageBlock += Item->GetDamageBlock(Upgrades);
+		Attributes["DamageBlock"].Integer += Item->GetDamageBlock(Upgrades);
 		Pierce += Item->GetPierce(Upgrades);
 		MaxHealth += Item->GetMaxHealth(Upgrades);
 		MaxMana += Item->GetMaxMana(Upgrades);
 		HealthRegen += Item->GetHealthRegen(Upgrades);
 		ManaRegen += Item->GetManaRegen(Upgrades);
-		BattleSpeed += Item->GetBattleSpeed(Upgrades);
-		MoveSpeed += Item->GetMoveSpeed(Upgrades);
-		Evasion += Item->GetEvasion(Upgrades);
+		Attributes["BattleSpeed"].Integer += Item->GetBattleSpeed(Upgrades);
+		Attributes["MoveSpeed"].Integer += Item->GetMoveSpeed(Upgrades);
+		Attributes["Evasion"].Integer += Item->GetEvasion(Upgrades);
 		AllSkills += Item->GetAllSkills(Upgrades);
-		SpellDamage += Item->GetSpellDamage(Upgrades);
+		Attributes["SpellDamage"].Integer += Item->GetSpellDamage(Upgrades);
 		CooldownMultiplier += Item->GetCooldownReduction(Upgrades) / 100.0f;
 		ExperienceMultiplier += Item->GetExpBonus(Upgrades);
 		GoldMultiplier += Item->GetGoldBonus(Upgrades);
@@ -543,7 +538,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get speed before buffs
-	EquipmentBattleSpeed = BattleSpeed;
+	EquipmentBattleSpeed = Attributes["BattleSpeed"].Integer;
 
 	// Get buff stats
 	for(const auto &StatusEffect : StatusEffects) {
@@ -572,19 +567,16 @@ void _Character::CalculateStats() {
 	Resistances[2] = (int)(ArmorResist * 100);
 
 	// Cap stats
-	if(Evasion > GAME_MAX_EVASION)
-		Evasion = GAME_MAX_EVASION;
-	if(BattleSpeed < BATTLE_MIN_SPEED)
-		BattleSpeed = BATTLE_MIN_SPEED;
-	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
-		MoveSpeed = PLAYER_MIN_MOVESPEED;
+	Attributes["Evasion"].Integer = std::clamp(Attributes["Evasion"].Integer, 0, GAME_MAX_EVASION);
+	Attributes["MoveSpeed"].Integer = std::max(Attributes["MoveSpeed"].Integer, PLAYER_MIN_MOVESPEED);
+	Attributes["BattleSpeed"].Integer = std::max(Attributes["BattleSpeed"].Integer, BATTLE_MIN_SPEED);
 	if(CooldownMultiplier <= 0.0f)
 		CooldownMultiplier = 0.0f;
 
 	MinDamage = std::max(MinDamage, 0);
 	MaxDamage = std::max(MaxDamage, 0);
 	Pierce = std::max(Pierce, 0);
-	DamageBlock = std::max(DamageBlock, 0);
+	Attributes["DamageBlock"].Integer = std::max(Attributes["DamageBlock"].Integer, 0);
 	ManaReductionRatio = std::clamp(1.0f - ManaReductionRatio, 0.0f, 1.0f);
 	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
 
@@ -669,14 +661,14 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat("SummonLimit"))
 		SummonLimit += StatChange.Values["SummonLimit"].Integer;
 	if(StatChange.HasStat("SpellDamage"))
-		SpellDamage += StatChange.Values["SpellDamage"].Integer;
+		Attributes["SpellDamage"].Integer += StatChange.Values["SpellDamage"].Integer;
 
 	if(StatChange.HasStat("BattleSpeed"))
-		BattleSpeed += StatChange.Values["BattleSpeed"].Integer;
+		Attributes["BattleSpeed"].Integer += StatChange.Values["BattleSpeed"].Integer;
 	if(StatChange.HasStat("HitChance"))
-		HitChance += StatChange.Values["HitChance"].Integer;
+		Attributes["HitChance"].Integer += StatChange.Values["HitChance"].Integer;
 	if(StatChange.HasStat("Evasion"))
-		Evasion += StatChange.Values["Evasion"].Integer;
+		Attributes["Evasion"].Integer += StatChange.Values["Evasion"].Integer;
 	if(StatChange.HasStat("Stunned"))
 		Stunned = StatChange.Values["Stunned"].Integer;
 
@@ -724,12 +716,12 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat("Armor"))
 		Armor += StatChange.Values["Armor"].Integer;
 	if(StatChange.HasStat("DamageBlock"))
-		DamageBlock += StatChange.Values["DamageBlock"].Integer;
+		Attributes["DamageBlock"].Integer += StatChange.Values["DamageBlock"].Integer;
 	if(StatChange.HasStat("ShieldDamage"))
-		ShieldDamage += StatChange.Values["ShieldDamage"].Integer;
+		Attributes["ShieldDamage"].Integer += StatChange.Values["ShieldDamage"].Integer;
 
 	if(StatChange.HasStat("MoveSpeed"))
-		MoveSpeed += StatChange.Values["MoveSpeed"].Integer;
+		Attributes["MoveSpeed"].Integer += StatChange.Values["MoveSpeed"].Integer;
 
 	if(StatChange.HasStat("Invisible"))
 		Invisible = StatChange.Values["Invisible"].Integer;

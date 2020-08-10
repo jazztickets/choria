@@ -70,13 +70,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
-	// Damage Block
-	Buffer << HUD->Player->Character->DamageBlock;
-	Font->DrawText("Damage Block", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
 	// Pierce
 	if(HUD->Player->Character->Pierce != 0) {
 		Buffer << HUD->Player->Character->Pierce;
@@ -140,38 +133,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	// Move speed
-	Buffer << HUD->Player->Character->MoveSpeed << "%";
-	Font->DrawText("Move Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Battle speed
-	Buffer << HUD->Player->Character->BattleSpeed << "%";
-	Font->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Hit chance
-	if(HUD->Player->Character->HitChance != 100) {
-		Buffer << HUD->Player->Character->HitChance << "%";
-		Font->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Evasion
-	if(HUD->Player->Character->Evasion != 0) {
-		Buffer << HUD->Player->Character->Evasion << "%";
-		Font->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
 	// Consume chance
 	if(HUD->Player->Character->ConsumeChance != 100) {
 		Buffer << HUD->Player->Character->ConsumeChance << "%";
@@ -199,15 +160,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	// Spell Damage
-	if(HUD->Player->Character->SpellDamage != 100) {
-		Buffer << HUD->Player->Character->SpellDamage << "%";
-		Font->DrawText("Spell Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
 	// Display attributes
 	for(const auto &AttributeName : HUD->Player->Stats->AttributeRank) {
 		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
@@ -219,15 +171,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 			Buffer.str("");
 			DrawPosition.y += SpacingY;
 		}
-	}
-
-	// Shield Damage
-	if(HUD->Player->Character->ShieldDamage != 100) {
-		Buffer << HUD->Player->Character->ShieldDamage << "%";
-		Font->DrawText("Shield Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
 	}
 
 	// Difficulty

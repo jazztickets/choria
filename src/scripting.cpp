@@ -575,23 +575,8 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->ManaReductionRatio);
 	lua_setfield(LuaState, -2, "ManaReductionRatio");
 
-	lua_pushinteger(LuaState, Object->Character->ShieldDamage);
-	lua_setfield(LuaState, -2, "ShieldDamage");
-
-	lua_pushinteger(LuaState, Object->Character->HitChance);
-	lua_setfield(LuaState, -2, "HitChance");
-
-	lua_pushinteger(LuaState, Object->Character->DamageBlock);
-	lua_setfield(LuaState, -2, "DamageBlock");
-
 	lua_pushinteger(LuaState, Object->Character->Pierce);
 	lua_setfield(LuaState, -2, "Pierce");
-
-	lua_pushinteger(LuaState, Object->Character->Evasion);
-	lua_setfield(LuaState, -2, "Evasion");
-
-	lua_pushinteger(LuaState, Object->Character->SpellDamage);
-	lua_setfield(LuaState, -2, "SpellDamage");
 
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");

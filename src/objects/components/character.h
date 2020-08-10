@@ -242,18 +242,11 @@ class _Character {
 		int MaxManaMultiplier;
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
-		int ShieldDamage;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;
-		int DamageBlock;
 		int Pierce;
-		int MoveSpeed;
-		int BattleSpeed;
 		int EquipmentBattleSpeed;
-		int Evasion;
-		int SpellDamage;
-		int HitChance;
 		int AllSkills;
 		int SummonLimit;
 		int Difficulty;
