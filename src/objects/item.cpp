@@ -228,7 +228,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			if(SkillIterator != Player->Character->Skills.end()) {
 				PlayerMaxSkillLevel = Player->Character->MaxSkillLevels[ID];
 				DrawLevel = SkillIterator->second;
-				if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0) {
+				if(!(Tooltip.Window == _HUD::WINDOW_SKILLS && ae::Input.ModKeyDown(KMOD_ALT)) && SkillIterator->second > 0) {
 					DrawLevel += Player->Character->AllSkills;
 					DrawLevel = std::min(DrawLevel, PlayerMaxSkillLevel);
 				}

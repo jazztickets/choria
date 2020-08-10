@@ -402,9 +402,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	if(HUD->Player->Character->Resistances.size())
-		DrawPosition.y += SpacingY;
-
 	// Separator
 	DrawPosition.y += SpacingY;
 
