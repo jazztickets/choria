@@ -28,6 +28,7 @@
 #include <packet.h>
 #include <stats.h>
 #include <algorithm>
+#include <stdexcept>
 #include <cmath>
 
 // Constructor
@@ -622,6 +623,51 @@ void _Character::CalculateLevelStats() {
 
 // Update an object's stats from a statchange
 void _Character::CalculateStatBonuses(_StatChange &StatChange) {
+
+	// Update attributes
+	for(const auto &Update : StatChange.Values) {
+		const auto &Attribute = Object->Stats->Attributes.at(Update.first);
+		switch(Attribute.UpdateType) {
+			case StatUpdateType::NONE:
+				continue;
+			break;
+			case StatUpdateType::ADD: {
+				switch(Attribute.Type) {
+					case StatValueType::INTEGER:
+					case StatValueType::PERCENT:
+						Attributes[Update.first].Integer += Update.second.Integer;
+					break;
+					case StatValueType::FLOAT:
+						Attributes[Update.first].Float += Update.second.Float;
+					break;
+					default:
+						throw std::runtime_error("Bad update type: " + Update.first);
+					break;
+				}
+			} break;
+			case StatUpdateType::SET:
+			break;
+			case StatUpdateType::MULTIPLICATIVE:
+			break;
+		}
+	}
+
+	if(StatChange.HasStat("ManaReductionRatio"))
+		ManaReductionRatio *= (1.0f - StatChange.Values["ManaReductionRatio"].Float);
+
+	if(StatChange.HasStat("Stunned"))
+		Stunned = StatChange.Values["Stunned"].Integer;
+	if(StatChange.HasStat("Invisible"))
+		Invisible = StatChange.Values["Invisible"].Integer;
+	if(StatChange.HasStat("Light"))
+		Object->Light = StatChange.Values["Light"].Integer;
+	if(StatChange.HasStat("DiagonalMovement"))
+		DiagonalMovement = StatChange.Values["DiagonalMovement"].Integer;
+	if(StatChange.HasStat("MinigameSpeed"))
+		MinigameSpeed = StatChange.Values["MinigameSpeed"].Integer;
+	if(StatChange.HasStat("LavaProtection"))
+		LavaProtection = StatChange.Values["LavaProtection"].Integer;
+
 	if(StatChange.HasStat("MaxHealth"))
 		MaxHealth += StatChange.Values["MaxHealth"].Integer;
 	if(StatChange.HasStat("MaxMana"))
@@ -630,58 +676,34 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		HealthRegen += StatChange.Values["HealthRegen"].Integer;
 	if(StatChange.HasStat("ManaRegen"))
 		ManaRegen += StatChange.Values["ManaRegen"].Integer;
-
-	if(StatChange.HasStat("ManaReductionRatio"))
-		ManaReductionRatio *= (1.0f - StatChange.Values["ManaReductionRatio"].Float);
 	if(StatChange.HasStat("HealthUpdateMultiplier"))
 		Attributes["HealthUpdateMultiplier"].Integer += StatChange.Values["HealthUpdateMultiplier"].Integer;
-	if(StatChange.HasStat("AttackPower"))
-		Attributes["AttackPower"].Integer += StatChange.Values["AttackPower"].Integer;
-	if(StatChange.HasStat("PhysicalPower"))
-		Attributes["PhysicalPower"].Integer += StatChange.Values["PhysicalPower"].Integer;
-	if(StatChange.HasStat("FirePower"))
-		Attributes["FirePower"].Integer += StatChange.Values["FirePower"].Integer;
-	if(StatChange.HasStat("ColdPower"))
-		Attributes["ColdPower"].Integer += StatChange.Values["ColdPower"].Integer;
-	if(StatChange.HasStat("LightningPower"))
-		Attributes["LightningPower"].Integer += StatChange.Values["LightningPower"].Integer;
-	if(StatChange.HasStat("BleedPower"))
-		Attributes["BleedPower"].Integer += StatChange.Values["BleedPower"].Integer;
-	if(StatChange.HasStat("PoisonPower"))
-		Attributes["PoisonPower"].Integer += StatChange.Values["PoisonPower"].Integer;
-	if(StatChange.HasStat("PetPower"))
-		Attributes["PetPower"].Integer += StatChange.Values["PetPower"].Integer;
-	if(StatChange.HasStat("HealPower"))
-		Attributes["HealPower"].Integer += StatChange.Values["HealPower"].Integer;
-	if(StatChange.HasStat("ManaPower"))
-		Attributes["ManaPower"].Integer += StatChange.Values["ManaPower"].Integer;
 	if(StatChange.HasStat("SummonLimit"))
 		Attributes["SummonLimit"].Integer += StatChange.Values["SummonLimit"].Integer;
-	if(StatChange.HasStat("SpellDamage"))
-		Attributes["SpellDamage"].Integer += StatChange.Values["SpellDamage"].Integer;
-
 	if(StatChange.HasStat("BattleSpeed"))
 		Attributes["BattleSpeed"].Integer += StatChange.Values["BattleSpeed"].Integer;
 	if(StatChange.HasStat("HitChance"))
 		Attributes["HitChance"].Integer += StatChange.Values["HitChance"].Integer;
 	if(StatChange.HasStat("Evasion"))
 		Attributes["Evasion"].Integer += StatChange.Values["Evasion"].Integer;
-	if(StatChange.HasStat("Stunned"))
-		Stunned = StatChange.Values["Stunned"].Integer;
-
-	if(StatChange.HasStat("ResistType") && StatChange.HasStat("Resist")) {
-		uint32_t ResistType = (uint32_t)StatChange.Values["ResistType"].Integer;
-		if(ResistType == 1) {
-			for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-				Resistances[i] += StatChange.Values["Resist"].Integer;
-		}
-		else if(ResistType == 9) {
-			for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
-				Resistances[i] += StatChange.Values["Resist"].Integer;
-		}
-		else
-			Resistances[ResistType] += StatChange.Values["Resist"].Integer;
-	}
+	if(StatChange.HasStat("MinDamage"))
+		MinDamage += StatChange.Values["MinDamage"].Integer;
+	if(StatChange.HasStat("MaxDamage"))
+		MaxDamage += StatChange.Values["MaxDamage"].Integer;
+	if(StatChange.HasStat("Armor"))
+		Armor += StatChange.Values["Armor"].Integer;
+	if(StatChange.HasStat("DamageBlock"))
+		Attributes["DamageBlock"].Integer += StatChange.Values["DamageBlock"].Integer;
+	if(StatChange.HasStat("ShieldDamage"))
+		Attributes["ShieldDamage"].Integer += StatChange.Values["ShieldDamage"].Integer;
+	if(StatChange.HasStat("MoveSpeed"))
+		Attributes["MoveSpeed"].Integer += StatChange.Values["MoveSpeed"].Integer;
+	if(StatChange.HasStat("Difficulty"))
+		Difficulty += StatChange.Values["Difficulty"].Integer;
+	if(StatChange.HasStat("ConsumeChance"))
+		Attributes["ConsumeChance"].Integer += StatChange.Values["ConsumeChance"].Integer;
+	if(StatChange.HasStat("AllSkills"))
+		AllSkills += StatChange.Values["AllSkills"].Integer;
 
 	if(StatChange.HasStat("AllResist")) {
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
@@ -705,44 +727,6 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
 			Resistances[i] += StatChange.Values["ElementalResist"].Integer;
 	}
-
-	if(StatChange.HasStat("MinDamage"))
-		MinDamage += StatChange.Values["MinDamage"].Integer;
-	if(StatChange.HasStat("MaxDamage"))
-		MaxDamage += StatChange.Values["MaxDamage"].Integer;
-	if(StatChange.HasStat("Armor"))
-		Armor += StatChange.Values["Armor"].Integer;
-	if(StatChange.HasStat("DamageBlock"))
-		Attributes["DamageBlock"].Integer += StatChange.Values["DamageBlock"].Integer;
-	if(StatChange.HasStat("ShieldDamage"))
-		Attributes["ShieldDamage"].Integer += StatChange.Values["ShieldDamage"].Integer;
-
-	if(StatChange.HasStat("MoveSpeed"))
-		Attributes["MoveSpeed"].Integer += StatChange.Values["MoveSpeed"].Integer;
-
-	if(StatChange.HasStat("Invisible"))
-		Invisible = StatChange.Values["Invisible"].Integer;
-
-	if(StatChange.HasStat("Light"))
-		Object->Light = StatChange.Values["Light"].Integer;
-
-	if(StatChange.HasStat("DiagonalMovement"))
-		DiagonalMovement = StatChange.Values["DiagonalMovement"].Integer;
-
-	if(StatChange.HasStat("MinigameSpeed"))
-		MinigameSpeed = StatChange.Values["MinigameSpeed"].Integer;
-
-	if(StatChange.HasStat("LavaProtection"))
-		LavaProtection = StatChange.Values["LavaProtection"].Integer;
-
-	if(StatChange.HasStat("Difficulty"))
-		Difficulty += StatChange.Values["Difficulty"].Integer;
-
-	if(StatChange.HasStat("ConsumeChance"))
-		Attributes["ConsumeChance"].Integer += StatChange.Values["ConsumeChance"].Integer;
-
-	if(StatChange.HasStat("AllSkills"))
-		AllSkills += StatChange.Values["AllSkills"].Integer;
 }
 
 // Get percentage to next level

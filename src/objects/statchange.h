@@ -41,6 +41,7 @@ enum class StatValueType : int {
 };
 
 enum class StatUpdateType : int {
+	NONE,
 	ADD,
 	SET,
 	MULTIPLICATIVE,

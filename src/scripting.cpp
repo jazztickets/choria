@@ -879,6 +879,7 @@ void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &Stat
 		// Get value from lua
 		switch(Attribute.Type) {
 			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
 				StatChange.Values[Key].Integer = (int)lua_tonumber(LuaState, -1);
 			break;
 			case StatValueType::FLOAT:
@@ -1193,7 +1194,7 @@ int _Scripting::ObjectGetDamageReduction(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
 
-	lua_pushnumber(LuaState, 1.0 - (double)Object->Character->Resistances[DamageTypeID] / 100.0);
+	lua_pushnumber(LuaState, 1.0 - (double)Object->Character->Resistances[DamageTypeID] * 0.01f);
 
 	return 1;
 }
