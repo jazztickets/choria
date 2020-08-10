@@ -182,7 +182,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Energy Field
-	if(HUD->Player->Character->ManaReductionRatio != 1.0f) {
+	if(HUD->Player->Character->ManaReductionRatio != 0.0f) {
 		Buffer << (int)(HUD->Player->Character->ManaReductionRatio * 100) << "%";
 		Font->DrawText("Energy Field", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
