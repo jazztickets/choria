@@ -28,19 +28,6 @@
 #include <algorithm>
 #include <iostream>
 
-std::vector<_AttributeMeta> _Stats::AttributeData = {
-	{ "AttackPower",     "Attack Power",     StatValueType::INTEGER, { 100 } },
-	{ "PhysicalPower",   "Physical Power",   StatValueType::INTEGER, { 100 } },
-	{ "FirePower",       "Fire Power",       StatValueType::INTEGER, { 100 } },
-	{ "ColdPower",       "Cold Power",       StatValueType::INTEGER, { 100 } },
-	{ "LightningPower",  "Lightning Power",  StatValueType::INTEGER, { 100 } },
-	{ "BleedPower",      "Bleed Power",      StatValueType::INTEGER, { 100 } },
-	{ "PoisonPower",     "Poison Power",     StatValueType::INTEGER, { 100 } },
-	{ "PetPower",        "Pet Power",        StatValueType::INTEGER, { 100 } },
-	{ "HealPower",       "Heal Power",       StatValueType::INTEGER, { 100 } },
-	{ "ManaPower",       "Mana Power",       StatValueType::INTEGER, { 100 } },
-};
-
 // Constructor
 _Stats::_Stats(bool Headless) :
 	Headless(Headless) {
@@ -49,6 +36,7 @@ _Stats::_Stats(bool Headless) :
 	Database = new ae::_Database("stats/stats.db", true);
 
 	// Load spreadsheet data
+	LoadAttributes();
 	LoadMaps();
 	LoadEvents();
 	LoadLevels();
@@ -887,6 +875,38 @@ const _Level *_Stats::FindLevel(int64_t Experience) const {
 	}
 
 	return &Levels[Levels.size()-1];
+}
+
+// Load attributes
+void _Stats::LoadAttributes() {
+	Attributes.clear();
+	AttributeRank.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM attribute");
+
+	// Get data
+	_Attribute Attribute;
+	while(Database->FetchRow()) {
+		Attribute.Name = Database->GetString("name");
+		Attribute.Label = Database->GetString("label");
+		Attribute.Type = (StatValueType)Database->GetInt<int>("valuetype_id");
+		switch(Attribute.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+				Attribute.Default.Integer = Database->GetInt<int>("default");
+			break;
+			case StatValueType::FLOAT:
+				Attribute.Default.Float = (float)Database->GetReal("default");
+			break;
+			case StatValueType::POINTER:
+				Attribute.Default.Pointer = nullptr;
+			break;
+		}
+
+		Attributes[Attribute.Name] = Attribute;
+	}
+	Database->CloseQuery();
 }
 
 // Convert vendor slot from item id

@@ -60,8 +60,9 @@ INSERT INTO light VALUES(49,'green',0.29999999999999998889,1.0,0.299999999999999
 INSERT INTO light VALUES(50,'green',0.29999999999999998889,1.0,0.29999999999999998889,10.0);
 CREATE TABLE IF NOT EXISTS "damagetype" (
 	"id" INTEGER PRIMARY KEY,
-	"name" TEXT
-, "color" TEXT);
+	"name" TEXT,
+	"color" TEXT
+);
 INSERT INTO damagetype VALUES(0,'None','white');
 INSERT INTO damagetype VALUES(1,'All','white');
 INSERT INTO damagetype VALUES(2,'Physical','white');
@@ -72,6 +73,109 @@ INSERT INTO damagetype VALUES(6,'Poison','light_green');
 INSERT INTO damagetype VALUES(7,'Bleed','white');
 INSERT INTO damagetype VALUES(8,'Stun','white');
 INSERT INTO damagetype VALUES(9,'Elemental','white');
+CREATE TABLE IF NOT EXISTS "valuetype" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT
+);
+INSERT INTO valuetype VALUES(0,'Boolean');
+INSERT INTO valuetype VALUES(1,'Integer');
+INSERT INTO valuetype VALUES(2,'Float');
+INSERT INTO valuetype VALUES(3,'Pointer');
+CREATE TABLE IF NOT EXISTS "attribute" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"label" TEXT,
+	"valuetype_id" INTEGER DEFAULT(0) REFERENCES "valuetype"(id) ON DELETE CASCADE,
+	"default" TEXT,
+	"upgrade_scale" REAL DEFAULT(1.0)
+);
+INSERT INTO attribute VALUES(0,'Buff','Buff',3,'100',1.0);
+INSERT INTO attribute VALUES(1,'BuffLevel','Buff Level',1,'100',1.0);
+INSERT INTO attribute VALUES(2,'BuffDuration','Buff Duration',2,'100',1.0);
+INSERT INTO attribute VALUES(3,'BuffSound','Buff Sound',1,'100',1.0);
+INSERT INTO attribute VALUES(4,'Health','Health',1,'0',1.0);
+INSERT INTO attribute VALUES(5,'MaxHealth','Max Health',1,'0',0.5);
+INSERT INTO attribute VALUES(6,'Mana','Mana',1,'0',1.0);
+INSERT INTO attribute VALUES(7,'MaxMana','Max Mana',1,'0',0.5);
+INSERT INTO attribute VALUES(8,'HealthRegen','Health Regen',1,'0',1.0);
+INSERT INTO attribute VALUES(9,'ManaRegen','Mana Regen',1,'0',1.0);
+INSERT INTO attribute VALUES(10,'HealthUpdateMultiplier','Health Update Multiplier',2,'1',1.0);
+INSERT INTO attribute VALUES(11,'AttackPower','Attack Power',1,'100',1.0);
+INSERT INTO attribute VALUES(12,'MinDamage','Min Damage',1,'0',1.0);
+INSERT INTO attribute VALUES(13,'MaxDamage','Max Damage',1,'0',1.0);
+INSERT INTO attribute VALUES(14,'Armor','Armor',1,'0',0.5);
+INSERT INTO attribute VALUES(15,'DamageBlock','Damage Block',1,'0',1.0);
+INSERT INTO attribute VALUES(16,'Pierce','Pierce',1,'0',1.0);
+INSERT INTO attribute VALUES(17,'MoveSpeed','Move Speed',1,'100',0.10000000000000000555);
+INSERT INTO attribute VALUES(18,'Stamina','Stamina',2,'0',1.0);
+INSERT INTO attribute VALUES(19,'BattleSpeed','Battle Speed',1,'100',0.10000000000000000555);
+INSERT INTO attribute VALUES(20,'HitChance','Hit Chance',1,'100',1.0);
+INSERT INTO attribute VALUES(21,'Evasion','Evasion',1,'0',0.25);
+INSERT INTO attribute VALUES(22,'Stunned','Stunned',0,'0',1.0);
+INSERT INTO attribute VALUES(23,'ResistType','Resist Type',1,'0',1.0);
+INSERT INTO attribute VALUES(24,'Resist','Resist',1,'0',0.25);
+INSERT INTO attribute VALUES(25,'Experience','Experience',1,'100',1.0);
+INSERT INTO attribute VALUES(26,'Gold','Gold',1,'100',1.0);
+INSERT INTO attribute VALUES(27,'GoldStolen','Gold Stolen',1,'100',1.0);
+INSERT INTO attribute VALUES(28,'Invisible','Invisible',0,'100',1.0);
+INSERT INTO attribute VALUES(29,'BeltSize','Belt Size',1,'100',1.0);
+INSERT INTO attribute VALUES(30,'SkillBarSize','Skill Bar Size',1,'100',1.0);
+INSERT INTO attribute VALUES(31,'SkillPoint','Skill Point',1,'100',1.0);
+INSERT INTO attribute VALUES(32,'AllSkills','All Skills',1,'100',1.0);
+INSERT INTO attribute VALUES(33,'Miss','Miss',0,'100',1.0);
+INSERT INTO attribute VALUES(34,'Crit','Crit',0,'100',1.0);
+INSERT INTO attribute VALUES(35,'Flee','Flee',0,'100',1.0);
+INSERT INTO attribute VALUES(36,'Battle','Battle',1,'100',1.0);
+INSERT INTO attribute VALUES(37,'Hunt','Hunt',2,'100',1.0);
+INSERT INTO attribute VALUES(38,'BountyHunt','Bounty Hunt',2,'100',1.0);
+INSERT INTO attribute VALUES(39,'Teleport','Teleport',2,'100',1.0);
+INSERT INTO attribute VALUES(40,'Light','Light',1,'100',1.0);
+INSERT INTO attribute VALUES(41,'Clock','Clock',2,'100',1.0);
+INSERT INTO attribute VALUES(42,'ManaReductionRatio','Mana Reduction Ratio',2,'100',1.0);
+INSERT INTO attribute VALUES(43,'DamageType','Damage Type',1,'100',1.0);
+INSERT INTO attribute VALUES(44,'PhysicalPower','Physical Power',1,'100',1.0);
+INSERT INTO attribute VALUES(45,'FirePower','Fire Power',1,'100',1.0);
+INSERT INTO attribute VALUES(46,'ColdPower','Cold Power',1,'100',1.0);
+INSERT INTO attribute VALUES(47,'LightningPower','Lightning Power',1,'100',1.0);
+INSERT INTO attribute VALUES(48,'BleedPower','Bleed Power',1,'100',1.0);
+INSERT INTO attribute VALUES(49,'PoisonPower','Poison Power',1,'100',1.0);
+INSERT INTO attribute VALUES(50,'PetPower','Pet Power',1,'100',1.0);
+INSERT INTO attribute VALUES(51,'HealPower','Heal Power',1,'100',1.0);
+INSERT INTO attribute VALUES(52,'ManaPower','Mana Power',1,'100',1.0);
+INSERT INTO attribute VALUES(53,'Respec','Respec',0,'100',1.0);
+INSERT INTO attribute VALUES(54,'Corpse','Corpse',1,'100',1.0);
+INSERT INTO attribute VALUES(55,'SummonLimit','Summon Limit',1,'100',1.0);
+INSERT INTO attribute VALUES(56,'Rebirth','Rebirth',1,'100',1.0);
+INSERT INTO attribute VALUES(57,'DiagonalMovement','Diagonal Movement',0,'100',1.0);
+INSERT INTO attribute VALUES(58,'MapChange','Map Change',1,'100',1.0);
+INSERT INTO attribute VALUES(59,'ClearBuff','Clear Buff',3,'100',1.0);
+INSERT INTO attribute VALUES(60,'GoldBonus','Gold Bonus',1,'100',1.0);
+INSERT INTO attribute VALUES(61,'ExpBonus','Exp Bonus',1,'100',1.0);
+INSERT INTO attribute VALUES(62,'SummonBuff','Summon Buff',3,'100',1.0);
+INSERT INTO attribute VALUES(63,'LavaProtection','Lava Protection',0,'100',1.0);
+INSERT INTO attribute VALUES(64,'Difficulty','Difficulty',1,'100',1.0);
+INSERT INTO attribute VALUES(65,'Cooldown','Cooldown',2,'100',0.5);
+INSERT INTO attribute VALUES(66,'RebirthWealth','Rebirth Wealth',1,'100',1.0);
+INSERT INTO attribute VALUES(67,'RebirthWisdom','Rebirth Wisdom',1,'100',1.0);
+INSERT INTO attribute VALUES(68,'RebirthKnowledge','Rebirth Knowledge',1,'100',1.0);
+INSERT INTO attribute VALUES(69,'RebirthPower','Rebirth Power',1,'100',1.0);
+INSERT INTO attribute VALUES(70,'RebirthGirth','Rebirth Girth',1,'100',1.0);
+INSERT INTO attribute VALUES(71,'RebirthProficiency','Rebirth Proficiency',1,'100',1.0);
+INSERT INTO attribute VALUES(72,'RebirthInsight','Rebirth Insight',1,'100',1.0);
+INSERT INTO attribute VALUES(73,'RebirthPassage','Rebirth Passage',1,'100',1.0);
+INSERT INTO attribute VALUES(74,'SpellDamage','Spell Damage',1,'100',1.0);
+INSERT INTO attribute VALUES(75,'MinigameSpeed','Minigame Speed',1,'100',1.0);
+INSERT INTO attribute VALUES(76,'ConsumeChance','Consume Chance',1,'100',1.0);
+INSERT INTO attribute VALUES(77,'AllResistance','All Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(78,'PhysicalResistance','Physical Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(79,'FireResistance','Fire Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(80,'ColdResistance','Cold Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(81,'LightningResistance','Lightning Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(82,'PoisonResistance','Poison Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(83,'BleedResistance','Bleed Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(84,'StunResistance','Stun Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(85,'ElementalResistance','Elemental Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(86,'ShieldDamage','Shield Damage',1,'100',1.0);
 CREATE TABLE IF NOT EXISTS "stattype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,

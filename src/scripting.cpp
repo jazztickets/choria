@@ -562,9 +562,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->ManaReductionRatio);
 	lua_setfield(LuaState, -2, "ManaReductionRatio");
 
-	for(const auto &Attribute : _Stats::AttributeData) {
-		_AttributeStorage &AttributeStorage = Object->Character->Attributes[Attribute.Name];
-		switch(Attribute.Type) {
+	for(const auto &Attribute : Object->Stats->Attributes) {
+		_AttributeStorage &AttributeStorage = Object->Character->Attributes[Attribute.second.Name];
+		switch(Attribute.second.Type) {
 			case StatValueType::BOOLEAN:
 				lua_pushboolean(LuaState, AttributeStorage.Integer);
 			break;
@@ -581,7 +581,7 @@ void _Scripting::PushObject(_Object *Object) {
 					lua_pushnil(LuaState);
 			break;
 		}
-		lua_setfield(LuaState, -2, Attribute.Name.c_str());
+		lua_setfield(LuaState, -2, Attribute.second.Name.c_str());
 	}
 
 	lua_pushinteger(LuaState, Object->Character->ShieldDamage);

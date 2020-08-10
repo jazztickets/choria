@@ -168,7 +168,8 @@ struct _LightType {
 	float Radius;
 };
 
-struct _AttributeMeta {
+struct _Attribute {
+	uint8_t ID;
 	std::string Name;
 	std::string Label;
 	StatValueType Type;
@@ -179,8 +180,6 @@ struct _AttributeMeta {
 class _Stats {
 
 	public:
-
-		static std::vector<_AttributeMeta> AttributeData;
 
 		_Stats(bool Headless=false);
 		~_Stats();
@@ -208,6 +207,8 @@ class _Stats {
 		std::vector<_EventName> EventNames;
 		std::vector<_Level> Levels;
 
+		std::vector<std::string> AttributeRank;
+		std::unordered_map<std::string, _Attribute> Attributes;
 		std::unordered_map<uint32_t, _MapStat> Maps;
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
@@ -233,6 +234,7 @@ class _Stats {
 
 	private:
 
+		void LoadAttributes();
 		void LoadMaps();
 		void LoadEvents();
 		void LoadLevels();

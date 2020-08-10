@@ -339,8 +339,8 @@ void _Character::CalculateStats() {
 	_Scripting *Scripting = Object->Scripting;
 
 	// Set default values
-	for(const auto &Attribute : _Stats::AttributeData)
-		Attributes[Attribute.Name].Integer = Attribute.Default.Integer;
+	for(const auto &Attribute : Object->Stats->Attributes)
+		Attributes[Attribute.second.Name].Integer = Attribute.second.Default.Integer;
 
 	// Get base stats
 	CalculateLevelStats();
