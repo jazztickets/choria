@@ -1,3 +1,54 @@
+-- Base Attack --
+
+Base_Attack = {
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetPierce = function(self, Source)
+		return Source.Pierce
+	end,
+
+	GetInfo = function(self, Item)
+		return ""
+	end,
+
+	GetDamageType = function(self, Object)
+		Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+		if Weapon ~= nil then
+			return Weapon.DamageType
+		end
+
+		return self.Item.DamageType
+	end,
+
+	GenerateDamage = function(self, Level, Source)
+		Damage = Source.GenerateDamage()
+
+		return Damage
+	end,
+
+	Proc = function(self, Roll, Level, Duration, Source, Target, Result)
+
+		return false
+	end,
+
+	Use = function(self, Level, Duration, Source, Target, Result)
+		Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+		if Hit then
+			self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
+			WeaponProc(Source, Target, Result, false)
+		end
+
+		return Result
+	end
+}
+
 -- MONSTER SKILLS --
 
 -- Monster attack --

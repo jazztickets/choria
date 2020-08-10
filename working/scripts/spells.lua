@@ -1,3 +1,146 @@
+-- Base Spell --
+
+Base_Spell = {
+	DamageType = 0,
+	ManaCostBase = 0,
+	DamageBase = 0,
+	DamagePerLevel = 0,
+	DamageScale = 0,
+	Duration = 0,
+	DurationPerLevel = 0,
+	CostPerLevel = 0,
+	CostScale = 0.15,
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetDamage = function(self, Source, Level)
+		return math.floor((self.DamageBase + Level * self.DamagePerLevel + Level * Level * self.DamageScale) * self:GetDamagePower(Source, Level))
+	end,
+
+	GetDuration = function(self, Level)
+		return math.floor(10 * (self.Duration + self.DurationPerLevel * (Level - 1))) / 10.0
+	end,
+
+	GetDamagePower = function(self, Source, Level)
+		return Source.SpellDamage * 0.01
+	end,
+
+	GetManaCost = function(self, Level)
+		return math.floor(math.max(self.ManaCostBase + Level * self.CostPerLevel + Level * Level * self.CostScale, 0))
+	end,
+
+	ApplyCost = function(self, Source, Level, Result)
+		Result.Source.Mana = -self:GetManaCost(Level)
+
+		return Result
+	end,
+
+	CanUse = function(self, Level, Source, Target)
+		if Source.Mana >= self:GetManaCost(Level) then
+			return true
+		end
+
+		return false
+	end,
+
+	Proc = function(self, Roll, Level, Duration, Source, Target, Result)
+
+		return false
+	end,
+
+	Use = function(self, Level, Duration, Source, Target, Result)
+		Change = {}
+		Change.Damage = self:GetDamage(Source, Level)
+		Change.Damage = math.floor(Change.Damage * Target.GetDamageReduction(self.Item.DamageType))
+		Change.Damage = math.max(Change.Damage, 0)
+
+		Result.Target.DamageType = self.Item.DamageType
+		Result.Target.Health = -Change.Damage
+
+		self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
+		WeaponProc(Source, Target, Result, true)
+
+		return Result
+	end
+}
+
+-- Base Summon Spell --
+
+Base_SummonSpell = {
+	ManaCostBase = 0,
+	CostPerLevel = 0,
+	DamageScale = 0,
+	SkillLevel = 0,
+	SkillLevelPerLevel = 0,
+	SkillLevelPower = 0.75,
+	SpecialChance = 0,
+	SpecialChancePerLevel = 0,
+	Duration = -1,
+	DurationPerLevel = 0,
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetSpecialChance = function(self, Level)
+		return math.floor(self.SpecialChance + (Level - 1) * self.SpecialChancePerLevel)
+	end,
+
+	GetManaCost = function(self, Level)
+		return math.max(self.ManaCostBase + Level * self.CostPerLevel, 0)
+	end,
+
+	ApplyCost = function(self, Source, Level, Result)
+		Result.Source.Mana = -self:GetManaCost(Level)
+
+		return Result
+	end,
+
+	CanUse = function(self, Level, Source, Target)
+		if Source.Mana >= self:GetManaCost(Level) then
+			return true
+		end
+
+		return false
+	end,
+
+	GetHealth = function(self, Source, Level)
+		return math.floor((self.BaseHealth + (Level - 1) * self.HealthPerLevel) * Source.PetPower * 0.01)
+	end,
+
+	GetMana = function(self, Source, Level)
+		return math.floor((self.BaseMana + (Level - 1) * self.ManaPerLevel) * Source.PetPower * 0.01)
+	end,
+
+	GetArmor = function(self, Source, Level)
+		return math.floor((self.BaseArmor + (Level - 1) * self.ArmorPerLevel) * Source.PetPower * 0.01)
+	end,
+
+	GetLimit = function(self, Source, Level)
+		return math.floor(self.Limit + (Level) * self.LimitPerLevel + Source.SummonLimit)
+	end,
+
+	GetSkillLevel = function(self, Source, Level)
+		return math.max(math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower * 0.01 * self.SkillLevelPower), 1)
+	end,
+
+	GetDuration = function(self, Source, Level)
+		return math.floor(self.Duration + (Level) * self.DurationPerLevel)
+	end,
+
+	GetDamage = function(self, Source, Level)
+		AddedDamage = math.floor((Level - 1) * self.DamagePerLevel) + Level * Level * self.DamageScale
+		return math.floor((self.BaseMinDamage + AddedDamage) * Source.PetPower * 0.01), math.floor((self.BaseMaxDamage + AddedDamage) * Source.PetPower * 0.01)
+	end
+}
 
 -- Rejuvenation --
 
