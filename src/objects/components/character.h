@@ -237,7 +237,6 @@ class _Character {
 		int MinDamage;
 		int MaxDamage;
 		int EquipmentBattleSpeed;
-		float CooldownMultiplier;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;
 		std::unordered_map<uint32_t, _SetData> Sets;

@@ -1559,8 +1559,8 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	const _Item *ItemUsed = ActionResult.ActionUsed.Item;
 	if(ItemUsed) {
 		if(SourceObject && !SkillUnlocked && ItemUsed->Cooldown > 0.0) {
-			SourceObject->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown * SourceObject->Character->CooldownMultiplier;
-			SourceObject->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown * SourceObject->Character->CooldownMultiplier;
+			SourceObject->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown * SourceObject->Character->Attributes["Cooldown"].Integer * 0.01f;
+			SourceObject->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown * SourceObject->Character->Attributes["Cooldown"].Integer * 0.01f;
 		}
 
 		// Set texture

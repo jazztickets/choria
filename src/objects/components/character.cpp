@@ -324,7 +324,6 @@ void _Character::CalculateStats() {
 
 	Object->Light = 0;
 	Invisible = 0;
-	CooldownMultiplier = 1.0f;
 	Attributes["Difficulty"].Integer += EternalPain + Rebirths;
 	RebirthTier += RebirthPower;
 	Resistances.clear();
@@ -410,7 +409,7 @@ void _Character::CalculateStats() {
 		Attributes["Evasion"].Integer += Item->GetEvasion(Upgrades);
 		Attributes["AllSkills"].Integer += Item->GetAllSkills(Upgrades);
 		Attributes["SpellDamage"].Integer += Item->GetSpellDamage(Upgrades);
-		CooldownMultiplier += Item->GetCooldownReduction(Upgrades) / 100.0f;
+		Attributes["Cooldown"].Integer += Item->GetCooldownReduction(Upgrades);
 		Attributes["ExperienceBonus"].Integer += Item->GetExperienceBonus(Upgrades);
 		Attributes["GoldBonus"].Integer += Item->GetGoldBonus(Upgrades);
 
@@ -557,8 +556,7 @@ void _Character::CalculateStats() {
 	Attributes["Evasion"].Integer = std::clamp(Attributes["Evasion"].Integer, 0, GAME_MAX_EVASION);
 	Attributes["MoveSpeed"].Integer = std::max(Attributes["MoveSpeed"].Integer, PLAYER_MIN_MOVESPEED);
 	Attributes["BattleSpeed"].Integer = std::max(Attributes["BattleSpeed"].Integer, BATTLE_MIN_SPEED);
-	if(CooldownMultiplier <= 0.0f)
-		CooldownMultiplier = 0.0f;
+	Attributes["Cooldown"].Integer = std::max(Attributes["Cooldown"].Integer, 0);
 
 	MinDamage = std::max(MinDamage, 0);
 	MaxDamage = std::max(MaxDamage, 0);
