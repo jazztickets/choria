@@ -377,6 +377,7 @@ void _Scripting::PushObject(_Object *Object) {
 				lua_pushboolean(LuaState, AttributeStorage.Integer);
 			break;
 			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
 				lua_pushinteger(LuaState, AttributeStorage.Integer);
 			break;
 			case StatValueType::FLOAT:

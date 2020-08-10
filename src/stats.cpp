@@ -877,10 +877,13 @@ void _Stats::LoadAttributes() {
 		Attribute.Name = Database->GetString("name");
 		Attribute.Label = Database->GetString("label");
 		Attribute.Type = (StatValueType)Database->GetInt<int>("valuetype_id");
+		Attribute.UpdateType = (StatUpdateType)Database->GetInt<int>("updatetype_id");
 		Attribute.UpgradeScale = Database->GetReal("upgrade_scale");
+		Attribute.Show = Database->GetInt<int>("show");
 		switch(Attribute.Type) {
 			case StatValueType::BOOLEAN:
 			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
 				Attribute.Default.Integer = Database->GetInt<int>("default");
 			break;
 			case StatValueType::FLOAT:

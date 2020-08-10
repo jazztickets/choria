@@ -37,6 +37,13 @@ enum class StatValueType : int {
 	INTEGER,
 	FLOAT,
 	POINTER,
+	PERCENT,
+};
+
+enum class StatUpdateType : int {
+	ADD,
+	SET,
+	MULTIPLICATIVE,
 };
 
 union _Value {

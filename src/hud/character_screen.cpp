@@ -65,10 +65,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 
 	// Display attributes
 	for(const auto &AttributeName : HUD->Player->Stats->AttributeRank) {
-		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
 		const _Attribute &Attribute = HUD->Player->Stats->Attributes.at(AttributeName);
+		if(!Attribute.Show)
+			continue;
+
+		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
 		if(AttributeStorage.Integer != Attribute.Default.Integer) {
-			Buffer << AttributeStorage.Integer << "%";
+			Buffer << AttributeStorage.Integer;
+			if(Attribute.Type == StatValueType::PERCENT)
+				Buffer << "%";
 			Font->DrawText(Attribute.Label, DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 			Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 			Buffer.str("");
@@ -76,6 +81,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 		}
 	}
 
+	// Separator
 	if(HUD->Player->Character->Resistances.size())
 		DrawPosition.y += SpacingY;
 

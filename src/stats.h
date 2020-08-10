@@ -173,8 +173,10 @@ struct _Attribute {
 	std::string Name;
 	std::string Label;
 	StatValueType Type;
+	StatUpdateType UpdateType;
 	_Value Default;
 	float UpgradeScale;
+	bool Show;
 };
 
 // Classes
