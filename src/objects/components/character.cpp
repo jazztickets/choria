@@ -101,37 +101,6 @@ _Character::_Character(_Object *Object) :
 	BaseSpellDamage(100),
 	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
 
-	Health(1),
-	MaxHealth(1),
-	Mana(0),
-	MaxMana(0),
-	HealthRegen(0),
-	ManaRegen(0),
-	ExperienceMultiplier(1.0f),
-	GoldMultiplier(1.0f),
-	MaxHealthMultiplier(1.0f),
-	MaxManaMultiplier(1.0f),
-	ManaReductionRatio(0.0f),
-	HealthUpdateMultiplier(0.0f),
-	ShieldDamage(100),
-	MinDamage(0),
-	MaxDamage(0),
-	Armor(0),
-	DamageBlock(0),
-	Pierce(0),
-	MoveSpeed(100),
-	BattleSpeed(0),
-	EquipmentBattleSpeed(0),
-	Evasion(0),
-	SpellDamage(100),
-	HitChance(100),
-	AllSkills(0),
-	SummonLimit(0),
-	Difficulty(0),
-	MinigameSpeed(1),
-	ConsumeChance(100),
-	CooldownMultiplier(0),
-
 	SkillPoints(0),
 	SkillPointsUnlocked(0),
 	SkillPointsUsed(0),
@@ -401,18 +370,18 @@ void _Character::CalculateStats() {
 	}
 
 	// Eternal Fortitude
-	MaxHealthMultiplier = 1.0f + EternalFortitude / 100.0f;
+	MaxHealthMultiplier = 100 + EternalFortitude;
 	Attributes["HealPower"].Integer += EternalFortitude;
 
 	// Eternal Spirit
-	MaxManaMultiplier = 1.0f + EternalSpirit / 100.0f;
+	MaxManaMultiplier = 100 + EternalSpirit;
 	Attributes["ManaPower"].Integer += EternalSpirit;
 
 	// Eternal Wisdom
-	ExperienceMultiplier = 1.0f + EternalWisdom / 100.0f;
+	ExperienceMultiplier = 100 + EternalWisdom;
 
 	// Eternal Wealth
-	GoldMultiplier = 1.0f + EternalWealth / 100.0f;
+	GoldMultiplier = 100 + EternalWealth;
 
 	// Eternal Alacrity
 	BattleSpeed = 100 + EternalAlacrity;
@@ -460,8 +429,8 @@ void _Character::CalculateStats() {
 		AllSkills += Item->GetAllSkills(Upgrades);
 		SpellDamage += Item->GetSpellDamage(Upgrades);
 		CooldownMultiplier += Item->GetCooldownReduction(Upgrades) / 100.0f;
-		GoldMultiplier += Item->GetGoldBonus(Upgrades) / 100.0f;
-		ExperienceMultiplier += Item->GetExpBonus(Upgrades) / 100.0f;
+		ExperienceMultiplier += Item->GetExpBonus(Upgrades);
+		GoldMultiplier += Item->GetGoldBonus(Upgrades);
 
 		// Handle all resist
 		if(Item->ResistanceTypeID == 1) {
@@ -619,8 +588,8 @@ void _Character::CalculateStats() {
 	ManaReductionRatio = std::clamp(1.0f - ManaReductionRatio, 0.0f, 1.0f);
 	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
 
-	MaxHealth *= MaxHealthMultiplier;
-	MaxMana *= MaxManaMultiplier;
+	MaxHealth *= MaxHealthMultiplier * 0.01f;
+	MaxMana *= MaxManaMultiplier * 0.01f;
 	Health = std::min(Health, MaxHealth);
 	Mana = std::min(Mana, MaxMana);
 	if(HealthRegen > 0)

@@ -905,6 +905,7 @@ void _Stats::LoadAttributes() {
 		}
 
 		Attributes[Attribute.Name] = Attribute;
+		AttributeRank.push_back(Attribute.Name);
 	}
 	Database->CloseQuery();
 }

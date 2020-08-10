@@ -236,10 +236,10 @@ class _Character {
 		int MaxMana;
 		int HealthRegen;
 		int ManaRegen;
-		float ExperienceMultiplier;
-		float GoldMultiplier;
-		float MaxHealthMultiplier;
-		float MaxManaMultiplier;
+		int ExperienceMultiplier;
+		int GoldMultiplier;
+		int MaxHealthMultiplier;
+		int MaxManaMultiplier;
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
 		int ShieldDamage;

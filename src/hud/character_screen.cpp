@@ -87,8 +87,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Experience
-	if(HUD->Player->Character->ExperienceMultiplier != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->ExperienceMultiplier * 100) << "%";
+	if(HUD->Player->Character->ExperienceMultiplier != 100) {
+		Buffer << HUD->Player->Character->ExperienceMultiplier << "%";
 		Font->DrawText("Experience Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -96,8 +96,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Gold
-	if(HUD->Player->Character->GoldMultiplier != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->GoldMultiplier * 100) << "%";
+	if(HUD->Player->Character->GoldMultiplier != 100) {
+		Buffer << HUD->Player->Character->GoldMultiplier << "%";
 		Font->DrawText("Gold Bonus", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -105,8 +105,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Max Health
-	if(HUD->Player->Character->MaxHealthMultiplier != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->MaxHealthMultiplier * 100) << "%";
+	if(HUD->Player->Character->MaxHealthMultiplier != 100) {
+		Buffer << HUD->Player->Character->MaxHealthMultiplier << "%";
 		Font->DrawText("Max Health", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -114,8 +114,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Max Mana
-	if(HUD->Player->Character->MaxManaMultiplier != 1.0f) {
-		Buffer << (int)(HUD->Player->Character->MaxManaMultiplier * 100) << "%";
+	if(HUD->Player->Character->MaxManaMultiplier != 100) {
+		Buffer << HUD->Player->Character->MaxManaMultiplier << "%";
 		Font->DrawText("Max Mana", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
