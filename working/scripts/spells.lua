@@ -7,6 +7,7 @@ Base_Spell = {
 	DamagePerLevel = 0,
 	DamageScale = 0,
 	DamagePower = 2,
+	DamageRange = 0,
 	Duration = 0,
 	DurationPerLevel = 0,
 	CostPerLevel = 0,
@@ -19,8 +20,32 @@ Base_Spell = {
 		return Object
 	end,
 
+	GenerateDamage = function(self, Source, Level)
+		return Random.GetInt(self:GetMinDamage(Source, Level), self:GetMaxDamage(Source, Level))
+	end,
+
 	GetDamage = function(self, Source, Level)
 		return math.floor((self.DamageBase + (Level - 1) * self.DamagePerLevel + math.pow(Level, self.DamagePower) * self.DamageScale) * self:GetDamagePower(Source, Level))
+	end,
+
+	GetMinDamage = function(self, Source, Level)
+		Damage = self:GetDamage(Source, Level)
+
+		return math.max(Damage - math.floor(Damage * self.DamageRange), 0)
+	end,
+
+	GetMaxDamage = function(self, Source, Level)
+		Damage = self:GetDamage(Source, Level)
+
+		return Damage + math.floor(Damage * self.DamageRange)
+	end,
+
+	GetDamageText = function(self, Source, Item)
+		if Item.MoreInfo == true then
+			return "[c green]" .. self:GetDamage(Source, Item.Level) .. " [c green]avg[c white]"
+		else
+			return "[c green]" .. self:GetMinDamage(Source, Item.Level) .. "-" .. self:GetMaxDamage(Source, Item.Level) .. "[c white]"
+		end
 	end,
 
 	GetDuration = function(self, Level)
@@ -56,7 +81,7 @@ Base_Spell = {
 
 	Use = function(self, Level, Duration, Source, Target, Result)
 		Change = {}
-		Change.Damage = self:GetDamage(Source, Level)
+		Change.Damage = self:GenerateDamage(Source, Level)
 		Change.Damage = math.floor(Change.Damage * Target.GetDamageReduction(self.Item.DamageType))
 		Change.Damage = math.max(Change.Damage, 0)
 
@@ -234,10 +259,11 @@ end
 -- Spark --
 
 Skill_Spark = Base_Spell:New()
-Skill_Spark.DamageBase = 30
+Skill_Spark.DamageBase = 40
 Skill_Spark.DamagePerLevel = 25
 Skill_Spark.DamageScale = 0.025
 Skill_Spark.DamagePower = 3
+Skill_Spark.DamageRange = 0.3
 Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 Skill_Spark.Duration = 1.0
@@ -259,7 +285,7 @@ function Skill_Spark.GetChance(self, Level)
 end
 
 function Skill_Spark.GetInfo(self, Source, Item)
-	return "Shock a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] lightning damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Shock a target for " .. self:GetDamageText(Source, Item) .. " lightning damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Spark.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -280,10 +306,11 @@ end
 -- Icicle --
 
 Skill_Icicle = Base_Spell:New()
-Skill_Icicle.DamageBase = 25
+Skill_Icicle.DamageBase = 35
 Skill_Icicle.DamagePerLevel = 20
 Skill_Icicle.DamageScale = 0.023
 Skill_Icicle.DamagePower = 3
+Skill_Icicle.DamageRange = 0.1
 Skill_Icicle.CostPerLevel = 4
 Skill_Icicle.Slow = 30
 Skill_Icicle.SlowPerLevel = 0.25
@@ -301,7 +328,7 @@ function Skill_Icicle.GetSlow(self, Level)
 end
 
 function Skill_Icicle.GetInfo(self, Source, Item)
-	return "Pierce a target for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage\nSlows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Pierce a target for " .. self:GetDamageText(Source, Item) .. " cold damage\nSlows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -363,6 +390,7 @@ Skill_FireBlast = Base_Spell:New()
 Skill_FireBlast.DamageBase = 150
 Skill_FireBlast.DamagePerLevel = 30
 Skill_FireBlast.DamageScale = 2
+Skill_FireBlast.DamageRange = 0.2
 Skill_FireBlast.BurnLevel = 10
 Skill_FireBlast.BurnLevelPerLevel = 5
 Skill_FireBlast.CostPerLevel = 20
@@ -388,7 +416,7 @@ function Skill_FireBlast.GetBurnDamage(self, Source, Level)
 end
 
 function Skill_FireBlast.GetInfo(self, Source, Item)
-	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage, then igniting them for [c green]" .. self:GetBurnDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Blast [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage, then igniting them for [c green]" .. self:GetBurnDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self, Level)
@@ -409,6 +437,7 @@ Skill_IceNova = Base_Spell:New()
 Skill_IceNova.DamageBase = 125
 Skill_IceNova.DamagePerLevel = 25
 Skill_IceNova.DamageScale = 2
+Skill_IceNova.DamageRange = 0.15
 Skill_IceNova.CostPerLevel = 20
 Skill_IceNova.ManaCostBase = 180 - Skill_IceNova.CostPerLevel
 Skill_IceNova.BaseTargets = 4
@@ -431,7 +460,7 @@ function Skill_IceNova.GetSlow(self, Level)
 end
 
 function Skill_IceNova.GetInfo(self, Source, Item)
-	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] cold damage that slows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Summon an icy explosion, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] cold damage that slows by [c green]" .. self:GetSlow(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_IceNova.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -452,6 +481,7 @@ Skill_ChainLightning = Base_Spell:New()
 Skill_ChainLightning.DamageBase = 170
 Skill_ChainLightning.DamagePerLevel = 20
 Skill_ChainLightning.DamageScale = 2.25
+Skill_ChainLightning.DamageRange = 0.35
 Skill_ChainLightning.CostPerLevel = 18
 Skill_ChainLightning.ManaCostBase = 190 - Skill_ChainLightning.CostPerLevel
 Skill_ChainLightning.BaseTargets = 4
@@ -478,7 +508,7 @@ function Skill_ChainLightning.GetChance(self, Level)
 end
 
 function Skill_ChainLightning.GetInfo(self, Source, Item)
-	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. "[c white] MP"
+	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. "[c white] MP"
 end
 
 function Skill_ChainLightning.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -502,6 +532,7 @@ Skill_Rupture = Base_Spell:New()
 Skill_Rupture.DamageBase = 130
 Skill_Rupture.DamagePerLevel = 30
 Skill_Rupture.DamageScale = 2.5
+Skill_Rupture.DamageRange = 0.2
 Skill_Rupture.Level = 20
 Skill_Rupture.LevelPerLevel = 10
 Skill_Rupture.CostPerLevel = 30
@@ -548,7 +579,7 @@ function Skill_Rupture.CanUse(self, Level, Source, Target)
 end
 
 function Skill_Rupture.GetInfo(self, Source, Item)
-	return "Explode a corpse, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies that deals [c green]" .. self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Explode a corpse, dealing [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies that deals [c green]" .. self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Rupture.Proc(self, Roll, Level, Duration, Source, Target, Result)

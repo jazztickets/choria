@@ -47,9 +47,9 @@ end
 Script_Fall = { }
 
 function Script_Fall.Activate(self, Level, Object, Change)
-	Change.Health = -1000
+	Change.Health = -5000
 	Change.Buff = Buff_Bleeding.Pointer
-	Change.BuffLevel = 100
+	Change.BuffLevel = 1000
 	Change.BuffDuration = 10
 	Change.MapChange = Level
 

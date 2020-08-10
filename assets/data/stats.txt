@@ -2709,7 +2709,7 @@ INSERT INTO item VALUES(38,1,0,1,1,0,0,0,'Portal','textures/skills/portal.png','
 INSERT INTO item VALUES(39,1,0,2,2,0,0,0,'Raise Dead','textures/skills/raise_dead.png','','Skill_RaiseDead','',3,300,0,0,50,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(40,1,0,0,0,0,0,0,'Pet Mastery','textures/skills/pet_mastery.png','','Skill_PetMastery','',1,1500,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(41,1,5,4,2,0,0,0,'Chain Lightning','textures/skills/chain_lightning.png','','Skill_ChainLightning','',3,750,0,0,50,0,0.0,6.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(42,1,6,9,2,0,0,0,'Rupture','textures/skills/rupture.png','','Skill_Rupture','',3,1150,0,0,50,0,0.0,6.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(42,1,6,9,2,0,0,0,'Rupture','textures/skills/rupture.png','','Skill_Rupture','',3,1150,0,0,50,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(43,1,0,5,3,0,0,0,'Sanctuary','textures/skills/sanctuary.png','','Skill_Sanctuary','',3,1800,0,0,50,0,0.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(44,1,0,4,2,0,0,0,'Flay','textures/skills/flay.png','','Skill_Flay','',3,2500,0,0,50,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(45,1,6,2,2,0,0,0,'Poison Touch','textures/skills/poison_touch.png','','Skill_PoisonTouch','',3,225,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
