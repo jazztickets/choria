@@ -104,7 +104,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 			}
 
 			// Roll to consume item
-			if(ConsumeRoll <= Source->Character->ConsumeChance) {
+			if(ConsumeRoll <= Source->Character->Attributes["ConsumeChance"].Integer) {
 				Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 				DecrementItem = true;
 			}

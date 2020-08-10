@@ -239,7 +239,7 @@ void _Character::Update(double FrameTime) {
 // Update health
 void _Character::UpdateHealth(int &Value) {
 	if(Object->Server && Value > 0)
-		Value *= HealthUpdateMultiplier;
+		Value *= Attributes["HealthUpdateMultiplier"].Integer * 0.01f;
 
 	Health += Value;
 
@@ -324,7 +324,6 @@ void _Character::CalculateStats() {
 	Attributes["SpellDamage"].Integer = BaseSpellDamage;
 	HealthRegen = 0;
 	ManaRegen = 0;
-	HealthUpdateMultiplier = 1.0f;
 	ManaReductionRatio = 1.0f;
 	Pierce = 0;
 	AllSkills = 0;
@@ -335,9 +334,7 @@ void _Character::CalculateStats() {
 	DiagonalMovement = false;
 	LavaProtection = false;
 	Stunned = 0;
-	SummonLimit = 0;
 	MinigameSpeed = 1;
-	ConsumeChance = 100;
 	Difficulty = EternalPain + Rebirths;
 	RebirthTier += RebirthPower;
 	Resistances.clear();
@@ -578,7 +575,7 @@ void _Character::CalculateStats() {
 	Pierce = std::max(Pierce, 0);
 	Attributes["DamageBlock"].Integer = std::max(Attributes["DamageBlock"].Integer, 0);
 	ManaReductionRatio = std::clamp(1.0f - ManaReductionRatio, 0.0f, 1.0f);
-	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
+	Attributes["ConsumeChance"].Integer = std::clamp(Attributes["ConsumeChance"].Integer, 0, 100);
 
 	MaxHealth *= MaxHealthMultiplier * 0.01f;
 	MaxMana *= MaxManaMultiplier * 0.01f;
@@ -637,7 +634,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat("ManaReductionRatio"))
 		ManaReductionRatio *= (1.0f - StatChange.Values["ManaReductionRatio"].Float);
 	if(StatChange.HasStat("HealthUpdateMultiplier"))
-		HealthUpdateMultiplier += StatChange.Values["HealthUpdateMultiplier"].Float;
+		Attributes["HealthUpdateMultiplier"].Integer += StatChange.Values["HealthUpdateMultiplier"].Integer;
 	if(StatChange.HasStat("AttackPower"))
 		Attributes["AttackPower"].Integer += StatChange.Values["AttackPower"].Integer;
 	if(StatChange.HasStat("PhysicalPower"))
@@ -659,7 +656,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat("ManaPower"))
 		Attributes["ManaPower"].Integer += StatChange.Values["ManaPower"].Integer;
 	if(StatChange.HasStat("SummonLimit"))
-		SummonLimit += StatChange.Values["SummonLimit"].Integer;
+		Attributes["SummonLimit"].Integer += StatChange.Values["SummonLimit"].Integer;
 	if(StatChange.HasStat("SpellDamage"))
 		Attributes["SpellDamage"].Integer += StatChange.Values["SpellDamage"].Integer;
 
@@ -742,7 +739,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		Difficulty += StatChange.Values["Difficulty"].Integer;
 
 	if(StatChange.HasStat("ConsumeChance"))
-		ConsumeChance += StatChange.Values["ConsumeChance"].Integer;
+		Attributes["ConsumeChance"].Integer += StatChange.Values["ConsumeChance"].Integer;
 
 	if(StatChange.HasStat("AllSkills"))
 		AllSkills += StatChange.Values["AllSkills"].Integer;

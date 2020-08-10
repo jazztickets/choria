@@ -241,17 +241,14 @@ class _Character {
 		int MaxHealthMultiplier;
 		int MaxManaMultiplier;
 		float ManaReductionRatio;
-		float HealthUpdateMultiplier;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;
 		int Pierce;
 		int EquipmentBattleSpeed;
 		int AllSkills;
-		int SummonLimit;
 		int Difficulty;
 		int MinigameSpeed;
-		int ConsumeChance;
 		float CooldownMultiplier;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;

@@ -509,9 +509,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushlightuserdata(LuaState, Object->Monster->Owner);
 	lua_setfield(LuaState, -2, "Owner");
 
-	lua_pushinteger(LuaState, Object->Character->SummonLimit);
-	lua_setfield(LuaState, -2, "SummonLimit");
-
 	lua_pushinteger(LuaState, Object->Character->LavaProtection);
 	lua_setfield(LuaState, -2, "LavaProtection");
 
