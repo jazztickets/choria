@@ -6,6 +6,7 @@ Base_Spell = {
 	DamageBase = 0,
 	DamagePerLevel = 0,
 	DamageScale = 0,
+	DamagePower = 2,
 	Duration = 0,
 	DurationPerLevel = 0,
 	CostPerLevel = 0,
@@ -19,7 +20,7 @@ Base_Spell = {
 	end,
 
 	GetDamage = function(self, Source, Level)
-		return math.floor((self.DamageBase + Level * self.DamagePerLevel + Level * Level * self.DamageScale) * self:GetDamagePower(Source, Level))
+		return math.floor((self.DamageBase + (Level - 1) * self.DamagePerLevel + math.pow(Level, self.DamagePower) * self.DamageScale) * self:GetDamagePower(Source, Level))
 	end,
 
 	GetDuration = function(self, Level)
@@ -233,9 +234,10 @@ end
 -- Spark --
 
 Skill_Spark = Base_Spell:New()
-Skill_Spark.DamageBase = 10
-Skill_Spark.DamagePerLevel = 30
-Skill_Spark.DamageScale = 0.75
+Skill_Spark.DamageBase = 30
+Skill_Spark.DamagePerLevel = 25
+Skill_Spark.DamageScale = 0.025
+Skill_Spark.DamagePower = 3
 Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 Skill_Spark.Duration = 1.0
@@ -279,8 +281,9 @@ end
 
 Skill_Icicle = Base_Spell:New()
 Skill_Icicle.DamageBase = 25
-Skill_Icicle.DamagePerLevel = 25
-Skill_Icicle.DamageScale = 0.70
+Skill_Icicle.DamagePerLevel = 20
+Skill_Icicle.DamageScale = 0.023
+Skill_Icicle.DamagePower = 3
 Skill_Icicle.CostPerLevel = 4
 Skill_Icicle.Slow = 30
 Skill_Icicle.SlowPerLevel = 0.25
@@ -357,7 +360,7 @@ end
 -- Fire Blast --
 
 Skill_FireBlast = Base_Spell:New()
-Skill_FireBlast.DamageBase = 120
+Skill_FireBlast.DamageBase = 150
 Skill_FireBlast.DamagePerLevel = 30
 Skill_FireBlast.DamageScale = 2
 Skill_FireBlast.BurnLevel = 10
@@ -403,7 +406,7 @@ end
 -- Ice Nova --
 
 Skill_IceNova = Base_Spell:New()
-Skill_IceNova.DamageBase = 100
+Skill_IceNova.DamageBase = 125
 Skill_IceNova.DamagePerLevel = 25
 Skill_IceNova.DamageScale = 2
 Skill_IceNova.CostPerLevel = 20
@@ -446,7 +449,7 @@ end
 -- Chain Lightning --
 
 Skill_ChainLightning = Base_Spell:New()
-Skill_ChainLightning.DamageBase = 150
+Skill_ChainLightning.DamageBase = 170
 Skill_ChainLightning.DamagePerLevel = 20
 Skill_ChainLightning.DamageScale = 2.25
 Skill_ChainLightning.CostPerLevel = 18
@@ -496,7 +499,7 @@ end
 -- Rupture --
 
 Skill_Rupture = Base_Spell:New()
-Skill_Rupture.DamageBase = 100
+Skill_Rupture.DamageBase = 130
 Skill_Rupture.DamagePerLevel = 30
 Skill_Rupture.DamageScale = 2.5
 Skill_Rupture.Level = 20
