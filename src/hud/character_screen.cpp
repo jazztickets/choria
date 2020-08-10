@@ -181,6 +181,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Energy Field
+	if(HUD->Player->Character->ManaReductionRatio != 1.0f) {
+		Buffer << (int)(HUD->Player->Character->ManaReductionRatio * 100) << "%";
+		Font->DrawText("Energy Field", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Cooldown reduction
 	if(HUD->Player->Character->CooldownMultiplier != 1.0f) {
 		Buffer << (int)(HUD->Player->Character->CooldownMultiplier * 100) << "%";
@@ -306,22 +315,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
-
-	// Resistances
-	bool HasResist = false;
-	for(auto &Resistance : HUD->Player->Character->Resistances) {
-		if(Resistance.first == 0 || Resistance.second == 0)
-			continue;
-
-		Buffer << Resistance.second << "%";
-		Font->DrawText(HUD->Player->Stats->DamageTypes.at(Resistance.first).Name + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-
-		HasResist = true;
-	}
-
 	// Rebirth Wealth
 	if(HUD->Player->Character->RebirthWealth > 0) {
 		Buffer << HUD->Player->Character->RebirthWealth << "%";
@@ -394,9 +387,26 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	// Separator
-	if(HasResist)
+	if(HUD->Player->Character->Resistances.size())
 		DrawPosition.y += SpacingY;
+
+	// Resistances
+	for(auto &Resistance : HUD->Player->Character->Resistances) {
+		if(Resistance.first == 0 || Resistance.second == 0)
+			continue;
+
+		Buffer << Resistance.second << "%";
+		Font->DrawText(HUD->Player->Stats->DamageTypes.at(Resistance.first).Name + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	if(HUD->Player->Character->Resistances.size())
+		DrawPosition.y += SpacingY;
+
+	// Separator
+	DrawPosition.y += SpacingY;
 
 	// Play time
 	_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->PlayTime);

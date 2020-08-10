@@ -363,7 +363,7 @@ void _Character::CalculateStats() {
 	HealthRegen = 0;
 	ManaRegen = 0;
 	HealthUpdateMultiplier = 1.0f;
-	ManaReductionRatio = 0.0f;
+	ManaReductionRatio = 1.0f;
 	AttackPower = 100;
 	HealPower = 100;
 	ManaPower = 100;
@@ -625,7 +625,7 @@ void _Character::CalculateStats() {
 	MaxDamage = std::max(MaxDamage, 0);
 	Pierce = std::max(Pierce, 0);
 	DamageBlock = std::max(DamageBlock, 0);
-	ManaReductionRatio = std::clamp(ManaReductionRatio, 0.0f, 1.0f);
+	ManaReductionRatio = std::clamp(1.0f - ManaReductionRatio, 0.0f, 1.0f);
 	ConsumeChance = std::clamp(ConsumeChance, 0, 100);
 
 	MaxHealth *= MaxHealthMultiplier;
@@ -683,7 +683,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		ManaRegen += StatChange.Values[StatType::MANAREGEN].Integer;
 
 	if(StatChange.HasStat(StatType::MANAREDUCTIONRATIO))
-		ManaReductionRatio += StatChange.Values[StatType::MANAREDUCTIONRATIO].Float;
+		ManaReductionRatio *= (1.0f - StatChange.Values[StatType::MANAREDUCTIONRATIO].Float);
 	if(StatChange.HasStat(StatType::HEALTHUPDATEMULTIPLIER))
 		HealthUpdateMultiplier += StatChange.Values[StatType::HEALTHUPDATEMULTIPLIER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
