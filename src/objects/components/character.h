@@ -59,12 +59,6 @@ struct _Cooldown {
 	double MaxDuration;
 };
 
-struct _AttributeMeta {
-	std::string Name;
-	std::string Label;
-	StatValueType ValueType;
-};
-
 struct _AttributeStorage {
 	union {
 		int Integer;
@@ -77,8 +71,6 @@ struct _AttributeStorage {
 class _Character {
 
 	public:
-
-		static std::vector<_AttributeMeta> AttributeData;
 
 		enum StatusImageType {
 			STATUS_NONE,
@@ -250,7 +242,6 @@ class _Character {
 		float MaxManaMultiplier;
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
-		int AttackPower;
 		int ShieldDamage;
 		int MinDamage;
 		int MaxDamage;

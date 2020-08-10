@@ -28,6 +28,19 @@
 #include <algorithm>
 #include <iostream>
 
+std::vector<_AttributeMeta> _Stats::AttributeData = {
+	{ "AttackPower",     "Attack Power",     StatValueType::INTEGER, { 100 } },
+	{ "PhysicalPower",   "Physical Power",   StatValueType::INTEGER, { 100 } },
+	{ "FirePower",       "Fire Power",       StatValueType::INTEGER, { 100 } },
+	{ "ColdPower",       "Cold Power",       StatValueType::INTEGER, { 100 } },
+	{ "LightningPower",  "Lightning Power",  StatValueType::INTEGER, { 100 } },
+	{ "BleedPower",      "Bleed Power",      StatValueType::INTEGER, { 100 } },
+	{ "PoisonPower",     "Poison Power",     StatValueType::INTEGER, { 100 } },
+	{ "PetPower",        "Pet Power",        StatValueType::INTEGER, { 100 } },
+	{ "HealPower",       "Heal Power",       StatValueType::INTEGER, { 100 } },
+	{ "ManaPower",       "Mana Power",       StatValueType::INTEGER, { 100 } },
+};
+
 // Constructor
 _Stats::_Stats(bool Headless) :
 	Headless(Headless) {

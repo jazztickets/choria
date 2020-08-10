@@ -208,16 +208,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	// Attack Power
-	if(HUD->Player->Character->AttackPower != 100) {
-		Buffer << HUD->Player->Character->AttackPower << "%";
-		Font->DrawText("Attack Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	for(const auto &Attribute : _Character::AttributeData) {
+	for(const auto &Attribute : _Stats::AttributeData) {
 		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[Attribute.Name];
 		if(AttributeStorage.Integer != 100) {
 			Buffer << AttributeStorage.Integer << "%";

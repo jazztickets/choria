@@ -168,10 +168,19 @@ struct _LightType {
 	float Radius;
 };
 
+struct _AttributeMeta {
+	std::string Name;
+	std::string Label;
+	StatValueType Type;
+	_Value Default;
+};
+
 // Classes
 class _Stats {
 
 	public:
+
+		static std::vector<_AttributeMeta> AttributeData;
 
 		_Stats(bool Headless=false);
 		~_Stats();

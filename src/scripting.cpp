@@ -562,12 +562,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Character->ManaReductionRatio);
 	lua_setfield(LuaState, -2, "ManaReductionRatio");
 
-	lua_pushinteger(LuaState, Object->Character->AttackPower);
-	lua_setfield(LuaState, -2, "AttackPower");
-
-	for(const auto &Attribute : _Character::AttributeData) {
+	for(const auto &Attribute : _Stats::AttributeData) {
 		_AttributeStorage &AttributeStorage = Object->Character->Attributes[Attribute.Name];
-		switch(Attribute.ValueType) {
+		switch(Attribute.Type) {
 			case StatValueType::BOOLEAN:
 				lua_pushboolean(LuaState, AttributeStorage.Integer);
 			break;

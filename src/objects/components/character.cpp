@@ -30,18 +30,6 @@
 #include <algorithm>
 #include <cmath>
 
-std::vector<_AttributeMeta> _Character::AttributeData = {
-	{ "PhysicalPower",   "Physical Power",   StatValueType::INTEGER },
-	{ "FirePower",       "Fire Power",       StatValueType::INTEGER },
-	{ "ColdPower",       "Cold Power",       StatValueType::INTEGER },
-	{ "LightningPower",  "Lightning Power",  StatValueType::INTEGER },
-	{ "BleedPower",      "Bleed Power",      StatValueType::INTEGER },
-	{ "PoisonPower",     "Poison Power",     StatValueType::INTEGER },
-	{ "PetPower",        "Pet Power",        StatValueType::INTEGER },
-	{ "HealPower",       "Heal Power",       StatValueType::INTEGER },
-	{ "ManaPower",       "Mana Power",       StatValueType::INTEGER },
-};
-
 // Constructor
 _Character::_Character(_Object *Object) :
 	Object(Object),
@@ -125,7 +113,6 @@ _Character::_Character(_Object *Object) :
 	MaxManaMultiplier(1.0f),
 	ManaReductionRatio(0.0f),
 	HealthUpdateMultiplier(0.0f),
-	AttackPower(100),
 	ShieldDamage(100),
 	MinDamage(0),
 	MaxDamage(0),
@@ -174,10 +161,6 @@ _Character::_Character(_Object *Object) :
 	SkillsOpen(false),
 
 	Bot(false) {
-
-	for(const auto &Attribute : AttributeData) {
-		Attributes[Attribute.Name] = { 0 };
-	}
 
 	ActionBar.resize(ACTIONBAR_MAX_SIZE);
 }
@@ -355,6 +338,10 @@ void _Character::UpdateStatus() {
 void _Character::CalculateStats() {
 	_Scripting *Scripting = Object->Scripting;
 
+	// Set default values
+	for(const auto &Attribute : _Stats::AttributeData)
+		Attributes[Attribute.Name].Integer = Attribute.Default.Integer;
+
 	// Get base stats
 	CalculateLevelStats();
 	SkillPoints += SkillPointsUnlocked;
@@ -371,7 +358,6 @@ void _Character::CalculateStats() {
 	ManaRegen = 0;
 	HealthUpdateMultiplier = 1.0f;
 	ManaReductionRatio = 1.0f;
-	AttackPower = 100;
 	MoveSpeed = 100;
 	Evasion = 0;
 	HitChance = 100;
@@ -398,13 +384,13 @@ void _Character::CalculateStats() {
 		Resistances[i] = BaseResistances[i];
 
 	// Eternal Strength
-	Attributes["PhysicalPower"].Integer = 100 + EternalStrength;
-	Attributes["FirePower"].Integer = 100 + EternalStrength;
-	Attributes["ColdPower"].Integer = 100 + EternalStrength;
-	Attributes["LightningPower"].Integer = 100 + EternalStrength;
-	Attributes["BleedPower"].Integer = 100 + EternalStrength;
-	Attributes["PoisonPower"].Integer = 100 + EternalStrength;
-	Attributes["PetPower"].Integer = 100 + EternalStrength;
+	Attributes["PhysicalPower"].Integer += EternalStrength;
+	Attributes["FirePower"].Integer += EternalStrength;
+	Attributes["ColdPower"].Integer += EternalStrength;
+	Attributes["LightningPower"].Integer += EternalStrength;
+	Attributes["BleedPower"].Integer += EternalStrength;
+	Attributes["PoisonPower"].Integer += EternalStrength;
+	Attributes["PetPower"].Integer += EternalStrength;
 
 	// Eternal Guard
 	if(EternalGuard) {
@@ -416,11 +402,11 @@ void _Character::CalculateStats() {
 
 	// Eternal Fortitude
 	MaxHealthMultiplier = 1.0f + EternalFortitude / 100.0f;
-	Attributes["HealPower"].Integer = 100 + EternalFortitude;
+	Attributes["HealPower"].Integer += EternalFortitude;
 
 	// Eternal Spirit
 	MaxManaMultiplier = 1.0f + EternalSpirit / 100.0f;
-	Attributes["ManaPower"].Integer = 100 + EternalSpirit;
+	Attributes["ManaPower"].Integer += EternalSpirit;
 
 	// Eternal Wisdom
 	ExperienceMultiplier = 1.0f + EternalWisdom / 100.0f;
@@ -600,8 +586,8 @@ void _Character::CalculateStats() {
 
 	// Get damage
 	for(size_t i = 0; i < ItemMinDamage.size(); i++) {
-		MinDamage += (int)std::roundf(ItemMinDamage[i] * AttackPower * 0.01f * GetDamagePowerMultiplier(i));
-		MaxDamage += (int)std::roundf(ItemMaxDamage[i] * AttackPower * 0.01f * GetDamagePowerMultiplier(i));
+		MinDamage += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
+		MaxDamage += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
 	}
 
 	// Cap resistances
@@ -692,7 +678,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::HEALTHUPDATEMULTIPLIER))
 		HealthUpdateMultiplier += StatChange.Values[StatType::HEALTHUPDATEMULTIPLIER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
-		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Integer;
+		Attributes["AttackPower"].Integer += StatChange.Values[StatType::ATTACKPOWER].Integer;
 	if(StatChange.HasStat(StatType::PHYSICALPOWER))
 		Attributes["PhysicalPower"].Integer += StatChange.Values[StatType::PHYSICALPOWER].Integer;
 	if(StatChange.HasStat(StatType::FIREPOWER))
