@@ -289,7 +289,7 @@ void _Server::Update(double FrameTime) {
 		}
 	}
 	else if(StartDisconnect) {
-		Network->DisconnectAll();
+		Network->DisconnectAll(1);
 		StartDisconnect = false;
 		StartShutdown = true;
 	}
@@ -351,7 +351,8 @@ void _Server::HandleDisconnect(ae::_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
-	Log << "[DISCONNECT] Disconnect from " << Buffer << ":" << Address->port << std::endl;
+
+	Log << "[DISCONNECT] " << (Event.EventData ? "Disconnect" : "Timeout") << " from " << Buffer << ":" << Address->port << std::endl;
 
 	ae::_Buffer Data;
 	Data.WriteBit(1);

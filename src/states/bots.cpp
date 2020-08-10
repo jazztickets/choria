@@ -166,7 +166,7 @@ void _BotsState::DisconnectAll() {
 	std::cout << "disconnecting all bots" << std::endl;
 
 	for(auto &Bot : Bots)
-		Bot->Network->Disconnect();
+		Bot->Network->Disconnect(false, 1);
 }
 
 // List available commands
