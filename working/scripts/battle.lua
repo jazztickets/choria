@@ -1,4 +1,7 @@
 
+-- Storage for battle instance data
+Battles = {}
+
 -- Calculate basic weapon damage vs target's armor
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
@@ -114,6 +117,3 @@ function WeaponProc(Source, Target, Result, IsSpell)
 		WeaponOffHand.Proc:Proc(Random.GetInt(1, 100), WeaponOffHand, Source, Target, Result)
 	end
 end
-
--- Storage for battle instance data
-Battles = {}

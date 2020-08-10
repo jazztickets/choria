@@ -1,4 +1,3 @@
-
 -- Base Potion class --
 
 Base_Potion = {

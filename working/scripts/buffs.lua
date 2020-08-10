@@ -1,4 +1,5 @@
 -- Base Buff --
+
 Base_Buff = {
 
 	New = function(self, Object)

@@ -1,5 +1,5 @@
-
 -- Base Proc --
+
 Base_Proc = {
 
 	New = function(self, Object)
