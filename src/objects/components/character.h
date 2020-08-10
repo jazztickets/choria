@@ -59,10 +59,26 @@ struct _Cooldown {
 	double MaxDuration;
 };
 
+struct _AttributeMeta {
+	std::string Name;
+	std::string Label;
+	StatValueType ValueType;
+};
+
+struct _AttributeStorage {
+	union {
+		int Integer;
+		float Float;
+		void *Pointer;
+	};
+};
+
 // Classes
 class _Character {
 
 	public:
+
+		static std::vector<_AttributeMeta> AttributeData;
 
 		enum StatusImageType {
 			STATUS_NONE,
@@ -221,6 +237,7 @@ class _Character {
 		double BaseAttackPeriod;
 
 		// Final attributes
+		std::unordered_map<std::string, _AttributeStorage> Attributes;
 		int Health;
 		int MaxHealth;
 		int Mana;
@@ -234,13 +251,6 @@ class _Character {
 		float ManaReductionRatio;
 		float HealthUpdateMultiplier;
 		int AttackPower;
-		int PhysicalPower;
-		int FirePower;
-		int ColdPower;
-		int LightningPower;
-		int BleedPower;
-		int PoisonPower;
-		int PetPower;
 		int HealPower;
 		int ManaPower;
 		int ShieldDamage;

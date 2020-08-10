@@ -235,67 +235,15 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 	}
 
-	// Physical Power
-	if(HUD->Player->Character->PhysicalPower != 100) {
-		Buffer << HUD->Player->Character->PhysicalPower << "%";
-		Font->DrawText("Physical Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Fire Power
-	if(HUD->Player->Character->FirePower != 100) {
-		Buffer << HUD->Player->Character->FirePower << "%";
-		Font->DrawText("Fire Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Cold Power
-	if(HUD->Player->Character->ColdPower != 100) {
-		Buffer << HUD->Player->Character->ColdPower << "%";
-		Font->DrawText("Cold Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Lightning Power
-	if(HUD->Player->Character->LightningPower != 100) {
-		Buffer << HUD->Player->Character->LightningPower << "%";
-		Font->DrawText("Lightning Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Bleed Power
-	if(HUD->Player->Character->BleedPower != 100) {
-		Buffer << HUD->Player->Character->BleedPower << "%";
-		Font->DrawText("Bleed Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Poison Power
-	if(HUD->Player->Character->PoisonPower != 100) {
-		Buffer << HUD->Player->Character->PoisonPower << "%";
-		Font->DrawText("Poison Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Pet Power
-	if(HUD->Player->Character->PetPower != 100) {
-		Buffer << HUD->Player->Character->PetPower << "%";
-		Font->DrawText("Pet Power", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
+	for(const auto &Attribute : _Character::AttributeData) {
+		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[Attribute.Name];
+		if(AttributeStorage.Integer != 100) {
+			Buffer << AttributeStorage.Integer << "%";
+			Font->DrawText(Attribute.Label, DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+			Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+			Buffer.str("");
+			DrawPosition.y += SpacingY;
+		}
 	}
 
 	// Shield Damage

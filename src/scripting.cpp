@@ -565,26 +565,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->AttackPower);
 	lua_setfield(LuaState, -2, "AttackPower");
 
-	lua_pushinteger(LuaState, Object->Character->PhysicalPower);
-	lua_setfield(LuaState, -2, "PhysicalPower");
-
-	lua_pushinteger(LuaState, Object->Character->FirePower);
-	lua_setfield(LuaState, -2, "FirePower");
-
-	lua_pushinteger(LuaState, Object->Character->ColdPower);
-	lua_setfield(LuaState, -2, "ColdPower");
-
-	lua_pushinteger(LuaState, Object->Character->LightningPower);
-	lua_setfield(LuaState, -2, "LightningPower");
-
-	lua_pushinteger(LuaState, Object->Character->BleedPower);
-	lua_setfield(LuaState, -2, "BleedPower");
-
-	lua_pushinteger(LuaState, Object->Character->PoisonPower);
-	lua_setfield(LuaState, -2, "PoisonPower");
-
-	lua_pushinteger(LuaState, Object->Character->PetPower);
-	lua_setfield(LuaState, -2, "PetPower");
+	for(const auto &Attribute : _Character::AttributeData) {
+		lua_pushinteger(LuaState, Object->Character->Attributes[Attribute.Name].Integer);
+		lua_setfield(LuaState, -2, Attribute.Name.c_str());
+	}
 
 	lua_pushinteger(LuaState, Object->Character->HealPower);
 	lua_setfield(LuaState, -2, "HealPower");

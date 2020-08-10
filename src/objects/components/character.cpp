@@ -30,6 +30,16 @@
 #include <algorithm>
 #include <cmath>
 
+std::vector<_AttributeMeta> _Character::AttributeData = {
+	{ "PhysicalPower",   "Physical Power",   StatValueType::INTEGER },
+	{ "FirePower",       "Fire Power",       StatValueType::INTEGER },
+	{ "ColdPower",       "Cold Power",       StatValueType::INTEGER },
+	{ "LightningPower",  "Lightning Power",  StatValueType::INTEGER },
+	{ "BleedPower",      "Bleed Power",      StatValueType::INTEGER },
+	{ "PoisonPower",     "Poison Power",     StatValueType::INTEGER },
+	{ "PetPower",        "Pet Power",        StatValueType::INTEGER },
+};
+
 // Constructor
 _Character::_Character(_Object *Object) :
 	Object(Object),
@@ -114,13 +124,6 @@ _Character::_Character(_Object *Object) :
 	ManaReductionRatio(0.0f),
 	HealthUpdateMultiplier(0.0f),
 	AttackPower(100),
-	PhysicalPower(100),
-	FirePower(100),
-	ColdPower(100),
-	LightningPower(100),
-	BleedPower(100),
-	PoisonPower(100),
-	PetPower(100),
 	HealPower(100),
 	ManaPower(100),
 	ShieldDamage(100),
@@ -171,6 +174,10 @@ _Character::_Character(_Object *Object) :
 	SkillsOpen(false),
 
 	Bot(false) {
+
+	for(const auto &Attribute : AttributeData) {
+		Attributes[Attribute.Name] = { 0 };
+	}
 
 	ActionBar.resize(ACTIONBAR_MAX_SIZE);
 }
@@ -393,13 +400,13 @@ void _Character::CalculateStats() {
 		Resistances[i] = BaseResistances[i];
 
 	// Eternal Strength
-	PhysicalPower = 100 + EternalStrength;
-	FirePower = 100 + EternalStrength;
-	ColdPower = 100 + EternalStrength;
-	LightningPower = 100 + EternalStrength;
-	BleedPower = 100 + EternalStrength;
-	PoisonPower = 100 + EternalStrength;
-	PetPower = 100 + EternalStrength;
+	Attributes["PhysicalPower"].Integer = 100 + EternalStrength;
+	Attributes["FirePower"].Integer = 100 + EternalStrength;
+	Attributes["ColdPower"].Integer = 100 + EternalStrength;
+	Attributes["LightningPower"].Integer = 100 + EternalStrength;
+	Attributes["BleedPower"].Integer = 100 + EternalStrength;
+	Attributes["PoisonPower"].Integer = 100 + EternalStrength;
+	Attributes["PetPower"].Integer = 100 + EternalStrength;
 
 	// Eternal Guard
 	if(EternalGuard) {
@@ -689,19 +696,19 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
 		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Integer;
 	if(StatChange.HasStat(StatType::PHYSICALPOWER))
-		PhysicalPower += StatChange.Values[StatType::PHYSICALPOWER].Integer;
+		Attributes["PhysicalPower"].Integer += StatChange.Values[StatType::PHYSICALPOWER].Integer;
 	if(StatChange.HasStat(StatType::FIREPOWER))
-		FirePower += StatChange.Values[StatType::FIREPOWER].Integer;
+		Attributes["FirePower"].Integer += StatChange.Values[StatType::FIREPOWER].Integer;
 	if(StatChange.HasStat(StatType::COLDPOWER))
-		ColdPower += StatChange.Values[StatType::COLDPOWER].Integer;
+		Attributes["ColdPower"].Integer += StatChange.Values[StatType::COLDPOWER].Integer;
 	if(StatChange.HasStat(StatType::LIGHTNINGPOWER))
-		LightningPower += StatChange.Values[StatType::LIGHTNINGPOWER].Integer;
+		Attributes["LightningPower"].Integer += StatChange.Values[StatType::LIGHTNINGPOWER].Integer;
 	if(StatChange.HasStat(StatType::BLEEDPOWER))
-		BleedPower += StatChange.Values[StatType::BLEEDPOWER].Integer;
+		Attributes["BleedPower"].Integer += StatChange.Values[StatType::BLEEDPOWER].Integer;
 	if(StatChange.HasStat(StatType::POISONPOWER))
-		PoisonPower += StatChange.Values[StatType::POISONPOWER].Integer;
+		Attributes["PoisonPower"].Integer += StatChange.Values[StatType::POISONPOWER].Integer;
 	if(StatChange.HasStat(StatType::PETPOWER))
-		PetPower += StatChange.Values[StatType::PETPOWER].Integer;
+		Attributes["PetPower"].Integer += StatChange.Values[StatType::PETPOWER].Integer;
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Integer;
 	if(StatChange.HasStat(StatType::MANAPOWER))
@@ -849,12 +856,12 @@ int _Character::GenerateDamage() {
 float _Character::GetDamagePowerMultiplier(int DamageTypeID) {
 
 	switch(DamageTypeID) {
-		case 2: return PhysicalPower * 0.01f;
-		case 3: return FirePower * 0.01f;
-		case 4: return ColdPower * 0.01f;
-		case 5: return LightningPower * 0.01f;
-		case 6: return PoisonPower * 0.01f;
-		case 7: return BleedPower * 0.01f;
+		case 2: return Attributes["PhysicalPower"].Integer * 0.01f;
+		case 3: return Attributes["FirePower"].Integer * 0.01f;
+		case 4: return Attributes["ColdPower"].Integer * 0.01f;
+		case 5: return Attributes["LightningPower"].Integer * 0.01f;
+		case 6: return Attributes["PoisonPower"].Integer * 0.01f;
+		case 7: return Attributes["BleedPower"].Integer * 0.01f;
 	}
 
 	return 1.0f;
