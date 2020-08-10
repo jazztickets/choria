@@ -171,9 +171,7 @@ class _Character {
 		int Gold;
 		int NextBattle;
 		int Invisible;
-		int Stunned;
 		bool DiagonalMovement;
-		bool LavaProtection;
 		bool Hardcore;
 		bool Offline;
 		uint8_t Status;
@@ -248,7 +246,6 @@ class _Character {
 		int EquipmentBattleSpeed;
 		int AllSkills;
 		int Difficulty;
-		int MinigameSpeed;
 		float CooldownMultiplier;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;

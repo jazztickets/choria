@@ -510,9 +510,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushlightuserdata(LuaState, Object->Monster->Owner);
 	lua_setfield(LuaState, -2, "Owner");
 
-	lua_pushinteger(LuaState, Object->Character->LavaProtection);
-	lua_setfield(LuaState, -2, "LavaProtection");
-
 	lua_pushinteger(LuaState, Object->Fighter->Corpse);
 	lua_setfield(LuaState, -2, "Corpse");
 

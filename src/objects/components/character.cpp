@@ -49,9 +49,7 @@ _Character::_Character(_Object *Object) :
 	Gold(0),
 	NextBattle(0),
 	Invisible(0),
-	Stunned(0),
 	DiagonalMovement(false),
-	LavaProtection(false),
 	Hardcore(false),
 	Offline(false),
 	Status(0),
@@ -333,9 +331,6 @@ void _Character::CalculateStats() {
 	Invisible = 0;
 	CooldownMultiplier = 1.0f;
 	DiagonalMovement = false;
-	LavaProtection = false;
-	Stunned = 0;
-	MinigameSpeed = 1;
 	Difficulty = EternalPain + Rebirths;
 	RebirthTier += RebirthPower;
 	Resistances.clear();
@@ -646,6 +641,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 				}
 			} break;
 			case StatUpdateType::SET:
+				Attributes[Update.first].Integer = Update.second.Integer;
 			break;
 			case StatUpdateType::MULTIPLICATIVE:
 			break;
@@ -655,18 +651,12 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat("ManaReductionRatio"))
 		ManaReductionRatio *= (1.0f - StatChange.Values["ManaReductionRatio"].Float);
 
-	if(StatChange.HasStat("Stunned"))
-		Stunned = StatChange.Values["Stunned"].Integer;
 	if(StatChange.HasStat("Invisible"))
 		Invisible = StatChange.Values["Invisible"].Integer;
 	if(StatChange.HasStat("Light"))
 		Object->Light = StatChange.Values["Light"].Integer;
 	if(StatChange.HasStat("DiagonalMovement"))
 		DiagonalMovement = StatChange.Values["DiagonalMovement"].Integer;
-	if(StatChange.HasStat("MinigameSpeed"))
-		MinigameSpeed = StatChange.Values["MinigameSpeed"].Integer;
-	if(StatChange.HasStat("LavaProtection"))
-		LavaProtection = StatChange.Values["LavaProtection"].Integer;
 
 	if(StatChange.HasStat("MaxHealth"))
 		MaxHealth += StatChange.Values["MaxHealth"].Integer;

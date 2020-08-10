@@ -13,7 +13,7 @@ end
 Script_Lava = { BaseDamage = 10 }
 
 function Script_Lava.Activate(self, Level, Object, Change)
-	if Object.LavaProtection == 1 then
+	if Object.LavaProtection == true then
 		Change.ClearBuff = Buff_Invis.Pointer
 		return Change
 	end

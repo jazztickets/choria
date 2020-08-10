@@ -154,7 +154,7 @@ void _Object::Update(double FrameTime) {
 
 		// Check turn timer
 		if(Character->Battle) {
-			if(Character->Stunned)
+			if(Character->Attributes["Stunned"].Integer)
 				Fighter->TurnTimer += FrameTime * (1.0 / BATTLE_DEFAULTATTACKPERIOD) * BATTLE_STUNNED_BATTLESPEED * 0.01f;
 			else
 				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->Attributes["BattleSpeed"].Integer * 0.01f;
@@ -163,7 +163,7 @@ void _Object::Update(double FrameTime) {
 			Fighter->TurnTimer = 1.0;
 
 		// Resolve action
-		if(!Character->Stunned && Fighter->TurnTimer >= 1.0) {
+		if(!Character->Attributes["Stunned"].Integer && Fighter->TurnTimer >= 1.0) {
 			Fighter->TurnTimer = 1.0;
 
 			if(Server && Character->Action.IsSet()) {

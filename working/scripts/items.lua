@@ -794,7 +794,7 @@ function Item_LavaProtection.GetInfo(self, Source, Item)
 end
 
 function Item_LavaProtection.Stats(self, Item, Object, Change)
-	Change.LavaProtection = 1
+	Change.LavaProtection = true
 
 	return Change
 end

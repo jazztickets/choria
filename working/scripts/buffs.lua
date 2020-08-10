@@ -104,7 +104,7 @@ function Buff_Stunned.GetInfo(self, Level)
 end
 
 function Buff_Stunned.Stats(self, Level, Source, Change)
-	Change.Stunned = 1
+	Change.Stunned = true
 
 	return Change
 end

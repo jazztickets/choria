@@ -685,7 +685,7 @@ void _HUD::Update(double FrameTime) {
 
 	// Update minigame
 	if(Minigame) {
-		for(int i = 0; i < Player->Character->MinigameSpeed; i++) {
+		for(int i = 0; i < Player->Character->Attributes["MinigameSpeed"].Integer; i++) {
 			Minigame->Update(FrameTime);
 			if(Minigame->State == _Minigame::StateType::DONE) {
 				ae::_Buffer Packet;
