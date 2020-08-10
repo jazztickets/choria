@@ -105,7 +105,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 				for col in parsed[row]:
 					escaped = col.decode('utf-8').replace("'", "''")
 					if i > 0:
-						pairs.append(columns[i] + " = '" + escaped + "'")
+						pairs.append("\"" + columns[i] + "\" = '" + escaped + "'")
 					else:
 						id = escaped
 					i += 1
