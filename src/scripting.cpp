@@ -110,15 +110,6 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	}
 	lua_setglobal(LuaState, "DamageType");
 
-	// Add upgrade scale
-	lua_newtable(LuaState);
-	for(const auto &Iterator : StatStringToType) {
-		lua_pushstring(LuaState, Iterator.first.c_str());
-		lua_pushnumber(LuaState, Stats->UpgradeScale.at(Iterator.second.Type));
-		lua_settable(LuaState, -3);
-	}
-	lua_setglobal(LuaState, "UpgradeScale");
-
 	// Push limits
 	lua_pushinteger(LuaState, BATTLE_MAX_OBJECTS_PER_SIDE);
 	lua_setglobal(LuaState, "BATTLE_LIMIT");
@@ -869,12 +860,12 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 
 	lua_pushstring(LuaState, "Source");
 	lua_gettable(LuaState, -2);
-	GetStatChange(-1, ActionResult.Source);
+	GetStatChange(-1, ActionResult.Source.Object->Stats, ActionResult.Source);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Target");
 	lua_gettable(LuaState, -2);
-	GetStatChange(-1, ActionResult.Target);
+	GetStatChange(-1, ActionResult.Source.Object->Stats, ActionResult.Target);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Summon");
@@ -884,7 +875,7 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 }
 
 // Get return value as stat change
-void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
+void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &StatChange) {
 	if(Index != -1)
 		Index += CurrentTableIndex;
 
@@ -899,27 +890,23 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 		// Get key name
 		std::string Key = lua_tostring(LuaState, -2);
 
-		// Turn key into StatType
-		auto Iterator = StatStringToType.find(Key);
+		// Find attribute
+		const _Attribute &Attribute = Stats->Attributes.at(Key);
 
-		// Get value type
-		if(Iterator != StatStringToType.end()) {
-
-			// Get value from lua
-			switch(Iterator->second.ValueType) {
-				case StatValueType::INTEGER:
-					StatChange.Values[Iterator->second.Type].Integer = (int)lua_tonumber(LuaState, -1);
-				break;
-				case StatValueType::FLOAT:
-					StatChange.Values[Iterator->second.Type].Float = (float)lua_tonumber(LuaState, -1);
-				break;
-				case StatValueType::BOOLEAN:
-					StatChange.Values[Iterator->second.Type].Integer = lua_toboolean(LuaState, -1);
-				break;
-				case StatValueType::POINTER:
-					StatChange.Values[Iterator->second.Type].Pointer = lua_touserdata(LuaState, -1);
-				break;
-			}
+		// Get value from lua
+		switch(Attribute.Type) {
+			case StatValueType::INTEGER:
+				StatChange.Values[Key].Integer = (int)lua_tonumber(LuaState, -1);
+			break;
+			case StatValueType::FLOAT:
+				StatChange.Values[Key].Float = (float)lua_tonumber(LuaState, -1);
+			break;
+			case StatValueType::BOOLEAN:
+				StatChange.Values[Key].Integer = lua_toboolean(LuaState, -1);
+			break;
+			case StatValueType::POINTER:
+				StatChange.Values[Key].Pointer = lua_touserdata(LuaState, -1);
+			break;
 		}
 
 		lua_pop(LuaState, 1);

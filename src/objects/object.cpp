@@ -1190,25 +1190,25 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Rebirth
 	if(Server) {
-		if(StatChange.HasStat(StatType::REBIRTH)) {
-			if(StatChange.HasStat(StatType::MAXDAMAGE))
-				Server->QueueRebirth(this, 1, StatChange.Values[StatType::MAXDAMAGE].Integer);
-			else if(StatChange.HasStat(StatType::ARMOR))
-				Server->QueueRebirth(this, 2, StatChange.Values[StatType::ARMOR].Integer);
-			else if(StatChange.HasStat(StatType::HEALTH))
-				Server->QueueRebirth(this, 3, StatChange.Values[StatType::HEALTH].Integer);
-			else if(StatChange.HasStat(StatType::MANA))
-				Server->QueueRebirth(this, 4, StatChange.Values[StatType::MANA].Integer);
-			else if(StatChange.HasStat(StatType::EXPERIENCE))
-				Server->QueueRebirth(this, 5, StatChange.Values[StatType::EXPERIENCE].Integer);
-			else if(StatChange.HasStat(StatType::GOLD))
-				Server->QueueRebirth(this, 6, StatChange.Values[StatType::GOLD].Integer);
-			else if(StatChange.HasStat(StatType::BATTLESPEED))
-				Server->QueueRebirth(this, 7, StatChange.Values[StatType::BATTLESPEED].Integer);
-			else if(StatChange.HasStat(StatType::SKILLPOINT))
-				Server->QueueRebirth(this, 8, StatChange.Values[StatType::SKILLPOINT].Integer);
-			else if(StatChange.HasStat(StatType::REBIRTH))
-				Server->QueueRebirth(this, 9, StatChange.Values[StatType::DIFFICULTY].Integer);
+		if(StatChange.HasStat("Rebirth")) {
+			if(StatChange.HasStat("MaxDamage"))
+				Server->QueueRebirth(this, 1, StatChange.Values["MaxDamage"].Integer);
+			else if(StatChange.HasStat("Armor"))
+				Server->QueueRebirth(this, 2, StatChange.Values["Armor"].Integer);
+			else if(StatChange.HasStat("Health"))
+				Server->QueueRebirth(this, 3, StatChange.Values["Health"].Integer);
+			else if(StatChange.HasStat("Mana"))
+				Server->QueueRebirth(this, 4, StatChange.Values["Mana"].Integer);
+			else if(StatChange.HasStat("Experience"))
+				Server->QueueRebirth(this, 5, StatChange.Values["Experience"].Integer);
+			else if(StatChange.HasStat("Gold"))
+				Server->QueueRebirth(this, 6, StatChange.Values["Gold"].Integer);
+			else if(StatChange.HasStat("BattleSpeed"))
+				Server->QueueRebirth(this, 7, StatChange.Values["BattleSpeed"].Integer);
+			else if(StatChange.HasStat("SkillPoint"))
+				Server->QueueRebirth(this, 8, StatChange.Values["SkillPoint"].Integer);
+			else if(StatChange.HasStat("Difficulty"))
+				Server->QueueRebirth(this, 9, StatChange.Values["Difficulty"].Integer);
 
 			return nullptr;
 		}
@@ -1217,11 +1217,11 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	_StatusEffect *StatusEffect = nullptr;
 
 	// Add buffs
-	if(StatChange.HasStat(StatType::BUFF)) {
+	if(StatChange.HasStat("Buff")) {
 		StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = (const _Buff *)StatChange.Values[StatType::BUFF].Pointer;
-		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
-		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
+		StatusEffect->Buff = (const _Buff *)StatChange.Values["Buff"].Pointer;
+		StatusEffect->Level = StatChange.Values["BuffLevel"].Integer;
+		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values["BuffDuration"].Float;
 		StatusEffect->Source = Source;
 		if(StatusEffect->Duration < 0.0) {
 			StatusEffect->Infinite = true;
@@ -1241,8 +1241,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Clear buff
-	if(Server && StatChange.HasStat(StatType::CLEAR_BUFF)) {
-		_Buff *ClearBuff = (_Buff *)StatChange.Values[StatType::CLEAR_BUFF].Pointer;
+	if(Server && StatChange.HasStat("ClearBuff")) {
+		_Buff *ClearBuff = (_Buff *)StatChange.Values["ClearBuff"].Pointer;
 
 		// Find existing buff
 		for(auto &ExistingEffect : Character->StatusEffects) {
@@ -1254,8 +1254,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Update gold
-	if(StatChange.HasStat(StatType::GOLD)) {
-		int GoldUpdate = StatChange.Values[StatType::GOLD].Integer;
+	if(StatChange.HasStat("Gold")) {
+		int GoldUpdate = StatChange.Values["Gold"].Integer;
 		if(Character->Battle && GoldUpdate < 0 && Fighter->GoldStolen) {
 			Fighter->GoldStolen += GoldUpdate;
 			if(Fighter->GoldStolen < 0)
@@ -1266,8 +1266,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Update gold stolen
-	if(StatChange.HasStat(StatType::GOLDSTOLEN)) {
-		int Amount = StatChange.Values[StatType::GOLDSTOLEN].Integer;
+	if(StatChange.HasStat("GoldStolen")) {
+		int Amount = StatChange.Values["GoldStolen"].Integer;
 		Fighter->GoldStolen += Amount;
 		if(Fighter->GoldStolen > PLAYER_MAX_GOLD)
 			Fighter->GoldStolen = PLAYER_MAX_GOLD;
@@ -1276,14 +1276,14 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Update experience
-	if(StatChange.HasStat(StatType::EXPERIENCE)) {
-		Character->UpdateExperience(StatChange.Values[StatType::EXPERIENCE].Integer);
+	if(StatChange.HasStat("Experience")) {
+		Character->UpdateExperience(StatChange.Values["Experience"].Integer);
 	}
 
 	// Update health
 	bool WasAlive = Character->IsAlive();
-	if(StatChange.HasStat(StatType::HEALTH))
-		Character->UpdateHealth(StatChange.Values[StatType::HEALTH].Integer);
+	if(StatChange.HasStat("Health"))
+		Character->UpdateHealth(StatChange.Values["Health"].Integer);
 
 	// Just died
 	if(WasAlive && !Character->IsAlive()) {
@@ -1305,57 +1305,57 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Mana change
-	if(StatChange.HasStat(StatType::MANA))
-		Character->UpdateMana(StatChange.Values[StatType::MANA].Integer);
+	if(StatChange.HasStat("Mana"))
+		Character->UpdateMana(StatChange.Values["Mana"].Integer);
 
 	// Stamina change
-	if(StatChange.HasStat(StatType::STAMINA)) {
-		Fighter->TurnTimer += StatChange.Values[StatType::STAMINA].Float;
+	if(StatChange.HasStat("Stamina")) {
+		Fighter->TurnTimer += StatChange.Values["Stamina"].Float;
 		Fighter->TurnTimer = glm::clamp(Fighter->TurnTimer, 0.0, 1.0);
 	}
 
 	// Skill bar upgrade
-	if(StatChange.HasStat(StatType::SKILLBARSIZE)) {
-		Character->SkillBarSize += StatChange.Values[StatType::SKILLBARSIZE].Integer;
+	if(StatChange.HasStat("SkillBarSize")) {
+		Character->SkillBarSize += StatChange.Values["SkillBarSize"].Integer;
 		if(Character->SkillBarSize >= ACTIONBAR_MAX_SKILLBARSIZE)
 			Character->SkillBarSize = ACTIONBAR_MAX_SKILLBARSIZE;
 	}
 
 	// Belt size upgrade
-	if(StatChange.HasStat(StatType::BELTSIZE)) {
-		Character->BeltSize += StatChange.Values[StatType::BELTSIZE].Integer;
+	if(StatChange.HasStat("BeltSize")) {
+		Character->BeltSize += StatChange.Values["BeltSize"].Integer;
 		if(Character->BeltSize >= ACTIONBAR_MAX_BELTSIZE)
 			Character->BeltSize = ACTIONBAR_MAX_BELTSIZE;
 	}
 
 	// Skill point unlocked
-	if(StatChange.HasStat(StatType::SKILLPOINT)) {
-		Character->SkillPointsUnlocked += StatChange.Values[StatType::SKILLPOINT].Integer;
+	if(StatChange.HasStat("SkillPoint")) {
+		Character->SkillPointsUnlocked += StatChange.Values["SkillPoint"].Integer;
 		Character->CalculateStats();
 	}
 
 	// Rebirth bonus
-	if(StatChange.HasStat(StatType::REBIRTH_WEALTH))
-		Character->RebirthWealth += StatChange.Values[StatType::REBIRTH_WEALTH].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_WISDOM))
-		Character->RebirthWisdom += StatChange.Values[StatType::REBIRTH_WISDOM].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_KNOWLEDGE))
-		Character->RebirthKnowledge += StatChange.Values[StatType::REBIRTH_KNOWLEDGE].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_GIRTH))
-		Character->RebirthGirth += StatChange.Values[StatType::REBIRTH_GIRTH].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_PROFICIENCY))
-		Character->RebirthProficiency += StatChange.Values[StatType::REBIRTH_PROFICIENCY].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_INSIGHT))
-		Character->RebirthInsight += StatChange.Values[StatType::REBIRTH_INSIGHT].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_PASSAGE))
-		Character->RebirthPassage += StatChange.Values[StatType::REBIRTH_PASSAGE].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_POWER)) {
-		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
+	if(StatChange.HasStat("RebirthWealth"))
+		Character->RebirthWealth += StatChange.Values["RebirthWealth"].Integer;
+	if(StatChange.HasStat("RebirthWisdom"))
+		Character->RebirthWisdom += StatChange.Values["RebirthWisdom"].Integer;
+	if(StatChange.HasStat("RebirthKnowledge"))
+		Character->RebirthKnowledge += StatChange.Values["RebirthKnowledge"].Integer;
+	if(StatChange.HasStat("RebirthGirth"))
+		Character->RebirthGirth += StatChange.Values["RebirthGirth"].Integer;
+	if(StatChange.HasStat("RebirthProficiency"))
+		Character->RebirthProficiency += StatChange.Values["RebirthProficiency"].Integer;
+	if(StatChange.HasStat("RebirthInsight"))
+		Character->RebirthInsight += StatChange.Values["RebirthInsight"].Integer;
+	if(StatChange.HasStat("RebirthPassage"))
+		Character->RebirthPassage += StatChange.Values["RebirthPassage"].Integer;
+	if(StatChange.HasStat("RebirthPower")) {
+		Character->RebirthPower += StatChange.Values["RebirthPower"].Integer;
 		Character->CalculateStats();
 	}
 
 	// Reset skills
-	if(StatChange.HasStat(StatType::RESPEC)) {
+	if(StatChange.HasStat("Respec")) {
 		for(const auto &SkillLevel : Character->Skills) {
 			const _Item *Skill = Stats->Items.at(SkillLevel.first);
 			if(Skill && SkillLevel.second > 0) {
@@ -1379,14 +1379,14 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Flee from battle
-	if(StatChange.HasStat(StatType::FLEE)) {
+	if(StatChange.HasStat("Flee")) {
 		if(Fighter)
 			Fighter->FleeBattle = true;
 	}
 
 	// Use corpse
-	if(StatChange.HasStat(StatType::CORPSE)) {
-		Fighter->Corpse += StatChange.Values[StatType::CORPSE].Integer;
+	if(StatChange.HasStat("Corpse")) {
+		Fighter->Corpse += StatChange.Values["Corpse"].Integer;
 		if(Fighter->Corpse < 0)
 			Fighter->Corpse = 0;
 		else if(Fighter->Corpse > 1)
@@ -1398,27 +1398,27 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		if(!Character->Battle) {
 
 			// Start teleport
-			if(StatChange.HasStat(StatType::TELEPORT))
-				Server->StartTeleport(this, StatChange.Values[StatType::TELEPORT].Float);
+			if(StatChange.HasStat("Teleport"))
+				Server->StartTeleport(this, StatChange.Values["Teleport"].Float);
 
 			// Start battle
-			if(StatChange.HasStat(StatType::BATTLE))
-				Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true, false, 0.0f, 0.0f);
+			if(StatChange.HasStat("Battle"))
+				Server->QueueBattle(this, (uint32_t)StatChange.Values["Battle"].Integer, true, false, 0.0f, 0.0f);
 
 			// Start PVP
-			if(StatChange.HasStat(StatType::HUNT))
-				Server->QueueBattle(this, 0, false, true, StatChange.Values[StatType::HUNT].Float, 0.0f);
-			if(StatChange.HasStat(StatType::BOUNTYHUNT))
-				Server->QueueBattle(this, 0, false, true, 0.0f, StatChange.Values[StatType::BOUNTYHUNT].Float);
+			if(StatChange.HasStat("Hunt"))
+				Server->QueueBattle(this, 0, false, true, StatChange.Values["Hunt"].Float, 0.0f);
+			if(StatChange.HasStat("BountyHunt"))
+				Server->QueueBattle(this, 0, false, true, 0.0f, StatChange.Values["BountyHunt"].Float);
 		}
 
 		// Set clock
-		if(StatChange.HasStat(StatType::CLOCK))
-			Server->SetClock(StatChange.Values[StatType::CLOCK].Float);
+		if(StatChange.HasStat("Clock"))
+			Server->SetClock(StatChange.Values["Clock"].Float);
 
 		// Map Change
-		if(StatChange.HasStat(StatType::MAP_CHANGE))
-			QueuedMapChange = StatChange.Values[StatType::MAP_CHANGE].Integer;
+		if(StatChange.HasStat("MapChange"))
+			QueuedMapChange = StatChange.Values["MapChange"].Integer;
 	}
 
 	return StatusEffect;

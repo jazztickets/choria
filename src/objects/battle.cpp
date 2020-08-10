@@ -184,22 +184,22 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	// Get damage value and color
 	glm::vec4 TextColor = glm::vec4(1.0f);
 	std::stringstream Buffer;
-	if(ActionResult.Target.HasStat(StatType::HEALTH)) {
+	if(ActionResult.Target.HasStat("Health")) {
 
-		if(ActionResult.Target.HasStat(StatType::DAMAGETYPE)) {
-			uint32_t DamageTypeID = ActionResult.Target.Values[StatType::DAMAGETYPE].Integer;
+		if(ActionResult.Target.HasStat("DamageType")) {
+			uint32_t DamageTypeID = ActionResult.Target.Values["DamageType"].Integer;
 			TextColor = Stats->DamageTypes.at(DamageTypeID).Color;
 		}
 
-		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Integer);
+		Buffer << std::abs(ActionResult.Target.Values["Health"].Integer);
 	}
-	else if(ActionResult.Target.HasStat(StatType::MISS))
+	else if(ActionResult.Target.HasStat("Miss"))
 		Buffer << "miss";
 
 	// Change color
-	if(ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer > 0)
+	if(ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Integer > 0)
 		TextColor = ae::Assets.Colors["green"];
-	else if(ActionResult.Target.HasStat(StatType::CRIT) && ActionResult.Target.Values[StatType::CRIT].Integer)
+	else if(ActionResult.Target.HasStat("Crit") && ActionResult.Target.Values["Crit"].Integer)
 		TextColor = ae::Assets.Colors["yellow"];
 
 	// Draw damage dealt
@@ -209,9 +209,9 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	ae::Assets.Fonts[Font]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
 
 	// Draw mana damage
-	if(ActionResult.Target.HasStat(StatType::MANA) && ActionResult.Target.Values[StatType::MANA].Integer < 0) {
+	if(ActionResult.Target.HasStat("Mana") && ActionResult.Target.Values["Mana"].Integer < 0) {
 		Buffer.str("");
-		Buffer << std::abs(ActionResult.Target.Values[StatType::MANA].Integer);
+		Buffer << std::abs(ActionResult.Target.Values["Mana"].Integer);
 		TextColor = ae::Assets.Colors["light_blue"];
 		TextColor.a = AlphaPercent;
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(24, 24), ae::RIGHT_BASELINE, TextColor);
@@ -902,9 +902,9 @@ void _Battle::ServerEndBattle() {
 			// Create buff
 			_StatChange Summons;
 			Summons.Object = Owner;
-			Summons.Values[StatType::BUFF].Pointer = (void *)Monster->SummonBuff;
-			Summons.Values[StatType::BUFFLEVEL].Integer = SurvivedSummon.second.Count;
-			Summons.Values[StatType::BUFFDURATION].Float = Monster->Duration;
+			Summons.Values["Buff"].Pointer = (void *)Monster->SummonBuff;
+			Summons.Values["BuffLevel"].Integer = SurvivedSummon.second.Count;
+			Summons.Values["BuffDuration"].Float = Monster->Duration;
 			Owner->UpdateStats(Summons, Owner);
 		}
 	}

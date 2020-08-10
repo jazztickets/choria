@@ -70,7 +70,7 @@ class _Scripting {
 		std::string GetString(int Index);
 		void *GetPointer(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
-		void GetStatChange(int Index, _StatChange &StatChange);
+		void GetStatChange(int Index, const _Stats *Stats, _StatChange &StatChange);
 		void GetSummon(int Index, _Summon &Summon);
 
 		bool StartMethodCall(const std::string &TableName, const std::string &Function);

@@ -1497,8 +1497,8 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	Player->Character->MonsterKills = Data.Read<int>();
 	Player->Character->GoldLost = Data.Read<int>();
 	Player->Character->Bounty = Data.Read<int>();
-	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
-	StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
+	StatChange.Values["Experience"].Integer = Data.Read<int>();
+	StatChange.Values["Gold"].Integer = Data.Read<int>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		_RecentItem RecentItem;
@@ -1609,11 +1609,11 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 
 			// No damage dealt
 			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
-			   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0) || ActionResult.Target.HasStat(StatType::MISS))) {
+			   && ((ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Integer == 0) || ActionResult.Target.HasStat("Miss"))) {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 
-				if(ActionResult.Target.HasStat(StatType::MISS)) {
+				if(ActionResult.Target.HasStat("Miss")) {
 					std::stringstream Buffer;
 					Buffer << "miss" << ae::GetRandomInt(0, 2) << ".ogg";
 					ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
@@ -1657,8 +1657,8 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 
 			// Play buff sounds
-			if(StatChange.HasStat(StatType::BUFFSOUND)) {
-				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values[StatType::BUFFSOUND].Integer);
+			if(StatChange.HasStat("BuffSound")) {
+				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values["BuffSound"].Integer);
 				if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
 					Scripting->MethodCall(0, 0);
 					Scripting->FinishMethodCall();
@@ -1666,7 +1666,7 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 			}
 
 			// Update action bar
-			if(StatChange.HasStat(StatType::SKILLBARSIZE) || StatChange.HasStat(StatType::BELTSIZE))
+			if(StatChange.HasStat("SkillBarSize") || StatChange.HasStat("BeltSize"))
 				HUD->UpdateActionBarSize();
 
 			// Play death sound

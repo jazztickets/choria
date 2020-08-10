@@ -166,15 +166,15 @@ INSERT INTO attribute VALUES(73,'RebirthPassage','Rebirth Passage',1,'100',1.0);
 INSERT INTO attribute VALUES(74,'SpellDamage','Spell Damage',1,'100',1.0);
 INSERT INTO attribute VALUES(75,'MinigameSpeed','Minigame Speed',1,'100',1.0);
 INSERT INTO attribute VALUES(76,'ConsumeChance','Consume Chance',1,'100',1.0);
-INSERT INTO attribute VALUES(77,'AllResistance','All Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(78,'PhysicalResistance','Physical Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(79,'FireResistance','Fire Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(80,'ColdResistance','Cold Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(81,'LightningResistance','Lightning Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(82,'PoisonResistance','Poison Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(83,'BleedResistance','Bleed Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(84,'StunResistance','Stun Resistance',1,'100',0.25);
-INSERT INTO attribute VALUES(85,'ElementalResistance','Elemental Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(77,'AllResist','All Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(78,'PhysicalResist','Physical Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(79,'FireResist','Fire Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(80,'ColdResist','Cold Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(81,'LightningResist','Lightning Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(82,'PoisonResist','Poison Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(83,'BleedResist','Bleed Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(84,'StunResist','Stun Resistance',1,'100',0.25);
+INSERT INTO attribute VALUES(85,'ElementalResist','Elemental Resistance',1,'100',0.25);
 INSERT INTO attribute VALUES(86,'ShieldDamage','Shield Damage',1,'100',1.0);
 CREATE TABLE IF NOT EXISTS "stattype" (
 	"id" INTEGER PRIMARY KEY,

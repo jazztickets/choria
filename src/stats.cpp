@@ -42,7 +42,6 @@ _Stats::_Stats(bool Headless) :
 	LoadLevels();
 	LoadBuffs();
 	LoadItemTypes();
-	LoadStatTypes();
 	LoadTargetTypes();
 	LoadDamageTypes();
 	LoadItems();
@@ -177,20 +176,6 @@ void _Stats::LoadItemTypes() {
 	while(Database->FetchRow()) {
 		uint32_t ID = Database->GetInt<uint32_t>("id");
 		ItemTypes[ID] = Database->GetString("name");
-	}
-	Database->CloseQuery();
-}
-
-// Load upgrade scales from stat types
-void _Stats::LoadStatTypes() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM stattype");
-
-	// Get data
-	while(Database->FetchRow()) {
-		StatType ID = (StatType)Database->GetInt<uint32_t>("id");
-		UpgradeScale[ID] = Database->GetReal("upgrade_scale");
 	}
 	Database->CloseQuery();
 }
@@ -888,9 +873,11 @@ void _Stats::LoadAttributes() {
 	// Get data
 	_Attribute Attribute;
 	while(Database->FetchRow()) {
+		Attribute.ID = Database->GetInt<uint8_t>("id");
 		Attribute.Name = Database->GetString("name");
 		Attribute.Label = Database->GetString("label");
 		Attribute.Type = (StatValueType)Database->GetInt<int>("valuetype_id");
+		Attribute.UpgradeScale = Database->GetReal("upgrade_scale");
 		switch(Attribute.Type) {
 			case StatValueType::BOOLEAN:
 			case StatValueType::INTEGER:

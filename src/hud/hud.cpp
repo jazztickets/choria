@@ -1610,10 +1610,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.Values.size() == 0 || !StatChange.Object)
 		return;
 
-	if(StatChange.HasStat(StatType::HEALTH)) {
+	if(StatChange.HasStat("Health")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Integer;
+		StatChangeUI.Change = StatChange.Values["Health"].Integer;
 		if(StatChangeUI.Object->Character->Battle) {
 			float OffsetX = 55;
 			if(StatChangeUI.Change < 0)
@@ -1629,10 +1629,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(StatChange.HasStat(StatType::MANA)) {
+	if(StatChange.HasStat("Mana")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.Change = StatChange.Values[StatType::MANA].Integer;
+		StatChangeUI.Change = StatChange.Values["Mana"].Integer;
 		if(StatChangeUI.Object->Character->Battle) {
 			float OffsetX = 55;
 			if(StatChangeUI.Change < 0)
@@ -1648,11 +1648,11 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(StatChange.HasStat(StatType::EXPERIENCE)) {
+	if(StatChange.HasStat("Experience")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -150 * ae::_Element::GetUIScale());
-		StatChangeUI.Change = StatChange.Values[StatType::EXPERIENCE].Integer;
+		StatChangeUI.Change = StatChange.Values["Experience"].Integer;
 		StatChangeUI.Direction = -1.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = ae::Assets.Fonts["battle_large"];
@@ -1660,7 +1660,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(StatChange.HasStat(StatType::GOLD) || StatChange.HasStat(StatType::GOLDSTOLEN)) {
+	if(StatChange.HasStat("Gold") || StatChange.HasStat("GoldStolen")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 
@@ -1676,10 +1676,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		}
 
 		// Get amount
-		if(StatChange.HasStat(StatType::GOLD))
-			StatChangeUI.Change = StatChange.Values[StatType::GOLD].Integer;
+		if(StatChange.HasStat("Gold"))
+			StatChangeUI.Change = StatChange.Values["Gold"].Integer;
 		else
-			StatChangeUI.Change = StatChange.Values[StatType::GOLDSTOLEN].Integer;
+			StatChangeUI.Change = StatChange.Values["GoldStolen"].Integer;
 
 		StatChangeUI.Direction = -1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;

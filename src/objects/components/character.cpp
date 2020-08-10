@@ -154,9 +154,9 @@ void _Character::Update(double FrameTime) {
 
 			// Update regen
 			if((Health < MaxHealth && HealthRegen != 0) || HealthRegen < 0)
-				StatChange.Values[StatType::HEALTH].Integer = HealthRegen;
+				StatChange.Values["Health"].Integer = HealthRegen;
 			if((Mana < MaxMana && ManaRegen != 0) || ManaRegen < 0)
-				StatChange.Values[StatType::MANA].Integer = ManaRegen;
+				StatChange.Values["Mana"].Integer = ManaRegen;
 
 			// Update object
 			if(StatChange.Values.size() != 0) {
@@ -480,7 +480,7 @@ void _Character::CalculateStats() {
 			Scripting->PushInt(SetData.second.MaxLevel);
 			Scripting->PushStatChange(&StatChange);
 			Scripting->MethodCall(4, 1);
-			Scripting->GetStatChange(1, StatChange);
+			Scripting->GetStatChange(1, Object->Stats, StatChange);
 			Scripting->FinishMethodCall();
 
 			CalculateStatBonuses(StatChange);
@@ -508,7 +508,7 @@ void _Character::CalculateStats() {
 			Scripting->PushInt(SetData.MaxLevel);
 			Scripting->PushStatChange(&StatChange);
 			Scripting->MethodCall(4, 1);
-			Scripting->GetStatChange(1, StatChange);
+			Scripting->GetStatChange(1, Object->Stats, StatChange);
 			Scripting->FinishMethodCall();
 
 			CalculateStatBonuses(StatChange);
@@ -633,127 +633,127 @@ void _Character::CalculateLevelStats() {
 
 // Update an object's stats from a statchange
 void _Character::CalculateStatBonuses(_StatChange &StatChange) {
-	if(StatChange.HasStat(StatType::MAXHEALTH))
-		MaxHealth += StatChange.Values[StatType::MAXHEALTH].Integer;
-	if(StatChange.HasStat(StatType::MAXMANA))
-		MaxMana += StatChange.Values[StatType::MAXMANA].Integer;
-	if(StatChange.HasStat(StatType::HEALTHREGEN))
-		HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Integer;
-	if(StatChange.HasStat(StatType::MANAREGEN))
-		ManaRegen += StatChange.Values[StatType::MANAREGEN].Integer;
+	if(StatChange.HasStat("MaxHealth"))
+		MaxHealth += StatChange.Values["MaxHealth"].Integer;
+	if(StatChange.HasStat("MaxMana"))
+		MaxMana += StatChange.Values["MaxMana"].Integer;
+	if(StatChange.HasStat("HealthRegen"))
+		HealthRegen += StatChange.Values["HealthRegen"].Integer;
+	if(StatChange.HasStat("ManaRegen"))
+		ManaRegen += StatChange.Values["ManaRegen"].Integer;
 
-	if(StatChange.HasStat(StatType::MANAREDUCTIONRATIO))
-		ManaReductionRatio *= (1.0f - StatChange.Values[StatType::MANAREDUCTIONRATIO].Float);
-	if(StatChange.HasStat(StatType::HEALTHUPDATEMULTIPLIER))
-		HealthUpdateMultiplier += StatChange.Values[StatType::HEALTHUPDATEMULTIPLIER].Float;
-	if(StatChange.HasStat(StatType::ATTACKPOWER))
-		Attributes["AttackPower"].Integer += StatChange.Values[StatType::ATTACKPOWER].Integer;
-	if(StatChange.HasStat(StatType::PHYSICALPOWER))
-		Attributes["PhysicalPower"].Integer += StatChange.Values[StatType::PHYSICALPOWER].Integer;
-	if(StatChange.HasStat(StatType::FIREPOWER))
-		Attributes["FirePower"].Integer += StatChange.Values[StatType::FIREPOWER].Integer;
-	if(StatChange.HasStat(StatType::COLDPOWER))
-		Attributes["ColdPower"].Integer += StatChange.Values[StatType::COLDPOWER].Integer;
-	if(StatChange.HasStat(StatType::LIGHTNINGPOWER))
-		Attributes["LightningPower"].Integer += StatChange.Values[StatType::LIGHTNINGPOWER].Integer;
-	if(StatChange.HasStat(StatType::BLEEDPOWER))
-		Attributes["BleedPower"].Integer += StatChange.Values[StatType::BLEEDPOWER].Integer;
-	if(StatChange.HasStat(StatType::POISONPOWER))
-		Attributes["PoisonPower"].Integer += StatChange.Values[StatType::POISONPOWER].Integer;
-	if(StatChange.HasStat(StatType::PETPOWER))
-		Attributes["PetPower"].Integer += StatChange.Values[StatType::PETPOWER].Integer;
-	if(StatChange.HasStat(StatType::HEALPOWER))
-		Attributes["HealPower"].Integer += StatChange.Values[StatType::HEALPOWER].Integer;
-	if(StatChange.HasStat(StatType::MANAPOWER))
-		Attributes["ManaPower"].Integer += StatChange.Values[StatType::MANAPOWER].Integer;
-	if(StatChange.HasStat(StatType::SUMMONLIMIT))
-		SummonLimit += StatChange.Values[StatType::SUMMONLIMIT].Integer;
-	if(StatChange.HasStat(StatType::SPELL_DAMAGE))
-		SpellDamage += StatChange.Values[StatType::SPELL_DAMAGE].Integer;
+	if(StatChange.HasStat("ManaReductionRatio"))
+		ManaReductionRatio *= (1.0f - StatChange.Values["ManaReductionRatio"].Float);
+	if(StatChange.HasStat("HealthUpdateMultiplier"))
+		HealthUpdateMultiplier += StatChange.Values["HealthUpdateMultiplier"].Float;
+	if(StatChange.HasStat("AttackPower"))
+		Attributes["AttackPower"].Integer += StatChange.Values["AttackPower"].Integer;
+	if(StatChange.HasStat("PhysicalPower"))
+		Attributes["PhysicalPower"].Integer += StatChange.Values["PhysicalPower"].Integer;
+	if(StatChange.HasStat("FirePower"))
+		Attributes["FirePower"].Integer += StatChange.Values["FirePower"].Integer;
+	if(StatChange.HasStat("ColdPower"))
+		Attributes["ColdPower"].Integer += StatChange.Values["ColdPower"].Integer;
+	if(StatChange.HasStat("LightningPower"))
+		Attributes["LightningPower"].Integer += StatChange.Values["LightningPower"].Integer;
+	if(StatChange.HasStat("BleedPower"))
+		Attributes["BleedPower"].Integer += StatChange.Values["BleedPower"].Integer;
+	if(StatChange.HasStat("PoisonPower"))
+		Attributes["PoisonPower"].Integer += StatChange.Values["PoisonPower"].Integer;
+	if(StatChange.HasStat("PetPower"))
+		Attributes["PetPower"].Integer += StatChange.Values["PetPower"].Integer;
+	if(StatChange.HasStat("HealPower"))
+		Attributes["HealPower"].Integer += StatChange.Values["HealPower"].Integer;
+	if(StatChange.HasStat("ManaPower"))
+		Attributes["ManaPower"].Integer += StatChange.Values["ManaPower"].Integer;
+	if(StatChange.HasStat("SummonLimit"))
+		SummonLimit += StatChange.Values["SummonLimit"].Integer;
+	if(StatChange.HasStat("SpellDamage"))
+		SpellDamage += StatChange.Values["SpellDamage"].Integer;
 
-	if(StatChange.HasStat(StatType::BATTLESPEED))
-		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
-	if(StatChange.HasStat(StatType::HITCHANCE))
-		HitChance += StatChange.Values[StatType::HITCHANCE].Integer;
-	if(StatChange.HasStat(StatType::EVASION))
-		Evasion += StatChange.Values[StatType::EVASION].Integer;
-	if(StatChange.HasStat(StatType::STUNNED))
-		Stunned = StatChange.Values[StatType::STUNNED].Integer;
+	if(StatChange.HasStat("BattleSpeed"))
+		BattleSpeed += StatChange.Values["BattleSpeed"].Integer;
+	if(StatChange.HasStat("HitChance"))
+		HitChance += StatChange.Values["HitChance"].Integer;
+	if(StatChange.HasStat("Evasion"))
+		Evasion += StatChange.Values["Evasion"].Integer;
+	if(StatChange.HasStat("Stunned"))
+		Stunned = StatChange.Values["Stunned"].Integer;
 
-	if(StatChange.HasStat(StatType::RESISTTYPE) && StatChange.HasStat(StatType::RESIST)) {
-		uint32_t ResistType = (uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer;
+	if(StatChange.HasStat("ResistType") && StatChange.HasStat("Resist")) {
+		uint32_t ResistType = (uint32_t)StatChange.Values["ResistType"].Integer;
 		if(ResistType == 1) {
 			for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-				Resistances[i] += StatChange.Values[StatType::RESIST].Integer;
+				Resistances[i] += StatChange.Values["Resist"].Integer;
 		}
 		else if(ResistType == 9) {
 			for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
-				Resistances[i] += StatChange.Values[StatType::RESIST].Integer;
+				Resistances[i] += StatChange.Values["Resist"].Integer;
 		}
 		else
-			Resistances[ResistType] += StatChange.Values[StatType::RESIST].Integer;
+			Resistances[ResistType] += StatChange.Values["Resist"].Integer;
 	}
 
-	if(StatChange.HasStat(StatType::ALL_RESIST)) {
+	if(StatChange.HasStat("AllResist")) {
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-			Resistances[i] += StatChange.Values[StatType::ALL_RESIST].Integer;
+			Resistances[i] += StatChange.Values["AllResist"].Integer;
 	}
-	if(StatChange.HasStat(StatType::PHYSICAL_RESIST))
-		Resistances[2] += StatChange.Values[StatType::PHYSICAL_RESIST].Integer;
-	if(StatChange.HasStat(StatType::FIRE_RESIST))
-		Resistances[3] += StatChange.Values[StatType::FIRE_RESIST].Integer;
-	if(StatChange.HasStat(StatType::COLD_RESIST))
-		Resistances[4] += StatChange.Values[StatType::COLD_RESIST].Integer;
-	if(StatChange.HasStat(StatType::LIGHTNING_RESIST))
-		Resistances[5] += StatChange.Values[StatType::LIGHTNING_RESIST].Integer;
-	if(StatChange.HasStat(StatType::POISON_RESIST))
-		Resistances[6] += StatChange.Values[StatType::POISON_RESIST].Integer;
-	if(StatChange.HasStat(StatType::BLEED_RESIST))
-		Resistances[7] += StatChange.Values[StatType::BLEED_RESIST].Integer;
-	if(StatChange.HasStat(StatType::STUN_RESIST))
-		Resistances[8] += StatChange.Values[StatType::STUN_RESIST].Integer;
-	if(StatChange.HasStat(StatType::ELEMENTAL_RESIST)) {
+	if(StatChange.HasStat("PhysicalResist"))
+		Resistances[2] += StatChange.Values["PhysicalResist"].Integer;
+	if(StatChange.HasStat("FireResist"))
+		Resistances[3] += StatChange.Values["FireResist"].Integer;
+	if(StatChange.HasStat("ColdResist"))
+		Resistances[4] += StatChange.Values["ColdResist"].Integer;
+	if(StatChange.HasStat("LightningResist"))
+		Resistances[5] += StatChange.Values["LightningResist"].Integer;
+	if(StatChange.HasStat("PoisonResist"))
+		Resistances[6] += StatChange.Values["PoisonResist"].Integer;
+	if(StatChange.HasStat("BleedResist"))
+		Resistances[7] += StatChange.Values["BleedResist"].Integer;
+	if(StatChange.HasStat("StunResist"))
+		Resistances[8] += StatChange.Values["StunResist"].Integer;
+	if(StatChange.HasStat("ElementalResist")) {
 		for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
-			Resistances[i] += StatChange.Values[StatType::ELEMENTAL_RESIST].Integer;
+			Resistances[i] += StatChange.Values["ElementalResist"].Integer;
 	}
 
-	if(StatChange.HasStat(StatType::MINDAMAGE))
-		MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
-	if(StatChange.HasStat(StatType::MAXDAMAGE))
-		MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
-	if(StatChange.HasStat(StatType::ARMOR))
-		Armor += StatChange.Values[StatType::ARMOR].Integer;
-	if(StatChange.HasStat(StatType::DAMAGEBLOCK))
-		DamageBlock += StatChange.Values[StatType::DAMAGEBLOCK].Integer;
-	if(StatChange.HasStat(StatType::SHIELD_DAMAGE))
-		ShieldDamage += StatChange.Values[StatType::SHIELD_DAMAGE].Integer;
+	if(StatChange.HasStat("MinDamage"))
+		MinDamage += StatChange.Values["MinDamage"].Integer;
+	if(StatChange.HasStat("MaxDamage"))
+		MaxDamage += StatChange.Values["MaxDamage"].Integer;
+	if(StatChange.HasStat("Armor"))
+		Armor += StatChange.Values["Armor"].Integer;
+	if(StatChange.HasStat("DamageBlock"))
+		DamageBlock += StatChange.Values["DamageBlock"].Integer;
+	if(StatChange.HasStat("ShieldDamage"))
+		ShieldDamage += StatChange.Values["ShieldDamage"].Integer;
 
-	if(StatChange.HasStat(StatType::MOVESPEED))
-		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
+	if(StatChange.HasStat("MoveSpeed"))
+		MoveSpeed += StatChange.Values["MoveSpeed"].Integer;
 
-	if(StatChange.HasStat(StatType::INVISIBLE))
-		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
+	if(StatChange.HasStat("Invisible"))
+		Invisible = StatChange.Values["Invisible"].Integer;
 
-	if(StatChange.HasStat(StatType::LIGHT))
-		Object->Light = StatChange.Values[StatType::LIGHT].Integer;
+	if(StatChange.HasStat("Light"))
+		Object->Light = StatChange.Values["Light"].Integer;
 
-	if(StatChange.HasStat(StatType::DIAGONAL_MOVEMENT))
-		DiagonalMovement = StatChange.Values[StatType::DIAGONAL_MOVEMENT].Integer;
+	if(StatChange.HasStat("DiagonalMovement"))
+		DiagonalMovement = StatChange.Values["DiagonalMovement"].Integer;
 
-	if(StatChange.HasStat(StatType::MINIGAME_SPEED))
-		MinigameSpeed = StatChange.Values[StatType::MINIGAME_SPEED].Integer;
+	if(StatChange.HasStat("MinigameSpeed"))
+		MinigameSpeed = StatChange.Values["MinigameSpeed"].Integer;
 
-	if(StatChange.HasStat(StatType::LAVA_PROTECTION))
-		LavaProtection = StatChange.Values[StatType::LAVA_PROTECTION].Integer;
+	if(StatChange.HasStat("LavaProtection"))
+		LavaProtection = StatChange.Values["LavaProtection"].Integer;
 
-	if(StatChange.HasStat(StatType::DIFFICULTY))
-		Difficulty += StatChange.Values[StatType::DIFFICULTY].Integer;
+	if(StatChange.HasStat("Difficulty"))
+		Difficulty += StatChange.Values["Difficulty"].Integer;
 
-	if(StatChange.HasStat(StatType::CONSUME_CHANCE))
-		ConsumeChance += StatChange.Values[StatType::CONSUME_CHANCE].Integer;
+	if(StatChange.HasStat("ConsumeChance"))
+		ConsumeChance += StatChange.Values["ConsumeChance"].Integer;
 
-	if(StatChange.HasStat(StatType::ALLSKILLS))
-		AllSkills += StatChange.Values[StatType::ALLSKILLS].Integer;
+	if(StatChange.HasStat("AllSkills"))
+		AllSkills += StatChange.Values["AllSkills"].Integer;
 }
 
 // Get percentage to next level

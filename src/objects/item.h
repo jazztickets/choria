@@ -107,7 +107,7 @@ class _Item {
 		float GetExpBonus(int Upgrades) const;
 		float GetCooldownReduction(int Upgrades) const;
 		float GetAllSkills(int Upgrades) const;
-		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
+		template<typename T> T GetUpgradedValue(const std::string &AttributeName, int Upgrades, T Value) const;
 
 		const _Stats *Stats;
 

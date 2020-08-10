@@ -1188,7 +1188,7 @@ void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int Set
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushStatChange(&ActionResult.Source);
 		Scripting->MethodCall(3, 1);
-		Scripting->GetStatChange(1, ActionResult.Source);
+		Scripting->GetStatChange(1, ActionResult.Source.Object->Stats, ActionResult.Source);
 		Scripting->FinishMethodCall();
 	}
 }
@@ -1203,97 +1203,97 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 
 // Get average damage
 float _Item::GetAverageDamage(int Upgrades) const {
-	return (GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
+	return (GetUpgradedValue<float>("MinDamage", Upgrades, MinDamage) + GetUpgradedValue<float>("MaxDamage", Upgrades, MaxDamage)) / 2.0f;
 }
 
 // Get min damage
 float _Item::GetMinDamage(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage);
+	return GetUpgradedValue<float>("MinDamage", Upgrades, MinDamage);
 }
 
 // Get max damage
 float _Item::GetMaxDamage(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage);
+	return GetUpgradedValue<float>("MaxDamage", Upgrades, MaxDamage);
 }
 
 // Get armor
 float _Item::GetArmor(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::ARMOR, Upgrades, Armor);
+	return GetUpgradedValue<float>("Armor", Upgrades, Armor);
 }
 
 // Get damage block
 float _Item::GetDamageBlock(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::DAMAGEBLOCK, Upgrades, DamageBlock);
+	return GetUpgradedValue<float>("DamageBlock", Upgrades, DamageBlock);
 }
 
 // Get pierce
 float _Item::GetPierce(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::PIERCE, Upgrades, Pierce);
+	return GetUpgradedValue<float>("Pierce", Upgrades, Pierce);
 }
 
 // Get max health
 float _Item::GetMaxHealth(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXHEALTH, Upgrades, MaxHealth);
+	return GetUpgradedValue<float>("MaxHealth", Upgrades, MaxHealth);
 }
 
 // Get max mana
 float _Item::GetMaxMana(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXMANA, Upgrades, MaxMana);
+	return GetUpgradedValue<float>("MaxMana", Upgrades, MaxMana);
 }
 
 // Get health regen
 float _Item::GetHealthRegen(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::HEALTHREGEN, Upgrades, HealthRegen);
+	return GetUpgradedValue<float>("HealthRegen", Upgrades, HealthRegen);
 }
 
 // Get mana regen
 float _Item::GetManaRegen(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MANAREGEN, Upgrades, ManaRegen);
+	return GetUpgradedValue<float>("ManaRegen", Upgrades, ManaRegen);
 }
 
 // Get battle speed
 float _Item::GetBattleSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::BATTLESPEED, Upgrades, BattleSpeed);
+	return GetUpgradedValue<float>("BattleSpeed", Upgrades, BattleSpeed);
 }
 
 // Get move speed
 float _Item::GetMoveSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MOVESPEED, Upgrades, MoveSpeed);
+	return GetUpgradedValue<float>("MoveSpeed", Upgrades, MoveSpeed);
 }
 
 // Get evasion
 float _Item::GetEvasion(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::EVASION, Upgrades, Evasion);
+	return GetUpgradedValue<float>("Evasion", Upgrades, Evasion);
 }
 
 // Get spell damage
 float _Item::GetSpellDamage(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::SPELL_DAMAGE, Upgrades, SpellDamage);
+	return GetUpgradedValue<float>("SpellDamage", Upgrades, SpellDamage);
 }
 
 // Get resistance
 float _Item::GetResistance(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::RESIST, Upgrades, Resistance);
+	return GetUpgradedValue<float>("Resist", Upgrades, Resistance);
 }
 
 // Get gold bonus
 float _Item::GetGoldBonus(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::GOLD_BONUS, Upgrades, GoldBonus);
+	return GetUpgradedValue<float>("GoldBonus", Upgrades, GoldBonus);
 }
 
 // Get experience bonus
 float _Item::GetExpBonus(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::EXP_BONUS, Upgrades, ExpBonus);
+	return GetUpgradedValue<float>("ExpBonus", Upgrades, ExpBonus);
 }
 
 // Get cooldown reduction
 float _Item::GetCooldownReduction(int Upgrades) const {
-	return -GetUpgradedValue<float>(StatType::COOLDOWN, Upgrades, -Cooldown);
+	return -GetUpgradedValue<float>("Cooldown", Upgrades, -Cooldown);
 }
 
 // Get + all skills
 float _Item::GetAllSkills(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::ALLSKILLS, Upgrades, AllSkills);
+	return GetUpgradedValue<float>("AllSkills", Upgrades, AllSkills);
 }
 
 // Get appropriate text color when comparing items
@@ -1307,12 +1307,13 @@ glm::vec4 _Item::GetCompareColor(float ItemValue, float EquippedValue) const {
 }
 
 // Return value of a stat after upgrades
-template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Value) const {
+template<typename T> T _Item::GetUpgradedValue(const std::string &AttributeName, int Upgrades, T Value) const {
 	if(MaxLevel <= 0)
 		return Value;
 
+	float UpgradedValue = Stats->Attributes.at(AttributeName).UpgradeScale * GAME_UPGRADE_AMOUNT * Upgrades * std::abs(Value);
 	if(Value < 0)
-		return std::min(0.0f, Value + (T)(GAME_NEGATIVE_UPGRADE_SCALE * GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value)));
+		return std::min(0.0f, Value + (T)(GAME_NEGATIVE_UPGRADE_SCALE * UpgradedValue));
 	else
-		return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
+		return Value + (T)(UpgradedValue);
 }

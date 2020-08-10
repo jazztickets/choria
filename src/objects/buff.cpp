@@ -148,7 +148,7 @@ void _Buff::ExecuteScript(_Scripting *Scripting, const std::string &Function, in
 		Scripting->PushObject(StatChange.Object);
 		Scripting->PushStatChange(&StatChange);
 		Scripting->MethodCall(3, 1);
-		Scripting->GetStatChange(1, StatChange);
+		Scripting->GetStatChange(1, StatChange.Object->Stats, StatChange);
 		Scripting->FinishMethodCall();
 	}
 }

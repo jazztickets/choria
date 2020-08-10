@@ -25,7 +25,6 @@
 
 // Forward Declarations
 class _Object;
-class _Battle;
 
 namespace ae {
 	template<class T> class _Manager;
@@ -33,206 +32,11 @@ namespace ae {
 	class _Buffer;
 }
 
-// Hash function for StatType
-struct StatTypeHash {
-	template <typename T>
-	std::size_t operator()(T t) const {
-		return static_cast<std::uint64_t>(t);
-	}
-};
-
-// Types of stats
-enum class StatType : int {
-	BUFF,
-	BUFFLEVEL,
-	BUFFDURATION,
-	BUFFSOUND,
-	HEALTH,
-	MAXHEALTH,
-	MANA,
-	MAXMANA,
-	HEALTHREGEN,
-	MANAREGEN,
-	HEALTHUPDATEMULTIPLIER,
-	ATTACKPOWER,
-	MINDAMAGE,
-	MAXDAMAGE,
-	ARMOR,
-	DAMAGEBLOCK,
-	PIERCE,
-	MOVESPEED,
-	STAMINA,
-	BATTLESPEED,
-	HITCHANCE,
-	EVASION,
-	STUNNED,
-	RESISTTYPE,
-	RESIST,
-	EXPERIENCE,
-	GOLD,
-	GOLDSTOLEN,
-	INVISIBLE,
-	BELTSIZE,
-	SKILLBARSIZE,
-	SKILLPOINT,
-	ALLSKILLS,
-	MISS,
-	CRIT,
-	FLEE,
-	BATTLE,
-	HUNT,
-	BOUNTYHUNT,
-	TELEPORT,
-	LIGHT,
-	CLOCK,
-	MANAREDUCTIONRATIO,
-	DAMAGETYPE,
-	PHYSICALPOWER,
-	FIREPOWER,
-	COLDPOWER,
-	LIGHTNINGPOWER,
-	BLEEDPOWER,
-	POISONPOWER,
-	PETPOWER,
-	HEALPOWER,
-	MANAPOWER,
-	RESPEC,
-	CORPSE,
-	SUMMONLIMIT,
-	REBIRTH,
-	DIAGONAL_MOVEMENT,
-	MAP_CHANGE,
-	CLEAR_BUFF,
-	GOLD_BONUS,
-	EXP_BONUS,
-	SUMMON_BUFF,
-	LAVA_PROTECTION,
-	DIFFICULTY,
-	COOLDOWN,
-	REBIRTH_WEALTH,
-	REBIRTH_WISDOM,
-	REBIRTH_KNOWLEDGE,
-	REBIRTH_POWER,
-	REBIRTH_GIRTH,
-	REBIRTH_PROFICIENCY,
-	REBIRTH_INSIGHT,
-	REBIRTH_PASSAGE,
-	SPELL_DAMAGE,
-	MINIGAME_SPEED,
-	CONSUME_CHANCE,
-	ALL_RESIST,
-	PHYSICAL_RESIST,
-	FIRE_RESIST,
-	COLD_RESIST,
-	LIGHTNING_RESIST,
-	POISON_RESIST,
-	BLEED_RESIST,
-	STUN_RESIST,
-	ELEMENTAL_RESIST,
-	SHIELD_DAMAGE,
-	COUNT,
-};
-
 enum class StatValueType : int {
 	BOOLEAN,
 	INTEGER,
 	FLOAT,
 	POINTER,
-};
-
-struct _StatStorage {
-	StatType Type;
-	StatValueType ValueType;
-};
-
-const std::unordered_map<std::string, _StatStorage> StatStringToType = {
-	{ "Buff",                   { StatType::BUFF                   , StatValueType::POINTER } },
-	{ "BuffLevel",              { StatType::BUFFLEVEL              , StatValueType::INTEGER } },
-	{ "BuffDuration",           { StatType::BUFFDURATION           , StatValueType::FLOAT   } },
-	{ "BuffSound",              { StatType::BUFFSOUND              , StatValueType::INTEGER } },
-	{ "Health",                 { StatType::HEALTH                 , StatValueType::INTEGER } },
-	{ "MaxHealth",              { StatType::MAXHEALTH              , StatValueType::INTEGER } },
-	{ "Mana",                   { StatType::MANA                   , StatValueType::INTEGER } },
-	{ "MaxMana",                { StatType::MAXMANA                , StatValueType::INTEGER } },
-	{ "HealthRegen",            { StatType::HEALTHREGEN            , StatValueType::INTEGER } },
-	{ "ManaRegen",              { StatType::MANAREGEN              , StatValueType::INTEGER } },
-	{ "HealthUpdateMultiplier", { StatType::HEALTHUPDATEMULTIPLIER , StatValueType::FLOAT   } },
-	{ "AttackPower",            { StatType::ATTACKPOWER            , StatValueType::INTEGER } },
-	{ "MinDamage",              { StatType::MINDAMAGE              , StatValueType::INTEGER } },
-	{ "MaxDamage",              { StatType::MAXDAMAGE              , StatValueType::INTEGER } },
-	{ "Armor",                  { StatType::ARMOR                  , StatValueType::INTEGER } },
-	{ "DamageBlock",            { StatType::DAMAGEBLOCK            , StatValueType::INTEGER } },
-	{ "Pierce",                 { StatType::PIERCE                 , StatValueType::INTEGER } },
-	{ "MoveSpeed",              { StatType::MOVESPEED              , StatValueType::INTEGER } },
-	{ "Stamina",                { StatType::STAMINA                , StatValueType::FLOAT   } },
-	{ "BattleSpeed",            { StatType::BATTLESPEED            , StatValueType::INTEGER } },
-	{ "HitChance",              { StatType::HITCHANCE              , StatValueType::INTEGER } },
-	{ "Evasion",                { StatType::EVASION                , StatValueType::INTEGER } },
-	{ "Stunned",                { StatType::STUNNED                , StatValueType::BOOLEAN } },
-	{ "ResistType",             { StatType::RESISTTYPE             , StatValueType::INTEGER } },
-	{ "Resist",                 { StatType::RESIST                 , StatValueType::INTEGER } },
-	{ "Experience",             { StatType::EXPERIENCE             , StatValueType::INTEGER } },
-	{ "Gold",                   { StatType::GOLD                   , StatValueType::INTEGER } },
-	{ "GoldStolen",             { StatType::GOLDSTOLEN             , StatValueType::INTEGER } },
-	{ "Invisible",              { StatType::INVISIBLE              , StatValueType::BOOLEAN } },
-	{ "BeltSize",               { StatType::BELTSIZE               , StatValueType::INTEGER } },
-	{ "SkillBarSize",           { StatType::SKILLBARSIZE           , StatValueType::INTEGER } },
-	{ "SkillPoint",             { StatType::SKILLPOINT             , StatValueType::INTEGER } },
-	{ "AllSkills",              { StatType::ALLSKILLS              , StatValueType::INTEGER } },
-	{ "Miss",                   { StatType::MISS                   , StatValueType::BOOLEAN } },
-	{ "Crit",                   { StatType::CRIT                   , StatValueType::BOOLEAN } },
-	{ "Flee",                   { StatType::FLEE                   , StatValueType::BOOLEAN } },
-	{ "Battle",                 { StatType::BATTLE                 , StatValueType::INTEGER } },
-	{ "Hunt",                   { StatType::HUNT                   , StatValueType::FLOAT   } },
-	{ "BountyHunt",             { StatType::BOUNTYHUNT             , StatValueType::FLOAT   } },
-	{ "Teleport",               { StatType::TELEPORT               , StatValueType::FLOAT   } },
-	{ "Light",                  { StatType::LIGHT                  , StatValueType::INTEGER } },
-	{ "Clock",                  { StatType::CLOCK                  , StatValueType::FLOAT   } },
-	{ "ManaReductionRatio",     { StatType::MANAREDUCTIONRATIO     , StatValueType::FLOAT   } },
-	{ "DamageType",             { StatType::DAMAGETYPE             , StatValueType::INTEGER } },
-	{ "PhysicalPower",          { StatType::PHYSICALPOWER          , StatValueType::INTEGER } },
-	{ "FirePower",              { StatType::FIREPOWER              , StatValueType::INTEGER } },
-	{ "ColdPower",              { StatType::COLDPOWER              , StatValueType::INTEGER } },
-	{ "LightningPower",         { StatType::LIGHTNINGPOWER         , StatValueType::INTEGER } },
-	{ "BleedPower",             { StatType::BLEEDPOWER             , StatValueType::INTEGER } },
-	{ "PoisonPower",            { StatType::POISONPOWER            , StatValueType::INTEGER } },
-	{ "PetPower",               { StatType::PETPOWER               , StatValueType::INTEGER } },
-	{ "HealPower",              { StatType::HEALPOWER              , StatValueType::INTEGER } },
-	{ "ManaPower",              { StatType::MANAPOWER              , StatValueType::INTEGER } },
-	{ "Respec",                 { StatType::RESPEC                 , StatValueType::BOOLEAN } },
-	{ "Corpse",                 { StatType::CORPSE                 , StatValueType::INTEGER } },
-	{ "SummonLimit",            { StatType::SUMMONLIMIT            , StatValueType::INTEGER } },
-	{ "Rebirth",                { StatType::REBIRTH                , StatValueType::INTEGER } },
-	{ "DiagonalMovement",       { StatType::DIAGONAL_MOVEMENT      , StatValueType::BOOLEAN } },
-	{ "MapChange",              { StatType::MAP_CHANGE             , StatValueType::INTEGER } },
-	{ "ClearBuff",              { StatType::CLEAR_BUFF             , StatValueType::POINTER } },
-	{ "GoldBonus",              { StatType::GOLD_BONUS             , StatValueType::INTEGER } },
-	{ "ExpBonus",               { StatType::EXP_BONUS              , StatValueType::INTEGER } },
-	{ "SummonBuff",             { StatType::SUMMON_BUFF            , StatValueType::POINTER } },
-	{ "LavaProtection",         { StatType::LAVA_PROTECTION        , StatValueType::BOOLEAN } },
-	{ "Difficulty",             { StatType::DIFFICULTY             , StatValueType::INTEGER } },
-	{ "Cooldown",               { StatType::COOLDOWN               , StatValueType::FLOAT   } },
-	{ "RebirthWealth",          { StatType::REBIRTH_WEALTH         , StatValueType::INTEGER } },
-	{ "RebirthWisdom",          { StatType::REBIRTH_WISDOM         , StatValueType::INTEGER } },
-	{ "RebirthKnowledge",       { StatType::REBIRTH_KNOWLEDGE      , StatValueType::INTEGER } },
-	{ "RebirthPower",           { StatType::REBIRTH_POWER          , StatValueType::INTEGER } },
-	{ "RebirthGirth",           { StatType::REBIRTH_GIRTH          , StatValueType::INTEGER } },
-	{ "RebirthProficiency",     { StatType::REBIRTH_PROFICIENCY    , StatValueType::INTEGER } },
-	{ "RebirthInsight",         { StatType::REBIRTH_INSIGHT        , StatValueType::INTEGER } },
-	{ "RebirthPassage",         { StatType::REBIRTH_PASSAGE        , StatValueType::INTEGER } },
-	{ "SpellDamage",            { StatType::SPELL_DAMAGE           , StatValueType::INTEGER } },
-	{ "MinigameSpeed",          { StatType::MINIGAME_SPEED         , StatValueType::INTEGER } },
-	{ "ConsumeChance",          { StatType::CONSUME_CHANCE         , StatValueType::INTEGER } },
-	{ "AllResist",              { StatType::ALL_RESIST             , StatValueType::INTEGER } },
-	{ "PhysicalResist",         { StatType::PHYSICAL_RESIST        , StatValueType::INTEGER } },
-	{ "FireResist",             { StatType::FIRE_RESIST            , StatValueType::INTEGER } },
-	{ "ColdResist",             { StatType::COLD_RESIST            , StatValueType::INTEGER } },
-	{ "LightningResist",        { StatType::LIGHTNING_RESIST       , StatValueType::INTEGER } },
-	{ "PoisonResist",           { StatType::POISON_RESIST          , StatValueType::INTEGER } },
-	{ "BleedResist",            { StatType::BLEED_RESIST           , StatValueType::INTEGER } },
-	{ "StunResist",             { StatType::STUN_RESIST            , StatValueType::INTEGER } },
-	{ "ElementalResist",        { StatType::ELEMENTAL_RESIST       , StatValueType::INTEGER } },
-	{ "ShieldDamage",           { StatType::SHIELD_DAMAGE          , StatValueType::INTEGER } },
 };
 
 union _Value {
@@ -249,7 +53,7 @@ class _StatChange {
 		_StatChange();
 
 		void Reset() { Object = nullptr; Values.clear(); }
-		bool HasStat(StatType Type) const { return Values.find(Type) != Values.end();	}
+		bool HasStat(const std::string &Name) const { return Values.find(Name) != Values.end();	}
 
 		void Serialize(ae::_Buffer &Data);
 		void Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager);
@@ -258,7 +62,7 @@ class _StatChange {
 		_Object *Object;
 
 		// Data
-		std::unordered_map<StatType, _Value> Values;
+		std::unordered_map<std::string, _Value> Values;
 };
 
 // Graphical stat change

@@ -428,8 +428,8 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			Player->Character->MonsterKills = Data.Read<int>();
 			Player->Character->GoldLost = Data.Read<int>();
 			Player->Character->Bounty = Data.Read<int>();
-			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
-			StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
+			StatChange.Values["Experience"].Integer = Data.Read<int>();
+			StatChange.Values["Gold"].Integer = Data.Read<int>();
 			uint8_t ItemCount = Data.Read<uint8_t>();
 			for(uint8_t i = 0; i < ItemCount; i++) {
 
@@ -510,7 +510,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 					// No damage dealt
 					if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
-					   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0) || ActionResult.Target.HasStat(StatType::MISS))) {
+					   && ((ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Integer == 0) || ActionResult.Target.HasStat("Miss"))) {
 						ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 						ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 					}

@@ -1291,9 +1291,9 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Player->Character->Trader->RewardItem == nullptr) {
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values[StatType::BUFF].Pointer = (void *)Stats->Buffs.at(22);
-		StatChange.Values[StatType::BUFFLEVEL].Integer = 10;
-		StatChange.Values[StatType::BUFFDURATION].Float = 60;
+		StatChange.Values["Buff"].Pointer = (void *)Stats->Buffs.at(22);
+		StatChange.Values["BuffLevel"].Integer = 10;
+		StatChange.Values["BuffDuration"].Float = 60;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -1372,7 +1372,7 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values[StatType::GOLD].Integer = -Price;
+		StatChange.Values["Gold"].Integer = -Price;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -1669,7 +1669,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values[StatType::GOLD].Integer = -Price;
+		StatChange.Values["Gold"].Integer = -Price;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -2031,7 +2031,7 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 			Scripting->PushObject(StatChange.Object);
 			Scripting->PushStatChange(&StatChange);
 			Scripting->MethodCall(3, 1);
-			Scripting->GetStatChange(1, StatChange);
+			Scripting->GetStatChange(1, Stats, StatChange);
 			Scripting->FinishMethodCall();
 
 			StatChange.Object->UpdateStats(StatChange);
@@ -2097,8 +2097,8 @@ void _Server::Slap(ae::NetworkIDType PlayerID, int GoldAmount) {
 	// Penalty
 	_StatChange StatChange;
 	StatChange.Object = Player;
-	StatChange.Values[StatType::GOLD].Integer = -GoldAmount;
-	StatChange.Values[StatType::HEALTH].Integer = -Player->Character->Health / 2;
+	StatChange.Values["Gold"].Integer = -GoldAmount;
+	StatChange.Values["Health"].Integer = -Player->Character->Health / 2;
 	Player->UpdateStats(StatChange);
 
 	// Build packet
