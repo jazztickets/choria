@@ -142,9 +142,9 @@ void _Character::Update(double FrameTime) {
 			StatChange.Object = Object;
 
 			// Update regen
-			if((Health < MaxHealth && Attributes["HealthRegen"].Integer > 0) || Attributes["HealthRegen"].Integer < 0)
+			if((Health < Attributes["MaxHealth"].Integer && Attributes["HealthRegen"].Integer > 0) || Attributes["HealthRegen"].Integer < 0)
 				StatChange.Values["Health"].Integer = Attributes["HealthRegen"].Integer;
-			if((Mana < MaxMana && Attributes["ManaRegen"].Integer > 0) || Attributes["ManaRegen"].Integer < 0)
+			if((Mana < Attributes["MaxMana"].Integer && Attributes["ManaRegen"].Integer > 0) || Attributes["ManaRegen"].Integer < 0)
 				StatChange.Values["Mana"].Integer = Attributes["ManaRegen"].Integer;
 
 			// Update object
@@ -230,22 +230,12 @@ void _Character::UpdateHealth(int &Value) {
 	if(Object->Server && Value > 0)
 		Value *= Attributes["HealthUpdateMultiplier"].Integer * 0.01f;
 
-	Health += Value;
-
-	if(Health < 0)
-		Health = 0;
-	else if(Health > MaxHealth)
-		Health = MaxHealth;
+	Health = std::clamp(Health + Value, 0, Attributes["MaxHealth"].Integer);
 }
 
 // Update mana
 void _Character::UpdateMana(int Value) {
-	Mana += Value;
-
-	if(Mana < 0)
-		Mana = 0;
-	else if(Mana > MaxMana)
-		Mana = MaxMana;
+	Mana = std::clamp(Mana + Value, 0, Attributes["MaxMana"].Integer);
 }
 
 // Update gold amount
@@ -308,8 +298,8 @@ void _Character::CalculateStats() {
 	CalculateLevelStats();
 	SkillPoints += SkillPointsUnlocked;
 
-	MaxHealth = BaseMaxHealth;
-	MaxMana = BaseMaxMana;
+	Attributes["MaxHealth"].Integer = BaseMaxHealth;
+	Attributes["MaxMana"].Integer = BaseMaxMana;
 	Attributes["MinDamage"].Integer = BaseMinDamage;
 	Attributes["MaxDamage"].Integer = BaseMaxDamage;
 	Attributes["Armor"].Integer = BaseArmor;
@@ -394,8 +384,8 @@ void _Character::CalculateStats() {
 		Attributes["Armor"].Integer += Item->GetArmor(Upgrades);
 		Attributes["DamageBlock"].Integer += Item->GetDamageBlock(Upgrades);
 		Attributes["Pierce"].Integer += Item->GetPierce(Upgrades);
-		MaxHealth += Item->GetMaxHealth(Upgrades);
-		MaxMana += Item->GetMaxMana(Upgrades);
+		Attributes["MaxHealth"].Integer += Item->GetMaxHealth(Upgrades);
+		Attributes["MaxMana"].Integer += Item->GetMaxMana(Upgrades);
 		Attributes["HealthRegen"].Integer += Item->GetHealthRegen(Upgrades);
 		Attributes["ManaRegen"].Integer += Item->GetManaRegen(Upgrades);
 		Attributes["BattleSpeed"].Integer += Item->GetBattleSpeed(Upgrades);
@@ -559,10 +549,10 @@ void _Character::CalculateStats() {
 	Attributes["ConsumeChance"].Integer = std::clamp(Attributes["ConsumeChance"].Integer, 0, 100);
 	Attributes["EnergyField"].Integer = std::clamp(100 - Attributes["EnergyField"].Integer, 0, 100);
 
-	MaxHealth *= Attributes["HealthBonus"].Integer * 0.01f;
-	MaxMana *= Attributes["ManaBonus"].Integer * 0.01f;
-	Health = std::min(Health, MaxHealth);
-	Mana = std::min(Mana, MaxMana);
+	Attributes["MaxHealth"].Integer *= Attributes["HealthBonus"].Integer * 0.01f;
+	Attributes["MaxMana"].Integer *= Attributes["ManaBonus"].Integer * 0.01f;
+	Health = std::min(Health, Attributes["MaxHealth"].Integer);
+	Mana = std::min(Mana, Attributes["MaxMana"].Integer);
 	if(Attributes["HealthRegen"].Integer > 0)
 		Attributes["HealthRegen"].Integer *= Attributes["HealPower"].Integer * 0.01f;
 	if(Attributes["ManaRegen"].Integer > 0)
@@ -639,11 +629,6 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		Invisible = StatChange.Values["Invisible"].Integer;
 	if(StatChange.HasStat("Light"))
 		Object->Light = StatChange.Values["Light"].Integer;
-
-	if(StatChange.HasStat("MaxHealth"))
-		MaxHealth += StatChange.Values["MaxHealth"].Integer;
-	if(StatChange.HasStat("MaxMana"))
-		MaxMana += StatChange.Values["MaxMana"].Integer;
 
 	if(StatChange.HasStat("AllResist")) {
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)

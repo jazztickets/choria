@@ -785,7 +785,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ExperienceElement->Render();
 
 		// Draw health bar
-		Buffer << Player->Character->Health << " / " << Player->Character->MaxHealth;
+		Buffer << Player->Character->Health << " / " << Player->Character->Attributes["MaxHealth"].Integer;
 		ae::Assets.Elements["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
 		ae::Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->Character->GetHealthPercent());
@@ -793,7 +793,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		HealthElement->Render();
 
 		// Draw mana bar
-		Buffer << Player->Character->Mana << " / " << Player->Character->MaxMana;
+		Buffer << Player->Character->Mana << " / " << Player->Character->Attributes["MaxMana"].Integer;
 		ae::Assets.Elements["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
 		ae::Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->Character->GetManaPercent());

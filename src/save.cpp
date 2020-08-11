@@ -282,8 +282,8 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Character->CalculateStats();
 
 	// Set health/mana
-	Object.Character->Health = Object.Character->MaxHealth;
-	Object.Character->Mana = Object.Character->MaxMana;
+	Object.Character->Health = Object.Character->Attributes["MaxHealth"].Integer;
+	Object.Character->Mana = Object.Character->Attributes["MaxMana"].Integer;
 	Object.Character->GenerateNextBattle();
 
 	// Save new character
@@ -366,7 +366,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 
 	// Max sure player has health
 	if(!Player->Character->IsAlive() && !Player->Character->Hardcore)
-		Player->Character->Health = Player->Character->MaxHealth / 2;
+		Player->Character->Health = Player->Character->Attributes["MaxHealth"].Integer / 2;
 }
 
 // Get save version from database

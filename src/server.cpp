@@ -689,8 +689,8 @@ void _Server::HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(Player->Character->Battle)
 			return;
 
-		Player->Character->Health = Player->Character->MaxHealth / 2;
-		Player->Character->Mana = Player->Character->MaxMana / 2;
+		Player->Character->Health = Player->Character->Attributes["MaxHealth"].Integer / 2;
+		Player->Character->Mana = Player->Character->Attributes["MaxMana"].Integer / 2;
 		SpawnPlayer(Player, Player->Character->SpawnMapID, _Map::EVENT_SPAWN);
 	}
 }
@@ -1825,7 +1825,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 			if(!FromDisconnect) {
 				Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
 				Player->Character->Health = 0;
-				Player->Character->Mana = Player->Character->MaxMana / 2;
+				Player->Character->Mana = Player->Character->Attributes["MaxMana"].Integer / 2;
 				Player->Character->LoadMapID = 0;
 				Player->Character->DeleteStatusEffects();
 			}
@@ -2007,8 +2007,8 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
 	Packet.Write<int>(Player->Character->Health);
 	Packet.Write<int>(Player->Character->Mana);
-	Packet.Write<int>(Player->Character->MaxHealth);
-	Packet.Write<int>(Player->Character->MaxMana);
+	Packet.Write<int>(Player->Character->Attributes["MaxHealth"].Integer);
+	Packet.Write<int>(Player->Character->Attributes["MaxMana"].Integer);
 	Packet.Write<int64_t>(Player->Character->Experience);
 	Packet.Write<int>(Player->Character->Gold);
 	Packet.Write<int>(Player->Character->Bounty);
@@ -2554,8 +2554,8 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->CalculateStats();
 
 	// Spawn player
-	Character->Health = Character->MaxHealth;
-	Character->Mana = Character->MaxMana;
+	Character->Health = Character->Attributes["MaxHealth"].Integer;
+	Character->Mana = Character->Attributes["MaxMana"].Integer;
 	Character->GenerateNextBattle();
 	Character->LoadMapID = 0;
 	Character->SpawnMapID = 1;

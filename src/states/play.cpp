@@ -1688,8 +1688,8 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 
 	Player->Character->Health = Data.Read<int>();
 	Player->Character->Mana = Data.Read<int>();
-	Player->Character->MaxHealth = Data.Read<int>();
-	Player->Character->MaxMana = Data.Read<int>();
+	Player->Character->Attributes["MaxHealth"].Integer = Data.Read<int>();
+	Player->Character->Attributes["MaxMana"].Integer = Data.Read<int>();
 	Player->Character->Experience = Data.Read<int64_t>();
 	Player->Character->Gold = Data.Read<int>();
 	Player->Character->Bounty = Data.Read<int>();

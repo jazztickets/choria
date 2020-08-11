@@ -106,8 +106,8 @@ class _Character {
 		void CalculateLevelStats();
 		float GetNextLevelPercent() const;
 		bool IsAlive() const { return Health > 0; }
-		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
-		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
+		float GetHealthPercent() const { return Attributes.at("MaxHealth").Integer > 0 ? Health / (float)Attributes.at("MaxHealth").Integer : 0; }
+		float GetManaPercent() const { return Attributes.at("MaxMana").Integer > 0 ? Mana / (float)Attributes.at("MaxMana").Integer : 0; }
 
 		// Input
 		bool AcceptingMoveInput();
@@ -211,9 +211,7 @@ class _Character {
 		// Final attributes
 		std::unordered_map<std::string, _AttributeStorage> Attributes;
 		int Health;
-		int MaxHealth;
 		int Mana;
-		int MaxMana;
 		int EquipmentBattleSpeed;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;

@@ -533,14 +533,8 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Health);
 	lua_setfield(LuaState, -2, "Health");
 
-	lua_pushinteger(LuaState, Object->Character->MaxHealth);
-	lua_setfield(LuaState, -2, "MaxHealth");
-
 	lua_pushinteger(LuaState, Object->Character->Mana);
 	lua_setfield(LuaState, -2, "Mana");
-
-	lua_pushinteger(LuaState, Object->Character->MaxMana);
-	lua_setfield(LuaState, -2, "MaxMana");
 
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
