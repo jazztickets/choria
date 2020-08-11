@@ -880,6 +880,10 @@ void _Stats::LoadAttributes() {
 		Attribute.UpdateType = (StatUpdateType)Database->GetInt<int>("updatetype_id");
 		Attribute.UpgradeScale = Database->GetReal("upgrade_scale");
 		Attribute.Show = Database->GetInt<int>("show");
+		Attribute.Calculate = Database->GetInt<int>("calc");
+		Attribute.Save = Database->GetInt<int>("save");
+		Attribute.Script = Database->GetInt<int>("script");
+		Attribute.Network = Database->GetInt<int>("network");
 		switch(Attribute.Type) {
 			case StatValueType::BOOLEAN:
 			case StatValueType::INTEGER:

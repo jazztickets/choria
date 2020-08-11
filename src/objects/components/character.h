@@ -90,6 +90,9 @@ class _Character {
 		_Character(_Object *Object);
 		~_Character();
 
+		// Initialize
+		void Init();
+
 		// Updates
 		void Update(double FrameTime);
 		void UpdateHealth(int &Value);

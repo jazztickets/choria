@@ -137,6 +137,16 @@ _Character::~_Character() {
 	DeleteStatusEffects();
 }
 
+// Initialize attributes
+void _Character::Init() {
+	if(!Object->Stats)
+		throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Object->Stats is null");
+
+	// Set attributes
+	for(const auto &Attribute : Object->Stats->Attributes)
+		Attributes[Attribute.second.Name].Integer = 0;
+}
+
 // Update
 void _Character::Update(double FrameTime) {
 
@@ -306,8 +316,12 @@ void _Character::CalculateStats() {
 	_Scripting *Scripting = Object->Scripting;
 
 	// Set default values
-	for(const auto &Attribute : Object->Stats->Attributes)
+	for(const auto &Attribute : Object->Stats->Attributes) {
+		if(!Attribute.second.Calculate)
+			continue;
+
 		Attributes[Attribute.second.Name].Integer = Attribute.second.Default.Integer;
+	}
 
 	// Get base stats
 	CalculateLevelStats();

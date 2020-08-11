@@ -1785,6 +1785,7 @@ _Object *_PlayState::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID
 	Object->Stats = Stats;
 	Object->Map = Map;
 	Object->Character->CalcLevelStats = false;
+	Object->Character->Init();
 	Object->UnserializeCreate(Data);
 
 	// Add to map

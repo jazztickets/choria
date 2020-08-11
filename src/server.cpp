@@ -171,6 +171,7 @@ _Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
 	Object->Monster->SummonBuff = Summon.SummonBuff;
 	Object->Monster->SpellID = Summon.SpellID;
 	Object->Monster->Duration = Summon.Duration;
+	Object->Character->Init();
 
 	// Get difficulty
 	int Difficulty = 0;
@@ -908,6 +909,7 @@ _Object *_Server::CreatePlayer(ae::_Peer *Peer) {
 	Player->Character->CharacterID = Peer->CharacterID;
 	Player->Peer = Peer;
 	Player->Stats = Stats;
+	Player->Character->Init();
 	Peer->Object = Player;
 
 	Save->LoadPlayer(Stats, Player);
@@ -941,6 +943,7 @@ _Object *_Server::CreateBot() {
 	Bot->Server = this;
 	Bot->Character->CharacterID = CharacterID;
 	Bot->Stats = Stats;
+	Bot->Character->Init();
 	Save->LoadPlayer(Stats, Bot);
 	Bot->Character->PartyName = "bot";
 
@@ -2394,6 +2397,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Object->Monster->DatabaseID = Monster.MonsterID;
 			Object->Monster->Difficulty = Difficulty + Monster.Difficulty;
 			Object->Stats = Stats;
+			Object->Character->Init();
 			Stats->GetMonsterStats(Monster.MonsterID, Object, Object->Monster->Difficulty);
 			Object->Character->CalculateStats();
 			Battle->AddObject(Object, 1);

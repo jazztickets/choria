@@ -177,6 +177,10 @@ struct _Attribute {
 	_Value Default;
 	float UpgradeScale;
 	bool Show;
+	bool Calculate;
+	bool Save;
+	bool Script;
+	bool Network;
 };
 
 // Classes
