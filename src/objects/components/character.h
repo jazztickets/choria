@@ -59,14 +59,6 @@ struct _Cooldown {
 	double MaxDuration;
 };
 
-struct _AttributeStorage {
-	union {
-		int Integer;
-		float Float;
-		void *Pointer;
-	};
-};
-
 // Classes
 class _Character {
 
@@ -178,11 +170,6 @@ class _Character {
 		bool Offline;
 		uint8_t Status;
 
-		// Records
-		double PlayTime;
-		double RebirthTime;
-		double BattleTime;
-
 		// Levels
 		bool CalcLevelStats;
 		int Level;
@@ -202,7 +189,7 @@ class _Character {
 		double BaseAttackPeriod;
 
 		// Final attributes
-		std::unordered_map<std::string, _AttributeStorage> Attributes;
+		std::unordered_map<std::string, _Value> Attributes;
 		int EquipmentBattleSpeed;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;

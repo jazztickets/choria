@@ -53,10 +53,6 @@ _Character::_Character(_Object *Object) :
 	Offline(false),
 	Status(0),
 
-	PlayTime(0.0),
-	RebirthTime(0.0),
-	BattleTime(0.0),
-
 	CalcLevelStats(true),
 	Level(0),
 	Experience(0),

@@ -2454,7 +2454,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MenuOpen = false;
 	Character->InventoryOpen = false;
 	Character->SkillsOpen = false;
-	Character->RebirthTime = 0.0;
+	Character->Attributes["RebirthTime"].Double = 0.0;
 	Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
 	Character->SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
 	Character->Cooldowns.clear();

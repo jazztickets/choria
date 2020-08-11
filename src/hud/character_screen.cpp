@@ -71,16 +71,21 @@ void _CharacterScreen::Render(double BlendFactor) {
 		if(!Attribute.Show)
 			continue;
 
-		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
+		_Value &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
 		if(Attribute.UpdateType == StatUpdateType::MULTIPLICATIVE && AttributeStorage.Integer == 0)
 			continue;
 
 		if(AttributeStorage.Integer == Attribute.Default.Integer)
 			continue;
 
-		Buffer << AttributeStorage.Integer;
-		if(Attribute.Type == StatValueType::PERCENT)
-			Buffer << "%";
+		if(Attribute.Type == StatValueType::TIME) {
+			_HUD::FormatTime(Buffer, (int64_t)AttributeStorage.Double);
+		}
+		else {
+			Buffer << AttributeStorage.Integer;
+			if(Attribute.Type == StatValueType::PERCENT)
+				Buffer << "%";
+		}
 
 		// Separator
 		if(LastCategory != Attribute.Show && Drawn)
@@ -115,30 +120,4 @@ void _CharacterScreen::Render(double BlendFactor) {
 
 		First = false;
 	}
-
-	// Separator
-	DrawPosition.y += SpacingY;
-
-	// Play time
-	_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->PlayTime);
-	Font->DrawText("Play Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Rebirth time
-	if(HUD->Player->Character->Attributes["Rebirths"].Integer > 0) {
-		_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->RebirthTime);
-		Font->DrawText("Rebirth Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Battle time
-	_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->BattleTime);
-	Font->DrawText("Battle Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
 }

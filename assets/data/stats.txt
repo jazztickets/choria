@@ -82,6 +82,7 @@ INSERT INTO valuetype VALUES(1,'Integer');
 INSERT INTO valuetype VALUES(2,'Float');
 INSERT INTO valuetype VALUES(3,'Pointer');
 INSERT INTO valuetype VALUES(4,'Percent');
+INSERT INTO valuetype VALUES(5,'Time');
 CREATE TABLE IF NOT EXISTS "updatetype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -199,13 +200,16 @@ INSERT INTO attribute VALUES(95,'EternalWealth','Eternal Wealth',1,0,'0',0.0,0,0
 INSERT INTO attribute VALUES(96,'EternalAlacrity','Eternal Alacrity',1,0,'0',0.0,0,0,1,0,1);
 INSERT INTO attribute VALUES(97,'EternalKnowledge','Eternal Knowledge',1,0,'0',0.0,0,0,1,0,1);
 INSERT INTO attribute VALUES(98,'EternalPain','Eternal Pain',1,0,'0',0.0,0,0,1,1,1);
-INSERT INTO attribute VALUES(99,'MonsterKills','Monster Kills',1,0,'0',0.0,6,0,1,0,1);
-INSERT INTO attribute VALUES(100,'PlayerKills','Player Kills',1,0,'0',0.0,6,0,1,0,1);
-INSERT INTO attribute VALUES(101,'Deaths','Deaths',1,0,'0',0.0,6,0,1,0,1);
-INSERT INTO attribute VALUES(102,'GoldLost','Gold Lost',1,0,'0',0.0,6,0,1,0,1);
-INSERT INTO attribute VALUES(103,'Bounty','Bounty',1,0,'0',0.0,6,0,1,0,1);
-INSERT INTO attribute VALUES(104,'GamesPlayed','Games Played',1,0,'0',0.0,6,0,1,0,1);
-INSERT INTO attribute VALUES(105,'Rebirths','Rebirths',1,0,'0',0.0,6,0,1,1,1);
+INSERT INTO attribute VALUES(99,'PlayTime','Play Time',5,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(100,'RebirthTime','Rebirth Time',5,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(101,'BattleTime','Battle Time',5,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(102,'MonsterKills','Monster Kills',1,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(103,'PlayerKills','Player Kills',1,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(104,'Deaths','Deaths',1,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(105,'GoldLost','Gold Lost',1,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(106,'Bounty','Bounty',1,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(107,'GamesPlayed','Games Played',1,0,'0',0.0,6,0,1,0,1);
+INSERT INTO attribute VALUES(108,'Rebirths','Rebirths',1,0,'0',0.0,6,0,1,1,1);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT

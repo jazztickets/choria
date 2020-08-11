@@ -375,7 +375,7 @@ void _Scripting::PushObject(_Object *Object) {
 		if(!Attribute.second.Script)
 			continue;
 
-		_AttributeStorage &AttributeStorage = Object->Character->Attributes[Attribute.second.Name];
+		_Value &AttributeStorage = Object->Character->Attributes[Attribute.second.Name];
 		switch(Attribute.second.Type) {
 			case StatValueType::BOOLEAN:
 				lua_pushboolean(LuaState, AttributeStorage.Integer);
@@ -392,6 +392,9 @@ void _Scripting::PushObject(_Object *Object) {
 					lua_pushlightuserdata(LuaState, AttributeStorage.Pointer);
 				else
 					lua_pushnil(LuaState);
+			break;
+			case StatValueType::TIME:
+				lua_pushnumber(LuaState, AttributeStorage.Double);
 			break;
 		}
 		lua_setfield(LuaState, -2, Attribute.second.Name.c_str());

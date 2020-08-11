@@ -192,10 +192,11 @@ void _Object::Update(double FrameTime) {
 
 		// Update playtime
 		Character->IdleTime += FrameTime;
-		Character->PlayTime += FrameTime;
-		Character->RebirthTime += FrameTime;
+		Character->Attributes["PlayTime"].Double += FrameTime;
+		if(Character->Attributes["Rebirths"].Integer)
+			Character->Attributes["RebirthTime"].Double += FrameTime;
 		if(Character->Battle)
-			Character->BattleTime += FrameTime;
+			Character->Attributes["BattleTime"].Double += FrameTime;
 	}
 
 	// Update teleport time
@@ -597,9 +598,6 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
 	StatsNode["Experience"] = (Json::Value::Int64)Character->Experience;
 	StatsNode["Gold"] = Character->Gold;
-	StatsNode["PlayTime"] = Character->PlayTime;
-	StatsNode["RebirthTime"] = Character->RebirthTime;
-	StatsNode["BattleTime"] = Character->BattleTime;
 	StatsNode["NextBattle"] = Character->NextBattle;
 	StatsNode["Seed"] = Character->Seed;
 	StatsNode["PartyName"] = Character->PartyName;
@@ -609,7 +607,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		if(!Attribute.second.Save)
 			continue;
 
-		const _AttributeStorage &AttributeStorage = Character->Attributes.at(Attribute.second.Name);
+		const _Value &AttributeStorage = Character->Attributes.at(Attribute.second.Name);
 		switch(Attribute.second.Type) {
 			case StatValueType::BOOLEAN:
 			case StatValueType::INTEGER:
@@ -618,6 +616,9 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 			break;
 			case StatValueType::FLOAT:
 				StatsNode[Attribute.second.Name] = AttributeStorage.Float;
+			break;
+			case StatValueType::TIME:
+				StatsNode[Attribute.second.Name] = AttributeStorage.Double;
 			break;
 			default:
 				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported save type: " + Attribute.second.Name);
@@ -756,9 +757,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->SkillPointsUnlocked = StatsNode["SkillPointsUnlocked"].asInt();
 	Character->Experience = StatsNode["Experience"].asInt64();
 	Character->Gold = StatsNode["Gold"].asInt();
-	Character->PlayTime = StatsNode["PlayTime"].asDouble();
-	Character->RebirthTime = StatsNode["RebirthTime"].asDouble();
-	Character->BattleTime = StatsNode["BattleTime"].asDouble();
 	Character->NextBattle = StatsNode["NextBattle"].asInt();
 	Character->Seed = StatsNode["Seed"].asUInt();
 	Character->PartyName = StatsNode["PartyName"].asString();
@@ -778,6 +776,9 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 			break;
 			case StatValueType::FLOAT:
 				Character->Attributes[Attribute.second.Name].Float = StatsNode[Attribute.second.Name].asFloat();
+			break;
+			case StatValueType::TIME:
+				Character->Attributes[Attribute.second.Name].Double = StatsNode[Attribute.second.Name].asDouble();
 			break;
 			default:
 				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported save type: " + Attribute.second.Name);
@@ -937,9 +938,6 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
-	Data.Write<double>(Character->PlayTime);
-	Data.Write<double>(Character->RebirthTime);
-	Data.Write<double>(Character->BattleTime);
 
 	// Serialize attributes
 	for(const auto &AttributeName : Stats->AttributeRank) {
@@ -947,7 +945,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 		if(!Attribute.Network)
 			continue;
 
-		_AttributeStorage &AttributeStorage = Character->Attributes[AttributeName];
+		_Value &AttributeStorage = Character->Attributes[AttributeName];
 		switch(Attribute.Type) {
 			case StatValueType::BOOLEAN:
 			case StatValueType::INTEGER:
@@ -956,6 +954,9 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 			break;
 			case StatValueType::FLOAT:
 				Data.Write<float>(AttributeStorage.Float);
+			break;
+			case StatValueType::TIME:
+				Data.Write<float>(AttributeStorage.Double);
 			break;
 			default:
 				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported network type: " + Attribute.Name);
@@ -1020,9 +1021,6 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
-	Character->PlayTime = Data.Read<double>();
-	Character->RebirthTime = Data.Read<double>();
-	Character->BattleTime = Data.Read<double>();
 
 	// Serialize attributes
 	for(const auto &AttributeName : Stats->AttributeRank) {
@@ -1030,7 +1028,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 		if(!Attribute.Network)
 			continue;
 
-		_AttributeStorage &AttributeStorage = Character->Attributes[AttributeName];
+		_Value &AttributeStorage = Character->Attributes[AttributeName];
 		switch(Attribute.Type) {
 			case StatValueType::BOOLEAN:
 			case StatValueType::INTEGER:
@@ -1039,6 +1037,9 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 			break;
 			case StatValueType::FLOAT:
 				AttributeStorage.Float = Data.Read<float>();
+			break;
+			case StatValueType::TIME:
+				AttributeStorage.Double = Data.Read<float>();
 			break;
 			default:
 				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported network type: " + Attribute.Name);

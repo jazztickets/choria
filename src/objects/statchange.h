@@ -38,6 +38,7 @@ enum class StatValueType : int {
 	FLOAT,
 	POINTER,
 	PERCENT,
+	TIME,
 };
 
 enum class StatUpdateType : int {
@@ -47,10 +48,13 @@ enum class StatUpdateType : int {
 	MULTIPLICATIVE,
 };
 
-union _Value {
-	int Integer;
-	float Float;
-	void *Pointer;
+struct _Value {
+	union {
+		int Integer;
+		float Float;
+		double Double;
+		void *Pointer;
+	};
 };
 
 // Stat changes

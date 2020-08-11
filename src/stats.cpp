@@ -896,6 +896,9 @@ void _Stats::LoadAttributes() {
 			case StatValueType::POINTER:
 				Attribute.Default.Pointer = nullptr;
 			break;
+			case StatValueType::TIME:
+				Attribute.Default.Double = Database->GetReal("default");
+			break;
 		}
 
 		Attributes[Attribute.Name] = Attribute;
