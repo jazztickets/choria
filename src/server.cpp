@@ -2465,31 +2465,31 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	// Give bonus
 	switch(RebirthEvent.Type) {
 		case 1:
-			Character->EternalStrength += RebirthEvent.Value;
+			Character->Attributes["EternalStrength"].Integer += RebirthEvent.Value;
 		break;
 		case 2:
-			Character->EternalGuard += RebirthEvent.Value;
+			Character->Attributes["EternalGuard"].Integer += RebirthEvent.Value;
 		break;
 		case 3:
-			Character->EternalFortitude += RebirthEvent.Value;
+			Character->Attributes["EternalFortitude"].Integer += RebirthEvent.Value;
 		break;
 		case 4:
-			Character->EternalSpirit += RebirthEvent.Value;
+			Character->Attributes["EternalSpirit"].Integer += RebirthEvent.Value;
 		break;
 		case 5:
-			Character->EternalWisdom += RebirthEvent.Value;
+			Character->Attributes["EternalWisdom"].Integer += RebirthEvent.Value;
 		break;
 		case 6:
-			Character->EternalWealth += RebirthEvent.Value;
+			Character->Attributes["EternalWealth"].Integer += RebirthEvent.Value;
 		break;
 		case 7:
-			Character->EternalAlacrity += RebirthEvent.Value;
+			Character->Attributes["EternalAlacrity"].Integer += RebirthEvent.Value;
 		break;
 		case 8:
-			Character->EternalKnowledge += RebirthEvent.Value;
+			Character->Attributes["EternalKnowledge"].Integer += RebirthEvent.Value;
 		break;
 		case 9:
-			Character->EternalPain += RebirthEvent.Value;
+			Character->Attributes["EternalPain"].Integer += RebirthEvent.Value;
 		break;
 	}
 

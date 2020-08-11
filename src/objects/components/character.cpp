@@ -64,16 +64,6 @@ _Character::_Character(_Object *Object) :
 	GoldLost(0),
 	Rebirths(0),
 
-	EternalStrength(0),
-	EternalGuard(0),
-	EternalFortitude(0),
-	EternalSpirit(0),
-	EternalWisdom(0),
-	EternalWealth(0),
-	EternalAlacrity(0),
-	EternalKnowledge(0),
-	EternalPain(0),
-
 	CalcLevelStats(true),
 	Level(0),
 	RebirthTier(0),
@@ -329,7 +319,7 @@ void _Character::CalculateStats() {
 
 	Object->Light = 0;
 	Invisible = 0;
-	Attributes["Difficulty"].Integer += EternalPain + Rebirths;
+	Attributes["Difficulty"].Integer += Attributes["EternalPain"].Integer + Rebirths;
 	RebirthTier += Attributes["RebirthPower"].Integer;
 	Resistances.clear();
 	Sets.clear();
@@ -339,41 +329,41 @@ void _Character::CalculateStats() {
 		Resistances[i] = BaseResistances[i];
 
 	// Eternal Strength
-	Attributes["PhysicalPower"].Integer += EternalStrength;
-	Attributes["FirePower"].Integer += EternalStrength;
-	Attributes["ColdPower"].Integer += EternalStrength;
-	Attributes["LightningPower"].Integer += EternalStrength;
-	Attributes["BleedPower"].Integer += EternalStrength;
-	Attributes["PoisonPower"].Integer += EternalStrength;
-	Attributes["PetPower"].Integer += EternalStrength;
+	Attributes["PhysicalPower"].Integer += Attributes["EternalStrength"].Integer;
+	Attributes["FirePower"].Integer += Attributes["EternalStrength"].Integer;
+	Attributes["ColdPower"].Integer += Attributes["EternalStrength"].Integer;
+	Attributes["LightningPower"].Integer += Attributes["EternalStrength"].Integer;
+	Attributes["BleedPower"].Integer += Attributes["EternalStrength"].Integer;
+	Attributes["PoisonPower"].Integer += Attributes["EternalStrength"].Integer;
+	Attributes["PetPower"].Integer += Attributes["EternalStrength"].Integer;
 
 	// Eternal Guard
-	if(EternalGuard) {
-		Attributes["DamageBlock"].Integer += EternalGuard;
-		Attributes["Armor"].Integer += EternalGuard / 3;
+	if(Attributes["EternalGuard"].Integer) {
+		Attributes["DamageBlock"].Integer += Attributes["EternalGuard"].Integer;
+		Attributes["Armor"].Integer += Attributes["EternalGuard"].Integer / 3;
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-			Resistances[i] += EternalGuard / 4;
+			Resistances[i] += Attributes["EternalGuard"].Integer / 4;
 	}
 
 	// Eternal Fortitude
-	Attributes["HealthBonus"].Integer += EternalFortitude;
-	Attributes["HealPower"].Integer += EternalFortitude;
+	Attributes["HealthBonus"].Integer += Attributes["EternalFortitude"].Integer;
+	Attributes["HealPower"].Integer += Attributes["EternalFortitude"].Integer;
 
 	// Eternal Spirit
-	Attributes["ManaBonus"].Integer += EternalSpirit;
-	Attributes["ManaPower"].Integer += EternalSpirit;
+	Attributes["ManaBonus"].Integer += Attributes["EternalSpirit"].Integer;
+	Attributes["ManaPower"].Integer += Attributes["EternalSpirit"].Integer;
 
 	// Eternal Wisdom
-	Attributes["ExperienceBonus"].Integer += EternalWisdom;
+	Attributes["ExperienceBonus"].Integer += Attributes["EternalWisdom"].Integer;
 
 	// Eternal Wealth
-	Attributes["GoldBonus"].Integer += EternalWealth;
+	Attributes["GoldBonus"].Integer += Attributes["EternalWealth"].Integer;
 
 	// Eternal Alacrity
-	Attributes["BattleSpeed"].Integer = BaseBattleSpeed + EternalAlacrity;
+	Attributes["BattleSpeed"].Integer = BaseBattleSpeed + Attributes["EternalAlacrity"].Integer;
 
 	// Eternal Knowledge
-	SkillPoints += EternalKnowledge;
+	SkillPoints += Attributes["EternalKnowledge"].Integer;
 
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);

@@ -189,6 +189,15 @@ INSERT INTO attribute VALUES(85,'RebirthPower','Rebirth Power',1,0,'0',0.0,1,0,1
 INSERT INTO attribute VALUES(86,'RebirthProficiency','Rebirth Proficiency',1,0,'0',0.0,1,0,1,1,1);
 INSERT INTO attribute VALUES(87,'RebirthWealth','Rebirth Wealth',1,0,'0',0.0,1,0,1,1,1);
 INSERT INTO attribute VALUES(88,'RebirthWisdom','Rebirth Wisdom',1,0,'0',0.0,1,0,1,1,1);
+INSERT INTO attribute VALUES(89,'EternalStrength','Eternal Strength',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(90,'EternalGuard','Eternal Guard',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(91,'EternalFortitude','Eternal Fortitude',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(92,'EternalSpirit','Eternal Spirit',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(93,'EternalWisdom','Eternal Wisdom',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(94,'EternalWealth','Eternal Wealth',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(95,'EternalAlacrity','Eternal Alacrity',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(96,'EternalKnowledge','Eternal Knowledge',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(97,'EternalPain','Eternal Pain',1,0,'0',0.0,0,0,1,1,1);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT

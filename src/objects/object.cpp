@@ -612,15 +612,6 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["Rebirths"] = Character->Rebirths;
 	StatsNode["Seed"] = Character->Seed;
 	StatsNode["PartyName"] = Character->PartyName;
-	StatsNode["EternalStrength"] = Character->EternalStrength;
-	StatsNode["EternalGuard"] = Character->EternalGuard;
-	StatsNode["EternalFortitude"] = Character->EternalFortitude;
-	StatsNode["EternalSpirit"] = Character->EternalSpirit;
-	StatsNode["EternalWisdom"] = Character->EternalWisdom;
-	StatsNode["EternalWealth"] = Character->EternalWealth;
-	StatsNode["EternalAlacrity"] = Character->EternalAlacrity;
-	StatsNode["EternalKnowledge"] = Character->EternalKnowledge;
-	StatsNode["EternalPain"] = Character->EternalPain;
 
 	// Save attributes
 	for(const auto &Attribute : Stats->Attributes) {
@@ -789,15 +780,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->Rebirths = StatsNode["Rebirths"].asInt();
 	Character->Seed = StatsNode["Seed"].asUInt();
 	Character->PartyName = StatsNode["PartyName"].asString();
-	Character->EternalStrength = StatsNode["EternalStrength"].asInt();
-	Character->EternalGuard = StatsNode["EternalGuard"].asInt();
-	Character->EternalFortitude = StatsNode["EternalFortitude"].asInt();
-	Character->EternalSpirit = StatsNode["EternalSpirit"].asInt();
-	Character->EternalWisdom = StatsNode["EternalWisdom"].asInt();
-	Character->EternalWealth = StatsNode["EternalWealth"].asInt();
-	Character->EternalAlacrity = StatsNode["EternalAlacrity"].asInt();
-	Character->EternalKnowledge = StatsNode["EternalKnowledge"].asInt();
-	Character->EternalPain = StatsNode["EternalPain"].asInt();
 
 	// Load attributes
 	for(const auto &Attribute : Stats->Attributes) {
@@ -987,15 +969,6 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->GamesPlayed);
 	Data.Write<int>(Character->Bounty);
 	Data.Write<int>(Character->Rebirths);
-	Data.Write<int>(Character->EternalStrength);
-	Data.Write<int>(Character->EternalGuard);
-	Data.Write<int>(Character->EternalFortitude);
-	Data.Write<int>(Character->EternalSpirit);
-	Data.Write<int>(Character->EternalWisdom);
-	Data.Write<int>(Character->EternalWealth);
-	Data.Write<int>(Character->EternalAlacrity);
-	Data.Write<int>(Character->EternalKnowledge);
-	Data.Write<int>(Character->EternalPain);
 
 	// Serialize attributes
 	for(const auto &AttributeName : Stats->AttributeRank) {
@@ -1090,15 +1063,6 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->GamesPlayed = Data.Read<int>();
 	Character->Bounty = Data.Read<int>();
 	Character->Rebirths = Data.Read<int>();
-	Character->EternalStrength = Data.Read<int>();
-	Character->EternalGuard = Data.Read<int>();
-	Character->EternalFortitude = Data.Read<int>();
-	Character->EternalSpirit = Data.Read<int>();
-	Character->EternalWisdom = Data.Read<int>();
-	Character->EternalWealth = Data.Read<int>();
-	Character->EternalAlacrity = Data.Read<int>();
-	Character->EternalKnowledge = Data.Read<int>();
-	Character->EternalPain = Data.Read<int>();
 
 	// Serialize attributes
 	for(const auto &AttributeName : Stats->AttributeRank) {

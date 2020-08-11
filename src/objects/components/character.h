@@ -190,17 +190,6 @@ class _Character {
 		int GoldLost;
 		int Rebirths;
 
-		// Rebirths
-		int EternalStrength;
-		int EternalGuard;
-		int EternalFortitude;
-		int EternalSpirit;
-		int EternalWisdom;
-		int EternalWealth;
-		int EternalAlacrity;
-		int EternalKnowledge;
-		int EternalPain;
-
 		// Levels
 		bool CalcLevelStats;
 		int Level;

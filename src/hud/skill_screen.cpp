@@ -197,7 +197,7 @@ void _SkillScreen::Render(double BlendFactor) {
 
 	// Show more info when holding alt
 	int SkillPointsUnlocked = HUD->Player->Character->SkillPointsUnlocked;
-	int EternalKnowledge = HUD->Player->Character->EternalKnowledge;
+	int EternalKnowledge = HUD->Player->Character->Attributes["EternalKnowledge"].Integer;
 	if(ae::Input.ModKeyDown(KMOD_ALT)) {
 		std::string SubText;
 		if(SkillPointsUnlocked)
