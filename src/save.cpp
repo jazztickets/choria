@@ -317,7 +317,7 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 	// Get player stats
 	Json::Value Data;
 	Player->SerializeSaveData(Data);
-	Data["stats"]["map_id"] = MapID;
+	Data["stats"]["MapID"] = MapID;
 
 	// Get JSON string
 	Json::StreamWriterBuilder Writer;

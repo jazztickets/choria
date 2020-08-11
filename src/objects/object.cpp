@@ -584,51 +584,64 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write stats
 	Json::Value StatsNode;
-	StatsNode["hardcore"] = Character->Hardcore;
-	StatsNode["map_x"] = Position.x;
-	StatsNode["map_y"] = Position.y;
-	StatsNode["spawnmap_id"] = Character->SpawnMapID;
-	StatsNode["spawnpoint"] = Character->SpawnPoint;
-	StatsNode["build_id"] = Character->BuildID;
-	StatsNode["portrait_id"] = Character->PortraitID;
-	StatsNode["model_id"] = ModelID;
-	StatsNode["belt_size"] = Character->BeltSize;
-	StatsNode["skillbar_size"] = Character->SkillBarSize;
-	StatsNode["skillpoints_unlocked"] = Character->SkillPointsUnlocked;
-	StatsNode["health"] = Character->Health;
-	StatsNode["mana"] = Character->Mana;
-	StatsNode["experience"] = (Json::Value::Int64)Character->Experience;
-	StatsNode["gold"] = Character->Gold;
-	StatsNode["goldlost"] = Character->GoldLost;
-	StatsNode["playtime"] = Character->PlayTime;
-	StatsNode["rebirthtime"] = Character->RebirthTime;
-	StatsNode["battletime"] = Character->BattleTime;
-	StatsNode["deaths"] = Character->Deaths;
-	StatsNode["monsterkills"] = Character->MonsterKills;
-	StatsNode["playerkills"] = Character->PlayerKills;
-	StatsNode["gamesplayed"] = Character->GamesPlayed;
-	StatsNode["bounty"] = Character->Bounty;
-	StatsNode["nextbattle"] = Character->NextBattle;
-	StatsNode["rebirths"] = Character->Rebirths;
-	StatsNode["seed"] = Character->Seed;
-	StatsNode["partyname"] = Character->PartyName;
-	StatsNode["eternal_strength"] = Character->EternalStrength;
-	StatsNode["eternal_guard"] = Character->EternalGuard;
-	StatsNode["eternal_fortitude"] = Character->EternalFortitude;
-	StatsNode["eternal_spirit"] = Character->EternalSpirit;
-	StatsNode["eternal_wisdom"] = Character->EternalWisdom;
-	StatsNode["eternal_wealth"] = Character->EternalWealth;
-	StatsNode["eternal_alacrity"] = Character->EternalAlacrity;
-	StatsNode["eternal_knowledge"] = Character->EternalKnowledge;
-	StatsNode["eternal_pain"] = Character->EternalPain;
-	StatsNode["rebirth_wealth"] = Character->Attributes["RebirthWealth"].Integer;
-	StatsNode["rebirth_wisdom"] = Character->Attributes["RebirthWisdom"].Integer;
-	StatsNode["rebirth_knowledge"] = Character->Attributes["RebirthKnowledge"].Integer;
-	StatsNode["rebirth_power"] = Character->Attributes["RebirthPower"].Integer;
-	StatsNode["rebirth_girth"] = Character->Attributes["RebirthGirth"].Integer;
-	StatsNode["rebirth_proficiency"] = Character->Attributes["RebirthProficiency"].Integer;
-	StatsNode["rebirth_insight"] = Character->Attributes["RebirthInsight"].Integer;
-	StatsNode["rebirth_passage"] = Character->Attributes["RebirthPassage"].Integer;
+	StatsNode["Hardcore"] = Character->Hardcore;
+	StatsNode["MapX"] = Position.x;
+	StatsNode["MapY"] = Position.y;
+	StatsNode["SpawnMapID"] = Character->SpawnMapID;
+	StatsNode["SpawnPoint"] = Character->SpawnPoint;
+	StatsNode["BuildID"] = Character->BuildID;
+	StatsNode["PortraitID"] = Character->PortraitID;
+	StatsNode["ModelID"] = ModelID;
+	StatsNode["BeltSize"] = Character->BeltSize;
+	StatsNode["SkillBarSize"] = Character->SkillBarSize;
+	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
+	StatsNode["Health"] = Character->Health;
+	StatsNode["Mana"] = Character->Mana;
+	StatsNode["Experience"] = (Json::Value::Int64)Character->Experience;
+	StatsNode["Gold"] = Character->Gold;
+	StatsNode["GoldLost"] = Character->GoldLost;
+	StatsNode["PlayTime"] = Character->PlayTime;
+	StatsNode["RebirthTime"] = Character->RebirthTime;
+	StatsNode["BattleTime"] = Character->BattleTime;
+	StatsNode["Deaths"] = Character->Deaths;
+	StatsNode["MonsterKills"] = Character->MonsterKills;
+	StatsNode["PlayerKills"] = Character->PlayerKills;
+	StatsNode["GamesPlayed"] = Character->GamesPlayed;
+	StatsNode["Bounty"] = Character->Bounty;
+	StatsNode["NextBattle"] = Character->NextBattle;
+	StatsNode["Rebirths"] = Character->Rebirths;
+	StatsNode["Seed"] = Character->Seed;
+	StatsNode["PartyName"] = Character->PartyName;
+	StatsNode["EternalStrength"] = Character->EternalStrength;
+	StatsNode["EternalGuard"] = Character->EternalGuard;
+	StatsNode["EternalFortitude"] = Character->EternalFortitude;
+	StatsNode["EternalSpirit"] = Character->EternalSpirit;
+	StatsNode["EternalWisdom"] = Character->EternalWisdom;
+	StatsNode["EternalWealth"] = Character->EternalWealth;
+	StatsNode["EternalAlacrity"] = Character->EternalAlacrity;
+	StatsNode["EternalKnowledge"] = Character->EternalKnowledge;
+	StatsNode["EternalPain"] = Character->EternalPain;
+
+	// Save attributes
+	for(const auto &Attribute : Stats->Attributes) {
+		if(!Attribute.second.Save)
+			continue;
+
+		const _AttributeStorage &AttributeStorage = Character->Attributes.at(Attribute.second.Name);
+		switch(Attribute.second.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				StatsNode[Attribute.second.Name] = AttributeStorage.Integer;
+			break;
+			case StatValueType::FLOAT:
+				StatsNode[Attribute.second.Name] = AttributeStorage.Float;
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported save type: " + Attribute.second.Name);
+			break;
+		}
+	}
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -748,51 +761,65 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Get stats
 	Json::Value StatsNode = Data["stats"];
 	Character->LoadMapID = (ae::NetworkIDType)StatsNode["map_id"].asUInt();
-	Position.x = StatsNode["map_x"].asInt();
-	Position.y = StatsNode["map_y"].asInt();
-	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["spawnmap_id"].asUInt();
-	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
-	Character->Hardcore = StatsNode["hardcore"].asBool();
-	Character->BuildID = StatsNode["build_id"].asUInt();
-	Character->PortraitID = StatsNode["portrait_id"].asUInt();
-	ModelID = StatsNode["model_id"].asUInt();
-	Character->BeltSize = StatsNode["belt_size"].asInt();
-	Character->SkillBarSize = StatsNode["skillbar_size"].asInt();
-	Character->SkillPointsUnlocked = StatsNode["skillpoints_unlocked"].asInt();
-	Character->Health = StatsNode["health"].asInt();
-	Character->Mana = StatsNode["mana"].asInt();
-	Character->Experience = StatsNode["experience"].asInt64();
-	Character->Gold = StatsNode["gold"].asInt();
-	Character->GoldLost = StatsNode["goldlost"].asInt();
-	Character->PlayTime = StatsNode["playtime"].asDouble();
-	Character->RebirthTime = StatsNode["rebirthtime"].asDouble();
-	Character->BattleTime = StatsNode["battletime"].asDouble();
-	Character->Deaths = StatsNode["deaths"].asInt();
-	Character->MonsterKills = StatsNode["monsterkills"].asInt();
-	Character->PlayerKills = StatsNode["playerkills"].asInt();
-	Character->GamesPlayed = StatsNode["gamesplayed"].asInt();
-	Character->Bounty = StatsNode["bounty"].asInt();
-	Character->NextBattle = StatsNode["nextbattle"].asInt();
-	Character->Rebirths = StatsNode["rebirths"].asInt();
-	Character->Seed = StatsNode["seed"].asUInt();
-	Character->PartyName = StatsNode["partyname"].asString();
-	Character->EternalStrength = StatsNode["eternal_strength"].asInt();
-	Character->EternalGuard = StatsNode["eternal_guard"].asInt();
-	Character->EternalFortitude = StatsNode["eternal_fortitude"].asInt();
-	Character->EternalSpirit = StatsNode["eternal_spirit"].asInt();
-	Character->EternalWisdom = StatsNode["eternal_wisdom"].asInt();
-	Character->EternalWealth = StatsNode["eternal_wealth"].asInt();
-	Character->EternalAlacrity = StatsNode["eternal_alacrity"].asInt();
-	Character->EternalKnowledge = StatsNode["eternal_knowledge"].asInt();
-	Character->EternalPain = StatsNode["eternal_pain"].asInt();
-	Character->Attributes["RebirthWealth"].Integer = StatsNode["rebirth_wealth"].asInt();
-	Character->Attributes["RebirthWisdom"].Integer = StatsNode["rebirth_wisdom"].asInt();
-	Character->Attributes["RebirthKnowledge"].Integer = StatsNode["rebirth_knowledge"].asInt();
-	Character->Attributes["RebirthPower"].Integer = StatsNode["rebirth_power"].asInt();
-	Character->Attributes["RebirthGirth"].Integer = StatsNode["rebirth_girth"].asInt();
-	Character->Attributes["RebirthProficiency"].Integer = StatsNode["rebirth_proficiency"].asInt();
-	Character->Attributes["RebirthInsight"].Integer = StatsNode["rebirth_insight"].asInt();
-	Character->Attributes["RebirthPassage"].Integer = StatsNode["rebirth_passage"].asInt();
+	Position.x = StatsNode["MapX"].asInt();
+	Position.y = StatsNode["MapY"].asInt();
+	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["SpawnMapID"].asUInt();
+	Character->SpawnPoint = StatsNode["SpawnPoint"].asUInt();
+	Character->Hardcore = StatsNode["Hardcore"].asBool();
+	Character->BuildID = StatsNode["BuildID"].asUInt();
+	Character->PortraitID = StatsNode["PortraitID"].asUInt();
+	ModelID = StatsNode["ModelID"].asUInt();
+	Character->BeltSize = StatsNode["BeltSize"].asInt();
+	Character->SkillBarSize = StatsNode["SkillBarSize"].asInt();
+	Character->SkillPointsUnlocked = StatsNode["SkillPointsUnlocked"].asInt();
+	Character->Health = StatsNode["Health"].asInt();
+	Character->Mana = StatsNode["Mana"].asInt();
+	Character->Experience = StatsNode["Experience"].asInt64();
+	Character->Gold = StatsNode["Gold"].asInt();
+	Character->GoldLost = StatsNode["GoldLost"].asInt();
+	Character->PlayTime = StatsNode["PlayTime"].asDouble();
+	Character->RebirthTime = StatsNode["RebirthTime"].asDouble();
+	Character->BattleTime = StatsNode["BattleTime"].asDouble();
+	Character->Deaths = StatsNode["Deaths"].asInt();
+	Character->MonsterKills = StatsNode["MonsterKills"].asInt();
+	Character->PlayerKills = StatsNode["PlayerKills"].asInt();
+	Character->GamesPlayed = StatsNode["GamesPlayed"].asInt();
+	Character->Bounty = StatsNode["Bounty"].asInt();
+	Character->NextBattle = StatsNode["NextBattle"].asInt();
+	Character->Rebirths = StatsNode["Rebirths"].asInt();
+	Character->Seed = StatsNode["Seed"].asUInt();
+	Character->PartyName = StatsNode["PartyName"].asString();
+	Character->EternalStrength = StatsNode["EternalStrength"].asInt();
+	Character->EternalGuard = StatsNode["EternalGuard"].asInt();
+	Character->EternalFortitude = StatsNode["EternalFortitude"].asInt();
+	Character->EternalSpirit = StatsNode["EternalSpirit"].asInt();
+	Character->EternalWisdom = StatsNode["EternalWisdom"].asInt();
+	Character->EternalWealth = StatsNode["EternalWealth"].asInt();
+	Character->EternalAlacrity = StatsNode["EternalAlacrity"].asInt();
+	Character->EternalKnowledge = StatsNode["EternalKnowledge"].asInt();
+	Character->EternalPain = StatsNode["EternalPain"].asInt();
+
+	// Load attributes
+	for(const auto &Attribute : Stats->Attributes) {
+		if(!Attribute.second.Save)
+			continue;
+
+		switch(Attribute.second.Type) {
+			case StatValueType::BOOLEAN:
+				Character->Attributes[Attribute.second.Name].Integer = StatsNode[Attribute.second.Name].asBool();
+			break;
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				Character->Attributes[Attribute.second.Name].Integer = StatsNode[Attribute.second.Name].asInt();
+			break;
+			case StatValueType::FLOAT:
+				Character->Attributes[Attribute.second.Name].Float = StatsNode[Attribute.second.Name].asFloat();
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported save type: " + Attribute.second.Name);
+			break;
+		}
+	}
 
 	if(!Character->BeltSize)
 		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
