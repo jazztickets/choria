@@ -182,13 +182,6 @@ class _Character {
 		double PlayTime;
 		double RebirthTime;
 		double BattleTime;
-		int Deaths;
-		int MonsterKills;
-		int PlayerKills;
-		int GamesPlayed;
-		int Bounty;
-		int GoldLost;
-		int Rebirths;
 
 		// Levels
 		bool CalcLevelStats;

@@ -118,7 +118,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	DrawPosition.y += SpacingY;
 
 	// Rebirth time
-	if(HUD->Player->Character->Rebirths > 0) {
+	if(HUD->Player->Character->Attributes["Rebirths"].Integer > 0) {
 		_HUD::FormatTime(Buffer, (int64_t)HUD->Player->Character->RebirthTime);
 		Font->DrawText("Rebirth Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
@@ -132,67 +132,4 @@ void _CharacterScreen::Render(double BlendFactor) {
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
-
-	// Monster kills
-	if(HUD->Player->Character->MonsterKills > 0) {
-		Buffer << HUD->Player->Character->MonsterKills;
-		Font->DrawText("Monster Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Player kills
-	if(HUD->Player->Character->PlayerKills > 0) {
-		Buffer << HUD->Player->Character->PlayerKills;
-		Font->DrawText("Player Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Deaths
-	if(HUD->Player->Character->Deaths > 0) {
-		Buffer << HUD->Player->Character->Deaths;
-		Font->DrawText("Deaths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Bounty
-	if(HUD->Player->Character->Bounty > 0) {
-		Buffer << HUD->Player->Character->Bounty;
-		Font->DrawText("Bounty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Gold lost
-	if(HUD->Player->Character->GoldLost > 0) {
-		Buffer << HUD->Player->Character->GoldLost;
-		Font->DrawText("Gold Lost", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Games played
-	if(HUD->Player->Character->GamesPlayed > 0) {
-		Buffer << HUD->Player->Character->GamesPlayed;
-		Font->DrawText("Games Played", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Rebirths
-	if(HUD->Player->Character->Rebirths > 0) {
-		Buffer << HUD->Player->Character->Rebirths;
-		Font->DrawText("Rebirths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
 }

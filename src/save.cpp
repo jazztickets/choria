@@ -338,12 +338,12 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 			<< " exp=" << Player->Character->Experience
 			<< " gold=" << Player->Character->Gold
 			<< " playtime=" << Player->Character->PlayTime
-			<< " monsterkills=" << Player->Character->MonsterKills
-			<< " deaths=" << Player->Character->Deaths
+			<< " monsterkills=" << Player->Character->Attributes["MonsterKills"].Integer
+			<< " deaths=" << Player->Character->Attributes["Deaths"].Integer
 			<< " battletime=" << Player->Character->BattleTime
-			<< " bounty=" << Player->Character->Bounty
-			<< " gamesplayed=" << Player->Character->GamesPlayed
-			<< " rebirths=" << Player->Character->Rebirths
+			<< " bounty=" << Player->Character->Attributes["Bounty"].Integer
+			<< " gamesplayed=" << Player->Character->Attributes["GamesPlayed"].Integer
+			<< " rebirths=" << Player->Character->Attributes["Rebirths"].Integer
 			<< " rebirthtime=" << Player->Character->RebirthTime
 			<< " )" << std::endl;
 	}

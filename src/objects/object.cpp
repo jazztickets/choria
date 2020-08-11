@@ -228,14 +228,14 @@ void _Object::Update(double FrameTime) {
 			Changed = true;
 		if(Light != OldLight)
 			Changed = true;
-		if(Character->Bounty != OldBounty)
+		if(Character->Attributes["Bounty"].Integer != OldBounty)
 			Changed = true;
 	}
 
 	OldPosition = Position;
 	OldStatus = Character->Status;
 	OldInvisible = Character->Invisible;
-	OldBounty = Character->Bounty;
+	OldBounty = Character->Attributes["Bounty"].Integer;
 	OldLight = Light;
 }
 
@@ -375,17 +375,17 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
 	std::string Color = SameParty ? "green" : "white";
 	std::string NameText = "[c " + Color + "]" + Name + "[c white]";
-	if(Character->Bounty > 0)
-		NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
+	if(Character->Attributes["Bounty"].Integer > 0)
+		NameText += " ([c cyan]" + std::to_string(Character->Attributes["Bounty"].Integer) + "[c white])";
 
 	std::string Prefix;
-	if(Character->Rebirths)
-		Prefix = "[c gold]" + std::to_string(Character->Rebirths) + "[c white] ";
+	if(Character->Attributes["Rebirths"].Integer)
+		Prefix = "[c gold]" + std::to_string(Character->Attributes["Rebirths"].Integer) + "[c white] ";
 
 	// Cap name to screen
 	glm::vec2 NamePosition = DrawPosition;
 	float OffsetY = -0.5f;
-	if(SameParty || Character->Bounty > 0) {
+	if(SameParty || Character->Attributes["Bounty"].Integer > 0) {
 		ae::_TextBounds TextBounds;
 		ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
 		float HalfWidth = TextBounds.Width * 0.5f / ModelTexture->Size.x;
@@ -597,17 +597,10 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
 	StatsNode["Experience"] = (Json::Value::Int64)Character->Experience;
 	StatsNode["Gold"] = Character->Gold;
-	StatsNode["GoldLost"] = Character->GoldLost;
 	StatsNode["PlayTime"] = Character->PlayTime;
 	StatsNode["RebirthTime"] = Character->RebirthTime;
 	StatsNode["BattleTime"] = Character->BattleTime;
-	StatsNode["Deaths"] = Character->Deaths;
-	StatsNode["MonsterKills"] = Character->MonsterKills;
-	StatsNode["PlayerKills"] = Character->PlayerKills;
-	StatsNode["GamesPlayed"] = Character->GamesPlayed;
-	StatsNode["Bounty"] = Character->Bounty;
 	StatsNode["NextBattle"] = Character->NextBattle;
-	StatsNode["Rebirths"] = Character->Rebirths;
 	StatsNode["Seed"] = Character->Seed;
 	StatsNode["PartyName"] = Character->PartyName;
 
@@ -763,17 +756,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->SkillPointsUnlocked = StatsNode["SkillPointsUnlocked"].asInt();
 	Character->Experience = StatsNode["Experience"].asInt64();
 	Character->Gold = StatsNode["Gold"].asInt();
-	Character->GoldLost = StatsNode["GoldLost"].asInt();
 	Character->PlayTime = StatsNode["PlayTime"].asDouble();
 	Character->RebirthTime = StatsNode["RebirthTime"].asDouble();
 	Character->BattleTime = StatsNode["BattleTime"].asDouble();
-	Character->Deaths = StatsNode["Deaths"].asInt();
-	Character->MonsterKills = StatsNode["MonsterKills"].asInt();
-	Character->PlayerKills = StatsNode["PlayerKills"].asInt();
-	Character->GamesPlayed = StatsNode["GamesPlayed"].asInt();
-	Character->Bounty = StatsNode["Bounty"].asInt();
 	Character->NextBattle = StatsNode["NextBattle"].asInt();
-	Character->Rebirths = StatsNode["Rebirths"].asInt();
 	Character->Seed = StatsNode["Seed"].asUInt();
 	Character->PartyName = StatsNode["PartyName"].asString();
 
@@ -898,7 +884,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	else
 		Data.Write<uint32_t>(0);
 	Data.Write<uint32_t>(ModelID);
-	Data.Write<int>(Character->Rebirths);
+	Data.Write<int>(Character->Attributes["Rebirths"].Integer);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 	Data.WriteBit(Character->Offline);
@@ -913,7 +899,7 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	if(PortraitID && Character)
 		Character->PortraitID = PortraitID;
 	ModelID = Data.Read<uint32_t>();
-	Character->Rebirths = Data.Read<int>();
+	Character->Attributes["Rebirths"].Integer = Data.Read<int>();
 	Light = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();
 	Character->Offline = Data.ReadBit();
@@ -930,9 +916,9 @@ void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<uint8_t>(Character->Status);
 	Data.WriteBit(Light);
 	Data.WriteBit(Character->Invisible);
-	Data.WriteBit(Character->Bounty);
-	if(Character->Bounty)
-		Data.Write<int>(Character->Bounty);
+	Data.WriteBit(Character->Attributes["Bounty"].Integer);
+	if(Character->Attributes["Bounty"].Integer)
+		Data.Write<int>(Character->Attributes["Bounty"].Integer);
 	if(Light)
 		Data.Write<uint8_t>(Light);
 }
@@ -951,16 +937,9 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
-	Data.Write<int>(Character->GoldLost);
 	Data.Write<double>(Character->PlayTime);
 	Data.Write<double>(Character->RebirthTime);
 	Data.Write<double>(Character->BattleTime);
-	Data.Write<int>(Character->Deaths);
-	Data.Write<int>(Character->MonsterKills);
-	Data.Write<int>(Character->PlayerKills);
-	Data.Write<int>(Character->GamesPlayed);
-	Data.Write<int>(Character->Bounty);
-	Data.Write<int>(Character->Rebirths);
 
 	// Serialize attributes
 	for(const auto &AttributeName : Stats->AttributeRank) {
@@ -1041,16 +1020,9 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
-	Character->GoldLost = Data.Read<int>();
 	Character->PlayTime = Data.Read<double>();
 	Character->RebirthTime = Data.Read<double>();
 	Character->BattleTime = Data.Read<double>();
-	Character->Deaths = Data.Read<int>();
-	Character->MonsterKills = Data.Read<int>();
-	Character->PlayerKills = Data.Read<int>();
-	Character->GamesPlayed = Data.Read<int>();
-	Character->Bounty = Data.Read<int>();
-	Character->Rebirths = Data.Read<int>();
 
 	// Serialize attributes
 	for(const auto &AttributeName : Stats->AttributeRank) {
@@ -1539,19 +1511,19 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 // Update death count and gold loss
 void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
-	int OldBounty = Character->Bounty;
+	int OldBounty = Character->Attributes["Bounty"].Integer;
 
 	// Update stats
 	Character->UpdateGold(-GoldPenalty);
-	Character->Deaths++;
-	Character->GoldLost += GoldPenalty;
-	Character->Bounty -= BountyLoss;
-	if(Character->Bounty < 0)
-		Character->Bounty = 0;
+	Character->Attributes["Deaths"].Integer++;
+	Character->Attributes["GoldLost"].Integer += GoldPenalty;
+	Character->Attributes["Bounty"].Integer -= BountyLoss;
+	if(Character->Attributes["Bounty"].Integer < 0)
+		Character->Attributes["Bounty"].Integer = 0;
 
 	// Send message
 	if(Server) {
-		if(BountyLoss > 0 && Character->Bounty == 0) {
+		if(BountyLoss > 0 && Character->Attributes["Bounty"].Integer == 0) {
 			std::string BountyMessage = "Player " + Name + "'s bounty of " + std::to_string(OldBounty) + " gold has been claimed!";
 			Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
 			Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
@@ -1564,7 +1536,7 @@ void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 
 			Server->SendPlayerPosition(Peer);
 			Server->SendMessage(Peer, std::string(Text + "and lost " + std::to_string(GoldPenalty) + " gold"), "red");
-			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Deaths << " hardcore=" << Character->Hardcore << " )" << std::endl;
+			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Attributes["Deaths"].Integer << " hardcore=" << Character->Hardcore << " )" << std::endl;
 		}
 	}
 }

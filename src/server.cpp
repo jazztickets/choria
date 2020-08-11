@@ -1718,7 +1718,7 @@ void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Network->SendPacket(Packet, Peer);
 
 	// Update stats
-	Player->Character->GamesPlayed++;
+	Player->Character->Attributes["GamesPlayed"].Integer++;
 	Player->Character->IdleTime = 0.0;
 }
 
@@ -1878,7 +1878,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "bounty") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Player->Character->Bounty = std::max((int64_t)0, Adjust ? Player->Character->Bounty + Change : Change);
+		Player->Character->Attributes["Bounty"].Integer = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Bounty"].Integer + Change : Change);
 		SendHUD(Peer);
 	}
 	else if(Command == "clearunlocks") {
@@ -1923,7 +1923,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Character->Gold = Adjust ? Player->Character->Gold + Change : Change;
 		if(Player->Character->Gold > PLAYER_MAX_GOLD)
 			Player->Character->Gold = PLAYER_MAX_GOLD;
-		Player->Character->GoldLost = 0;
+		Player->Character->Attributes["GoldLost"].Integer = 0;
 		SendHUD(Peer);
 	}
 	else if(Command == "map") {
@@ -2011,7 +2011,7 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<int>(Player->Character->Attributes["MaxMana"].Integer);
 	Packet.Write<int64_t>(Player->Character->Experience);
 	Packet.Write<int>(Player->Character->Gold);
-	Packet.Write<int>(Player->Character->Bounty);
+	Packet.Write<int>(Player->Character->Attributes["Bounty"].Integer);
 	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);
@@ -2560,7 +2560,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->LoadMapID = 0;
 	Character->SpawnMapID = 1;
 	Character->SpawnPoint = 0;
-	Character->Rebirths++;
+	Character->Attributes["Rebirths"].Integer++;
 	SpawnPlayer(Player, Character->LoadMapID, _Map::EVENT_NONE);
 	SendPlayerInfo(Player->Peer);
 }

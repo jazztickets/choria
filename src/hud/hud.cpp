@@ -215,7 +215,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
 					PlayState.Network->SendPacket(Packet);
 
-					Player->Character->GamesPlayed++;
+					Player->Character->Attributes["GamesPlayed"].Integer++;
 					PlayState.PlayCoinSound();
 				}
 			}

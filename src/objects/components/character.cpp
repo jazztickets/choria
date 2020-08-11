@@ -56,13 +56,6 @@ _Character::_Character(_Object *Object) :
 	PlayTime(0.0),
 	RebirthTime(0.0),
 	BattleTime(0.0),
-	Deaths(0),
-	MonsterKills(0),
-	PlayerKills(0),
-	GamesPlayed(0),
-	Bounty(0),
-	GoldLost(0),
-	Rebirths(0),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -308,7 +301,7 @@ void _Character::CalculateStats() {
 
 	Object->Light = 0;
 	Invisible = 0;
-	Attributes["Difficulty"].Integer += Attributes["EternalPain"].Integer + Rebirths;
+	Attributes["Difficulty"].Integer += Attributes["EternalPain"].Integer + Attributes["Rebirths"].Integer;
 	Attributes["RebirthTier"].Integer += Attributes["RebirthPower"].Integer;
 	Resistances.clear();
 	Sets.clear();

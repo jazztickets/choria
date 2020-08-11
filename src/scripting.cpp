@@ -518,9 +518,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Fighter->Corpse);
 	lua_setfield(LuaState, -2, "Corpse");
 
-	lua_pushinteger(LuaState, Object->Character->Rebirths);
-	lua_setfield(LuaState, -2, "Rebirths");
-
 	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
