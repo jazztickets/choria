@@ -920,7 +920,7 @@ function Skill_EnergyField.GetInfo(self, Source, Item)
 end
 
 function Skill_EnergyField.Stats(self, Level, Object, Change)
-	Change.ManaReductionRatio = self:GetReduction(Level) / 100.0
+	Change.EnergyField = self:GetReduction(Level)
 
 	return Change
 end

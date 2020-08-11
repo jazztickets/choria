@@ -55,9 +55,9 @@ void _CharacterScreen::Render(double BlendFactor) {
 
 	// Damage
 	if(ae::Input.ModKeyDown(KMOD_ALT))
-		Buffer << ae::Round((HUD->Player->Character->MinDamage + HUD->Player->Character->MaxDamage) * 0.5f);
+		Buffer << ae::Round((HUD->Player->Character->Attributes["MinDamage"].Integer + HUD->Player->Character->Attributes["MaxDamage"].Integer) * 0.5f);
 	else
-		Buffer << HUD->Player->Character->MinDamage << " - " << HUD->Player->Character->MaxDamage;
+		Buffer << HUD->Player->Character->Attributes["MinDamage"].Integer << " - " << HUD->Player->Character->Attributes["MaxDamage"].Integer;
 	Font->DrawText("Weapon Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");

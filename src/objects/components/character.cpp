@@ -315,12 +315,11 @@ void _Character::CalculateStats() {
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
-	MinDamage = BaseMinDamage;
-	MaxDamage = BaseMaxDamage;
+	Attributes["MinDamage"].Integer = BaseMinDamage;
+	Attributes["MaxDamage"].Integer = BaseMaxDamage;
 	Attributes["Armor"].Integer = BaseArmor;
 	Attributes["DamageBlock"].Integer = BaseDamageBlock;
 	Attributes["SpellDamage"].Integer = BaseSpellDamage;
-	ManaReductionRatio = 1.0f;
 
 	Object->Light = 0;
 	Invisible = 0;
@@ -536,8 +535,8 @@ void _Character::CalculateStats() {
 
 	// Get damage
 	for(size_t i = 0; i < ItemMinDamage.size(); i++) {
-		MinDamage += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
-		MaxDamage += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
+		Attributes["MinDamage"].Integer += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
+		Attributes["MaxDamage"].Integer += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
 	}
 
 	// Cap resistances
@@ -558,12 +557,12 @@ void _Character::CalculateStats() {
 	Attributes["BattleSpeed"].Integer = std::max(Attributes["BattleSpeed"].Integer, BATTLE_MIN_SPEED);
 	Attributes["Cooldown"].Integer = std::max(Attributes["Cooldown"].Integer, 0);
 
-	MinDamage = std::max(MinDamage, 0);
-	MaxDamage = std::max(MaxDamage, 0);
+	Attributes["MinDamage"].Integer = std::max(Attributes["MinDamage"].Integer, 0);
+	Attributes["MaxDamage"].Integer = std::max(Attributes["MaxDamage"].Integer, 0);
 	Attributes["Pierce"].Integer = std::max(Attributes["Pierce"].Integer, 0);
 	Attributes["DamageBlock"].Integer = std::max(Attributes["DamageBlock"].Integer, 0);
-	ManaReductionRatio = std::clamp(1.0f - ManaReductionRatio, 0.0f, 1.0f);
 	Attributes["ConsumeChance"].Integer = std::clamp(Attributes["ConsumeChance"].Integer, 0, 100);
+	Attributes["EnergyField"].Integer = std::clamp(100 - Attributes["EnergyField"].Integer, 0, 100);
 
 	MaxHealth *= MaxHealthMultiplier * 0.01f;
 	MaxMana *= MaxManaMultiplier * 0.01f;
@@ -636,12 +635,10 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 				Attributes[Update.first].Integer = Update.second.Integer;
 			break;
 			case StatUpdateType::MULTIPLICATIVE:
+				Attributes[Update.first].Integer = (Attributes[Update.first].Integer * 0.01f * (100 - Update.second.Integer) * 0.01f) * 100;
 			break;
 		}
 	}
-
-	if(StatChange.HasStat("ManaReductionRatio"))
-		ManaReductionRatio *= (1.0f - StatChange.Values["ManaReductionRatio"].Float);
 
 	if(StatChange.HasStat("Invisible"))
 		Invisible = StatChange.Values["Invisible"].Integer;
@@ -652,10 +649,6 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		MaxHealth += StatChange.Values["MaxHealth"].Integer;
 	if(StatChange.HasStat("MaxMana"))
 		MaxMana += StatChange.Values["MaxMana"].Integer;
-	if(StatChange.HasStat("MinDamage"))
-		MinDamage += StatChange.Values["MinDamage"].Integer;
-	if(StatChange.HasStat("MaxDamage"))
-		MaxDamage += StatChange.Values["MaxDamage"].Integer;
 
 	if(StatChange.HasStat("AllResist")) {
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
@@ -727,7 +720,7 @@ void _Character::GenerateNextBattle() {
 
 // Generate damage
 int _Character::GenerateDamage() {
-	return ae::GetRandomInt(MinDamage, MaxDamage);
+	return ae::GetRandomInt(Attributes["MinDamage"].Integer, Attributes["MaxDamage"].Integer);
 }
 
 // Get damage power from a type

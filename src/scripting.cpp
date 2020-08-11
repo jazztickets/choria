@@ -567,9 +567,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
-	lua_pushnumber(LuaState, Object->Character->ManaReductionRatio);
-	lua_setfield(LuaState, -2, "ManaReductionRatio");
-
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
 

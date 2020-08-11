@@ -843,7 +843,7 @@ function Item_EnergyField.GetInfo(self, Source, Item)
 end
 
 function Item_EnergyField.Stats(self, Item, Object, Change)
-	Change.ManaReductionRatio = self:GetReduction(Item) / 100.0
+	Change.EnergyField = self:GetReduction(Item)
 
 	return Change
 end

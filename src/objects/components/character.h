@@ -120,7 +120,7 @@ class _Character {
 		bool IsZoneOnCooldown(uint32_t Zone) { return BattleCooldown.find(Zone) != BattleCooldown.end(); }
 		void GenerateNextBattle();
 		int GenerateDamage();
-		float GetAverageDamage() const { return (MinDamage + MaxDamage) / 2.0f; }
+		float GetAverageDamage() const { return (Attributes.at("MinDamage").Integer + Attributes.at("MaxDamage").Integer) / 2.0f; }
 		float GetDamagePowerMultiplier(int DamageTypeID);
 
 		// Actions
@@ -233,9 +233,6 @@ class _Character {
 		int MaxMana;
 		int MaxHealthMultiplier;
 		int MaxManaMultiplier;
-		float ManaReductionRatio;
-		int MinDamage;
-		int MaxDamage;
 		int EquipmentBattleSpeed;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;
