@@ -617,8 +617,8 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 		Object->Inventory->Bags = Build->Inventory->GetBags();
 		Object->Character->ActionBar = Build->Character->ActionBar;
 		Object->Character->Skills = Build->Character->Skills;
-		Object->Character->Health = Object->Character->Attributes["MaxHealth"].Integer = Object->Character->BaseMaxHealth;
-		Object->Character->Mana = Object->Character->Attributes["MaxMana"].Integer = Object->Character->BaseMaxMana;
+		Object->Character->Attributes["Health"].Integer = Object->Character->Attributes["MaxHealth"].Integer = Object->Character->BaseMaxHealth;
+		Object->Character->Attributes["Mana"].Integer = Object->Character->Attributes["MaxMana"].Integer = Object->Character->BaseMaxMana;
 		Object->Character->Gold = Object->Monster->GoldGiven;
 		Object->Character->CalcLevelStats = false;
 		Object->Character->BaseResistances[3] = Database->GetInt<int>("fire_res");

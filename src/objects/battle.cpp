@@ -824,8 +824,8 @@ void _Battle::ServerEndBattle() {
 			if(Object->Peer)
 				Server->SendMessage(Object->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
 
-			Object->Character->Health = Object->Character->Attributes["MaxHealth"].Integer;
-			Object->Character->Mana = Object->Character->Attributes["MaxMana"].Integer;
+			Object->Character->Attributes["Health"].Integer = Object->Character->Attributes["MaxHealth"].Integer;
+			Object->Character->Attributes["Mana"].Integer = Object->Character->Attributes["MaxMana"].Integer;
 		}
 
 		// See if summon is alive, then add buff to owner

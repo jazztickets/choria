@@ -216,11 +216,11 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		else if(ExistingSummons.size()) {
 
 			// Get lowest health summon
-			int LowestHealth = ExistingSummons[0]->Character->Health;
+			int LowestHealth = ExistingSummons[0]->Character->Attributes["Health"].Integer;
 			_Object *LowestHealthSummon = ExistingSummons[0];
 			for(auto &ExistingSummon : ExistingSummons) {
-				if(ExistingSummon->Character->Health < LowestHealth) {
-					LowestHealth = ExistingSummon->Character->Health;
+				if(ExistingSummon->Character->Attributes["Health"].Integer < LowestHealth) {
+					LowestHealth = ExistingSummon->Character->Attributes["Health"].Integer;
 					LowestHealthSummon = ExistingSummon;
 				}
 			}

@@ -472,13 +472,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		HealthFont = TinyFont;
 	int TextOffsetY = (HealthFont->MaxAbove - HealthFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
 
-	Buffer << Character->Health << " / " << Character->Attributes["MaxHealth"].Integer;
+	Buffer << Character->Attributes["Health"].Integer << " / " << Character->Attributes["MaxHealth"].Integer;
 	HealthFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
 	// Draw mana
 	if(Character->Attributes["MaxMana"].Integer > 0) {
-		float ManaPercent = Character->Attributes["MaxMana"].Integer > 0 ? Character->Mana / (float)Character->Attributes["MaxMana"].Integer : 0;
+		float ManaPercent = Character->Attributes["MaxMana"].Integer > 0 ? Character->Attributes["Mana"].Integer / (float)Character->Attributes["MaxMana"].Integer : 0;
 
 		// Get ui size
 		BarOffset.y += BarSize.y + BarPaddingY;
@@ -499,7 +499,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		if(Character->Attributes["MaxMana"].Integer > 9999)
 			ManaFont = TinyFont;
 		int TextOffsetY = (ManaFont->MaxAbove - ManaFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
-		Buffer << Character->Mana << " / " << Character->Attributes["MaxMana"].Integer;
+		Buffer << Character->Attributes["Mana"].Integer << " / " << Character->Attributes["MaxMana"].Integer;
 		ManaFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
@@ -595,8 +595,6 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["BeltSize"] = Character->BeltSize;
 	StatsNode["SkillBarSize"] = Character->SkillBarSize;
 	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
-	StatsNode["Health"] = Character->Health;
-	StatsNode["Mana"] = Character->Mana;
 	StatsNode["Experience"] = (Json::Value::Int64)Character->Experience;
 	StatsNode["Gold"] = Character->Gold;
 	StatsNode["GoldLost"] = Character->GoldLost;
@@ -763,8 +761,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->BeltSize = StatsNode["BeltSize"].asInt();
 	Character->SkillBarSize = StatsNode["SkillBarSize"].asInt();
 	Character->SkillPointsUnlocked = StatsNode["SkillPointsUnlocked"].asInt();
-	Character->Health = StatsNode["Health"].asInt();
-	Character->Mana = StatsNode["Mana"].asInt();
 	Character->Experience = StatsNode["Experience"].asInt64();
 	Character->Gold = StatsNode["Gold"].asInt();
 	Character->GoldLost = StatsNode["GoldLost"].asInt();
@@ -950,8 +946,6 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.WriteString(Character->PartyName.c_str());
 	Data.Write<uint8_t>(Character->BeltSize);
 	Data.Write<uint8_t>(Character->SkillBarSize);
-	Data.Write<int>(Character->Health);
-	Data.Write<int>(Character->Mana);
 	Data.Write<int64_t>(Character->Experience);
 	Data.Write<int>(Character->Gold);
 	Data.Write<int>(Character->SkillPointsUnlocked);
@@ -1042,8 +1036,6 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->PartyName = Data.ReadString();
 	Character->BeltSize = Data.Read<uint8_t>();
 	Character->SkillBarSize = Data.Read<uint8_t>();
-	Character->Health = Data.Read<int>();
-	Character->Mana = Data.Read<int>();
 	Character->Experience = Data.Read<int64_t>();
 	Character->Gold = Data.Read<int>();
 	Character->SkillPointsUnlocked = Data.Read<int>();
@@ -1148,9 +1140,9 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<uint32_t>(Monster->DatabaseID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<int>(Character->Level);
-	Data.Write<int>(Character->Health);
+	Data.Write<int>(Character->Attributes["Health"].Integer);
 	Data.Write<int>(Character->Attributes["MaxHealth"].Integer);
-	Data.Write<int>(Character->Mana);
+	Data.Write<int>(Character->Attributes["Mana"].Integer);
 	Data.Write<int>(Character->Attributes["MaxMana"].Integer);
 	Data.Write<int>(Character->EquipmentBattleSpeed);
 	Data.Write<double>(Fighter->TurnTimer);
@@ -1166,9 +1158,9 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	// Get object type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
 	Character->Level = Data.Read<int>();
-	Character->Health = Data.Read<int>();
+	Character->Attributes["Health"].Integer = Data.Read<int>();
 	Character->BaseMaxHealth = Character->Attributes["MaxHealth"].Integer = Data.Read<int>();
-	Character->Mana = Data.Read<int>();
+	Character->Attributes["Mana"].Integer = Data.Read<int>();
 	Character->BaseMaxMana = Character->Attributes["MaxMana"].Integer = Data.Read<int>();
 	Character->EquipmentBattleSpeed = Data.Read<int>();
 	if(!IsClient)

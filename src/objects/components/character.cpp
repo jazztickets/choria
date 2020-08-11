@@ -142,9 +142,9 @@ void _Character::Update(double FrameTime) {
 			StatChange.Object = Object;
 
 			// Update regen
-			if((Health < Attributes["MaxHealth"].Integer && Attributes["HealthRegen"].Integer > 0) || Attributes["HealthRegen"].Integer < 0)
+			if((Attributes["Health"].Integer < Attributes["MaxHealth"].Integer && Attributes["HealthRegen"].Integer > 0) || Attributes["HealthRegen"].Integer < 0)
 				StatChange.Values["Health"].Integer = Attributes["HealthRegen"].Integer;
-			if((Mana < Attributes["MaxMana"].Integer && Attributes["ManaRegen"].Integer > 0) || Attributes["ManaRegen"].Integer < 0)
+			if((Attributes["Mana"].Integer < Attributes["MaxMana"].Integer && Attributes["ManaRegen"].Integer > 0) || Attributes["ManaRegen"].Integer < 0)
 				StatChange.Values["Mana"].Integer = Attributes["ManaRegen"].Integer;
 
 			// Update object
@@ -230,12 +230,12 @@ void _Character::UpdateHealth(int &Value) {
 	if(Object->Server && Value > 0)
 		Value *= Attributes["HealthUpdateMultiplier"].Integer * 0.01f;
 
-	Health = std::clamp(Health + Value, 0, Attributes["MaxHealth"].Integer);
+	Attributes["Health"].Integer = std::clamp(Attributes["Health"].Integer + Value, 0, Attributes["MaxHealth"].Integer);
 }
 
 // Update mana
 void _Character::UpdateMana(int Value) {
-	Mana = std::clamp(Mana + Value, 0, Attributes["MaxMana"].Integer);
+	Attributes["Mana"].Integer = std::clamp(Attributes["Mana"].Integer + Value, 0, Attributes["MaxMana"].Integer);
 }
 
 // Update gold amount
@@ -551,8 +551,8 @@ void _Character::CalculateStats() {
 
 	Attributes["MaxHealth"].Integer *= Attributes["HealthBonus"].Integer * 0.01f;
 	Attributes["MaxMana"].Integer *= Attributes["ManaBonus"].Integer * 0.01f;
-	Health = std::min(Health, Attributes["MaxHealth"].Integer);
-	Mana = std::min(Mana, Attributes["MaxMana"].Integer);
+	Attributes["Health"].Integer = std::min(Attributes["Health"].Integer, Attributes["MaxHealth"].Integer);
+	Attributes["Mana"].Integer = std::min(Attributes["Mana"].Integer, Attributes["MaxMana"].Integer);
 	if(Attributes["HealthRegen"].Integer > 0)
 		Attributes["HealthRegen"].Integer *= Attributes["HealPower"].Integer * 0.01f;
 	if(Attributes["ManaRegen"].Integer > 0)

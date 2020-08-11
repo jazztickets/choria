@@ -530,12 +530,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Experience);
 	lua_setfield(LuaState, -2, "Experience");
 
-	lua_pushinteger(LuaState, Object->Character->Health);
-	lua_setfield(LuaState, -2, "Health");
-
-	lua_pushinteger(LuaState, Object->Character->Mana);
-	lua_setfield(LuaState, -2, "Mana");
-
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
 

@@ -530,8 +530,8 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			HandleStatChange(Data, StatChange);
 		} break;
 		case PacketType::WORLD_HUD: {
-			Player->Character->Health = Data.Read<int>();
-			Player->Character->Mana = Data.Read<int>();
+			Player->Character->Attributes["Health"].Integer = Data.Read<int>();
+			Player->Character->Attributes["Mana"].Integer = Data.Read<int>();
 			Player->Character->Attributes["MaxHealth"].Integer = Data.Read<int>();
 			Player->Character->Attributes["MaxMana"].Integer = Data.Read<int>();
 			Player->Character->Experience = Data.Read<int64_t>();

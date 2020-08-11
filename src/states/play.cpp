@@ -1670,7 +1670,7 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 				HUD->UpdateActionBarSize();
 
 			// Play death sound
-			if(!Player->Character->Battle && Player->Character->Health <= 0 && WasAlive)
+			if(!Player->Character->Battle && Player->Character->Attributes["Health"].Integer <= 0 && WasAlive)
 				PlayDeathSound();
 		}
 
@@ -1686,8 +1686,8 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 
 	int OldLevel = Player->Character->Level;
 
-	Player->Character->Health = Data.Read<int>();
-	Player->Character->Mana = Data.Read<int>();
+	Player->Character->Attributes["Health"].Integer = Data.Read<int>();
+	Player->Character->Attributes["Mana"].Integer = Data.Read<int>();
 	Player->Character->Attributes["MaxHealth"].Integer = Data.Read<int>();
 	Player->Character->Attributes["MaxMana"].Integer = Data.Read<int>();
 	Player->Character->Experience = Data.Read<int64_t>();
