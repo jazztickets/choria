@@ -200,7 +200,6 @@ class _Character {
 		int EternalAlacrity;
 		int EternalKnowledge;
 		int EternalPain;
-		int RebirthWealth;
 		int RebirthWisdom;
 		int RebirthKnowledge;
 		int RebirthPower;

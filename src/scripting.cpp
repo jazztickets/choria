@@ -370,7 +370,11 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_newtable(LuaState);
 
+	// Push object attributes
 	for(const auto &Attribute : Object->Stats->Attributes) {
+		if(!Attribute.second.Script)
+			continue;
+
 		_AttributeStorage &AttributeStorage = Object->Character->Attributes[Attribute.second.Name];
 		switch(Attribute.second.Type) {
 			case StatValueType::BOOLEAN:
@@ -396,6 +400,7 @@ void _Scripting::PushObject(_Object *Object) {
 	PushObjectStatusEffects(Object);
 	lua_setfield(LuaState, -2, "StatusEffects");
 
+	// Push functions
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectAddTarget, 1);
 	lua_setfield(LuaState, -2, "AddTarget");
@@ -515,9 +520,6 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->Character->Rebirths);
 	lua_setfield(LuaState, -2, "Rebirths");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthWealth);
-	lua_setfield(LuaState, -2, "RebirthWealth");
 
 	lua_pushinteger(LuaState, Object->Character->RebirthWisdom);
 	lua_setfield(LuaState, -2, "RebirthWisdom");

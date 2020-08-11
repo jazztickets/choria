@@ -73,7 +73,6 @@ _Character::_Character(_Object *Object) :
 	EternalAlacrity(0),
 	EternalKnowledge(0),
 	EternalPain(0),
-	RebirthWealth(0),
 	RebirthWisdom(0),
 	RebirthKnowledge(0),
 	RebirthPower(0),

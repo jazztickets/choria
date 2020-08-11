@@ -621,7 +621,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["eternal_alacrity"] = Character->EternalAlacrity;
 	StatsNode["eternal_knowledge"] = Character->EternalKnowledge;
 	StatsNode["eternal_pain"] = Character->EternalPain;
-	StatsNode["rebirth_wealth"] = Character->RebirthWealth;
+	StatsNode["rebirth_wealth"] = Character->Attributes["RebirthWealth"].Integer;
 	StatsNode["rebirth_wisdom"] = Character->RebirthWisdom;
 	StatsNode["rebirth_knowledge"] = Character->RebirthKnowledge;
 	StatsNode["rebirth_power"] = Character->RebirthPower;
@@ -785,7 +785,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->EternalAlacrity = StatsNode["eternal_alacrity"].asInt();
 	Character->EternalKnowledge = StatsNode["eternal_knowledge"].asInt();
 	Character->EternalPain = StatsNode["eternal_pain"].asInt();
-	Character->RebirthWealth = StatsNode["rebirth_wealth"].asInt();
+	Character->Attributes["RebirthWealth"].Integer = StatsNode["rebirth_wealth"].asInt();
 	Character->RebirthWisdom = StatsNode["rebirth_wisdom"].asInt();
 	Character->RebirthKnowledge = StatsNode["rebirth_knowledge"].asInt();
 	Character->RebirthPower = StatsNode["rebirth_power"].asInt();
@@ -951,7 +951,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->EternalAlacrity);
 	Data.Write<int>(Character->EternalKnowledge);
 	Data.Write<int>(Character->EternalPain);
-	Data.Write<int>(Character->RebirthWealth);
+	Data.Write<int>(Character->Attributes["RebirthWealth"].Integer);
 	Data.Write<int>(Character->RebirthWisdom);
 	Data.Write<int>(Character->RebirthKnowledge);
 	Data.Write<int>(Character->RebirthPower);
@@ -1082,7 +1082,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->EternalAlacrity = Data.Read<int>();
 	Character->EternalKnowledge = Data.Read<int>();
 	Character->EternalPain = Data.Read<int>();
-	Character->RebirthWealth = Data.Read<int>();
+	Character->Attributes["RebirthWealth"].Integer = Data.Read<int>();
 	Character->RebirthWisdom = Data.Read<int>();
 	Character->RebirthKnowledge = Data.Read<int>();
 	Character->RebirthPower = Data.Read<int>();
@@ -1336,7 +1336,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Rebirth bonus
 	if(StatChange.HasStat("RebirthWealth"))
-		Character->RebirthWealth += StatChange.Values["RebirthWealth"].Integer;
+		Character->Attributes["RebirthWealth"].Integer += StatChange.Values["RebirthWealth"].Integer;
 	if(StatChange.HasStat("RebirthWisdom"))
 		Character->RebirthWisdom += StatChange.Values["RebirthWisdom"].Integer;
 	if(StatChange.HasStat("RebirthKnowledge"))
