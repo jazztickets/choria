@@ -176,7 +176,7 @@ struct _Attribute {
 	StatUpdateType UpdateType;
 	_Value Default;
 	float UpgradeScale;
-	bool Show;
+	int Show;
 	bool Calculate;
 	bool Save;
 	bool Script;
