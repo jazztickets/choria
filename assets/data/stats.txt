@@ -164,7 +164,7 @@ INSERT INTO attribute VALUES(60,'GoldBonus','Gold Bonus',4,1,'100',1.0,1);
 INSERT INTO attribute VALUES(61,'ExperienceBonus','Experience Bonus',4,1,'100',1.0,1);
 INSERT INTO attribute VALUES(62,'SummonBuff','Summon Buff',3,0,'0',0.0,0);
 INSERT INTO attribute VALUES(63,'LavaProtection','Lava Protection',0,2,'0',0.0,0);
-INSERT INTO attribute VALUES(64,'Difficulty','Difficulty',1,1,'0',0.0,1);
+INSERT INTO attribute VALUES(64,'Difficulty','Difficulty',4,1,'0',0.0,1);
 INSERT INTO attribute VALUES(65,'Cooldown','Cooldowns',4,1,'100',0.5,1);
 INSERT INTO attribute VALUES(66,'RebirthWealth','Rebirth Wealth',1,0,'0',0.0,1);
 INSERT INTO attribute VALUES(67,'RebirthWisdom','Rebirth Wisdom',1,0,'0',0.0,1);
