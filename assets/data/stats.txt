@@ -187,6 +187,8 @@ INSERT INTO attribute VALUES(83,'BleedResist','Bleed Resistance',1,0,'0',0.0,0);
 INSERT INTO attribute VALUES(84,'StunResist','Stun Resistance',1,0,'0',0.0,0);
 INSERT INTO attribute VALUES(85,'ElementalResist','Elemental Resistance',1,0,'0',0.0,0);
 INSERT INTO attribute VALUES(86,'ShieldDamage','Shield Damage',4,1,'100',0.0,1);
+INSERT INTO attribute VALUES(87,'HealthBonus','Health Bonus',4,1,'100',0.0,1);
+INSERT INTO attribute VALUES(88,'ManaBonus','Mana Bonus',4,1,'100',0.0,1);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT

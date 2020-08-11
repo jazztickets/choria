@@ -70,15 +70,21 @@ void _CharacterScreen::Render(double BlendFactor) {
 			continue;
 
 		_AttributeStorage &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
-		if(AttributeStorage.Integer != Attribute.Default.Integer) {
-			Buffer << AttributeStorage.Integer;
-			if(Attribute.Type == StatValueType::PERCENT)
-				Buffer << "%";
-			Font->DrawText(Attribute.Label, DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-			Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-			Buffer.str("");
-			DrawPosition.y += SpacingY;
-		}
+		if(Attribute.UpdateType == StatUpdateType::MULTIPLICATIVE && AttributeStorage.Integer == 0)
+			continue;
+
+		if(AttributeStorage.Integer == Attribute.Default.Integer)
+			continue;
+
+		Buffer << AttributeStorage.Integer;
+		if(Attribute.Type == StatValueType::PERCENT)
+			Buffer << "%";
+
+		// Draw values
+		Font->DrawText(Attribute.Label, DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
 	}
 
 	// Resistances

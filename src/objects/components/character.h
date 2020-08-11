@@ -231,8 +231,6 @@ class _Character {
 		int MaxHealth;
 		int Mana;
 		int MaxMana;
-		int MaxHealthMultiplier;
-		int MaxManaMultiplier;
 		int EquipmentBattleSpeed;
 		std::unordered_map<uint32_t, int> BaseResistances;
 		std::unordered_map<uint32_t, int> Resistances;

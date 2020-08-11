@@ -350,11 +350,11 @@ void _Character::CalculateStats() {
 	}
 
 	// Eternal Fortitude
-	MaxHealthMultiplier = 100 + EternalFortitude;
+	Attributes["HealthBonus"].Integer += EternalFortitude;
 	Attributes["HealPower"].Integer += EternalFortitude;
 
 	// Eternal Spirit
-	MaxManaMultiplier = 100 + EternalSpirit;
+	Attributes["ManaBonus"].Integer += EternalSpirit;
 	Attributes["ManaPower"].Integer += EternalSpirit;
 
 	// Eternal Wisdom
@@ -564,8 +564,8 @@ void _Character::CalculateStats() {
 	Attributes["ConsumeChance"].Integer = std::clamp(Attributes["ConsumeChance"].Integer, 0, 100);
 	Attributes["EnergyField"].Integer = std::clamp(100 - Attributes["EnergyField"].Integer, 0, 100);
 
-	MaxHealth *= MaxHealthMultiplier * 0.01f;
-	MaxMana *= MaxManaMultiplier * 0.01f;
+	MaxHealth *= Attributes["HealthBonus"].Integer * 0.01f;
+	MaxMana *= Attributes["ManaBonus"].Integer * 0.01f;
 	Health = std::min(Health, MaxHealth);
 	Mana = std::min(Mana, MaxMana);
 	if(Attributes["HealthRegen"].Integer > 0)
