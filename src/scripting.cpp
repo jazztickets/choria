@@ -530,9 +530,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Experience);
 	lua_setfield(LuaState, -2, "Experience");
 
-	lua_pushinteger(LuaState, Object->Character->RebirthTier);
-	lua_setfield(LuaState, -2, "RebirthTier");
-
 	lua_pushinteger(LuaState, Object->Character->Health);
 	lua_setfield(LuaState, -2, "Health");
 

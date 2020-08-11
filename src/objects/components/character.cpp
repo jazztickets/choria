@@ -66,7 +66,6 @@ _Character::_Character(_Object *Object) :
 
 	CalcLevelStats(true),
 	Level(0),
-	RebirthTier(0),
 	Experience(0),
 	ExperienceNeeded(0),
 	ExperienceNextLevel(0),
@@ -320,12 +319,12 @@ void _Character::CalculateStats() {
 	Object->Light = 0;
 	Invisible = 0;
 	Attributes["Difficulty"].Integer += Attributes["EternalPain"].Integer + Rebirths;
-	RebirthTier += Attributes["RebirthPower"].Integer;
+	Attributes["RebirthTier"].Integer += Attributes["RebirthPower"].Integer;
 	Resistances.clear();
 	Sets.clear();
 
 	// Base resistances
-	for(int i = 3; i <= 8; i++)
+	for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
 		Resistances[i] = BaseResistances[i];
 
 	// Eternal Strength
@@ -589,7 +588,7 @@ void _Character::CalculateLevelStats() {
 	// Find current level
 	const _Level *LevelStat = Object->Stats->FindLevel(Experience);
 	Level = LevelStat->Level;
-	RebirthTier = LevelStat->RebirthTier;
+	Attributes["RebirthTier"].Integer = LevelStat->RebirthTier;
 	ExperienceNextLevel = LevelStat->NextLevel;
 	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
 

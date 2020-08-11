@@ -193,7 +193,6 @@ class _Character {
 		// Levels
 		bool CalcLevelStats;
 		int Level;
-		int RebirthTier;
 		int64_t Experience;
 		int64_t ExperienceNeeded;
 		int64_t ExperienceNextLevel;
