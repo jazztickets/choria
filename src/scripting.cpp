@@ -521,27 +521,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Rebirths);
 	lua_setfield(LuaState, -2, "Rebirths");
 
-	lua_pushinteger(LuaState, Object->Character->RebirthWisdom);
-	lua_setfield(LuaState, -2, "RebirthWisdom");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthKnowledge);
-	lua_setfield(LuaState, -2, "RebirthKnowledge");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthPower);
-	lua_setfield(LuaState, -2, "RebirthPower");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthGirth);
-	lua_setfield(LuaState, -2, "RebirthGirth");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthProficiency);
-	lua_setfield(LuaState, -2, "RebirthProficiency");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthInsight);
-	lua_setfield(LuaState, -2, "RebirthInsight");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthPassage);
-	lua_setfield(LuaState, -2, "RebirthPassage");
-
 	lua_pushinteger(LuaState, Object->Character->EternalPain);
 	lua_setfield(LuaState, -2, "EternalPain");
 

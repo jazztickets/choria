@@ -73,13 +73,6 @@ _Character::_Character(_Object *Object) :
 	EternalAlacrity(0),
 	EternalKnowledge(0),
 	EternalPain(0),
-	RebirthWisdom(0),
-	RebirthKnowledge(0),
-	RebirthPower(0),
-	RebirthGirth(0),
-	RebirthProficiency(0),
-	RebirthInsight(0),
-	RebirthPassage(0),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -337,7 +330,7 @@ void _Character::CalculateStats() {
 	Object->Light = 0;
 	Invisible = 0;
 	Attributes["Difficulty"].Integer += EternalPain + Rebirths;
-	RebirthTier += RebirthPower;
+	RebirthTier += Attributes["RebirthPower"].Integer;
 	Resistances.clear();
 	Sets.clear();
 

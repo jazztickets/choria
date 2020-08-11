@@ -2438,7 +2438,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 	Character->Gold = std::min((int64_t)(Character->Experience * Character->Attributes["RebirthWealth"].Integer * 0.01f), (int64_t)PLAYER_MAX_GOLD);
-	Character->Experience = Stats->GetLevel(Character->RebirthWisdom + 1)->Experience;
+	Character->Experience = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Integer + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;
 	Character->Vendor = nullptr;
@@ -2494,15 +2494,15 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	}
 
 	// Keep belt unlocks
-	Character->BeltSize = std::min(Character->RebirthGirth + ACTIONBAR_DEFAULT_BELTSIZE, ACTIONBAR_MAX_BELTSIZE);
-	Character->UnlockBySearch("Belt Slot %", Character->RebirthGirth);
+	Character->BeltSize = std::min(Character->Attributes["RebirthGirth"].Integer + ACTIONBAR_DEFAULT_BELTSIZE, ACTIONBAR_MAX_BELTSIZE);
+	Character->UnlockBySearch("Belt Slot %", Character->Attributes["RebirthGirth"].Integer);
 
 	// Keep skill bar unlocks
-	Character->SkillBarSize = std::min(Character->RebirthProficiency + ACTIONBAR_DEFAULT_SKILLBARSIZE, ACTIONBAR_MAX_SKILLBARSIZE);
-	Character->UnlockBySearch("Skill Slot %", Character->RebirthProficiency);
+	Character->SkillBarSize = std::min(Character->Attributes["RebirthProficiency"].Integer + ACTIONBAR_DEFAULT_SKILLBARSIZE, ACTIONBAR_MAX_SKILLBARSIZE);
+	Character->UnlockBySearch("Skill Slot %", Character->Attributes["RebirthProficiency"].Integer);
 
 	// Keep skill point unlocks
-	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->RebirthInsight);
+	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->Attributes["RebirthInsight"].Integer);
 
 	// Keep items from trade bag
 	int ItemCount = 0;
@@ -2525,13 +2525,13 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 		Stats->Items.at(239),
 		Stats->Items.at(238),
 	};
-	int KeyUnlockCount = std::clamp(Character->RebirthPassage, 0, (int)KeyUnlocks.size());
+	int KeyUnlockCount = std::clamp(Character->Attributes["RebirthPassage"].Integer, 0, (int)KeyUnlocks.size());
 	for(int i = 0; i < KeyUnlockCount; i++) {
 		Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(KeyUnlocks[i], 1));
 	}
 
 	// Get highest skills
-	int SkillCount = Character->RebirthKnowledge;
+	int SkillCount = Character->Attributes["RebirthKnowledge"].Integer;
 	if(SkillCount) {
 		std::list<_HighestSkill> Skills;
 		for(const auto &Skill : OldSkills) {

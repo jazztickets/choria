@@ -200,13 +200,6 @@ class _Character {
 		int EternalAlacrity;
 		int EternalKnowledge;
 		int EternalPain;
-		int RebirthWisdom;
-		int RebirthKnowledge;
-		int RebirthPower;
-		int RebirthGirth;
-		int RebirthProficiency;
-		int RebirthInsight;
-		int RebirthPassage;
 
 		// Levels
 		bool CalcLevelStats;

@@ -622,13 +622,13 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["eternal_knowledge"] = Character->EternalKnowledge;
 	StatsNode["eternal_pain"] = Character->EternalPain;
 	StatsNode["rebirth_wealth"] = Character->Attributes["RebirthWealth"].Integer;
-	StatsNode["rebirth_wisdom"] = Character->RebirthWisdom;
-	StatsNode["rebirth_knowledge"] = Character->RebirthKnowledge;
-	StatsNode["rebirth_power"] = Character->RebirthPower;
-	StatsNode["rebirth_girth"] = Character->RebirthGirth;
-	StatsNode["rebirth_proficiency"] = Character->RebirthProficiency;
-	StatsNode["rebirth_insight"] = Character->RebirthInsight;
-	StatsNode["rebirth_passage"] = Character->RebirthPassage;
+	StatsNode["rebirth_wisdom"] = Character->Attributes["RebirthWisdom"].Integer;
+	StatsNode["rebirth_knowledge"] = Character->Attributes["RebirthKnowledge"].Integer;
+	StatsNode["rebirth_power"] = Character->Attributes["RebirthPower"].Integer;
+	StatsNode["rebirth_girth"] = Character->Attributes["RebirthGirth"].Integer;
+	StatsNode["rebirth_proficiency"] = Character->Attributes["RebirthProficiency"].Integer;
+	StatsNode["rebirth_insight"] = Character->Attributes["RebirthInsight"].Integer;
+	StatsNode["rebirth_passage"] = Character->Attributes["RebirthPassage"].Integer;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -786,13 +786,13 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->EternalKnowledge = StatsNode["eternal_knowledge"].asInt();
 	Character->EternalPain = StatsNode["eternal_pain"].asInt();
 	Character->Attributes["RebirthWealth"].Integer = StatsNode["rebirth_wealth"].asInt();
-	Character->RebirthWisdom = StatsNode["rebirth_wisdom"].asInt();
-	Character->RebirthKnowledge = StatsNode["rebirth_knowledge"].asInt();
-	Character->RebirthPower = StatsNode["rebirth_power"].asInt();
-	Character->RebirthGirth = StatsNode["rebirth_girth"].asInt();
-	Character->RebirthProficiency = StatsNode["rebirth_proficiency"].asInt();
-	Character->RebirthInsight = StatsNode["rebirth_insight"].asInt();
-	Character->RebirthPassage = StatsNode["rebirth_passage"].asInt();
+	Character->Attributes["RebirthWisdom"].Integer = StatsNode["rebirth_wisdom"].asInt();
+	Character->Attributes["RebirthKnowledge"].Integer = StatsNode["rebirth_knowledge"].asInt();
+	Character->Attributes["RebirthPower"].Integer = StatsNode["rebirth_power"].asInt();
+	Character->Attributes["RebirthGirth"].Integer = StatsNode["rebirth_girth"].asInt();
+	Character->Attributes["RebirthProficiency"].Integer = StatsNode["rebirth_proficiency"].asInt();
+	Character->Attributes["RebirthInsight"].Integer = StatsNode["rebirth_insight"].asInt();
+	Character->Attributes["RebirthPassage"].Integer = StatsNode["rebirth_passage"].asInt();
 
 	if(!Character->BeltSize)
 		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
@@ -952,13 +952,13 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->EternalKnowledge);
 	Data.Write<int>(Character->EternalPain);
 	Data.Write<int>(Character->Attributes["RebirthWealth"].Integer);
-	Data.Write<int>(Character->RebirthWisdom);
-	Data.Write<int>(Character->RebirthKnowledge);
-	Data.Write<int>(Character->RebirthPower);
-	Data.Write<int>(Character->RebirthGirth);
-	Data.Write<int>(Character->RebirthProficiency);
-	Data.Write<int>(Character->RebirthInsight);
-	Data.Write<int>(Character->RebirthPassage);
+	Data.Write<int>(Character->Attributes["RebirthWisdom"].Integer);
+	Data.Write<int>(Character->Attributes["RebirthKnowledge"].Integer);
+	Data.Write<int>(Character->Attributes["RebirthPower"].Integer);
+	Data.Write<int>(Character->Attributes["RebirthGirth"].Integer);
+	Data.Write<int>(Character->Attributes["RebirthProficiency"].Integer);
+	Data.Write<int>(Character->Attributes["RebirthInsight"].Integer);
+	Data.Write<int>(Character->Attributes["RebirthPassage"].Integer);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -1083,13 +1083,13 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->EternalKnowledge = Data.Read<int>();
 	Character->EternalPain = Data.Read<int>();
 	Character->Attributes["RebirthWealth"].Integer = Data.Read<int>();
-	Character->RebirthWisdom = Data.Read<int>();
-	Character->RebirthKnowledge = Data.Read<int>();
-	Character->RebirthPower = Data.Read<int>();
-	Character->RebirthGirth = Data.Read<int>();
-	Character->RebirthProficiency = Data.Read<int>();
-	Character->RebirthInsight = Data.Read<int>();
-	Character->RebirthPassage = Data.Read<int>();
+	Character->Attributes["RebirthWisdom"].Integer = Data.Read<int>();
+	Character->Attributes["RebirthKnowledge"].Integer = Data.Read<int>();
+	Character->Attributes["RebirthPower"].Integer = Data.Read<int>();
+	Character->Attributes["RebirthGirth"].Integer = Data.Read<int>();
+	Character->Attributes["RebirthProficiency"].Integer = Data.Read<int>();
+	Character->Attributes["RebirthInsight"].Integer = Data.Read<int>();
+	Character->Attributes["RebirthPassage"].Integer = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1338,19 +1338,19 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	if(StatChange.HasStat("RebirthWealth"))
 		Character->Attributes["RebirthWealth"].Integer += StatChange.Values["RebirthWealth"].Integer;
 	if(StatChange.HasStat("RebirthWisdom"))
-		Character->RebirthWisdom += StatChange.Values["RebirthWisdom"].Integer;
+		Character->Attributes["RebirthWisdom"].Integer += StatChange.Values["RebirthWisdom"].Integer;
 	if(StatChange.HasStat("RebirthKnowledge"))
-		Character->RebirthKnowledge += StatChange.Values["RebirthKnowledge"].Integer;
+		Character->Attributes["RebirthKnowledge"].Integer += StatChange.Values["RebirthKnowledge"].Integer;
 	if(StatChange.HasStat("RebirthGirth"))
-		Character->RebirthGirth += StatChange.Values["RebirthGirth"].Integer;
+		Character->Attributes["RebirthGirth"].Integer += StatChange.Values["RebirthGirth"].Integer;
 	if(StatChange.HasStat("RebirthProficiency"))
-		Character->RebirthProficiency += StatChange.Values["RebirthProficiency"].Integer;
+		Character->Attributes["RebirthProficiency"].Integer += StatChange.Values["RebirthProficiency"].Integer;
 	if(StatChange.HasStat("RebirthInsight"))
-		Character->RebirthInsight += StatChange.Values["RebirthInsight"].Integer;
+		Character->Attributes["RebirthInsight"].Integer += StatChange.Values["RebirthInsight"].Integer;
 	if(StatChange.HasStat("RebirthPassage"))
-		Character->RebirthPassage += StatChange.Values["RebirthPassage"].Integer;
+		Character->Attributes["RebirthPassage"].Integer += StatChange.Values["RebirthPassage"].Integer;
 	if(StatChange.HasStat("RebirthPower")) {
-		Character->RebirthPower += StatChange.Values["RebirthPower"].Integer;
+		Character->Attributes["RebirthPower"].Integer += StatChange.Values["RebirthPower"].Integer;
 		Character->CalculateStats();
 	}
 
