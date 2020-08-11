@@ -996,14 +996,28 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->EternalAlacrity);
 	Data.Write<int>(Character->EternalKnowledge);
 	Data.Write<int>(Character->EternalPain);
-	Data.Write<int>(Character->Attributes["RebirthWealth"].Integer);
-	Data.Write<int>(Character->Attributes["RebirthWisdom"].Integer);
-	Data.Write<int>(Character->Attributes["RebirthKnowledge"].Integer);
-	Data.Write<int>(Character->Attributes["RebirthPower"].Integer);
-	Data.Write<int>(Character->Attributes["RebirthGirth"].Integer);
-	Data.Write<int>(Character->Attributes["RebirthProficiency"].Integer);
-	Data.Write<int>(Character->Attributes["RebirthInsight"].Integer);
-	Data.Write<int>(Character->Attributes["RebirthPassage"].Integer);
+
+	// Serialize attributes
+	for(const auto &AttributeName : Stats->AttributeRank) {
+		const _Attribute &Attribute = Stats->Attributes.at(AttributeName);
+		if(!Attribute.Network)
+			continue;
+
+		_AttributeStorage &AttributeStorage = Character->Attributes[AttributeName];
+		switch(Attribute.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				Data.Write<int>(AttributeStorage.Integer);
+			break;
+			case StatValueType::FLOAT:
+				Data.Write<float>(AttributeStorage.Float);
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported network type: " + Attribute.Name);
+			break;
+		}
+	}
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -1085,14 +1099,28 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->EternalAlacrity = Data.Read<int>();
 	Character->EternalKnowledge = Data.Read<int>();
 	Character->EternalPain = Data.Read<int>();
-	Character->Attributes["RebirthWealth"].Integer = Data.Read<int>();
-	Character->Attributes["RebirthWisdom"].Integer = Data.Read<int>();
-	Character->Attributes["RebirthKnowledge"].Integer = Data.Read<int>();
-	Character->Attributes["RebirthPower"].Integer = Data.Read<int>();
-	Character->Attributes["RebirthGirth"].Integer = Data.Read<int>();
-	Character->Attributes["RebirthProficiency"].Integer = Data.Read<int>();
-	Character->Attributes["RebirthInsight"].Integer = Data.Read<int>();
-	Character->Attributes["RebirthPassage"].Integer = Data.Read<int>();
+
+	// Serialize attributes
+	for(const auto &AttributeName : Stats->AttributeRank) {
+		const _Attribute &Attribute = Stats->Attributes.at(AttributeName);
+		if(!Attribute.Network)
+			continue;
+
+		_AttributeStorage &AttributeStorage = Character->Attributes[AttributeName];
+		switch(Attribute.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				AttributeStorage.Integer = Data.Read<int>();
+			break;
+			case StatValueType::FLOAT:
+				AttributeStorage.Float = Data.Read<float>();
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported network type: " + Attribute.Name);
+			break;
+		}
+	}
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
