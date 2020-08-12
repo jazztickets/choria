@@ -1354,3 +1354,32 @@ function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result)
 
 	return Result
 end
+
+-- Dodge --
+
+Skill_Dodge = Base_Attack:New()
+Skill_Dodge.Duration = 1.0
+Skill_Dodge.DurationPerLevel = 0.015
+Skill_Dodge.Constant = 15
+Skill_Dodge.BasePercent = 47
+Skill_Dodge.Multiplier = 56
+
+function Skill_Dodge.GetDuration(self, Level)
+	return math.floor((self.Duration + self.DurationPerLevel * (Level - 1)) * 10) / 10
+end
+
+function Skill_Dodge.GetEvasion(self, Level)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
+end
+
+function Skill_Dodge.GetInfo(self, Source, Item)
+	return "Gain [c green]" .. self:GetEvasion(Item.Level) .. "%[c white] evasion for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds"
+end
+
+function Skill_Dodge.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Evasion.Pointer
+	Result.Target.BuffLevel = self:GetEvasion(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
