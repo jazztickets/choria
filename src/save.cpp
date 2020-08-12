@@ -282,8 +282,8 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Character->CalculateStats();
 
 	// Set health/mana
-	Object.Character->Attributes["Health"].Integer = Object.Character->Attributes["MaxHealth"].Integer;
-	Object.Character->Attributes["Mana"].Integer = Object.Character->Attributes["MaxMana"].Integer;
+	Object.Character->Attributes["Health"].Int = Object.Character->Attributes["MaxHealth"].Int;
+	Object.Character->Attributes["Mana"].Int = Object.Character->Attributes["MaxMana"].Int;
 	Object.Character->GenerateNextBattle();
 
 	// Save new character
@@ -335,15 +335,15 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 		*Log
 			<< "[SAVE] Saving player " << Player->Name
 			<< " ( character_id=" << Player->Character->CharacterID
-			<< " exp=" << Player->Character->Attributes["Experience"].Integer64
-			<< " gold=" << Player->Character->Attributes["Gold"].Integer
+			<< " exp=" << Player->Character->Attributes["Experience"].Int64
+			<< " gold=" << Player->Character->Attributes["Gold"].Int
 			<< " playtime=" << Player->Character->Attributes["PlayTime"].Double
-			<< " monsterkills=" << Player->Character->Attributes["MonsterKills"].Integer
-			<< " deaths=" << Player->Character->Attributes["Deaths"].Integer
+			<< " monsterkills=" << Player->Character->Attributes["MonsterKills"].Int
+			<< " deaths=" << Player->Character->Attributes["Deaths"].Int
 			<< " battletime=" << Player->Character->Attributes["BattleTime"].Double
-			<< " bounty=" << Player->Character->Attributes["Bounty"].Integer
-			<< " gamesplayed=" << Player->Character->Attributes["GamesPlayed"].Integer
-			<< " rebirths=" << Player->Character->Attributes["Rebirths"].Integer
+			<< " bounty=" << Player->Character->Attributes["Bounty"].Int
+			<< " gamesplayed=" << Player->Character->Attributes["GamesPlayed"].Int
+			<< " rebirths=" << Player->Character->Attributes["Rebirths"].Int
 			<< " rebirthtime=" << Player->Character->Attributes["RebirthTime"].Double
 			<< " )" << std::endl;
 	}
@@ -366,7 +366,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 
 	// Max sure player has health
 	if(!Player->Character->IsAlive() && !Player->Character->Hardcore)
-		Player->Character->Attributes["Health"].Integer = Player->Character->Attributes["MaxHealth"].Integer / 2;
+		Player->Character->Attributes["Health"].Int = Player->Character->Attributes["MaxHealth"].Int / 2;
 }
 
 // Get save version from database

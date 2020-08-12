@@ -378,14 +378,14 @@ void _Scripting::PushObject(_Object *Object) {
 		_Value &AttributeStorage = Object->Character->Attributes[Attribute.second.Name];
 		switch(Attribute.second.Type) {
 			case StatValueType::BOOLEAN:
-				lua_pushboolean(LuaState, AttributeStorage.Integer);
+				lua_pushboolean(LuaState, AttributeStorage.Int);
 			break;
 			case StatValueType::INTEGER:
 			case StatValueType::PERCENT:
-				lua_pushinteger(LuaState, AttributeStorage.Integer);
+				lua_pushinteger(LuaState, AttributeStorage.Int);
 			break;
 			case StatValueType::INTEGER64:
-				lua_pushinteger(LuaState, AttributeStorage.Integer64);
+				lua_pushinteger(LuaState, AttributeStorage.Int64);
 			break;
 			case StatValueType::FLOAT:
 				lua_pushnumber(LuaState, AttributeStorage.Float);
@@ -831,16 +831,16 @@ void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &Stat
 		switch(Attribute.Type) {
 			case StatValueType::INTEGER:
 			case StatValueType::PERCENT:
-				StatChange.Values[Key].Integer = (int)lua_tonumber(LuaState, -1);
+				StatChange.Values[Key].Int = (int)lua_tonumber(LuaState, -1);
 			break;
 			case StatValueType::INTEGER64:
-				StatChange.Values[Key].Integer64 = (int64_t)lua_tonumber(LuaState, -1);
+				StatChange.Values[Key].Int64 = (int64_t)lua_tonumber(LuaState, -1);
 			break;
 			case StatValueType::FLOAT:
 				StatChange.Values[Key].Float = (float)lua_tonumber(LuaState, -1);
 			break;
 			case StatValueType::BOOLEAN:
-				StatChange.Values[Key].Integer = lua_toboolean(LuaState, -1);
+				StatChange.Values[Key].Int = lua_toboolean(LuaState, -1);
 			break;
 			case StatValueType::POINTER:
 				StatChange.Values[Key].Pointer = lua_touserdata(LuaState, -1);

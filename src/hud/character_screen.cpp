@@ -55,9 +55,9 @@ void _CharacterScreen::Render(double BlendFactor) {
 
 	// Damage
 	if(ae::Input.ModKeyDown(KMOD_ALT))
-		Buffer << ae::Round((HUD->Player->Character->Attributes["MinDamage"].Integer + HUD->Player->Character->Attributes["MaxDamage"].Integer) * 0.5f);
+		Buffer << ae::Round((HUD->Player->Character->Attributes["MinDamage"].Int + HUD->Player->Character->Attributes["MaxDamage"].Int) * 0.5f);
 	else
-		Buffer << HUD->Player->Character->Attributes["MinDamage"].Integer << " - " << HUD->Player->Character->Attributes["MaxDamage"].Integer;
+		Buffer << HUD->Player->Character->Attributes["MinDamage"].Int << " - " << HUD->Player->Character->Attributes["MaxDamage"].Int;
 	Font->DrawText("Weapon Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
@@ -72,17 +72,17 @@ void _CharacterScreen::Render(double BlendFactor) {
 			continue;
 
 		_Value &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
-		if(Attribute.UpdateType == StatUpdateType::MULTIPLICATIVE && AttributeStorage.Integer == 0)
+		if(Attribute.UpdateType == StatUpdateType::MULTIPLICATIVE && AttributeStorage.Int == 0)
 			continue;
 
-		if(AttributeStorage.Integer == Attribute.Default.Integer)
+		if(AttributeStorage.Int == Attribute.Default.Int)
 			continue;
 
 		if(Attribute.Type == StatValueType::TIME) {
 			_HUD::FormatTime(Buffer, (int64_t)AttributeStorage.Double);
 		}
 		else {
-			Buffer << AttributeStorage.Integer;
+			Buffer << AttributeStorage.Int;
 			if(Attribute.Type == StatValueType::PERCENT)
 				Buffer << "%";
 		}

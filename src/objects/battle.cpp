@@ -187,19 +187,19 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	if(ActionResult.Target.HasStat("Health")) {
 
 		if(ActionResult.Target.HasStat("DamageType")) {
-			uint32_t DamageTypeID = ActionResult.Target.Values["DamageType"].Integer;
+			uint32_t DamageTypeID = ActionResult.Target.Values["DamageType"].Int;
 			TextColor = Stats->DamageTypes.at(DamageTypeID).Color;
 		}
 
-		Buffer << std::abs(ActionResult.Target.Values["Health"].Integer);
+		Buffer << std::abs(ActionResult.Target.Values["Health"].Int);
 	}
 	else if(ActionResult.Target.HasStat("Miss"))
 		Buffer << "miss";
 
 	// Change color
-	if(ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Integer > 0)
+	if(ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Int > 0)
 		TextColor = ae::Assets.Colors["green"];
-	else if(ActionResult.Target.HasStat("Crit") && ActionResult.Target.Values["Crit"].Integer)
+	else if(ActionResult.Target.HasStat("Crit") && ActionResult.Target.Values["Crit"].Int)
 		TextColor = ae::Assets.Colors["yellow"];
 
 	// Draw damage dealt
@@ -209,9 +209,9 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	ae::Assets.Fonts[Font]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
 
 	// Draw mana damage
-	if(ActionResult.Target.HasStat("Mana") && ActionResult.Target.Values["Mana"].Integer < 0) {
+	if(ActionResult.Target.HasStat("Mana") && ActionResult.Target.Values["Mana"].Int < 0) {
 		Buffer.str("");
-		Buffer << std::abs(ActionResult.Target.Values["Mana"].Integer);
+		Buffer << std::abs(ActionResult.Target.Values["Mana"].Int);
 		TextColor = ae::Assets.Colors["light_blue"];
 		TextColor.a = AlphaPercent;
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(24, 24), ae::RIGHT_BASELINE, TextColor);
@@ -617,11 +617,11 @@ void _Battle::ServerEndBattle() {
 
 			// Calculate gold based on monster or player
 			SideStats[Side].TotalGoldStolen += Object->Fighter->GoldStolen;
-			SideStats[Side].TotalBounty += Object->Character->Attributes["Bounty"].Integer;
+			SideStats[Side].TotalBounty += Object->Character->Attributes["Bounty"].Int;
 			if(Object->IsMonster())
 				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven;
 			else
-				SideStats[Side].TotalGoldGiven += Object->Character->Attributes["Bounty"].Integer + (int)(Object->Character->Attributes["Gold"].Integer * BountyEarned + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Character->Attributes["Bounty"].Int + (int)(Object->Character->Attributes["Gold"].Int * BountyEarned + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = std::ceil(SideStats[Side].TotalExperienceGiven);
@@ -742,8 +742,8 @@ void _Battle::ServerEndBattle() {
 
 				// Boost xp/gold gain
 				if(!PVP) {
-					ExperienceEarned *= Object->Character->Attributes["ExperienceBonus"].Integer * 0.01f;
-					GoldEarned *= Object->Character->Attributes["GoldBonus"].Integer * 0.01f;
+					ExperienceEarned *= Object->Character->Attributes["ExperienceBonus"].Int * 0.01f;
+					GoldEarned *= Object->Character->Attributes["GoldBonus"].Int * 0.01f;
 				}
 
 				if(Zone) {
@@ -767,13 +767,13 @@ void _Battle::ServerEndBattle() {
 			// Handle pickpocket
 			GoldEarned += SideStats[WinningSide].GoldStolenPerCharacter;
 
-			Object->Character->Attributes["PlayerKills"].Integer += SideStats[!WinningSide].PlayerCount;
-			Object->Character->Attributes["MonsterKills"].Integer += SideStats[!WinningSide].MonsterCount;
+			Object->Character->Attributes["PlayerKills"].Int += SideStats[!WinningSide].PlayerCount;
+			Object->Character->Attributes["MonsterKills"].Int += SideStats[!WinningSide].MonsterCount;
 			if(PVP && Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
 				if(BountyEarned) {
-					Object->Character->Attributes["Bounty"].Integer += GoldEarned;
-					if(Object->Character->Attributes["Bounty"].Integer) {
-						std::string BountyMessage = "Player " + Object->Name + " now has a bounty of " + std::to_string(Object->Character->Attributes["Bounty"].Integer) + " gold!";
+					Object->Character->Attributes["Bounty"].Int += GoldEarned;
+					if(Object->Character->Attributes["Bounty"].Int) {
+						std::string BountyMessage = "Player " + Object->Name + " now has a bounty of " + std::to_string(Object->Character->Attributes["Bounty"].Int) + " gold!";
 						Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
 						Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
 					}
@@ -802,11 +802,11 @@ void _Battle::ServerEndBattle() {
 					}
 					// Attacker loses contract
 					else {
-						Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Integer);
+						Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Int);
 					}
 				}
 				else {
-					Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Integer);
+					Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Int);
 				}
 			}
 			else
@@ -824,8 +824,8 @@ void _Battle::ServerEndBattle() {
 			if(Object->Peer)
 				Server->SendMessage(Object->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
 
-			Object->Character->Attributes["Health"].Integer = Object->Character->Attributes["MaxHealth"].Integer;
-			Object->Character->Attributes["Mana"].Integer = Object->Character->Attributes["MaxMana"].Integer;
+			Object->Character->Attributes["Health"].Int = Object->Character->Attributes["MaxHealth"].Int;
+			Object->Character->Attributes["Mana"].Int = Object->Character->Attributes["MaxMana"].Int;
 		}
 
 		// See if summon is alive, then add buff to owner
@@ -838,10 +838,10 @@ void _Battle::ServerEndBattle() {
 		// Write results
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
-		Packet.Write<int>(Object->Character->Attributes["PlayerKills"].Integer);
-		Packet.Write<int>(Object->Character->Attributes["MonsterKills"].Integer);
-		Packet.Write<int>(Object->Character->Attributes["GoldLost"].Integer);
-		Packet.Write<int>(Object->Character->Attributes["Bounty"].Integer);
+		Packet.Write<int>(Object->Character->Attributes["PlayerKills"].Int);
+		Packet.Write<int>(Object->Character->Attributes["MonsterKills"].Int);
+		Packet.Write<int>(Object->Character->Attributes["GoldLost"].Int);
+		Packet.Write<int>(Object->Character->Attributes["Bounty"].Int);
 		Packet.Write<int>(ExperienceEarned);
 		Packet.Write<int>(GoldEarned);
 
@@ -903,7 +903,7 @@ void _Battle::ServerEndBattle() {
 			_StatChange Summons;
 			Summons.Object = Owner;
 			Summons.Values["Buff"].Pointer = (void *)Monster->SummonBuff;
-			Summons.Values["BuffLevel"].Integer = SurvivedSummon.second.Count;
+			Summons.Values["BuffLevel"].Int = SurvivedSummon.second.Count;
 			Summons.Values["BuffDuration"].Float = Monster->Duration;
 			Owner->UpdateStats(Summons, Owner);
 		}

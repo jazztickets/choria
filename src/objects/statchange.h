@@ -51,8 +51,8 @@ enum class StatUpdateType : int {
 
 struct _Value {
 	union {
-		int Integer;
-		int64_t	Integer64;
+		int Int;
+		int64_t	Int64;
 		float Float;
 		double Double;
 		void *Pointer;

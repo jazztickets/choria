@@ -199,7 +199,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(!IsEquippable() && Cooldown > 0.0) {
 		DrawPosition.y += RewindSpacingY;
 		std::stringstream Buffer;
-		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldown"].Integer * 0.01f << " second cooldown";
+		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldown"].Int * 0.01f << " second cooldown";
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 		DrawPosition.y += LargeSpacingY;
 	}
@@ -229,7 +229,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				PlayerMaxSkillLevel = Player->Character->MaxSkillLevels[ID];
 				DrawLevel = SkillIterator->second;
 				if(!(Tooltip.Window == _HUD::WINDOW_SKILLS && ae::Input.ModKeyDown(KMOD_ALT)) && SkillIterator->second > 0) {
-					DrawLevel += Player->Character->Attributes["AllSkills"].Integer;
+					DrawLevel += Player->Character->Attributes["AllSkills"].Int;
 					DrawLevel = std::min(DrawLevel, PlayerMaxSkillLevel);
 				}
 			}
@@ -598,7 +598,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		std::stringstream Buffer;
 		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
 			glm::vec4 Color = ae::Assets.Colors["gold"];
-			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Integer)
+			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Int)
 				Color = ae::Assets.Colors["red"];
 
 			Buffer << "Upgrade for " << Tooltip.Cost << " gold";
@@ -868,7 +868,7 @@ int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTa
 				int SkillLevel = 1;
 				auto SkillIterator = Object->Character->Skills.find(ID);
 				if(SkillIterator != Object->Character->Skills.end()) {
-					SkillLevel = SkillIterator->second + Object->Character->Attributes["AllSkills"].Integer;
+					SkillLevel = SkillIterator->second + Object->Character->Attributes["AllSkills"].Int;
 					if(Object->Character->MaxSkillLevels.find(ID) != Object->Character->MaxSkillLevels.end())
 						SkillLevel = std::min(SkillLevel, Object->Character->MaxSkillLevels.at(ID));
 				}

@@ -56,7 +56,7 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 			Data.Write<uint32_t>(Buff->ID);
 		}
 		else
-			Data.Write<int>(Iterator.second.Integer);
+			Data.Write<int>(Iterator.second.Int);
 	}
 }
 
@@ -90,7 +90,7 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 				Values[Attribute.Name].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
 		}
 		else
-			Values[Attribute.Name].Integer = Data.Read<int>();
+			Values[Attribute.Name].Int = Data.Read<int>();
 	}
 }
 

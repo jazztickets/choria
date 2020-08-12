@@ -197,7 +197,7 @@ void _SkillScreen::Render(double BlendFactor) {
 
 	// Show more info when holding alt
 	int SkillPointsUnlocked = HUD->Player->Character->SkillPointsUnlocked;
-	int EternalKnowledge = HUD->Player->Character->Attributes["EternalKnowledge"].Integer;
+	int EternalKnowledge = HUD->Player->Character->Attributes["EternalKnowledge"].Int;
 	if(ae::Input.ModKeyDown(KMOD_ALT)) {
 		std::string SubText;
 		if(SkillPointsUnlocked)
@@ -251,8 +251,8 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 			int DrawLevel = HUD->Player->Character->Skills[SkillID];
 			int MaxSkillLevel = HUD->Player->Character->MaxSkillLevels[SkillID];
 			glm::vec4 LevelColor = glm::vec4(1.0f);
-			if(ShowBonusPoints && DrawLevel > 0 && HUD->Player->Character->Attributes["AllSkills"].Integer) {
-				DrawLevel += HUD->Player->Character->Attributes["AllSkills"].Integer;
+			if(ShowBonusPoints && DrawLevel > 0 && HUD->Player->Character->Attributes["AllSkills"].Int) {
+				DrawLevel += HUD->Player->Character->Attributes["AllSkills"].Int;
 				if(DrawLevel > MaxSkillLevel)
 					LevelColor = ae::Assets.Colors["red"];
 				else if(DrawLevel == MaxSkillLevel)
@@ -262,7 +262,7 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 				DrawLevel = std::min(DrawLevel, MaxSkillLevel);
 			}
 
-			if(!HUD->Player->Character->Attributes["AllSkills"].Integer) {
+			if(!HUD->Player->Character->Attributes["AllSkills"].Int) {
 				if(DrawLevel == MaxSkillLevel)
 					LevelColor = ae::Assets.Colors["yellow"];
 			}

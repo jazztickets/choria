@@ -181,8 +181,8 @@ _Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
 
 	// Get stats from db and script
 	Stats->GetMonsterStats(Object->Monster->DatabaseID, Object, Difficulty);
-	Object->Character->Attributes["Health"].Integer = Object->Character->BaseMaxHealth = Summon.Health * DifficultyMultiplier;
-	Object->Character->Attributes["Mana"].Integer = Object->Character->BaseMaxMana = Summon.Mana * DifficultyMultiplier;
+	Object->Character->Attributes["Health"].Int = Object->Character->BaseMaxHealth = Summon.Health * DifficultyMultiplier;
+	Object->Character->Attributes["Mana"].Int = Object->Character->BaseMaxMana = Summon.Mana * DifficultyMultiplier;
 	Object->Character->BaseMinDamage = Summon.MinDamage;
 	Object->Character->BaseMaxDamage = Summon.MaxDamage;
 	Object->Character->BaseArmor = Summon.Armor;
@@ -689,8 +689,8 @@ void _Server::HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(Player->Character->Battle)
 			return;
 
-		Player->Character->Attributes["Health"].Integer = Player->Character->Attributes["MaxHealth"].Integer / 2;
-		Player->Character->Attributes["Mana"].Integer = Player->Character->Attributes["MaxMana"].Integer / 2;
+		Player->Character->Attributes["Health"].Int = Player->Character->Attributes["MaxHealth"].Int / 2;
+		Player->Character->Attributes["Mana"].Int = Player->Character->Attributes["MaxMana"].Int / 2;
 		SpawnPlayer(Player, Player->Character->SpawnMapID, _Map::EVENT_SPAWN);
 	}
 }
@@ -768,8 +768,8 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 		Packet.Write<uint8_t>(Player.Character->Hardcore);
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Player.Character->PortraitID);
-		Packet.Write<int>(Player.Character->Attributes["Health"].Integer);
-		Packet.Write<int64_t>(Player.Character->Attributes["Experience"].Integer64);
+		Packet.Write<int>(Player.Character->Attributes["Health"].Int);
+		Packet.Write<int64_t>(Player.Character->Attributes["Experience"].Int64);
 	}
 	Save->Database->CloseQuery();
 
@@ -1193,7 +1193,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		int Price = Item->GetPrice(Scripting, Player, Vendor, Amount, Buy);
 
 		// Not enough gold
-		if(Price > Player->Character->Attributes["Gold"].Integer)
+		if(Price > Player->Character->Attributes["Gold"].Int)
 			return;
 
 		// Find open slot for new item
@@ -1213,7 +1213,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(Peer) {
 			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-			Packet.Write<int>(Player->Character->Attributes["Gold"].Integer);
+			Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
 			Network->SendPacket(Packet, Peer);
 		}
 
@@ -1229,7 +1229,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Character->CalculateStats();
 
 		// Log
-		Log << "[PURCHASE] Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Attributes["Gold"].Integer << " )" << std::endl;
+		Log << "[PURCHASE] Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int << " )" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1249,12 +1249,12 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 			if(Peer) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-				Packet.Write<int>(Player->Character->Attributes["Gold"].Integer);
+				Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
 				Network->SendPacket(Packet, Peer);
 			}
 
 			// Log
-			Log << "[SELL] Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Integer << " )" << std::endl;
+			Log << "[SELL] Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int << " )" << std::endl;
 
 			// Update items
 			Player->Inventory->UpdateItemCount(Slot, -Amount);
@@ -1295,7 +1295,7 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 		_StatChange StatChange;
 		StatChange.Object = Player;
 		StatChange.Values["Buff"].Pointer = (void *)Stats->Buffs.at(22);
-		StatChange.Values["BuffLevel"].Integer = 10;
+		StatChange.Values["BuffLevel"].Int = 10;
 		StatChange.Values["BuffDuration"].Float = 60;
 		Player->UpdateStats(StatChange);
 
@@ -1368,14 +1368,14 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 	int Price = _Item::GetEnchantCost(MaxSkillLevel);
 
 	// Check gold
-	if(Price > Player->Character->Attributes["Gold"].Integer)
+	if(Price > Player->Character->Attributes["Gold"].Int)
 		return;
 
 	// Update gold
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values["Gold"].Integer = -Price;
+		StatChange.Values["Gold"].Int = -Price;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -1466,8 +1466,8 @@ void _Server::HandleTradeGold(ae::_Buffer &Data, ae::_Peer *Peer) {
 	int Gold = Data.Read<int>();
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > Player->Character->Attributes["Gold"].Integer)
-		Gold = std::max(0, Player->Character->Attributes["Gold"].Integer);
+	else if(Gold > Player->Character->Attributes["Gold"].Int)
+		Gold = std::max(0, Player->Character->Attributes["Gold"].Int);
 	Player->Character->TradeGold = Gold;
 	Player->Character->TradeAccepted = false;
 
@@ -1530,14 +1530,14 @@ void _Server::HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 			{
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int>(Player->Character->Attributes["Gold"].Integer);
+				Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
 				Player->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, Player->Peer);
 			}
 			{
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int>(TradePlayer->Character->Attributes["Gold"].Integer);
+				Packet.Write<int>(TradePlayer->Character->Attributes["Gold"].Int);
 				TradePlayer->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, TradePlayer->Peer);
 			}
@@ -1662,7 +1662,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	int Price = InventorySlot.Item->GetUpgradeCost(InventorySlot.Upgrades+1);
 
 	// Check gold
-	if(Price > Player->Character->Attributes["Gold"].Integer)
+	if(Price > Player->Character->Attributes["Gold"].Int)
 		return;
 
 	// Upgrade item
@@ -1672,7 +1672,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values["Gold"].Integer = -Price;
+		StatChange.Values["Gold"].Int = -Price;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -1692,7 +1692,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Log
-	Log << "[UPGRADE] Player " << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Integer << " )" << std::endl;
+	Log << "[UPGRADE] Player " << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int << " )" << std::endl;
 
 	Player->Character->CalculateStats();
 }
@@ -1718,7 +1718,7 @@ void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Network->SendPacket(Packet, Peer);
 
 	// Update stats
-	Player->Character->Attributes["GamesPlayed"].Integer++;
+	Player->Character->Attributes["GamesPlayed"].Int++;
 	Player->Character->IdleTime = 0.0;
 }
 
@@ -1819,13 +1819,13 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 
 			// Remove stolen gold
 			if(Player->Fighter->GoldStolen)
-				Player->Character->Attributes["Gold"].Integer -= Player->Fighter->GoldStolen;
+				Player->Character->Attributes["Gold"].Int -= Player->Fighter->GoldStolen;
 
 			// Apply penalty
 			if(!FromDisconnect) {
 				Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
-				Player->Character->Attributes["Health"].Integer = 0;
-				Player->Character->Attributes["Mana"].Integer = Player->Character->Attributes["MaxMana"].Integer / 2;
+				Player->Character->Attributes["Health"].Int = 0;
+				Player->Character->Attributes["Mana"].Int = Player->Character->Attributes["MaxMana"].Int / 2;
 				Player->Character->LoadMapID = 0;
 				Player->Character->DeleteStatusEffects();
 			}
@@ -1878,7 +1878,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "bounty") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Player->Character->Attributes["Bounty"].Integer = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Bounty"].Integer + Change : Change);
+		Player->Character->Attributes["Bounty"].Int = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Bounty"].Int + Change : Change);
 		SendHUD(Peer);
 	}
 	else if(Command == "clearunlocks") {
@@ -1903,7 +1903,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "experience") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Player->Character->Attributes["Experience"].Integer64 = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Experience"].Integer64 + Change : Change);
+		Player->Character->Attributes["Experience"].Int64 = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Experience"].Int64 + Change : Change);
 		Player->Character->CalculateStats();
 		SendHUD(Peer);
 	}
@@ -1920,8 +1920,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
 		Change = std::clamp(Change, -(int64_t)PLAYER_MAX_GOLD, (int64_t)PLAYER_MAX_GOLD);
-		Player->Character->Attributes["Gold"].Integer = Adjust ? Player->Character->Attributes["Gold"].Integer + Change : Change;
-		Player->Character->Attributes["GoldLost"].Integer = 0;
+		Player->Character->Attributes["Gold"].Int = Adjust ? Player->Character->Attributes["Gold"].Int + Change : Change;
+		Player->Character->Attributes["GoldLost"].Int = 0;
 		Player->Character->UpdateGold(0);
 		SendHUD(Peer);
 	}
@@ -2004,13 +2004,13 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
-	Packet.Write<int>(Player->Character->Attributes["Health"].Integer);
-	Packet.Write<int>(Player->Character->Attributes["Mana"].Integer);
-	Packet.Write<int>(Player->Character->Attributes["MaxHealth"].Integer);
-	Packet.Write<int>(Player->Character->Attributes["MaxMana"].Integer);
-	Packet.Write<int64_t>(Player->Character->Attributes["Experience"].Integer64);
-	Packet.Write<int>(Player->Character->Attributes["Gold"].Integer);
-	Packet.Write<int>(Player->Character->Attributes["Bounty"].Integer);
+	Packet.Write<int>(Player->Character->Attributes["Health"].Int);
+	Packet.Write<int>(Player->Character->Attributes["Mana"].Int);
+	Packet.Write<int>(Player->Character->Attributes["MaxHealth"].Int);
+	Packet.Write<int>(Player->Character->Attributes["MaxMana"].Int);
+	Packet.Write<int64_t>(Player->Character->Attributes["Experience"].Int64);
+	Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
+	Packet.Write<int>(Player->Character->Attributes["Bounty"].Int);
 	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);
@@ -2099,8 +2099,8 @@ void _Server::Slap(ae::NetworkIDType PlayerID, int GoldAmount) {
 	// Penalty
 	_StatChange StatChange;
 	StatChange.Object = Player;
-	StatChange.Values["Gold"].Integer = -GoldAmount;
-	StatChange.Values["Health"].Integer = -Player->Character->Attributes["Health"].Integer / 2;
+	StatChange.Values["Gold"].Int = -GoldAmount;
+	StatChange.Values["Health"].Int = -Player->Character->Attributes["Health"].Int / 2;
 	Player->UpdateStats(StatChange);
 
 	// Build packet
@@ -2382,7 +2382,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Difficulty += DifficultyAdjust;
 
 			// Increase by each player's difficulty stat
-			Difficulty += PartyPlayer->Character->Attributes["Difficulty"].Integer;
+			Difficulty += PartyPlayer->Character->Attributes["Difficulty"].Int;
 		}
 
 		// Add summons
@@ -2436,8 +2436,8 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MaxSkillLevels.clear();
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Attributes["Gold"].Integer = std::min((int64_t)(Character->Attributes["Experience"].Integer64 * Character->Attributes["RebirthWealth"].Integer * 0.01f), (int64_t)PLAYER_MAX_GOLD);
-	Character->Attributes["Experience"].Integer64 = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Integer + 1)->Experience;
+	Character->Attributes["Gold"].Int = std::min((int64_t)(Character->Attributes["Experience"].Int64 * Character->Attributes["RebirthWealth"].Int * 0.01f), (int64_t)PLAYER_MAX_GOLD);
+	Character->Attributes["Experience"].Int64 = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Int + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;
 	Character->Vendor = nullptr;
@@ -2464,44 +2464,44 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	// Give bonus
 	switch(RebirthEvent.Type) {
 		case 1:
-			Character->Attributes["EternalStrength"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalStrength"].Int += RebirthEvent.Value;
 		break;
 		case 2:
-			Character->Attributes["EternalGuard"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalGuard"].Int += RebirthEvent.Value;
 		break;
 		case 3:
-			Character->Attributes["EternalFortitude"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalFortitude"].Int += RebirthEvent.Value;
 		break;
 		case 4:
-			Character->Attributes["EternalSpirit"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalSpirit"].Int += RebirthEvent.Value;
 		break;
 		case 5:
-			Character->Attributes["EternalWisdom"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalWisdom"].Int += RebirthEvent.Value;
 		break;
 		case 6:
-			Character->Attributes["EternalWealth"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalWealth"].Int += RebirthEvent.Value;
 		break;
 		case 7:
-			Character->Attributes["EternalAlacrity"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalAlacrity"].Int += RebirthEvent.Value;
 		break;
 		case 8:
-			Character->Attributes["EternalKnowledge"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalKnowledge"].Int += RebirthEvent.Value;
 		break;
 		case 9:
-			Character->Attributes["EternalPain"].Integer += RebirthEvent.Value;
+			Character->Attributes["EternalPain"].Int += RebirthEvent.Value;
 		break;
 	}
 
 	// Keep belt unlocks
-	Character->BeltSize = std::min(Character->Attributes["RebirthGirth"].Integer + ACTIONBAR_DEFAULT_BELTSIZE, ACTIONBAR_MAX_BELTSIZE);
-	Character->UnlockBySearch("Belt Slot %", Character->Attributes["RebirthGirth"].Integer);
+	Character->BeltSize = std::min(Character->Attributes["RebirthGirth"].Int + ACTIONBAR_DEFAULT_BELTSIZE, ACTIONBAR_MAX_BELTSIZE);
+	Character->UnlockBySearch("Belt Slot %", Character->Attributes["RebirthGirth"].Int);
 
 	// Keep skill bar unlocks
-	Character->SkillBarSize = std::min(Character->Attributes["RebirthProficiency"].Integer + ACTIONBAR_DEFAULT_SKILLBARSIZE, ACTIONBAR_MAX_SKILLBARSIZE);
-	Character->UnlockBySearch("Skill Slot %", Character->Attributes["RebirthProficiency"].Integer);
+	Character->SkillBarSize = std::min(Character->Attributes["RebirthProficiency"].Int + ACTIONBAR_DEFAULT_SKILLBARSIZE, ACTIONBAR_MAX_SKILLBARSIZE);
+	Character->UnlockBySearch("Skill Slot %", Character->Attributes["RebirthProficiency"].Int);
 
 	// Keep skill point unlocks
-	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->Attributes["RebirthInsight"].Integer);
+	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->Attributes["RebirthInsight"].Int);
 
 	// Keep items from trade bag
 	int ItemCount = 0;
@@ -2524,13 +2524,13 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 		Stats->Items.at(239),
 		Stats->Items.at(238),
 	};
-	int KeyUnlockCount = std::clamp(Character->Attributes["RebirthPassage"].Integer, 0, (int)KeyUnlocks.size());
+	int KeyUnlockCount = std::clamp(Character->Attributes["RebirthPassage"].Int, 0, (int)KeyUnlocks.size());
 	for(int i = 0; i < KeyUnlockCount; i++) {
 		Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(KeyUnlocks[i], 1));
 	}
 
 	// Get highest skills
-	int SkillCount = Character->Attributes["RebirthKnowledge"].Integer;
+	int SkillCount = Character->Attributes["RebirthKnowledge"].Int;
 	if(SkillCount) {
 		std::list<_HighestSkill> Skills;
 		for(const auto &Skill : OldSkills) {
@@ -2553,13 +2553,13 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->CalculateStats();
 
 	// Spawn player
-	Character->Attributes["Health"].Integer = Character->Attributes["MaxHealth"].Integer;
-	Character->Attributes["Mana"].Integer = Character->Attributes["MaxMana"].Integer;
+	Character->Attributes["Health"].Int = Character->Attributes["MaxHealth"].Int;
+	Character->Attributes["Mana"].Int = Character->Attributes["MaxMana"].Int;
 	Character->GenerateNextBattle();
 	Character->LoadMapID = 0;
 	Character->SpawnMapID = 1;
 	Character->SpawnPoint = 0;
-	Character->Attributes["Rebirths"].Integer++;
+	Character->Attributes["Rebirths"].Int++;
 	SpawnPlayer(Player, Character->LoadMapID, _Map::EVENT_NONE);
 	SendPlayerInfo(Player->Peer);
 }

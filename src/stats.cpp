@@ -617,9 +617,9 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 		Object->Inventory->Bags = Build->Inventory->GetBags();
 		Object->Character->ActionBar = Build->Character->ActionBar;
 		Object->Character->Skills = Build->Character->Skills;
-		Object->Character->Attributes["Health"].Integer = Object->Character->Attributes["MaxHealth"].Integer = Object->Character->BaseMaxHealth;
-		Object->Character->Attributes["Mana"].Integer = Object->Character->Attributes["MaxMana"].Integer = Object->Character->BaseMaxMana;
-		Object->Character->Attributes["Gold"].Integer = Object->Monster->GoldGiven;
+		Object->Character->Attributes["Health"].Int = Object->Character->Attributes["MaxHealth"].Int = Object->Character->BaseMaxHealth;
+		Object->Character->Attributes["Mana"].Int = Object->Character->Attributes["MaxMana"].Int = Object->Character->BaseMaxMana;
+		Object->Character->Attributes["Gold"].Int = Object->Monster->GoldGiven;
 		Object->Character->CalcLevelStats = false;
 		Object->Character->BaseResistances[3] = Database->GetInt<int>("fire_res");
 		Object->Character->BaseResistances[4] = Database->GetInt<int>("cold_res");
@@ -888,10 +888,10 @@ void _Stats::LoadAttributes() {
 			case StatValueType::BOOLEAN:
 			case StatValueType::INTEGER:
 			case StatValueType::PERCENT:
-				Attribute.Default.Integer = Database->GetInt<int>("default");
+				Attribute.Default.Int = Database->GetInt<int>("default");
 			break;
 			case StatValueType::INTEGER64:
-				Attribute.Default.Integer64 = Database->GetInt64("default");
+				Attribute.Default.Int64 = Database->GetInt64("default");
 			break;
 			case StatValueType::FLOAT:
 				Attribute.Default.Float = (float)Database->GetReal("default");

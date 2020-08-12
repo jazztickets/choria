@@ -112,7 +112,7 @@ void _Character::Init() {
 
 	// Set attributes
 	for(const auto &Attribute : Object->Stats->Attributes)
-		Attributes[Attribute.second.Name].Integer = 0;
+		Attributes[Attribute.second.Name].Int = 0;
 }
 
 // Update
@@ -129,10 +129,10 @@ void _Character::Update(double FrameTime) {
 			StatChange.Object = Object;
 
 			// Update regen
-			if((Attributes["Health"].Integer < Attributes["MaxHealth"].Integer && Attributes["HealthRegen"].Integer > 0) || Attributes["HealthRegen"].Integer < 0)
-				StatChange.Values["Health"].Integer = Attributes["HealthRegen"].Integer;
-			if((Attributes["Mana"].Integer < Attributes["MaxMana"].Integer && Attributes["ManaRegen"].Integer > 0) || Attributes["ManaRegen"].Integer < 0)
-				StatChange.Values["Mana"].Integer = Attributes["ManaRegen"].Integer;
+			if((Attributes["Health"].Int < Attributes["MaxHealth"].Int && Attributes["HealthRegen"].Int > 0) || Attributes["HealthRegen"].Int < 0)
+				StatChange.Values["Health"].Int = Attributes["HealthRegen"].Int;
+			if((Attributes["Mana"].Int < Attributes["MaxMana"].Int && Attributes["ManaRegen"].Int > 0) || Attributes["ManaRegen"].Int < 0)
+				StatChange.Values["Mana"].Int = Attributes["ManaRegen"].Int;
 
 			// Update object
 			if(StatChange.Values.size() != 0) {
@@ -215,24 +215,24 @@ void _Character::Update(double FrameTime) {
 // Update health
 void _Character::UpdateHealth(int &Value) {
 	if(Object->Server && Value > 0)
-		Value *= Attributes["HealthUpdateMultiplier"].Integer * 0.01f;
+		Value *= Attributes["HealthUpdateMultiplier"].Int * 0.01f;
 
-	Attributes["Health"].Integer = std::clamp(Attributes["Health"].Integer + Value, 0, Attributes["MaxHealth"].Integer);
+	Attributes["Health"].Int = std::clamp(Attributes["Health"].Int + Value, 0, Attributes["MaxHealth"].Int);
 }
 
 // Update mana
 void _Character::UpdateMana(int Value) {
-	Attributes["Mana"].Integer = std::clamp(Attributes["Mana"].Integer + Value, 0, Attributes["MaxMana"].Integer);
+	Attributes["Mana"].Int = std::clamp(Attributes["Mana"].Int + Value, 0, Attributes["MaxMana"].Int);
 }
 
 // Update gold amount
 void _Character::UpdateGold(int Value) {
-	Attributes["Gold"].Integer = std::clamp(Attributes["Gold"].Integer + Value, -PLAYER_MAX_GOLD, PLAYER_MAX_GOLD);
+	Attributes["Gold"].Int = std::clamp(Attributes["Gold"].Int + Value, -PLAYER_MAX_GOLD, PLAYER_MAX_GOLD);
 }
 
 // Update experience
 void _Character::UpdateExperience(int64_t Value) {
-	Attributes["Experience"].Integer64 = std::max(Attributes["Experience"].Integer64 + Value, (int64_t)0);
+	Attributes["Experience"].Int64 = std::max(Attributes["Experience"].Int64 + Value, (int64_t)0);
 }
 
 // Update status of character
@@ -274,25 +274,25 @@ void _Character::CalculateStats() {
 		if(!Attribute.second.Calculate)
 			continue;
 
-		Attributes[Attribute.second.Name].Integer = Attribute.second.Default.Integer;
+		Attributes[Attribute.second.Name].Int = Attribute.second.Default.Int;
 	}
 
 	// Get base stats
 	CalculateLevelStats();
 	SkillPoints += SkillPointsUnlocked;
 
-	Attributes["MaxHealth"].Integer = BaseMaxHealth;
-	Attributes["MaxMana"].Integer = BaseMaxMana;
-	Attributes["MinDamage"].Integer = BaseMinDamage;
-	Attributes["MaxDamage"].Integer = BaseMaxDamage;
-	Attributes["Armor"].Integer = BaseArmor;
-	Attributes["DamageBlock"].Integer = BaseDamageBlock;
-	Attributes["SpellDamage"].Integer = BaseSpellDamage;
+	Attributes["MaxHealth"].Int = BaseMaxHealth;
+	Attributes["MaxMana"].Int = BaseMaxMana;
+	Attributes["MinDamage"].Int = BaseMinDamage;
+	Attributes["MaxDamage"].Int = BaseMaxDamage;
+	Attributes["Armor"].Int = BaseArmor;
+	Attributes["DamageBlock"].Int = BaseDamageBlock;
+	Attributes["SpellDamage"].Int = BaseSpellDamage;
 
 	Object->Light = 0;
 	Invisible = 0;
-	Attributes["Difficulty"].Integer += Attributes["EternalPain"].Integer + Attributes["Rebirths"].Integer;
-	Attributes["RebirthTier"].Integer += Attributes["RebirthPower"].Integer;
+	Attributes["Difficulty"].Int += Attributes["EternalPain"].Int + Attributes["Rebirths"].Int;
+	Attributes["RebirthTier"].Int += Attributes["RebirthPower"].Int;
 	Resistances.clear();
 	Sets.clear();
 
@@ -301,41 +301,41 @@ void _Character::CalculateStats() {
 		Resistances[i] = BaseResistances[i];
 
 	// Eternal Strength
-	Attributes["PhysicalPower"].Integer += Attributes["EternalStrength"].Integer;
-	Attributes["FirePower"].Integer += Attributes["EternalStrength"].Integer;
-	Attributes["ColdPower"].Integer += Attributes["EternalStrength"].Integer;
-	Attributes["LightningPower"].Integer += Attributes["EternalStrength"].Integer;
-	Attributes["BleedPower"].Integer += Attributes["EternalStrength"].Integer;
-	Attributes["PoisonPower"].Integer += Attributes["EternalStrength"].Integer;
-	Attributes["PetPower"].Integer += Attributes["EternalStrength"].Integer;
+	Attributes["PhysicalPower"].Int += Attributes["EternalStrength"].Int;
+	Attributes["FirePower"].Int += Attributes["EternalStrength"].Int;
+	Attributes["ColdPower"].Int += Attributes["EternalStrength"].Int;
+	Attributes["LightningPower"].Int += Attributes["EternalStrength"].Int;
+	Attributes["BleedPower"].Int += Attributes["EternalStrength"].Int;
+	Attributes["PoisonPower"].Int += Attributes["EternalStrength"].Int;
+	Attributes["PetPower"].Int += Attributes["EternalStrength"].Int;
 
 	// Eternal Guard
-	if(Attributes["EternalGuard"].Integer) {
-		Attributes["DamageBlock"].Integer += Attributes["EternalGuard"].Integer;
-		Attributes["Armor"].Integer += Attributes["EternalGuard"].Integer / 3;
+	if(Attributes["EternalGuard"].Int) {
+		Attributes["DamageBlock"].Int += Attributes["EternalGuard"].Int;
+		Attributes["Armor"].Int += Attributes["EternalGuard"].Int / 3;
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-			Resistances[i] += Attributes["EternalGuard"].Integer / 4;
+			Resistances[i] += Attributes["EternalGuard"].Int / 4;
 	}
 
 	// Eternal Fortitude
-	Attributes["HealthBonus"].Integer += Attributes["EternalFortitude"].Integer;
-	Attributes["HealPower"].Integer += Attributes["EternalFortitude"].Integer;
+	Attributes["HealthBonus"].Int += Attributes["EternalFortitude"].Int;
+	Attributes["HealPower"].Int += Attributes["EternalFortitude"].Int;
 
 	// Eternal Spirit
-	Attributes["ManaBonus"].Integer += Attributes["EternalSpirit"].Integer;
-	Attributes["ManaPower"].Integer += Attributes["EternalSpirit"].Integer;
+	Attributes["ManaBonus"].Int += Attributes["EternalSpirit"].Int;
+	Attributes["ManaPower"].Int += Attributes["EternalSpirit"].Int;
 
 	// Eternal Wisdom
-	Attributes["ExperienceBonus"].Integer += Attributes["EternalWisdom"].Integer;
+	Attributes["ExperienceBonus"].Int += Attributes["EternalWisdom"].Int;
 
 	// Eternal Wealth
-	Attributes["GoldBonus"].Integer += Attributes["EternalWealth"].Integer;
+	Attributes["GoldBonus"].Int += Attributes["EternalWealth"].Int;
 
 	// Eternal Alacrity
-	Attributes["BattleSpeed"].Integer = BaseBattleSpeed + Attributes["EternalAlacrity"].Integer;
+	Attributes["BattleSpeed"].Int = BaseBattleSpeed + Attributes["EternalAlacrity"].Int;
 
 	// Eternal Knowledge
-	SkillPoints += Attributes["EternalKnowledge"].Integer;
+	SkillPoints += Attributes["EternalKnowledge"].Int;
 
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
@@ -364,21 +364,21 @@ void _Character::CalculateStats() {
 		}
 
 		// Stat changes
-		Attributes["Armor"].Integer += Item->GetArmor(Upgrades);
-		Attributes["DamageBlock"].Integer += Item->GetDamageBlock(Upgrades);
-		Attributes["Pierce"].Integer += Item->GetPierce(Upgrades);
-		Attributes["MaxHealth"].Integer += Item->GetMaxHealth(Upgrades);
-		Attributes["MaxMana"].Integer += Item->GetMaxMana(Upgrades);
-		Attributes["HealthRegen"].Integer += Item->GetHealthRegen(Upgrades);
-		Attributes["ManaRegen"].Integer += Item->GetManaRegen(Upgrades);
-		Attributes["BattleSpeed"].Integer += Item->GetBattleSpeed(Upgrades);
-		Attributes["MoveSpeed"].Integer += Item->GetMoveSpeed(Upgrades);
-		Attributes["Evasion"].Integer += Item->GetEvasion(Upgrades);
-		Attributes["AllSkills"].Integer += Item->GetAllSkills(Upgrades);
-		Attributes["SpellDamage"].Integer += Item->GetSpellDamage(Upgrades);
-		Attributes["Cooldown"].Integer += Item->GetCooldownReduction(Upgrades);
-		Attributes["ExperienceBonus"].Integer += Item->GetExperienceBonus(Upgrades);
-		Attributes["GoldBonus"].Integer += Item->GetGoldBonus(Upgrades);
+		Attributes["Armor"].Int += Item->GetArmor(Upgrades);
+		Attributes["DamageBlock"].Int += Item->GetDamageBlock(Upgrades);
+		Attributes["Pierce"].Int += Item->GetPierce(Upgrades);
+		Attributes["MaxHealth"].Int += Item->GetMaxHealth(Upgrades);
+		Attributes["MaxMana"].Int += Item->GetMaxMana(Upgrades);
+		Attributes["HealthRegen"].Int += Item->GetHealthRegen(Upgrades);
+		Attributes["ManaRegen"].Int += Item->GetManaRegen(Upgrades);
+		Attributes["BattleSpeed"].Int += Item->GetBattleSpeed(Upgrades);
+		Attributes["MoveSpeed"].Int += Item->GetMoveSpeed(Upgrades);
+		Attributes["Evasion"].Int += Item->GetEvasion(Upgrades);
+		Attributes["AllSkills"].Int += Item->GetAllSkills(Upgrades);
+		Attributes["SpellDamage"].Int += Item->GetSpellDamage(Upgrades);
+		Attributes["Cooldown"].Int += Item->GetCooldownReduction(Upgrades);
+		Attributes["ExperienceBonus"].Int += Item->GetExperienceBonus(Upgrades);
+		Attributes["GoldBonus"].Int += Item->GetGoldBonus(Upgrades);
 
 		// Handle all resist
 		if(Item->ResistanceTypeID == 1) {
@@ -491,7 +491,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get speed before buffs
-	EquipmentBattleSpeed = Attributes["BattleSpeed"].Integer;
+	EquipmentBattleSpeed = Attributes["BattleSpeed"].Int;
 
 	// Get buff stats
 	for(const auto &StatusEffect : StatusEffects) {
@@ -503,8 +503,8 @@ void _Character::CalculateStats() {
 
 	// Get damage
 	for(size_t i = 0; i < ItemMinDamage.size(); i++) {
-		Attributes["MinDamage"].Integer += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
-		Attributes["MaxDamage"].Integer += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Integer * 0.01f * GetDamagePowerMultiplier(i));
+		Attributes["MinDamage"].Int += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Int * 0.01f * GetDamagePowerMultiplier(i));
+		Attributes["MaxDamage"].Int += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Int * 0.01f * GetDamagePowerMultiplier(i));
 	}
 
 	// Cap resistances
@@ -514,32 +514,32 @@ void _Character::CalculateStats() {
 	}
 
 	// Get physical resistance from armor
-	float ArmorResist = Attributes["Armor"].Integer / (30.0f + std::abs(Attributes["Armor"].Integer));
+	float ArmorResist = Attributes["Armor"].Int / (30.0f + std::abs(Attributes["Armor"].Int));
 
 	// Physical resist comes solely from armor
 	Resistances[2] = (int)(ArmorResist * 100);
 
 	// Cap stats
-	Attributes["Evasion"].Integer = std::clamp(Attributes["Evasion"].Integer, 0, GAME_MAX_EVASION);
-	Attributes["MoveSpeed"].Integer = std::max(Attributes["MoveSpeed"].Integer, PLAYER_MIN_MOVESPEED);
-	Attributes["BattleSpeed"].Integer = std::max(Attributes["BattleSpeed"].Integer, BATTLE_MIN_SPEED);
-	Attributes["Cooldown"].Integer = std::max(Attributes["Cooldown"].Integer, 0);
+	Attributes["Evasion"].Int = std::clamp(Attributes["Evasion"].Int, 0, GAME_MAX_EVASION);
+	Attributes["MoveSpeed"].Int = std::max(Attributes["MoveSpeed"].Int, PLAYER_MIN_MOVESPEED);
+	Attributes["BattleSpeed"].Int = std::max(Attributes["BattleSpeed"].Int, BATTLE_MIN_SPEED);
+	Attributes["Cooldown"].Int = std::max(Attributes["Cooldown"].Int, 0);
 
-	Attributes["MinDamage"].Integer = std::max(Attributes["MinDamage"].Integer, 0);
-	Attributes["MaxDamage"].Integer = std::max(Attributes["MaxDamage"].Integer, 0);
-	Attributes["Pierce"].Integer = std::max(Attributes["Pierce"].Integer, 0);
-	Attributes["DamageBlock"].Integer = std::max(Attributes["DamageBlock"].Integer, 0);
-	Attributes["ConsumeChance"].Integer = std::clamp(Attributes["ConsumeChance"].Integer, 0, 100);
-	Attributes["EnergyField"].Integer = std::clamp(100 - Attributes["EnergyField"].Integer, 0, 100);
+	Attributes["MinDamage"].Int = std::max(Attributes["MinDamage"].Int, 0);
+	Attributes["MaxDamage"].Int = std::max(Attributes["MaxDamage"].Int, 0);
+	Attributes["Pierce"].Int = std::max(Attributes["Pierce"].Int, 0);
+	Attributes["DamageBlock"].Int = std::max(Attributes["DamageBlock"].Int, 0);
+	Attributes["ConsumeChance"].Int = std::clamp(Attributes["ConsumeChance"].Int, 0, 100);
+	Attributes["EnergyField"].Int = std::clamp(100 - Attributes["EnergyField"].Int, 0, 100);
 
-	Attributes["MaxHealth"].Integer *= Attributes["HealthBonus"].Integer * 0.01f;
-	Attributes["MaxMana"].Integer *= Attributes["ManaBonus"].Integer * 0.01f;
-	Attributes["Health"].Integer = std::min(Attributes["Health"].Integer, Attributes["MaxHealth"].Integer);
-	Attributes["Mana"].Integer = std::min(Attributes["Mana"].Integer, Attributes["MaxMana"].Integer);
-	if(Attributes["HealthRegen"].Integer > 0)
-		Attributes["HealthRegen"].Integer *= Attributes["HealPower"].Integer * 0.01f;
-	if(Attributes["ManaRegen"].Integer > 0)
-		Attributes["ManaRegen"].Integer *= Attributes["ManaPower"].Integer * 0.01f;
+	Attributes["MaxHealth"].Int *= Attributes["HealthBonus"].Int * 0.01f;
+	Attributes["MaxMana"].Int *= Attributes["ManaBonus"].Int * 0.01f;
+	Attributes["Health"].Int = std::min(Attributes["Health"].Int, Attributes["MaxHealth"].Int);
+	Attributes["Mana"].Int = std::min(Attributes["Mana"].Int, Attributes["MaxMana"].Int);
+	if(Attributes["HealthRegen"].Int > 0)
+		Attributes["HealthRegen"].Int *= Attributes["HealPower"].Int * 0.01f;
+	if(Attributes["ManaRegen"].Int > 0)
+		Attributes["ManaRegen"].Int *= Attributes["ManaPower"].Int * 0.01f;
 
 	RefreshActionBarCount();
 }
@@ -551,14 +551,14 @@ void _Character::CalculateLevelStats() {
 
 	// Cap experience
 	const _Level *MaxLevelStat = Object->Stats->GetLevel(Object->Stats->GetMaxLevel());
-	Attributes["Experience"].Integer64 = std::clamp(Attributes["Experience"].Integer64, (int64_t)0, MaxLevelStat->Experience);
+	Attributes["Experience"].Int64 = std::clamp(Attributes["Experience"].Int64, (int64_t)0, MaxLevelStat->Experience);
 
 	// Find current level
-	const _Level *LevelStat = Object->Stats->FindLevel(Attributes["Experience"].Integer64);
+	const _Level *LevelStat = Object->Stats->FindLevel(Attributes["Experience"].Int64);
 	Level = LevelStat->Level;
-	Attributes["RebirthTier"].Integer = LevelStat->RebirthTier;
+	Attributes["RebirthTier"].Int = LevelStat->RebirthTier;
 	ExperienceNextLevel = LevelStat->NextLevel;
-	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Attributes["Experience"].Integer64 - LevelStat->Experience);
+	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Attributes["Experience"].Int64 - LevelStat->Experience);
 
 	// Set base attributes
 	BaseMaxHealth = LevelStat->Health;
@@ -584,10 +584,10 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 				switch(Attribute.Type) {
 					case StatValueType::INTEGER:
 					case StatValueType::PERCENT:
-						Attributes[Update.first].Integer += Update.second.Integer;
+						Attributes[Update.first].Int += Update.second.Int;
 					break;
 					case StatValueType::INTEGER64:
-						Attributes[Update.first].Integer64 += Update.second.Integer64;
+						Attributes[Update.first].Int64 += Update.second.Int64;
 					break;
 					case StatValueType::FLOAT:
 						Attributes[Update.first].Float += Update.second.Float;
@@ -598,40 +598,40 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 				}
 			} break;
 			case StatUpdateType::SET:
-				Attributes[Update.first].Integer = Update.second.Integer;
+				Attributes[Update.first].Int = Update.second.Int;
 			break;
 			case StatUpdateType::MULTIPLICATIVE:
-				Attributes[Update.first].Integer = (Attributes[Update.first].Integer * 0.01f * (100 - Update.second.Integer) * 0.01f) * 100;
+				Attributes[Update.first].Int = (Attributes[Update.first].Int * 0.01f * (100 - Update.second.Int) * 0.01f) * 100;
 			break;
 		}
 	}
 
 	if(StatChange.HasStat("Invisible"))
-		Invisible = StatChange.Values["Invisible"].Integer;
+		Invisible = StatChange.Values["Invisible"].Int;
 	if(StatChange.HasStat("Light"))
-		Object->Light = StatChange.Values["Light"].Integer;
+		Object->Light = StatChange.Values["Light"].Int;
 
 	if(StatChange.HasStat("AllResist")) {
 		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-			Resistances[i] += StatChange.Values["AllResist"].Integer;
+			Resistances[i] += StatChange.Values["AllResist"].Int;
 	}
 	if(StatChange.HasStat("PhysicalResist"))
-		Resistances[2] += StatChange.Values["PhysicalResist"].Integer;
+		Resistances[2] += StatChange.Values["PhysicalResist"].Int;
 	if(StatChange.HasStat("FireResist"))
-		Resistances[3] += StatChange.Values["FireResist"].Integer;
+		Resistances[3] += StatChange.Values["FireResist"].Int;
 	if(StatChange.HasStat("ColdResist"))
-		Resistances[4] += StatChange.Values["ColdResist"].Integer;
+		Resistances[4] += StatChange.Values["ColdResist"].Int;
 	if(StatChange.HasStat("LightningResist"))
-		Resistances[5] += StatChange.Values["LightningResist"].Integer;
+		Resistances[5] += StatChange.Values["LightningResist"].Int;
 	if(StatChange.HasStat("PoisonResist"))
-		Resistances[6] += StatChange.Values["PoisonResist"].Integer;
+		Resistances[6] += StatChange.Values["PoisonResist"].Int;
 	if(StatChange.HasStat("BleedResist"))
-		Resistances[7] += StatChange.Values["BleedResist"].Integer;
+		Resistances[7] += StatChange.Values["BleedResist"].Int;
 	if(StatChange.HasStat("StunResist"))
-		Resistances[8] += StatChange.Values["StunResist"].Integer;
+		Resistances[8] += StatChange.Values["StunResist"].Int;
 	if(StatChange.HasStat("ElementalResist")) {
 		for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
-			Resistances[i] += StatChange.Values["ElementalResist"].Integer;
+			Resistances[i] += StatChange.Values["ElementalResist"].Int;
 	}
 }
 
@@ -681,19 +681,19 @@ void _Character::GenerateNextBattle() {
 
 // Generate damage
 int _Character::GenerateDamage() {
-	return ae::GetRandomInt(Attributes["MinDamage"].Integer, Attributes["MaxDamage"].Integer);
+	return ae::GetRandomInt(Attributes["MinDamage"].Int, Attributes["MaxDamage"].Int);
 }
 
 // Get damage power from a type
 float _Character::GetDamagePowerMultiplier(int DamageTypeID) {
 
 	switch(DamageTypeID) {
-		case 2: return Attributes["PhysicalPower"].Integer * 0.01f;
-		case 3: return Attributes["FirePower"].Integer * 0.01f;
-		case 4: return Attributes["ColdPower"].Integer * 0.01f;
-		case 5: return Attributes["LightningPower"].Integer * 0.01f;
-		case 6: return Attributes["PoisonPower"].Integer * 0.01f;
-		case 7: return Attributes["BleedPower"].Integer * 0.01f;
+		case 2: return Attributes["PhysicalPower"].Int * 0.01f;
+		case 3: return Attributes["FirePower"].Int * 0.01f;
+		case 4: return Attributes["ColdPower"].Int * 0.01f;
+		case 5: return Attributes["LightningPower"].Int * 0.01f;
+		case 6: return Attributes["PoisonPower"].Int * 0.01f;
+		case 7: return Attributes["BleedPower"].Int * 0.01f;
 	}
 
 	return 1.0f;
@@ -726,7 +726,7 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item)) {
 			ReturnAction.Level = Skills[ReturnAction.Item->ID];
 			if(ReturnAction.Level > 0) {
-				ReturnAction.Level += Attributes["AllSkills"].Integer;
+				ReturnAction.Level += Attributes["AllSkills"].Int;
 				if(MaxSkillLevels.find(ReturnAction.Item->ID) != MaxSkillLevels.end())
 					ReturnAction.Level = std::min(ReturnAction.Level, MaxSkillLevels.at(ReturnAction.Item->ID));
 			}

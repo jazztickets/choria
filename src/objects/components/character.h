@@ -97,9 +97,9 @@ class _Character {
 		void CalculateStats();
 		void CalculateLevelStats();
 		float GetNextLevelPercent() const;
-		bool IsAlive() const { return Attributes.at("Health").Integer > 0; }
-		float GetHealthPercent() const { return Attributes.at("MaxHealth").Integer > 0 ? Attributes.at("Health").Integer / (float)Attributes.at("MaxHealth").Integer : 0; }
-		float GetManaPercent() const { return Attributes.at("MaxMana").Integer > 0 ? Attributes.at("Mana").Integer / (float)Attributes.at("MaxMana").Integer : 0; }
+		bool IsAlive() const { return Attributes.at("Health").Int > 0; }
+		float GetHealthPercent() const { return Attributes.at("MaxHealth").Int > 0 ? Attributes.at("Health").Int / (float)Attributes.at("MaxHealth").Int : 0; }
+		float GetManaPercent() const { return Attributes.at("MaxMana").Int > 0 ? Attributes.at("Mana").Int / (float)Attributes.at("MaxMana").Int : 0; }
 
 		// Input
 		bool AcceptingMoveInput();
@@ -115,7 +115,7 @@ class _Character {
 		bool IsZoneOnCooldown(uint32_t Zone) { return BattleCooldown.find(Zone) != BattleCooldown.end(); }
 		void GenerateNextBattle();
 		int GenerateDamage();
-		float GetAverageDamage() const { return (Attributes.at("MinDamage").Integer + Attributes.at("MaxDamage").Integer) / 2.0f; }
+		float GetAverageDamage() const { return (Attributes.at("MinDamage").Int + Attributes.at("MaxDamage").Int) / 2.0f; }
 		float GetDamagePowerMultiplier(int DamageTypeID);
 
 		// Actions
