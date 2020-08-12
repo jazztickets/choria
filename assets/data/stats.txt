@@ -79,11 +79,11 @@ CREATE TABLE IF NOT EXISTS "valuetype" (
 );
 INSERT INTO valuetype VALUES(0,'Boolean');
 INSERT INTO valuetype VALUES(1,'Integer');
-INSERT INTO valuetype VALUES(2,'Float');
-INSERT INTO valuetype VALUES(3,'Pointer');
+INSERT INTO valuetype VALUES(2,'Integer 64-bit');
+INSERT INTO valuetype VALUES(3,'Float');
 INSERT INTO valuetype VALUES(4,'Percent');
 INSERT INTO valuetype VALUES(5,'Time');
-INSERT INTO valuetype VALUES(6,'Integer 64-bit');
+INSERT INTO valuetype VALUES(6,'Pointer');
 CREATE TABLE IF NOT EXISTS "updatetype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -102,13 +102,13 @@ CREATE TABLE IF NOT EXISTS "attribute" (
 	"upgrade_scale" REAL DEFAULT(0.0),
 	"show" INTEGER DEFAULT(0)
 , "calc" INTEGER DEFAULT(0), "save" INTEGER DEFAULT(0), "script" INTEGER DEFAULT(0), "network" INTEGER DEFAULT(0));
-INSERT INTO attribute VALUES(0,'Buff','Buff',3,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(1,'BuffDuration','Buff Duration',2,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(0,'Buff','Buff',6,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(1,'BuffDuration','Buff Duration',3,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(2,'BuffLevel','Buff Level',1,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(3,'BuffSound','Buff Sound',1,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(4,'ClearBuff','Clear Buff',3,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(5,'SummonBuff','Summon Buff',3,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(6,'Experience','Experience',6,0,'0',0.0,0,0,1,1,1);
+INSERT INTO attribute VALUES(4,'ClearBuff','Clear Buff',6,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(5,'SummonBuff','Summon Buff',6,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(6,'Experience','Experience',2,0,'0',0.0,0,0,1,1,1);
 INSERT INTO attribute VALUES(7,'Gold','Gold',1,0,'0',0.0,0,0,1,1,1);
 INSERT INTO attribute VALUES(8,'GoldStolen','Gold Stolen',1,0,'0',0.0,0,0,0,1,0);
 INSERT INTO attribute VALUES(9,'DamageType','Damage Type',1,0,'0',0.0,0,0,0,0,0);
@@ -117,13 +117,13 @@ INSERT INTO attribute VALUES(11,'Crit','Crit',0,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(12,'Flee','Flee',0,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(13,'Stunned','Stunned',0,2,'0',0.0,0,1,0,1,0);
 INSERT INTO attribute VALUES(14,'Corpse','Corpse',1,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(15,'Stamina','Stamina',2,0,'0',0.0,0,1,0,0,0);
+INSERT INTO attribute VALUES(15,'Stamina','Stamina',3,0,'0',0.0,0,1,0,0,0);
 INSERT INTO attribute VALUES(16,'Battle','Battle',1,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(17,'Hunt','Hunt',2,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(18,'BountyHunt','Bounty Hunt',2,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(19,'Clock','Clock',2,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(17,'Hunt','Hunt',3,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(18,'BountyHunt','Bounty Hunt',3,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(19,'Clock','Clock',3,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(20,'MapChange','Map Change',1,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(21,'Teleport','Teleport',2,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(21,'Teleport','Teleport',3,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(22,'Light','Light',1,2,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(23,'Invisible','Invisible',0,2,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(24,'LavaProtection','Lava Protection',0,2,'0',0.0,0,1,0,1,0);

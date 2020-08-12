@@ -35,11 +35,11 @@ namespace ae {
 enum class StatValueType : int {
 	BOOLEAN,
 	INTEGER,
+	INTEGER64,
 	FLOAT,
-	POINTER,
 	PERCENT,
 	TIME,
-	INTEGER64,
+	POINTER,
 };
 
 enum class StatUpdateType : int {
