@@ -872,8 +872,11 @@ void _Stats::LoadAttributes() {
 
 	// Get data
 	_Attribute Attribute;
+	uint8_t ID = 0;
 	while(Database->FetchRow()) {
-		Attribute.ID = Database->GetInt<uint8_t>("id");
+		Attribute.ID = ID++;
+		if(ID == 0)
+			throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " - Hit attribute limit");
 		Attribute.Name = Database->GetString("name");
 		Attribute.Label = Database->GetString("label");
 		Attribute.Type = (StatValueType)Database->GetInt<int>("valuetype_id");
