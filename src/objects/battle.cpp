@@ -472,7 +472,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Fighter->Corpse = 1;
 	if(Server) {
 		Object->Character->GenerateNextBattle();
-		Object->Fighter->TurnTimer = ae::GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
+		Object->Fighter->TurnTimer = std::clamp(ae::GetRandomReal(0, BATTLE_MAX_START_TURNTIMER) + Object->Character->Attributes["Initiative"].Mult(), 0.0, 1.0);
 
 		// Send player join packet to current objects
 		if(Join) {

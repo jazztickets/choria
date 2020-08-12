@@ -87,6 +87,7 @@ Set_Cloth.Attributes = {
 	BleedPower = { "10%", "50%" },
 	BleedResist = { "10%", "25%" },
 	Evasion = { "5%", "15%" },
+	Initiative = { "20%", "40%" },
 	MaxHealth = { "10", "100" },
 	PoisonResist = { "10%", "25%" },
 }
@@ -97,6 +98,7 @@ Set_Black.Attributes = {
 	BleedPower = { "25%", "100%" },
 	BleedResist = { "15%", "45%" },
 	Evasion = { "10%", "30%" },
+	Initiative = { "30%", "50%" },
 	MaxHealth = { "50", "200" },
 	PoisonResist = { "15%", "45%" },
 }
