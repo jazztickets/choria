@@ -744,7 +744,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Get stats
 	Json::Value StatsNode = Data["stats"];
-	Character->LoadMapID = (ae::NetworkIDType)StatsNode["map_id"].asUInt();
+	Character->LoadMapID = (ae::NetworkIDType)StatsNode["MapID"].asUInt();
 	Position.x = StatsNode["MapX"].asInt();
 	Position.y = StatsNode["MapY"].asInt();
 	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["SpawnMapID"].asUInt();
