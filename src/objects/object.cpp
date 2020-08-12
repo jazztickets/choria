@@ -1333,6 +1333,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->Attributes["RebirthInsight"].Int += StatChange.Values["RebirthInsight"].Int;
 	if(StatChange.HasStat("RebirthPassage"))
 		Character->Attributes["RebirthPassage"].Int += StatChange.Values["RebirthPassage"].Int;
+	if(StatChange.HasStat("RebirthEnchantment"))
+		Character->Attributes["RebirthEnchantment"].Int += StatChange.Values["RebirthEnchantment"].Int;
 	if(StatChange.HasStat("RebirthPower")) {
 		Character->Attributes["RebirthPower"].Int += StatChange.Values["RebirthPower"].Int;
 		Character->CalculateStats();

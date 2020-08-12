@@ -119,8 +119,14 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "MAX_SKILLBAR_SIZE");
 	lua_pushinteger(LuaState, GAME_MAX_SKILL_UNLOCKS);
 	lua_setglobal(LuaState, "MAX_SKILL_UNLOCKS");
+	lua_pushinteger(LuaState, GAME_MAX_SKILL_LEVEL);
+	lua_setglobal(LuaState, "MAX_SKILL_LEVEL");
+	lua_pushinteger(LuaState, GAME_DEFAULT_MAX_SKILL_LEVEL);
+	lua_setglobal(LuaState, "DEFAULT_MAX_SKILL_LEVEL");
 	lua_pushinteger(LuaState, PLAYER_MAX_GOLD);
 	lua_setglobal(LuaState, "MAX_GOLD");
+	lua_pushnumber(LuaState, GAME_REBIRTH_WEALTH_MULTIPLIER);
+	lua_setglobal(LuaState, "REBIRTH_WEALTH_MULTIPLIER");
 	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_BELTSIZE);
 	lua_setglobal(LuaState, "DEFAULT_BELTSIZE");
 	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_SKILLBARSIZE);

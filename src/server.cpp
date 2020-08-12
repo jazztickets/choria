@@ -2427,7 +2427,6 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	// Save old info
 	_Bag OldTradeBag = Player->Inventory->GetBag(BagType::TRADE);
 	std::unordered_map<uint32_t, int> OldSkills = Character->Skills;
-	std::unordered_map<uint32_t, int> OldMaxSkillLevels = Character->MaxSkillLevels;
 
 	// Reset character
 	Character->ActionBar = Build->Character->ActionBar;
@@ -2436,7 +2435,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MaxSkillLevels.clear();
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Attributes["Gold"].Int = std::min((int64_t)(Character->Attributes["Experience"].Int64 * Character->Attributes["RebirthWealth"].Mult()), (int64_t)PLAYER_MAX_GOLD);
+	Character->Attributes["Gold"].Int = std::min((int64_t)(Character->Attributes["Experience"].Int64 * Character->Attributes["RebirthWealth"].Mult() * GAME_REBIRTH_WEALTH_MULTIPLIER), (int64_t)PLAYER_MAX_GOLD);
 	Character->Attributes["Experience"].Int64 = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Int + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;
@@ -2539,16 +2538,19 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 		}
 		Skills.sort();
 
-		// Learn old skills and keep max level
+		// Learn old skills
 		for(const auto &Skill : Skills) {
 			Character->Skills[Skill.ID] = 0;
-			Character->MaxSkillLevels[Skill.ID] = OldMaxSkillLevels[Skill.ID];
 
 			SkillCount--;
 			if(SkillCount <= 0)
 				break;
 		}
 	}
+
+	// Set max level for skills
+	for(const auto &Skill : Character->Skills)
+		Character->MaxSkillLevels[Skill.first] = GAME_DEFAULT_MAX_SKILL_LEVEL + Character->Attributes["RebirthEnchantment"].Int;
 
 	Character->CalculateStats();
 

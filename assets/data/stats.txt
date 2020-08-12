@@ -191,25 +191,26 @@ INSERT INTO attribute VALUES(85,'RebirthPower','Rebirth Power',1,0,'0',0.0,4,0,1
 INSERT INTO attribute VALUES(86,'RebirthProficiency','Rebirth Proficiency',1,0,'0',0.0,4,0,1,1,1);
 INSERT INTO attribute VALUES(87,'RebirthWealth','Rebirth Wealth',1,0,'0',0.0,4,0,1,1,1);
 INSERT INTO attribute VALUES(88,'RebirthWisdom','Rebirth Wisdom',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(89,'EternalStrength','Eternal Strength',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(90,'EternalGuard','Eternal Guard',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(91,'EternalFortitude','Eternal Fortitude',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(92,'EternalSpirit','Eternal Spirit',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(93,'EternalWisdom','Eternal Wisdom',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(94,'EternalWealth','Eternal Wealth',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(95,'EternalAlacrity','Eternal Alacrity',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(96,'EternalKnowledge','Eternal Knowledge',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(97,'EternalPain','Eternal Pain',1,0,'0',0.0,0,0,1,1,1);
-INSERT INTO attribute VALUES(98,'PlayTime','Play Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(99,'RebirthTime','Rebirth Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(100,'BattleTime','Battle Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(101,'MonsterKills','Monster Kills',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(102,'PlayerKills','Player Kills',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(103,'Deaths','Deaths',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(104,'GoldLost','Gold Lost',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(105,'Bounty','Bounty',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(106,'GamesPlayed','Games Played',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(107,'Rebirths','Rebirths',1,0,'0',0.0,5,0,1,1,1);
+INSERT INTO attribute VALUES(89,'RebirthEnchantment','Rebirth Enchantment',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(90,'EternalStrength','Eternal Strength',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(91,'EternalGuard','Eternal Guard',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(92,'EternalFortitude','Eternal Fortitude',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(93,'EternalSpirit','Eternal Spirit',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(94,'EternalWisdom','Eternal Wisdom',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(95,'EternalWealth','Eternal Wealth',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(96,'EternalAlacrity','Eternal Alacrity',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(97,'EternalKnowledge','Eternal Knowledge',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(98,'EternalPain','Eternal Pain',1,0,'0',0.0,0,0,1,1,1);
+INSERT INTO attribute VALUES(99,'PlayTime','Play Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(100,'RebirthTime','Rebirth Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(101,'BattleTime','Battle Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(102,'MonsterKills','Monster Kills',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(103,'PlayerKills','Player Kills',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(104,'Deaths','Deaths',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(105,'GoldLost','Gold Lost',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(106,'Bounty','Bounty',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(107,'GamesPlayed','Games Played',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(108,'Rebirths','Rebirths',1,0,'0',0.0,5,0,1,1,1);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -1599,6 +1600,7 @@ INSERT INTO vendoritem VALUES(205,2,320);
 INSERT INTO vendoritem VALUES(206,24,300);
 INSERT INTO vendoritem VALUES(207,24,322);
 INSERT INTO vendoritem VALUES(208,3,323);
+INSERT INTO vendoritem VALUES(209,24,324);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES "monster"(id) ON DELETE CASCADE,
@@ -2979,9 +2981,9 @@ INSERT INTO item VALUES(293,13,0,0,0,0,0,0,'Witch Key','textures/items/key2.png'
 INSERT INTO item VALUES(294,11,0,0,0,0,0,0,'Goblin Trophy','textures/items/goblin_trophy.png','','','',0,500,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(295,10,0,1,1,0,0,0,'Eternal Pain','textures/items/eternal_pain.png','','Item_EternalPain','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(296,13,0,0,0,0,0,0,'Ancient Key','textures/items/key2.png','','','',0,100000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(297,10,0,0,1,0,0,0,'Rite of Wealth','textures/items/rite_wealth.png','','Item_RiteWealth','',5,10000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(298,10,0,0,1,0,0,0,'Rite of Wisdom','textures/items/rite_wisdom.png','','Item_RiteWisdom','',5,25000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(299,10,0,0,1,0,0,0,'Rite of Knowledge','textures/items/rite_knowledge.png','','Item_RiteKnowledge','',5,500000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(297,10,0,0,1,0,0,0,'Rite of Wealth','textures/items/rite_wealth.png','','Item_RiteWealth','',5,250000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(298,10,0,0,1,0,0,0,'Rite of Wisdom','textures/items/rite_wisdom.png','','Item_RiteWisdom','',5,175000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(299,10,0,0,1,0,0,0,'Rite of Knowledge','textures/items/rite_knowledge.png','','Item_RiteKnowledge','',5,1000000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(300,10,0,0,1,0,0,0,'Rite of Power','textures/items/rite_power.png','','Item_RitePower','',5,150000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(301,12,0,0,1,11,0,0,'Belt Slot I','textures/items/beltslot1.png','','Item_BeltSlot','',0,250,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(302,12,0,0,1,12,0,0,'Belt Slot II','textures/items/beltslot2.png','','Item_BeltSlot','',0,2500,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -2991,7 +2993,7 @@ INSERT INTO item VALUES(305,10,0,4,2,0,0,0,'Unstable Potion','textures/items/bli
 INSERT INTO item VALUES(306,10,0,4,2,0,0,0,'Shrapnel Bomb','textures/items/shrapnel_bomb.png','','Item_ShrapnelBomb','',0,250,1,35,0,0,10.0,0.0,1,0,0,0,0,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(307,5,2,0,0,0,0,8,'Flanged Mace','textures/items/flanged_mace.png','','SetBonus_FlangedMace','Proc_Stun',0,1750,1,1,20,15,2.5,0.0,1,140,220,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(308,15,0,0,0,0,0,0,'Secret Garden Map','textures/items/map.png','textures/map_nearest/secret_garden.png','','',0,35000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(309,10,0,0,1,0,0,0,'Rite of Girth','textures/items/rite_girth.png','','Item_RiteGirth','',5,75000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(309,10,0,0,1,0,0,0,'Rite of Girth','textures/items/rite_girth.png','','Item_RiteGirth','',5,125000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(310,10,0,0,1,0,0,0,'Rite of Proficiency','textures/items/rite_proficiency.png','','Item_RiteProficiency','',5,750000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(311,10,0,0,1,0,0,0,'Rite of Insight','textures/items/rite_insight.png','','Item_RiteInsight','',5,100000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(312,8,0,0,0,0,0,0,'Dark Ring','textures/items/dark_ring.png','','Item_DarkRing','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -3006,6 +3008,7 @@ INSERT INTO item VALUES(320,9,0,0,0,0,0,0,'Mundane Amulet','textures/items/amule
 INSERT INTO item VALUES(321,9,0,0,0,0,1,0,'Warding Amulet','textures/items/amulet_blue.png','','','',0,1000,1,0,20,0,0.0,0.0,1,0,0,2,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(322,10,0,0,1,0,0,0,'Rite of Passage','textures/items/rite_passage.png','','Item_RitePassage','',5,500000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(323,5,2,0,0,0,0,0,'Stick','textures/items/stick.png','','','',0,5,1,0,5,0,0.0,0.0,1,5,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(324,10,0,0,1,0,0,0,'Rite of Enchantment','textures/items/rite_enchantment.png','','Item_RiteEnchantment','',5,200000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,

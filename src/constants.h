@@ -128,6 +128,8 @@ const  int          GAME_TRADING_LEVEL              =  3;
 const  int          GAME_TRADING_LEVEL_RANGE        =  10;
 const  int          GAME_DEFAULT_MAX_SKILL_LEVEL    =  5;
 const  int          GAME_MAX_SKILL_UNLOCKS          =  10;
+const  int          GAME_MAX_SKILL_LEVEL            =  50;
+const  double       GAME_REBIRTH_WEALTH_MULTIPLIER  =  0.1;
 //     Actionbar
 const  int          ACTIONBAR_BELT_STARTS           =  10;
 const  int          ACTIONBAR_DEFAULT_BELTSIZE      =  1;
