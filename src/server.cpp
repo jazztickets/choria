@@ -2436,7 +2436,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MaxSkillLevels.clear();
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Attributes["Gold"].Int = std::min((int64_t)(Character->Attributes["Experience"].Int64 * Character->Attributes["RebirthWealth"].Int * 0.01f), (int64_t)PLAYER_MAX_GOLD);
+	Character->Attributes["Gold"].Int = std::min((int64_t)(Character->Attributes["Experience"].Int64 * Character->Attributes["RebirthWealth"].Mult()), (int64_t)PLAYER_MAX_GOLD);
 	Character->Attributes["Experience"].Int64 = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Int + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;

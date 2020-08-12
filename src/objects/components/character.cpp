@@ -215,7 +215,7 @@ void _Character::Update(double FrameTime) {
 // Update health
 void _Character::UpdateHealth(int &Value) {
 	if(Object->Server && Value > 0)
-		Value *= Attributes["HealthUpdateMultiplier"].Int * 0.01f;
+		Value *= Attributes["HealthUpdateMultiplier"].Mult();
 
 	Attributes["Health"].Int = std::clamp(Attributes["Health"].Int + Value, 0, Attributes["MaxHealth"].Int);
 }
@@ -514,8 +514,8 @@ void _Character::CalculateStats() {
 
 	// Get damage
 	for(size_t i = 0; i < ItemMinDamage.size(); i++) {
-		Attributes["MinDamage"].Int += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Int * 0.01f * GetDamagePowerMultiplier(i));
-		Attributes["MaxDamage"].Int += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Int * 0.01f * GetDamagePowerMultiplier(i));
+		Attributes["MinDamage"].Int += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
+		Attributes["MaxDamage"].Int += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
 	}
 
 	// Cap resistances
@@ -541,14 +541,14 @@ void _Character::CalculateStats() {
 	Attributes["ConsumeChance"].Int = std::clamp(Attributes["ConsumeChance"].Int, 0, 100);
 	Attributes["EnergyField"].Int = std::clamp(100 - Attributes["EnergyField"].Int, 0, 100);
 
-	Attributes["MaxHealth"].Int *= Attributes["HealthBonus"].Int * 0.01f;
-	Attributes["MaxMana"].Int *= Attributes["ManaBonus"].Int * 0.01f;
+	Attributes["MaxHealth"].Int *= Attributes["HealthBonus"].Mult();
+	Attributes["MaxMana"].Int *= Attributes["ManaBonus"].Mult();
 	Attributes["Health"].Int = std::min(Attributes["Health"].Int, Attributes["MaxHealth"].Int);
 	Attributes["Mana"].Int = std::min(Attributes["Mana"].Int, Attributes["MaxMana"].Int);
 	if(Attributes["HealthRegen"].Int > 0)
-		Attributes["HealthRegen"].Int *= Attributes["HealPower"].Int * 0.01f;
+		Attributes["HealthRegen"].Int *= Attributes["HealPower"].Mult();
 	if(Attributes["ManaRegen"].Int > 0)
-		Attributes["ManaRegen"].Int *= Attributes["ManaPower"].Int * 0.01f;
+		Attributes["ManaRegen"].Int *= Attributes["ManaPower"].Mult();
 
 	RefreshActionBarCount();
 }
@@ -610,7 +610,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 				Attributes[Update.first].Int = Update.second.Int;
 			break;
 			case StatUpdateType::MULTIPLICATIVE:
-				Attributes[Update.first].Int = (Attributes[Update.first].Int * 0.01f * (100 - Update.second.Int) * 0.01f) * 100;
+				Attributes[Update.first].Int = (Attributes[Update.first].Mult() * (100 - Update.second.Int) * 0.01f) * 100;
 			break;
 		}
 	}
@@ -681,12 +681,12 @@ int _Character::GenerateDamage() {
 float _Character::GetDamagePowerMultiplier(int DamageTypeID) {
 
 	switch(DamageTypeID) {
-		case 2: return Attributes["PhysicalPower"].Int * 0.01f;
-		case 3: return Attributes["FirePower"].Int * 0.01f;
-		case 4: return Attributes["ColdPower"].Int * 0.01f;
-		case 5: return Attributes["LightningPower"].Int * 0.01f;
-		case 6: return Attributes["PoisonPower"].Int * 0.01f;
-		case 7: return Attributes["BleedPower"].Int * 0.01f;
+		case 2: return Attributes["PhysicalPower"].Mult();
+		case 3: return Attributes["FirePower"].Mult();
+		case 4: return Attributes["ColdPower"].Mult();
+		case 5: return Attributes["LightningPower"].Mult();
+		case 6: return Attributes["PoisonPower"].Mult();
+		case 7: return Attributes["BleedPower"].Mult();
 	}
 
 	return 1.0f;
@@ -892,7 +892,7 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 
 	// Reduce duration of stun with resist
 	if(StatusEffect->Buff->Name == "Stunned")
-		StatusEffect->Duration *= 1.0f - (Attributes["StunResist"].Int * 0.01f);
+		StatusEffect->Duration *= 1.0f - (Attributes["StunResist"].Mult());
 
 	// Find existing buff
 	for(auto &ExistingEffect : StatusEffects) {

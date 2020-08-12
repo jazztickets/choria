@@ -199,7 +199,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(!IsEquippable() && Cooldown > 0.0) {
 		DrawPosition.y += RewindSpacingY;
 		std::stringstream Buffer;
-		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldown"].Int * 0.01f << " second cooldown";
+		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldown"].Mult() << " second cooldown";
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 		DrawPosition.y += LargeSpacingY;
 	}

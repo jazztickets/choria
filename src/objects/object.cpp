@@ -157,7 +157,7 @@ void _Object::Update(double FrameTime) {
 			if(Character->Attributes["Stunned"].Int)
 				Fighter->TurnTimer += FrameTime * (1.0 / BATTLE_DEFAULTATTACKPERIOD) * BATTLE_STUNNED_BATTLESPEED * 0.01f;
 			else
-				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->Attributes["BattleSpeed"].Int * 0.01f;
+				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->Attributes["BattleSpeed"].Mult();
 		}
 		else
 			Fighter->TurnTimer = 1.0;
@@ -1414,7 +1414,7 @@ int _Object::Move() {
 		return 0;
 
 	// Check timer
-	if(Controller->MoveTime < PLAYER_MOVETIME / (Character->Attributes["MoveSpeed"].Int * 0.01f))
+	if(Controller->MoveTime < PLAYER_MOVETIME / (Character->Attributes["MoveSpeed"].Mult()))
 		return 0;
 
 	Controller->MoveTime = 0;

@@ -50,6 +50,8 @@ enum class StatUpdateType : int {
 };
 
 struct _Value {
+	float Mult() const { return Int * 0.01f; }
+
 	union {
 		int Int;
 		int64_t	Int64;
