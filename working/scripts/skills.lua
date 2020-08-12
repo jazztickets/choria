@@ -90,6 +90,17 @@ end
 
 Skill_AntAttack = Base_Attack:New()
 
+function Skill_AntAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buff_Poisoned.Pointer
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 2
+		return true
+	end
+
+	return false
+end
+
 function Skill_AntAttack.PlaySound(self, Level)
 	Audio.Play("crunch" .. Random.GetInt(0, 1) .. ".ogg")
 end
