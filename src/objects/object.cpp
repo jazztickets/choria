@@ -597,7 +597,6 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["SkillBarSize"] = Character->SkillBarSize;
 	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
 	StatsNode["Experience"] = (Json::Value::Int64)Character->Experience;
-	StatsNode["Gold"] = Character->Gold;
 	StatsNode["NextBattle"] = Character->NextBattle;
 	StatsNode["Seed"] = Character->Seed;
 	StatsNode["PartyName"] = Character->PartyName;
@@ -756,7 +755,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->SkillBarSize = StatsNode["SkillBarSize"].asInt();
 	Character->SkillPointsUnlocked = StatsNode["SkillPointsUnlocked"].asInt();
 	Character->Experience = StatsNode["Experience"].asInt64();
-	Character->Gold = StatsNode["Gold"].asInt();
 	Character->NextBattle = StatsNode["NextBattle"].asInt();
 	Character->Seed = StatsNode["Seed"].asUInt();
 	Character->PartyName = StatsNode["PartyName"].asString();
@@ -934,7 +932,6 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<uint8_t>(Character->BeltSize);
 	Data.Write<uint8_t>(Character->SkillBarSize);
 	Data.Write<int64_t>(Character->Experience);
-	Data.Write<int>(Character->Gold);
 	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
@@ -1017,7 +1014,6 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->BeltSize = Data.Read<uint8_t>();
 	Character->SkillBarSize = Data.Read<uint8_t>();
 	Character->Experience = Data.Read<int64_t>();
-	Character->Gold = Data.Read<int>();
 	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
@@ -1511,7 +1507,7 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 
 // Update death count and gold loss
 void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
-	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
+	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Attributes["Gold"].Integer) * Penalty + 0.5f);
 	int OldBounty = Character->Attributes["Bounty"].Integer;
 
 	// Update stats
@@ -1537,7 +1533,7 @@ void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 
 			Server->SendPlayerPosition(Peer);
 			Server->SendMessage(Peer, std::string(Text + "and lost " + std::to_string(GoldPenalty) + " gold"), "red");
-			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Attributes["Deaths"].Integer << " hardcore=" << Character->Hardcore << " )" << std::endl;
+			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Attributes["Gold"].Integer << " deaths=" << Character->Attributes["Deaths"].Integer << " hardcore=" << Character->Hardcore << " )" << std::endl;
 		}
 	}
 }

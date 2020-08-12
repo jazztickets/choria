@@ -535,7 +535,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			Player->Character->Attributes["MaxHealth"].Integer = Data.Read<int>();
 			Player->Character->Attributes["MaxMana"].Integer = Data.Read<int>();
 			Player->Character->Experience = Data.Read<int64_t>();
-			Player->Character->Gold = Data.Read<int>();
+			Player->Character->Attributes["Gold"].Integer = Data.Read<int>();
 			Player->Character->Attributes["Bounty"].Integer = Data.Read<int>();
 			double Clock = Data.Read<double>();
 

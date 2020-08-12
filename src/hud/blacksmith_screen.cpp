@@ -105,7 +105,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 
 			// Check upgrade conditions
 			bool Disabled = false;
-			if(HUD->Player->Character->Gold < Cost)
+			if(HUD->Player->Character->Attributes["Gold"].Integer < Cost)
 				Disabled = true;
 
 			// Check blacksmith level

@@ -212,7 +212,7 @@ void _EnchanterScreen::RefreshBuyButtons() {
 			int Cost = _Item::GetEnchantCost(CurrentLevel);
 
 			// Set button state
-			if(CurrentLevel >= Skill->MaxLevel || CurrentLevel >= Enchanter->Level || Cost > HUD->Player->Character->Gold) {
+			if(CurrentLevel >= Skill->MaxLevel || CurrentLevel >= Enchanter->Level || Cost > HUD->Player->Character->Attributes["Gold"].Integer) {
 				ChildElement->SetEnabled(false);
 				ChildElement->Children.front()->Color = ae::Assets.Colors["gray"];
 			}

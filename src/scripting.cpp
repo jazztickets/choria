@@ -521,9 +521,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Fighter->Corpse);
 	lua_setfield(LuaState, -2, "Corpse");
 
-	lua_pushinteger(LuaState, Object->Character->Gold);
-	lua_setfield(LuaState, -2, "Gold");
-
 	lua_pushinteger(LuaState, Object->Fighter->GoldStolen);
 	lua_setfield(LuaState, -2, "GoldStolen");
 

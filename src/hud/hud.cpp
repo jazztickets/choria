@@ -1394,7 +1394,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 
 	// Color
 	glm::vec4 Color;
-	if(Buy && Player->Character->Gold < Price)
+	if(Buy && Player->Character->Attributes["Gold"].Integer < Price)
 		Color = ae::Assets.Colors["red"];
 	else
 		Color = ae::Assets.Colors["light_gold"];
@@ -1729,10 +1729,10 @@ void _HUD::UpdateLabels() {
 	ae::Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
-	Buffer << Player->Character->Gold;
+	Buffer << Player->Character->Attributes["Gold"].Integer;
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
-	if(Player->Character->Gold < 0)
+	if(Player->Character->Attributes["Gold"].Integer < 0)
 		GoldElement->Color = ae::Assets.Colors["red"];
 	else
 		GoldElement->Color = ae::Assets.Colors["gold"];

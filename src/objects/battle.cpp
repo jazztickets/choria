@@ -621,7 +621,7 @@ void _Battle::ServerEndBattle() {
 			if(Object->IsMonster())
 				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven;
 			else
-				SideStats[Side].TotalGoldGiven += Object->Character->Attributes["Bounty"].Integer + (int)(Object->Character->Gold * BountyEarned + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Character->Attributes["Bounty"].Integer + (int)(Object->Character->Attributes["Gold"].Integer * BountyEarned + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = std::ceil(SideStats[Side].TotalExperienceGiven);

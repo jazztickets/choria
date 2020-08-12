@@ -598,7 +598,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		std::stringstream Buffer;
 		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
 			glm::vec4 Color = ae::Assets.Colors["gold"];
-			if(Tooltip.Cost > Player->Character->Gold)
+			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Integer)
 				Color = ae::Assets.Colors["red"];
 
 			Buffer << "Upgrade for " << Tooltip.Cost << " gold";

@@ -228,8 +228,8 @@ void _TradeScreen::ValidateTradeGold() {
 	int Gold = ae::ToNumber<int>(GoldTextBox->Text);
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > HUD->Player->Character->Gold)
-		Gold = std::max(0, HUD->Player->Character->Gold);
+	else if(Gold > HUD->Player->Character->Attributes["Gold"].Integer)
+		Gold = std::max(0, HUD->Player->Character->Attributes["Gold"].Integer);
 
 	// Set text
 	GoldTextBox->SetText(std::to_string(Gold));

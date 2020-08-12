@@ -46,7 +46,6 @@ _Character::_Character(_Object *Object) :
 	PortraitID(0),
 
 	IdleTime(0.0),
-	Gold(0),
 	NextBattle(0),
 	Invisible(0),
 	Hardcore(false),
@@ -229,9 +228,7 @@ void _Character::UpdateMana(int Value) {
 
 // Update gold amount
 void _Character::UpdateGold(int Value) {
-	Gold += Value;
-	if(Gold > PLAYER_MAX_GOLD)
-		Gold = PLAYER_MAX_GOLD;
+	Attributes["Gold"].Integer = std::clamp(Attributes["Gold"].Integer + Value, -PLAYER_MAX_GOLD, PLAYER_MAX_GOLD);
 }
 
 // Update experience
