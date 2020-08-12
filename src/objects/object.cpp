@@ -1318,6 +1318,12 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		Character->CalculateStats();
 	}
 
+	// Boss cooldowns
+	if(StatChange.HasStat("BossCooldowns")) {
+		for(auto &BattleCooldown : Character->BattleCooldown)
+			BattleCooldown.second *= 1.0 - StatChange.Values["BossCooldowns"].Mult();
+	}
+
 	// Rebirth bonus
 	if(StatChange.HasStat("RebirthWealth"))
 		Character->Attributes["RebirthWealth"].Int += StatChange.Values["RebirthWealth"].Int;

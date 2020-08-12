@@ -114,7 +114,6 @@ const  double       PLAYER_IDLE_TIME                =  60.0;
 const  int          GAME_MAX_RESISTANCE             =  75;
 const  int          GAME_MIN_RESISTANCE             =  -200;
 const  int          GAME_MAX_EVASION                =  90;
-const  int          GAME_BASE_DIFFICULTY            =  100;
 const  int          GAME_DIFFICULTY_PER_PLAYER      =  10;
 const  int          GAME_DIFFICULTY_PER_PLAYER_BOSS =  25;
 const  int          GAME_ENCHANT_COST_BASE          =  5;

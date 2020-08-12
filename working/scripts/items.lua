@@ -709,7 +709,7 @@ end
 
 -- Elusive Potion --
 
-Item_ElusivePotion = { }
+Item_ElusivePotion = Base_Potion:New()
 
 function Item_ElusivePotion.GetInfo(self, Source, Item)
 	return "Throw down smoke cover for [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies and increase evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. math.floor(Item.Duration) .. " [c white]seconds"
@@ -733,16 +733,30 @@ end
 
 -- Greater Battle Potion --
 
-Item_GreaterBattlePotion = { }
+Item_GreaterBattlePotion = Base_Potion:New()
 
 function Item_GreaterBattlePotion.GetInfo(self, Source, Item)
-	return "[c gray]Only for the bravest adventurers..."
+	return "Increase difficulty by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_GreaterBattlePotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Difficult.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
+-- Ultimate Battle Potion --
+
+Item_UltimateBattlePotion = Base_Potion:New()
+
+function Item_UltimateBattlePotion.GetInfo(self, Source, Item)
+	return "Reduce current boss cooldowns by [c green]" .. Item.Level .. "%[c white]"
+end
+
+function Item_UltimateBattlePotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.BossCooldowns = Level
 
 	return Result
 end
@@ -805,12 +819,16 @@ Item_PainRing = { }
 Item_PainRing.Difficulty = 50
 Item_PainRing.DifficultyPerLevel = 5
 
+function Item_PainRing.GetDifficulty(self, Source, Item)
+	return self.Difficulty + Item.Upgrades * self.DifficultyPerLevel
+end
+
 function Item_PainRing.GetInfo(self, Source, Item)
-	return "[c gray]Quit hurting yourself"
+	return "Increase difficulty by [c green]" .. self:GetDifficulty(Source, Item) .. "%"
 end
 
 function Item_PainRing.Stats(self, Item, Object, Change)
-	Change.Difficulty = self.Difficulty + Item.Upgrades * self.DifficultyPerLevel
+	Change.Difficulty = self:GetDifficulty(Source, Item)
 
 	return Change
 end
