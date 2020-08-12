@@ -108,7 +108,7 @@ INSERT INTO attribute VALUES(2,'BuffLevel','Buff Level',1,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(3,'BuffSound','Buff Sound',1,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(4,'ClearBuff','Clear Buff',3,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(5,'SummonBuff','Summon Buff',3,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(6,'Experience','Experience',6,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(6,'Experience','Experience',6,0,'0',0.0,0,0,1,1,1);
 INSERT INTO attribute VALUES(7,'Gold','Gold',1,0,'0',0.0,0,0,1,1,1);
 INSERT INTO attribute VALUES(8,'GoldStolen','Gold Stolen',1,0,'0',0.0,0,0,0,1,0);
 INSERT INTO attribute VALUES(9,'DamageType','Damage Type',1,0,'0',0.0,0,0,0,0,0);

@@ -769,7 +769,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Player.Character->PortraitID);
 		Packet.Write<int>(Player.Character->Attributes["Health"].Integer);
-		Packet.Write<int64_t>(Player.Character->Experience);
+		Packet.Write<int64_t>(Player.Character->Attributes["Experience"].Integer64);
 	}
 	Save->Database->CloseQuery();
 
@@ -1903,7 +1903,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "experience") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Player->Character->Experience = std::max((int64_t)0, Adjust ? Player->Character->Experience + Change : Change);
+		Player->Character->Attributes["Experience"].Integer64 = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Experience"].Integer64 + Change : Change);
 		Player->Character->CalculateStats();
 		SendHUD(Peer);
 	}
@@ -2008,7 +2008,7 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<int>(Player->Character->Attributes["Mana"].Integer);
 	Packet.Write<int>(Player->Character->Attributes["MaxHealth"].Integer);
 	Packet.Write<int>(Player->Character->Attributes["MaxMana"].Integer);
-	Packet.Write<int64_t>(Player->Character->Experience);
+	Packet.Write<int64_t>(Player->Character->Attributes["Experience"].Integer64);
 	Packet.Write<int>(Player->Character->Attributes["Gold"].Integer);
 	Packet.Write<int>(Player->Character->Attributes["Bounty"].Integer);
 	Packet.Write<double>(Save->Clock);
@@ -2436,8 +2436,8 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MaxSkillLevels.clear();
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Attributes["Gold"].Integer = std::min((int64_t)(Character->Experience * Character->Attributes["RebirthWealth"].Integer * 0.01f), (int64_t)PLAYER_MAX_GOLD);
-	Character->Experience = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Integer + 1)->Experience;
+	Character->Attributes["Gold"].Integer = std::min((int64_t)(Character->Attributes["Experience"].Integer64 * Character->Attributes["RebirthWealth"].Integer * 0.01f), (int64_t)PLAYER_MAX_GOLD);
+	Character->Attributes["Experience"].Integer64 = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Integer + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;
 	Character->Vendor = nullptr;

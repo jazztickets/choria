@@ -890,6 +890,9 @@ void _Stats::LoadAttributes() {
 			case StatValueType::PERCENT:
 				Attribute.Default.Integer = Database->GetInt<int>("default");
 			break;
+			case StatValueType::INTEGER64:
+				Attribute.Default.Integer64 = Database->GetInt64("default");
+			break;
 			case StatValueType::FLOAT:
 				Attribute.Default.Float = (float)Database->GetReal("default");
 			break;

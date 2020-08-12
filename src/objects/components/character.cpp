@@ -54,7 +54,6 @@ _Character::_Character(_Object *Object) :
 
 	CalcLevelStats(true),
 	Level(0),
-	Experience(0),
 	ExperienceNeeded(0),
 	ExperienceNextLevel(0),
 
@@ -233,9 +232,7 @@ void _Character::UpdateGold(int Value) {
 
 // Update experience
 void _Character::UpdateExperience(int64_t Value) {
-	Experience += Value;
-	if(Experience < 0)
-		Experience = 0;
+	Attributes["Experience"].Integer64 = std::max(Attributes["Experience"].Integer64 + Value, (int64_t)0);
 }
 
 // Update status of character
@@ -552,21 +549,16 @@ void _Character::CalculateLevelStats() {
 	if(!Object->Stats || !CalcLevelStats)
 		return;
 
-	// Cap min experience
-	if(Experience < 0)
-		Experience = 0;
-
-	// Cap max experience
+	// Cap experience
 	const _Level *MaxLevelStat = Object->Stats->GetLevel(Object->Stats->GetMaxLevel());
-	if(Experience > MaxLevelStat->Experience)
-		Experience = MaxLevelStat->Experience;
+	Attributes["Experience"].Integer64 = std::clamp(Attributes["Experience"].Integer64, (int64_t)0, MaxLevelStat->Experience);
 
 	// Find current level
-	const _Level *LevelStat = Object->Stats->FindLevel(Experience);
+	const _Level *LevelStat = Object->Stats->FindLevel(Attributes["Experience"].Integer64);
 	Level = LevelStat->Level;
 	Attributes["RebirthTier"].Integer = LevelStat->RebirthTier;
 	ExperienceNextLevel = LevelStat->NextLevel;
-	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
+	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Attributes["Experience"].Integer64 - LevelStat->Experience);
 
 	// Set base attributes
 	BaseMaxHealth = LevelStat->Health;
@@ -593,6 +585,9 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 					case StatValueType::INTEGER:
 					case StatValueType::PERCENT:
 						Attributes[Update.first].Integer += Update.second.Integer;
+					break;
+					case StatValueType::INTEGER64:
+						Attributes[Update.first].Integer64 += Update.second.Integer64;
 					break;
 					case StatValueType::FLOAT:
 						Attributes[Update.first].Float += Update.second.Float;

@@ -39,6 +39,7 @@ enum class StatValueType : int {
 	POINTER,
 	PERCENT,
 	TIME,
+	INTEGER64,
 };
 
 enum class StatUpdateType : int {
@@ -51,6 +52,7 @@ enum class StatUpdateType : int {
 struct _Value {
 	union {
 		int Integer;
+		int64_t	Integer64;
 		float Float;
 		double Double;
 		void *Pointer;

@@ -384,6 +384,9 @@ void _Scripting::PushObject(_Object *Object) {
 			case StatValueType::PERCENT:
 				lua_pushinteger(LuaState, AttributeStorage.Integer);
 			break;
+			case StatValueType::INTEGER64:
+				lua_pushinteger(LuaState, AttributeStorage.Integer64);
+			break;
 			case StatValueType::FLOAT:
 				lua_pushnumber(LuaState, AttributeStorage.Float);
 			break;
@@ -523,9 +526,6 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->Fighter->GoldStolen);
 	lua_setfield(LuaState, -2, "GoldStolen");
-
-	lua_pushinteger(LuaState, Object->Character->Experience);
-	lua_setfield(LuaState, -2, "Experience");
 
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
@@ -833,6 +833,9 @@ void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &Stat
 			case StatValueType::PERCENT:
 				StatChange.Values[Key].Integer = (int)lua_tonumber(LuaState, -1);
 			break;
+			case StatValueType::INTEGER64:
+				StatChange.Values[Key].Integer64 = (int64_t)lua_tonumber(LuaState, -1);
+			break;
 			case StatValueType::FLOAT:
 				StatChange.Values[Key].Float = (float)lua_tonumber(LuaState, -1);
 			break;
@@ -841,6 +844,9 @@ void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &Stat
 			break;
 			case StatValueType::POINTER:
 				StatChange.Values[Key].Pointer = lua_touserdata(LuaState, -1);
+			break;
+			case StatValueType::TIME:
+				StatChange.Values[Key].Double = lua_tonumber(LuaState, -1);
 			break;
 		}
 

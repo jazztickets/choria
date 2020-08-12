@@ -596,7 +596,6 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["BeltSize"] = Character->BeltSize;
 	StatsNode["SkillBarSize"] = Character->SkillBarSize;
 	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
-	StatsNode["Experience"] = (Json::Value::Int64)Character->Experience;
 	StatsNode["NextBattle"] = Character->NextBattle;
 	StatsNode["Seed"] = Character->Seed;
 	StatsNode["PartyName"] = Character->PartyName;
@@ -612,6 +611,9 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 			case StatValueType::INTEGER:
 			case StatValueType::PERCENT:
 				StatsNode[Attribute.second.Name] = AttributeStorage.Integer;
+			break;
+			case StatValueType::INTEGER64:
+				StatsNode[Attribute.second.Name] = (Json::Value::Int64)AttributeStorage.Integer64;
 			break;
 			case StatValueType::FLOAT:
 				StatsNode[Attribute.second.Name] = AttributeStorage.Float;
@@ -754,7 +756,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->BeltSize = StatsNode["BeltSize"].asInt();
 	Character->SkillBarSize = StatsNode["SkillBarSize"].asInt();
 	Character->SkillPointsUnlocked = StatsNode["SkillPointsUnlocked"].asInt();
-	Character->Experience = StatsNode["Experience"].asInt64();
 	Character->NextBattle = StatsNode["NextBattle"].asInt();
 	Character->Seed = StatsNode["Seed"].asUInt();
 	Character->PartyName = StatsNode["PartyName"].asString();
@@ -771,6 +772,9 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 			case StatValueType::INTEGER:
 			case StatValueType::PERCENT:
 				Character->Attributes[Attribute.second.Name].Integer = StatsNode[Attribute.second.Name].asInt();
+			break;
+			case StatValueType::INTEGER64:
+				Character->Attributes[Attribute.second.Name].Integer64 = StatsNode[Attribute.second.Name].asInt64();
 			break;
 			case StatValueType::FLOAT:
 				Character->Attributes[Attribute.second.Name].Float = StatsNode[Attribute.second.Name].asFloat();
@@ -931,7 +935,6 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.WriteString(Character->PartyName.c_str());
 	Data.Write<uint8_t>(Character->BeltSize);
 	Data.Write<uint8_t>(Character->SkillBarSize);
-	Data.Write<int64_t>(Character->Experience);
 	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
@@ -948,6 +951,9 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 			case StatValueType::INTEGER:
 			case StatValueType::PERCENT:
 				Data.Write<int>(AttributeStorage.Integer);
+			break;
+			case StatValueType::INTEGER64:
+				Data.Write<int64_t>(AttributeStorage.Integer64);
 			break;
 			case StatValueType::FLOAT:
 				Data.Write<float>(AttributeStorage.Float);
@@ -1013,7 +1019,6 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->PartyName = Data.ReadString();
 	Character->BeltSize = Data.Read<uint8_t>();
 	Character->SkillBarSize = Data.Read<uint8_t>();
-	Character->Experience = Data.Read<int64_t>();
 	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
@@ -1030,6 +1035,9 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 			case StatValueType::INTEGER:
 			case StatValueType::PERCENT:
 				AttributeStorage.Integer = Data.Read<int>();
+			break;
+			case StatValueType::INTEGER64:
+				AttributeStorage.Integer64 = Data.Read<int64_t>();
 			break;
 			case StatValueType::FLOAT:
 				AttributeStorage.Float = Data.Read<float>();
