@@ -1394,8 +1394,10 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 				Server->StartTeleport(this, StatChange.Values["Teleport"].Float);
 
 			// Start battle
-			if(StatChange.HasStat("Battle"))
+			if(StatChange.HasStat("Battle")) {
+				Character->GenerateNextBattle();
 				Server->QueueBattle(this, (uint32_t)StatChange.Values["Battle"].Int, true, false, 0.0f, 0.0f);
+			}
 
 			// Start PVP
 			if(StatChange.HasStat("Hunt"))

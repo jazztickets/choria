@@ -669,7 +669,10 @@ bool _Character::AcceptingMoveInput() {
 
 // Generates the number of moves until the next battle
 void _Character::GenerateNextBattle() {
-	NextBattle = ae::GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
+	if(Attributes["Attractant"].Int)
+		NextBattle = Attributes["Attractant"].Int;
+	else
+		NextBattle = ae::GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
 }
 
 // Generate damage

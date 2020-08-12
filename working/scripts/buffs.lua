@@ -509,3 +509,17 @@ function Buff_Difficult.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Attractant --
+
+Buff_Attractant = Base_Buff:New()
+
+function Buff_Attractant.GetInfo(self, Level)
+	return "Getting into battle more often"
+end
+
+function Buff_Attractant.Stats(self, Level, Source, Change)
+	Change.Attractant = Level
+
+	return Change
+end

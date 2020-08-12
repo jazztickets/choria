@@ -761,6 +761,23 @@ function Item_UltimateBattlePotion.Use(self, Level, Duration, Source, Target, Re
 	return Result
 end
 
+-- Belligerent Potion --
+
+Item_BelligerentPotion = Base_Potion:New()
+
+function Item_BelligerentPotion.GetInfo(self, Source, Item)
+	return "Get into fights more often for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Item_BelligerentPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Attractant.Pointer
+	Result.Target.BuffLevel = 2
+	Result.Target.BuffDuration = Duration
+	Result.Target.Battle = Source.GetTileZone(Source.X, Source.Y)
+
+	return Result
+end
+
 -- Torch --
 
 Item_Torch = { }
