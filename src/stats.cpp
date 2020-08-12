@@ -28,6 +28,16 @@
 #include <algorithm>
 #include <iostream>
 
+// Resistances
+std::vector<std::string> _Stats::ResistNames = {
+	"FireResist",
+	"ColdResist",
+	"LightningResist",
+	"PoisonResist",
+	"BleedResist",
+	"StunResist",
+};
+
 // Constructor
 _Stats::_Stats(bool Headless) :
 	Headless(Headless) {
@@ -621,12 +631,12 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 		Object->Character->Attributes["Mana"].Int = Object->Character->Attributes["MaxMana"].Int = Object->Character->BaseMaxMana;
 		Object->Character->Attributes["Gold"].Int = Object->Monster->GoldGiven;
 		Object->Character->CalcLevelStats = false;
-		Object->Character->BaseResistances[3] = Database->GetInt<int>("fire_res");
-		Object->Character->BaseResistances[4] = Database->GetInt<int>("cold_res");
-		Object->Character->BaseResistances[5] = Database->GetInt<int>("lightning_res");
-		Object->Character->BaseResistances[6] = Database->GetInt<int>("poison_res");
-		Object->Character->BaseResistances[7] = Database->GetInt<int>("bleed_res");
-		Object->Character->BaseResistances[8] = Database->GetInt<int>("stun_res");
+		Object->Character->BaseResistances["FireResist"] = Database->GetInt<int>("fire_res");
+		Object->Character->BaseResistances["ColdResist"] = Database->GetInt<int>("cold_res");
+		Object->Character->BaseResistances["LightningResist"] = Database->GetInt<int>("lightning_res");
+		Object->Character->BaseResistances["PoisonResist"] = Database->GetInt<int>("poison_res");
+		Object->Character->BaseResistances["BleedResist"] = Database->GetInt<int>("bleed_res");
+		Object->Character->BaseResistances["StunResist"] = Database->GetInt<int>("stun_res");
 	}
 
 	// Free memory

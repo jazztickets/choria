@@ -188,6 +188,8 @@ class _Stats {
 
 	public:
 
+		static std::vector<std::string> ResistNames;
+
 		_Stats(bool Headless=false);
 		~_Stats();
 

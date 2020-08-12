@@ -1150,8 +1150,9 @@ int _Scripting::ObjectGetDamageReduction(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
+	std::string ResistName = Object->Stats->DamageTypes.at(DamageTypeID).Name + "Resist";
 
-	lua_pushnumber(LuaState, 1.0 - (double)Object->Character->Resistances[DamageTypeID] * 0.01f);
+	lua_pushnumber(LuaState, 1.0 - Object->Character->Attributes[ResistName].Int * 0.01);
 
 	return 1;
 }

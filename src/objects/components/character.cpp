@@ -265,6 +265,19 @@ void _Character::UpdateStatus() {
 		Status = STATUS_TELEPORT;
 }
 
+// Update all resistances
+void _Character::UpdateAllResist(int Value) {
+	for(const auto &Name : _Stats::ResistNames)
+		Attributes[Name].Int += Value;
+}
+
+// Update elemental resistances
+void _Character::UpdateElementalResist(int Value) {
+	Attributes["FireResist"].Int += Value;
+	Attributes["ColdResist"].Int += Value;
+	Attributes["LightningResist"].Int += Value;
+}
+
 // Calculates all of the player stats
 void _Character::CalculateStats() {
 	_Scripting *Scripting = Object->Scripting;
@@ -293,12 +306,11 @@ void _Character::CalculateStats() {
 	Invisible = 0;
 	Attributes["Difficulty"].Int += Attributes["EternalPain"].Int + Attributes["Rebirths"].Int;
 	Attributes["RebirthTier"].Int += Attributes["RebirthPower"].Int;
-	Resistances.clear();
 	Sets.clear();
 
 	// Base resistances
-	for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-		Resistances[i] = BaseResistances[i];
+	for(const auto &Name : _Stats::ResistNames)
+		Attributes[Name].Int = BaseResistances[Name];
 
 	// Eternal Strength
 	Attributes["PhysicalPower"].Int += Attributes["EternalStrength"].Int;
@@ -313,8 +325,7 @@ void _Character::CalculateStats() {
 	if(Attributes["EternalGuard"].Int) {
 		Attributes["DamageBlock"].Int += Attributes["EternalGuard"].Int;
 		Attributes["Armor"].Int += Attributes["EternalGuard"].Int / 3;
-		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-			Resistances[i] += Attributes["EternalGuard"].Int / 4;
+		UpdateAllResist(Attributes["EternalGuard"].Int / 4);
 	}
 
 	// Eternal Fortitude
@@ -381,12 +392,12 @@ void _Character::CalculateStats() {
 		Attributes["GoldBonus"].Int += Item->GetGoldBonus(Upgrades);
 
 		// Handle all resist
-		if(Item->ResistanceTypeID == 1) {
-			for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-				Resistances[i] += Item->GetResistance(Upgrades);
-		}
+		if(Item->ResistanceTypeID == 1)
+			UpdateAllResist(Item->GetResistance(Upgrades));
+		else if(Item->ResistanceTypeID == 9)
+			UpdateElementalResist(Item->GetResistance(Upgrades));
 		else
-			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
+			Attributes[Object->Stats->DamageTypes.at(Item->ResistanceTypeID).Name + "Resist"].Int += Item->GetResistance(Upgrades);
 
 		// Increment set count
 		if(Item->SetID) {
@@ -508,16 +519,14 @@ void _Character::CalculateStats() {
 	}
 
 	// Cap resistances
-	for(auto &Resist : Resistances) {
-		Resist.second = std::min(Resist.second, GAME_MAX_RESISTANCE);
-		Resist.second = std::max(Resist.second, GAME_MIN_RESISTANCE);
-	}
+	for(const auto &Name : _Stats::ResistNames)
+		Attributes[Name].Int = std::clamp(Attributes[Name].Int, GAME_MIN_RESISTANCE, GAME_MAX_RESISTANCE);
 
 	// Get physical resistance from armor
 	float ArmorResist = Attributes["Armor"].Int / (30.0f + std::abs(Attributes["Armor"].Int));
 
 	// Physical resist comes solely from armor
-	Resistances[2] = (int)(ArmorResist * 100);
+	Attributes["PhysicalResist"].Int = (int)(ArmorResist * 100);
 
 	// Cap stats
 	Attributes["Evasion"].Int = std::clamp(Attributes["Evasion"].Int, 0, GAME_MAX_EVASION);
@@ -612,26 +621,10 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		Object->Light = StatChange.Values["Light"].Int;
 
 	if(StatChange.HasStat("AllResist")) {
-		for(int i = GAME_ALL_RESIST_START_ID; i <= GAME_ALL_RESIST_END_ID; i++)
-			Resistances[i] += StatChange.Values["AllResist"].Int;
+		UpdateAllResist(StatChange.Values["AllResist"].Int);
 	}
-	if(StatChange.HasStat("PhysicalResist"))
-		Resistances[2] += StatChange.Values["PhysicalResist"].Int;
-	if(StatChange.HasStat("FireResist"))
-		Resistances[3] += StatChange.Values["FireResist"].Int;
-	if(StatChange.HasStat("ColdResist"))
-		Resistances[4] += StatChange.Values["ColdResist"].Int;
-	if(StatChange.HasStat("LightningResist"))
-		Resistances[5] += StatChange.Values["LightningResist"].Int;
-	if(StatChange.HasStat("PoisonResist"))
-		Resistances[6] += StatChange.Values["PoisonResist"].Int;
-	if(StatChange.HasStat("BleedResist"))
-		Resistances[7] += StatChange.Values["BleedResist"].Int;
-	if(StatChange.HasStat("StunResist"))
-		Resistances[8] += StatChange.Values["StunResist"].Int;
 	if(StatChange.HasStat("ElementalResist")) {
-		for(int i = GAME_ELEMENTAL_RESIST_START_ID; i <= GAME_ELEMENTAL_RESIST_END_ID; i++)
-			Resistances[i] += StatChange.Values["ElementalResist"].Int;
+		UpdateElementalResist(StatChange.Values["ElementalResist"].Int);
 	}
 }
 
@@ -899,7 +892,7 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 
 	// Reduce duration of stun with resist
 	if(StatusEffect->Buff->Name == "Stunned")
-		StatusEffect->Duration *= 1.0f - (Resistances[8] / 100.0f);
+		StatusEffect->Duration *= 1.0f - (Attributes["StunResist"].Int * 0.01f);
 
 	// Find existing buff
 	for(auto &ExistingEffect : StatusEffects) {

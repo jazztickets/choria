@@ -92,6 +92,8 @@ class _Character {
 		void UpdateGold(int Value);
 		void UpdateExperience(int64_t Value);
 		void UpdateStatus();
+		void UpdateAllResist(int Value);
+		void UpdateElementalResist(int Value);
 
 		// Stats
 		void CalculateStats();
@@ -188,10 +190,9 @@ class _Character {
 
 		// Final attributes
 		std::unordered_map<std::string, _Value> Attributes;
-		int EquipmentBattleSpeed;
-		std::unordered_map<uint32_t, int> BaseResistances;
-		std::unordered_map<uint32_t, int> Resistances;
+		std::unordered_map<std::string, int> BaseResistances;
 		std::unordered_map<uint32_t, _SetData> Sets;
+		int EquipmentBattleSpeed;
 
 		// Status effects
 		std::list<_StatusEffect *> StatusEffects;
