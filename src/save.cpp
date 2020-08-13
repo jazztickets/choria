@@ -270,6 +270,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	_Object Object;
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
+	Object.Character->Init();
 	Object.Character->Hardcore = Hardcore;
 	Object.Character->BuildID = BuildID;
 	Object.Character->PortraitID = PortraitID;
