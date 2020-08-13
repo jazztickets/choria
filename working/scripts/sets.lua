@@ -134,8 +134,8 @@ Set_Arcane.Attributes = {
 Set_Leather = Base_Set:New()
 Set_Leather.Attributes = {
 	Armor = { "2", "10" },
-	BleedResist = { "10%", "25%" },
 	ColdResist = { "10%", "25%" },
+	HealPower = { "5%", "15%" },
 	MaxHealth = { "25", "250" },
 	PhysicalPower = { "10%", "50%" },
 }
@@ -143,10 +143,19 @@ Set_Leather.Attributes = {
 Set_ReinforcedLeather = Base_Set:New()
 Set_ReinforcedLeather.Attributes = {
 	Armor = { "6", "20" },
-	BleedResist = { "15%", "50%" },
 	ColdResist = { "15%", "50%" },
+	HealPower = { "10%", "25%" },
 	MaxHealth = { "125", "500" },
 	PhysicalPower = { "25%", "100%" },
+}
+
+Set_Warriors = Base_Set:New()
+Set_Warriors.Attributes = {
+	Armor = { "13", "45" },
+	ColdResist = { "25%", "75%" },
+	HealPower = { "15%", "75%" },
+	MaxHealth = { "250", "1250" },
+	PhysicalPower = { "50%", "250%" },
 }
 
 Set_Bronze = Base_Set:New()
@@ -318,7 +327,7 @@ SetBonus_Greatsword.Attributes = {
 
 SetBonus_Icebrand = Base_Set:New()
 SetBonus_Icebrand.Attributes = {
-	Armor = { "10", "20" },
+	ColdPower = { "10%", "50%" },
 }
 
 -- Off-Hand Weapons --

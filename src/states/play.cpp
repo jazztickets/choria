@@ -448,6 +448,12 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			else
 				Console->AddMessage("usage: " + Console->Command + " [+-][amount]");
 		}
+		else if(Console->Command == "clearkills") {
+			if(Player && Network && Network->IsConnected()) {
+				Player->Character->BossKills.clear();
+				Network->SendPacket(Packet);
+			}
+		}
 		else if(Console->Command == "clearunlocks") {
 			if(Player && Network && Network->IsConnected()) {
 				Player->Character->ClearUnlocks();

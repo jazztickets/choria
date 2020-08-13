@@ -1881,6 +1881,9 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Character->Attributes["Bounty"].Int = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Bounty"].Int + Change : Change);
 		SendHUD(Peer);
 	}
+	else if(Command == "clearkills") {
+		Player->Character->BossKills.clear();
+	}
 	else if(Command == "clearunlocks") {
 		Player->Character->ClearUnlocks();
 	}
