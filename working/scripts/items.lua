@@ -931,21 +931,19 @@ end
 
 -- Dark Ring --
 
-Item_DarkRing = { }
+Item_DarkRing = Base_Set:New()
 Item_DarkRing.PowerPerUpgrade = 1
-Item_DarkRing.SummonLimit = 1
 
 function Item_DarkRing.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
 end
 
 function Item_DarkRing.GetInfo(self, Source, Item)
-	return "Increases pet power by [c green]" .. self:GetPower(Item) .. "%\nIncreases summon limit by [c green]" .. self.SummonLimit
+	return "Increases pet power by [c green]" .. self:GetPower(Item) .. "%"
 end
 
 function Item_DarkRing.Stats(self, Item, Object, Change)
 	Change.PetPower = self:GetPower(Item)
-	Change.SummonLimit = 1
 
 	return Change
 end

@@ -174,7 +174,7 @@ INSERT INTO attribute VALUES(68,'StunResist','Stun Resist',4,1,'0',0.0,2,1,0,1,0
 INSERT INTO attribute VALUES(69,'ElementalResist','Elemental Resistance',4,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(70,'ExperienceBonus','Experience Bonus',4,1,'100',1.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(71,'GoldBonus','Gold Bonus',4,1,'100',1.0,3,1,0,0,0);
-INSERT INTO attribute VALUES(72,'SummonLimit','Summon Limit',1,1,'0',0.0,0,1,0,1,0);
+INSERT INTO attribute VALUES(72,'SummonLimit','Summon Limit',1,1,'0',0.0,3,1,0,1,0);
 INSERT INTO attribute VALUES(73,'Difficulty','Difficulty',4,1,'0',0.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(74,'ConsumeChance','Consume Chance',4,1,'100',0.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(75,'MoveSpeed','Move Speed',4,1,'100',0.10000000000000000555,3,1,0,0,0);
@@ -2719,6 +2719,7 @@ INSERT INTO "set" VALUES(9,'Elusive','Set_Elusive',4);
 INSERT INTO "set" VALUES(10,'Arcane','Set_Arcane',4);
 INSERT INTO "set" VALUES(11,'Warrior''s','Set_Warriors',4);
 INSERT INTO "set" VALUES(12,'Steel','Set_Steel',4);
+INSERT INTO "set" VALUES(13,'Dark','Set_Dark',2);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES "itemtype"(id) ON DELETE CASCADE,
@@ -3042,7 +3043,7 @@ INSERT INTO item VALUES(308,15,0,0,0,0,0,0,'Secret Garden Map','textures/items/m
 INSERT INTO item VALUES(309,10,0,0,1,0,0,0,'Rite of Girth','textures/items/rite_girth.png','','Item_RiteGirth','',5,125000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(310,10,0,0,1,0,0,0,'Rite of Proficiency','textures/items/rite_proficiency.png','','Item_RiteProficiency','',5,750000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(311,10,0,0,1,0,0,0,'Rite of Insight','textures/items/rite_insight.png','','Item_RiteInsight','',5,100000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(312,8,0,0,0,0,0,0,'Dark Ring','textures/items/dark_ring.png','','Item_DarkRing','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(312,8,0,0,0,0,0,13,'Dark Ring','textures/items/dark_ring.png','','Item_DarkRing','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(313,15,0,0,0,0,0,0,'Nocturnal Map','textures/items/map.png','textures/map_nearest/bat.png','','',0,375,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(314,7,0,0,0,0,0,10,'Arcane Book','textures/items/arcane_book.png','','SetBonus_ArcaneBook','',0,13000,1,0,50,0,0.0,0.0,1,0,0,0,8,0,0,0,50,0,4,0,0,0,0,0,0,0,30,0);
 INSERT INTO item VALUES(315,6,2,0,0,0,0,10,'Light Staff','textures/items/light_staff.png','','SetBonus_LightStaff','Proc_Harden',0,15000,1,20,50,15,5.0,-2.0,1,750,1000,0,20,0,0,0,250,2,8,15,0,0,0,2,0,0,0,0);

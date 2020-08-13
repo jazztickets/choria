@@ -76,7 +76,9 @@ Base_Set = {
 		end
 
 		return Change
-	end
+	end,
+
+	Attributes = {}
 }
 
 -- Base Bonus
@@ -194,6 +196,11 @@ Set_Steel.Attributes = {
 	DamageBlock = { "25", "125" },
 	MaxHealth = { "500", "2000" },
 	ShieldDamage = { "50%", "250%" },
+}
+
+Set_Dark = Base_Set:New()
+Set_Dark.Attributes = {
+	SummonLimit = { "1", "2" },
 }
 
 -- Added Bonus --
