@@ -458,6 +458,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 	// Get text size
 	ae::_Font *SmallFont = ae::Assets.Fonts["hud_small"];
 	ae::_Font *TinyFont = ae::Assets.Fonts["hud_tiny"];
+	ae::_Font *MicroFont = ae::Assets.Fonts["hud_micro"];
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
@@ -469,7 +470,9 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 	// Draw health text
 	ae::_Font *HealthFont = SmallFont;
-	if(Character->Attributes["MaxHealth"].Int > 9999)
+	if(Character->Attributes["MaxHealth"].Int > 999999)
+		HealthFont = MicroFont;
+	else if(Character->Attributes["MaxHealth"].Int > 9999)
 		HealthFont = TinyFont;
 	int TextOffsetY = (HealthFont->MaxAbove - HealthFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
 
@@ -497,7 +500,9 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 		// Draw mana text
 		ae::_Font *ManaFont = SmallFont;
-		if(Character->Attributes["MaxMana"].Int > 9999)
+		if(Character->Attributes["MaxMana"].Int > 999999)
+			ManaFont = MicroFont;
+		else if(Character->Attributes["MaxMana"].Int > 9999)
 			ManaFont = TinyFont;
 		int TextOffsetY = (ManaFont->MaxAbove - ManaFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
 		Buffer << Character->Attributes["Mana"].Int << " / " << Character->Attributes["MaxMana"].Int;

@@ -625,6 +625,8 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 
 		// Copy build
 		Object->Inventory->Bags = Build->Inventory->GetBags();
+		Object->Character->SkillBarSize = ACTIONBAR_MAX_SKILLBARSIZE;
+		Object->Character->BeltSize = ACTIONBAR_MAX_BELTSIZE;
 		Object->Character->ActionBar = Build->Character->ActionBar;
 		Object->Character->Skills = Build->Character->Skills;
 		Object->Character->Attributes["Health"].Int = Object->Character->Attributes["MaxHealth"].Int = Object->Character->BaseMaxHealth;

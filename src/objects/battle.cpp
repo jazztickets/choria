@@ -751,9 +751,10 @@ void _Battle::ServerEndBattle() {
 
 					// Add to kill count
 					if(Boss) {
-						if(Cooldown >= 1000 && Cooldown <= 1000000) {
+						if(Cooldown >= 1000) {
 							Object->Character->BossKills[Zone]++;
-							Server->SendMessage(Object->Peer, std::string("The soul grows stronger"), "yellow");
+							if(Cooldown <= 1000000)
+								Server->SendMessage(Object->Peer, std::string("The soul grows stronger"), "yellow");
 						}
 						else
 							Object->Character->BossKills[Zone] = 0;

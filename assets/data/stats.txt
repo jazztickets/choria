@@ -161,7 +161,7 @@ INSERT INTO attribute VALUES(55,'ManaRegen','Mana Regen',1,1,'0',1.0,1,1,0,0,0);
 INSERT INTO attribute VALUES(56,'DamageBlock','Damage Block',1,1,'0',1.0,1,1,0,1,0);
 INSERT INTO attribute VALUES(57,'Armor','Armor',1,1,'0',0.5,1,1,0,0,0);
 INSERT INTO attribute VALUES(58,'Evasion','Evasion',4,1,'0',0.25,1,1,0,1,0);
-INSERT INTO attribute VALUES(59,'EnergyField','Energy Field',4,3,'100',0.0,1,1,0,1,0);
+INSERT INTO attribute VALUES(59,'EnergyField','Energy Field',4,1,'0',0.0,1,1,0,1,0);
 INSERT INTO attribute VALUES(60,'Resist','Resist',4,0,'0',0.25,0,0,0,0,0);
 INSERT INTO attribute VALUES(61,'AllResist','All Resist',4,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(62,'PhysicalResist','Physical Resist',4,0,'0',0.0,2,1,0,1,0);
@@ -2008,7 +2008,7 @@ INSERT INTO monster VALUES(34,'Lava Spitter',12,46,'textures/monsters/lava_spitt
 INSERT INTO monster VALUES(35,'Lost One',1,25,'textures/monsters/lost_one.png',150,50,2000,0,500,600,90,0,7.0,0,50,0,75,75,0);
 INSERT INTO monster VALUES(36,'Lava Slime',1,35,'textures/monsters/lava_slime.png',165,200,7000,0,300,325,10,5,3.0,65,-45,0,0,25,0);
 INSERT INTO monster VALUES(37,'The Elite',1,20,'textures/monsters/the_elite.png',10000,10000,50000,0,5000,10000,100,1000,10.0,0,0,0,0,0,0);
-INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,50000,999999,999999,10000,20000,100,4000,5.0,75,75,75,75,75,75);
+INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,1000000,999999,999999,10000,20000,100,4000,5.0,75,75,75,75,75,75);
 INSERT INTO monster VALUES(39,'Ice Imp',14,48,'textures/monsters/ice_imp.png',40,35,1200,0,100,225,10,0,2.0,-25,50,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
@@ -2525,6 +2525,7 @@ INSERT INTO buildskill VALUES(79,33,36,50);
 INSERT INTO buildskill VALUES(80,42,40,5);
 INSERT INTO buildskill VALUES(81,5,14,1);
 INSERT INTO buildskill VALUES(82,48,67,1);
+INSERT INTO buildskill VALUES(83,47,27,20);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES "build"(id) ON DELETE CASCADE,
@@ -2680,6 +2681,7 @@ INSERT INTO buildactionbar VALUES(93,33,36,3);
 INSERT INTO buildactionbar VALUES(94,42,40,5);
 INSERT INTO buildactionbar VALUES(95,5,14,2);
 INSERT INTO buildactionbar VALUES(96,48,67,0);
+INSERT INTO buildactionbar VALUES(97,47,27,6);
 CREATE TABLE IF NOT EXISTS "set" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,

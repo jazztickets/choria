@@ -539,7 +539,7 @@ void _Character::CalculateStats() {
 	Attributes["Pierce"].Int = std::max(Attributes["Pierce"].Int, 0);
 	Attributes["DamageBlock"].Int = std::max(Attributes["DamageBlock"].Int, 0);
 	Attributes["ConsumeChance"].Int = std::clamp(Attributes["ConsumeChance"].Int, 0, 100);
-	Attributes["EnergyField"].Int = std::clamp(100 - Attributes["EnergyField"].Int, 0, 100);
+	Attributes["EnergyField"].Int = std::clamp(Attributes["EnergyField"].Int, 0, 100);
 
 	Attributes["MaxHealth"].Int *= Attributes["HealthBonus"].Mult();
 	Attributes["MaxMana"].Int *= Attributes["ManaBonus"].Mult();
@@ -893,9 +893,11 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 	if(!StatusEffect)
 		return false;
 
-	// Reduce duration of stun with resist
-	if(StatusEffect->Buff->Name == "Stunned")
+	// Reduce duration of stun/slow with resist
+	if(StatusEffect->Buff->Name == "Stunned" || StatusEffect->Buff->Name == "Slowed") {
 		StatusEffect->Duration *= 1.0f - (Attributes["StunResist"].Mult());
+		StatusEffect->MaxDuration *= 1.0f - (Attributes["StunResist"].Mult());
+	}
 
 	// Find existing buff
 	for(auto &ExistingEffect : StatusEffects) {
