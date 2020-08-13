@@ -207,6 +207,11 @@ Set_Dark.Attributes = {
 	SummonLimit = { "1", "2" },
 }
 
+Set_Healers = Base_Set:New()
+Set_Healers.Attributes = {
+	HealPower = { "10%", "50%" },
+}
+
 -- Added Bonus --
 -- Names need to start with SetBonus for the tooltip description to work correctly --
 

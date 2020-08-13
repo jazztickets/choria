@@ -944,25 +944,6 @@ function Item_DarkNote.GetInfo(self, Source, Item)
 	return "[c gray]Great power lies within the tower..."
 end
 
--- Health Ring --
-
-Item_HealthRing = { }
-Item_HealthRing.PowerPerUpgrade = 1
-
-function Item_HealthRing.GetPower(self, Item)
-	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
-end
-
-function Item_HealthRing.GetInfo(self, Source, Item)
-	return "Increases heal power by [c green]" .. self:GetPower(Item) .. "%"
-end
-
-function Item_HealthRing.Stats(self, Item, Object, Change)
-	Change.HealPower = self:GetPower(Item)
-
-	return Change
-end
-
 -- Dark Ring --
 
 Item_DarkRing = Base_Set:New()
