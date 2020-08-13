@@ -161,10 +161,19 @@ Set_Bronze.Attributes = {
 Set_Iron = Base_Set:New()
 Set_Iron.Attributes = {
 	Armor = { "10", "30" },
-	AllResist = { "15%", "40%" },
+	AllResist = { "15%", "35%" },
 	DamageBlock = { "15", "50" },
 	MaxHealth = { "200", "800" },
 	ShieldDamage = { "25%", "100%" },
+}
+
+Set_Steel = Base_Set:New()
+Set_Steel.Attributes = {
+	Armor = { "20", "75" },
+	AllResist = { "20%", "50%" },
+	DamageBlock = { "25", "125" },
+	MaxHealth = { "500", "2000" },
+	ShieldDamage = { "50%", "250%" },
 }
 
 -- Added Bonus --
@@ -246,7 +255,7 @@ SetBonus_FlangedMace.Attributes = {
 
 SetBonus_ShiningStar = Base_Set:New()
 SetBonus_ShiningStar.Attributes = {
-	AttackPower = { "50%", "100%" },
+	AttackPower = { "50%", "150%" },
 }
 
 -- Two-Handed Weapons --
@@ -390,7 +399,7 @@ SetBonus_IronShield.Attributes = {
 
 SetBonus_SteelShield = Base_Set:New()
 SetBonus_SteelShield.Attributes = {
-	DamageBlock = { "50", "150" },
+	DamageBlock = { "50", "250" },
 }
 
 -- Helmet --
