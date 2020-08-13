@@ -2019,8 +2019,8 @@ INSERT INTO monster VALUES(33,'Forest Spider',1,21,'textures/monsters/forest_spi
 INSERT INTO monster VALUES(34,'Lava Spitter',12,46,'textures/monsters/lava_spitter.png',175,175,5000,0,175,275,5,0,1.8000000000000000444,55,-35,0,0,0,0);
 INSERT INTO monster VALUES(35,'Lost One',1,25,'textures/monsters/lost_one.png',150,50,2000,0,500,600,90,0,7.0,0,50,0,75,75,0);
 INSERT INTO monster VALUES(36,'Lava Slime',1,35,'textures/monsters/lava_slime.png',165,200,7000,0,300,325,10,5,3.0,65,-45,0,0,25,0);
-INSERT INTO monster VALUES(37,'The Elite',1,20,'textures/monsters/the_elite.png',10000,10000,50000,0,5000,10000,100,1000,10.0,0,0,0,0,0,0);
-INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,1000000,999999,999999,10000,20000,100,4000,5.0,75,75,75,75,75,75);
+INSERT INTO monster VALUES(37,'The Elite',1,20,'textures/monsters/the_elite.png',0,0,100000,0,5000,10000,100,1000,10.0,0,0,0,0,0,0);
+INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,1000000,1000000,1000000,10000,20000,100,4000,5.0,75,75,75,75,75,75);
 INSERT INTO monster VALUES(39,'Ice Imp',14,48,'textures/monsters/ice_imp.png',40,35,1200,0,100,225,10,0,2.0,-25,50,0,0,0,0);
 INSERT INTO monster VALUES(40,'Sentinel',1,20,'textures/monsters/sentinel.png',1000,1000,10000,0,1000,1000,100,100,10.0,75,75,75,75,75,25);
 CREATE TABLE IF NOT EXISTS "map" (
