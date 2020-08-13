@@ -242,6 +242,11 @@ Set_Bleed.Attributes = {
 	BleedPower = { "25%", "75%" },
 }
 
+Set_Mundane = Base_Set:New()
+Set_Mundane.Attributes = {
+	PhysicalPower = { "15%", "50%" },
+}
+
 -- Added Bonus --
 -- Names need to start with SetBonus for the tooltip description to work correctly --
 

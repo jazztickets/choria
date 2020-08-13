@@ -2727,6 +2727,7 @@ INSERT INTO "set" VALUES(17,'Cold','Set_Cold',2);
 INSERT INTO "set" VALUES(18,'Lightning','Set_Lightning',2);
 INSERT INTO "set" VALUES(19,'Poison','Set_Poison',2);
 INSERT INTO "set" VALUES(20,'Bleed','Set_Bleed',2);
+INSERT INTO "set" VALUES(21,'Mundane','Set_Mundane',2);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES "itemtype"(id) ON DELETE CASCADE,
@@ -2952,7 +2953,7 @@ INSERT INTO item VALUES(207,7,2,0,0,0,0,8,'Iron Shield','textures/items/iron_shi
 INSERT INTO item VALUES(208,7,2,0,0,0,0,12,'Steel Shield','textures/items/steel_shield.png','','SetBonus_SteelShield','',0,17500,1,0,50,0,0.0,0.0,1,300,750,0,40,0,0,0,0,0,0,-10,-6,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(209,4,0,0,0,0,0,2,'Mage Slippers','textures/items/mage_slippers.png','','','',0,50,1,0,10,0,0.0,0.0,1,0,0,1,0,0,0,0,10,0,0,0,5,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(210,4,0,0,0,0,0,6,'Wizard Slippers','textures/items/wizard_slippers.png','','','',0,500,1,0,20,0,0.0,0.0,1,0,0,2,0,0,0,0,20,0,0,0,7,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(211,8,0,0,0,0,0,0,'Ring','textures/items/ring.png','','Item_PhysicalPower','',0,50,1,5,10,0,0.0,0.0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(211,8,0,0,0,0,0,21,'Ring','textures/items/ring.png','','','',0,50,1,0,10,0,0.0,0.0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(212,6,2,0,0,0,0,2,'Dark Staff','textures/items/dark_staff.png','','SetBonus_DarkStaff','Proc_Mana',0,80,1,20,10,15,0.0,0.0,1,20,60,0,0,0,0,0,50,0,2,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(213,6,3,0,0,0,0,6,'Demon Stick','textures/items/demon_stick.png','','SetBonus_DemonStick','Proc_Mana',0,800,1,60,20,15,0.0,0.0,1,50,120,0,5,0,0,0,150,0,6,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(214,8,0,0,0,0,0,14,'Warm Ring','textures/items/warm_ring.png','','','',0,800,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,35,0,3,0,0,0,0,0,0,0,0,0,0);
@@ -3058,7 +3059,7 @@ INSERT INTO item VALUES(316,9,0,0,0,0,0,0,'Lava Amulet','textures/items/amulet_o
 INSERT INTO item VALUES(317,6,2,0,0,0,0,10,'Diabolic Staff','textures/items/diabolic_staff.png','','SetBonus_DiabolicStaff','Proc_Mana',0,13000,1,175,50,15,0.0,0.0,1,600,800,0,10,0,0,0,350,0,10,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(318,11,0,0,0,0,0,0,'Dark Note','textures/items/note.png','','Item_DarkNote','',0,5000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(319,10,0,1,1,0,0,0,'Greater Battle Potion','textures/items/greater_battle_potion.png','','Item_GreaterBattlePotion','',0,1000,1,100,0,0,300.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(320,9,0,0,0,0,0,0,'Mundane Amulet','textures/items/amulet_green.png','','Item_ConsumeChance','',0,150,1,25,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(320,9,0,0,0,0,0,21,'Mundane Amulet','textures/items/amulet_green.png','','Item_ConsumeChance','',0,150,1,25,20,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(321,9,0,0,0,0,1,0,'Warding Amulet','textures/items/amulet_blue.png','','','',0,1000,1,0,20,0,0.0,0.0,1,0,0,2,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(322,10,0,0,1,0,0,0,'Rite of Passage','textures/items/rite_passage.png','','Item_RitePassage','',5,500000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(323,5,2,0,0,0,0,0,'Stick','textures/items/stick.png','','','',0,5,1,0,5,0,0.0,0.0,1,5,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

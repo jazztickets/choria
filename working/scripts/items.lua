@@ -920,7 +920,7 @@ end
 -- Consume Chance --
 
 Item_ConsumeChance = { }
-Item_ConsumeChance.ChancePerUpgrade = 1
+Item_ConsumeChance.ChancePerUpgrade = 2
 
 function Item_ConsumeChance.GetInfo(self, Source, Item)
 	return "Decrease chance to consume items in battle by [c green]" .. self:GetChance(Item) .. "%[c white]"
