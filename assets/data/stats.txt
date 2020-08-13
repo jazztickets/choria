@@ -347,6 +347,10 @@ INSERT INTO script VALUES(15,'Script_Fall',20);
 INSERT INTO script VALUES(16,'Script_Lava',100);
 INSERT INTO script VALUES(17,'Script_Boss',45);
 INSERT INTO script VALUES(18,'Script_Boss',46);
+INSERT INTO script VALUES(19,'Script_Boss',51);
+INSERT INTO script VALUES(20,'Script_Boss',52);
+INSERT INTO script VALUES(21,'Script_Boss',53);
+INSERT INTO script VALUES(22,'Script_Boss',54);
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -1807,6 +1811,10 @@ INSERT INTO zone VALUES(47,'forestspider_aquaslime_skeletonmage',0,0.0,2,5);
 INSERT INTO zone VALUES(48,'',0,0.0,1,1);
 INSERT INTO zone VALUES(49,'',0,0.0,1,1);
 INSERT INTO zone VALUES(50,'test',0,0.0,1,1);
+INSERT INTO zone VALUES(51,'sentinel_red',1,1440.0,0,0);
+INSERT INTO zone VALUES(52,'sentinel_green',1,1440.0,0,0);
+INSERT INTO zone VALUES(53,'sentinel_blue',1,1440.0,0,0);
+INSERT INTO zone VALUES(54,'sentinel_black',1,1440.0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
@@ -1949,6 +1957,10 @@ INSERT INTO zonedata VALUES(132,50,25,1,0,0);
 INSERT INTO zonedata VALUES(133,26,1,10,0,0);
 INSERT INTO zonedata VALUES(134,26,2,10,0,0);
 INSERT INTO zonedata VALUES(135,6,4,1,0,0);
+INSERT INTO zonedata VALUES(136,51,40,1,0,0);
+INSERT INTO zonedata VALUES(137,52,40,1,0,0);
+INSERT INTO zonedata VALUES(138,53,40,1,0,0);
+INSERT INTO zonedata VALUES(139,54,40,1,0,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2010,6 +2022,7 @@ INSERT INTO monster VALUES(36,'Lava Slime',1,35,'textures/monsters/lava_slime.pn
 INSERT INTO monster VALUES(37,'The Elite',1,20,'textures/monsters/the_elite.png',10000,10000,50000,0,5000,10000,100,1000,10.0,0,0,0,0,0,0);
 INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,1000000,999999,999999,10000,20000,100,4000,5.0,75,75,75,75,75,75);
 INSERT INTO monster VALUES(39,'Ice Imp',14,48,'textures/monsters/ice_imp.png',40,35,1200,0,100,225,10,0,2.0,-25,50,0,0,0,0);
+INSERT INTO monster VALUES(40,'Sentinel',1,20,'textures/monsters/sentinel.png',1000,1000,10000,0,1000,1000,100,100,10.0,75,75,75,75,75,25);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -2161,6 +2174,7 @@ INSERT INTO trader VALUES(77,'invisibility_potion',110,1);
 INSERT INTO trader VALUES(78,'warding_amulet',321,1);
 INSERT INTO trader VALUES(79,'ultimate_battle_potion',326,1);
 INSERT INTO trader VALUES(80,'belligerent_potion',327,1);
+INSERT INTO trader VALUES(81,'building_key',342,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -2371,6 +2385,10 @@ INSERT INTO traderitem VALUES(232,79,319,10);
 INSERT INTO traderitem VALUES(233,79,132,1);
 INSERT INTO traderitem VALUES(234,80,319,1);
 INSERT INTO traderitem VALUES(235,80,240,20);
+INSERT INTO traderitem VALUES(236,81,338,1);
+INSERT INTO traderitem VALUES(237,81,339,1);
+INSERT INTO traderitem VALUES(238,81,340,1);
+INSERT INTO traderitem VALUES(239,81,341,1);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -3050,6 +3068,11 @@ INSERT INTO item VALUES(334,4,0,0,0,0,0,10,'Arcane Slippers','textures/items/arc
 INSERT INTO item VALUES(335,4,0,0,0,0,6,9,'Elusive Slippers','textures/items/elusive_slippers.png','','','',0,6000,1,0,50,0,0.0,0.0,1,0,0,2,0,0,8,0,0,0,0,6,13,0,0,0,0,3,0,0);
 INSERT INTO item VALUES(336,4,0,0,0,0,7,11,'Warrior''s Boots','textures/items/warriors_boots.png','','','',0,5500,1,0,50,0,0.0,0.0,1,0,0,8,0,0,8,0,0,0,0,0,7,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(337,7,2,0,0,0,0,11,'Warrior''s Buckler','textures/items/warriors_buckler.png','','SetBonus_WarriorsBuckler','',0,10000,1,0,50,0,0.0,0.0,1,180,550,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(338,11,0,0,0,0,0,0,'Red Runestone Fragment','textures/items/fragment_red.png','','','',0,100,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(339,11,0,0,0,0,0,0,'Blue Runestone Fragment','textures/items/fragment_blue.png','','','',0,100,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(340,11,0,0,0,0,0,0,'Green Runestone Fragment','textures/items/fragment_green.png','','','',0,100,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(341,11,0,0,0,0,0,0,'Black Runestone Fragment','textures/items/fragment_black.png','','','',0,100,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(342,13,0,0,0,0,0,0,'Building Key','textures/items/key0.png','','','',0,1000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
@@ -3085,6 +3108,10 @@ INSERT INTO zonedrops VALUES(27,39,221,10);
 INSERT INTO zonedrops VALUES(28,41,191,1);
 INSERT INTO zonedrops VALUES(30,41,237,15);
 INSERT INTO zonedrops VALUES(31,41,248,3);
+INSERT INTO zonedrops VALUES(32,51,338,1);
+INSERT INTO zonedrops VALUES(33,52,340,1);
+INSERT INTO zonedrops VALUES(34,53,339,1);
+INSERT INTO zonedrops VALUES(35,54,341,1);
 CREATE TABLE IF NOT EXISTS "build" (
 "id" INTEGER PRIMARY KEY,
 "name" TEXT,

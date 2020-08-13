@@ -1882,6 +1882,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		SendHUD(Peer);
 	}
 	else if(Command == "clearkills") {
+		Player->Character->BattleCooldown.clear();
 		Player->Character->BossKills.clear();
 	}
 	else if(Command == "clearunlocks") {
