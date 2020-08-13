@@ -102,7 +102,7 @@ function WeaponProc(Source, Target, Result, IsSpell)
 	end
 
 	-- Proc main weapon
-	if (Weapon.Proc.SpellOnly == true and IsSpell == true) or (Weapon.Proc.SpellOnly == false and IsSpell == false) then
+	if (Weapon.SpellProc == 2) or (Weapon.Proc.SpellOnly == true and IsSpell == true) or (Weapon.Proc.SpellOnly == false and IsSpell == false) then
 		Weapon.Proc:Proc(Random.GetInt(1, 100), Weapon, Source, Target, Result)
 	end
 
@@ -113,7 +113,7 @@ function WeaponProc(Source, Target, Result, IsSpell)
 	end
 
 	-- Proc off-hand weapon
-	if (WeaponOffHand.Proc.SpellOnly == true and IsSpell == true) or (WeaponOffHand.Proc.SpellOnly == false and IsSpell == false) then
+	if (WeaponOffHand.SpellProc == 2) or (WeaponOffHand.Proc.SpellOnly == true and IsSpell == true) or (WeaponOffHand.Proc.SpellOnly == false and IsSpell == false) then
 		WeaponOffHand.Proc:Proc(Random.GetInt(1, 100), WeaponOffHand, Source, Target, Result)
 	end
 end
