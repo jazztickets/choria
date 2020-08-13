@@ -2994,7 +2994,7 @@ INSERT INTO item VALUES(259,10,0,1,1,0,0,0,'Eternal Wealth','textures/items/eter
 INSERT INTO item VALUES(260,10,0,1,1,0,0,0,'Eternal Alacrity','textures/items/eternal_alacrity.png','','Item_EternalAlacrity','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(261,10,0,1,1,0,0,0,'Eternal Knowledge','textures/items/eternal_knowledge.png','','Item_EternalKnowledge','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(262,13,0,0,0,0,0,0,'Timeless Key','textures/items/key1.png','','','',0,10000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(263,4,0,0,0,0,0,0,'Dimensional Slippers','textures/items/dimensional_slippers.png','','Item_Diagonal','',0,500,1,0,20,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(263,4,0,0,0,0,0,1,'Dimensional Slippers','textures/items/dimensional_slippers.png','','SetBonus_DimensionalSlippers','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,25,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(264,13,0,0,0,0,0,0,'Hideout Key','textures/items/key0.png','','','',0,250,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(265,14,2,0,0,0,7,5,'Bloodletter','textures/items/bloodletter.png','','SetBonus_Bloodletter','Proc_Bloodlet',0,3500,1,50,30,20,5.0,0.0,1,220,220,0,8,35,15,0,0,0,0,15,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(266,5,2,0,0,0,3,11,'Flamuss','textures/items/flamuss.png','','SetBonus_Flamuss','Proc_Ignite',0,20000,1,500,50,25,6.0,0.0,1,600,1200,0,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0,0);

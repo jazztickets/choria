@@ -9,8 +9,12 @@ Base_Set = {
 		return Object
 	end,
 
-	GetInfo = function(self, Source, Item)
+	GetAddedInfo = function(self, Source, Item)
 		return "[c light_green]Added " .. self.Item.Set.Name .. " Set Bonus\n" .. self:GetSetInfo(Source, Item.SetLevel, Item.MaxSetLevel, Item.MoreInfo)
+	end,
+
+	GetInfo = function(self, Source, Item)
+		return self:GetAddedInfo(Source, Item)
 	end,
 
 	GetSetInfo = function(self, Source, Upgrades, MaxUpgrades, MoreInfo)

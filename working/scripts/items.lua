@@ -802,6 +802,23 @@ function Item_Torch.PlaySound(self, Level)
 	Audio.Play("flame0.ogg")
 end
 
+-- Dimensional Slippers --
+
+SetBonus_DimensionalSlippers = Base_Set:New()
+SetBonus_DimensionalSlippers.Attributes = {
+	Evasion = { "1%", "5%" },
+}
+
+function SetBonus_DimensionalSlippers.GetInfo(self, Source, Item)
+	return "[c yellow]Allows for diagonal movement\n\n" .. self:GetAddedInfo(Source, Item)
+end
+
+function SetBonus_DimensionalSlippers.Stats(self, Item, Object, Change)
+	Change.DiagonalMovement = true
+
+	return Change
+end
+
 -- Diagonal --
 
 Item_Diagonal = { }
