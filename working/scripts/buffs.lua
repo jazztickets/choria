@@ -205,17 +205,21 @@ end
 -- Parry --
 
 Buff_Parry = Base_Buff:New()
-Buff_Parry.DamageReduction = 1
 Buff_Parry.StaminaGain = 0.2
+Buff_Parry.StunDuration = 1
 
 function Buff_Parry.GetInfo(self, Level)
 	return "Blocking attacks"
 end
 
-function Buff_Parry.OnHit(self, Object, Level, Duration, Change)
+function Buff_Parry.OnHit(self, Object, Effect, Change, Result)
 	Change.BuffSound = self.ID
-	Change.Damage = math.max(math.floor(Change.Damage * (1.0 - (Level / 100.0))), 0)
+	Change.Damage = math.max(math.floor(Change.Damage * (1.0 - (Effect.Level / 100.0))), 0)
 	Change.Stamina = self.StaminaGain
+
+	Result.Source.Buff = Buff_Stunned.Pointer
+	Result.Source.BuffLevel = 1
+	Result.Source.BuffDuration = self.StunDuration
 end
 
 function Buff_Parry.PlaySound(self, Level)
@@ -369,10 +373,16 @@ function Buff_Shielded.GetInfo(self, Level)
 	return "Blocking [c green]" .. Level .. "[c white] damage before breaking"
 end
 
-function Buff_Shielded.OnHit(self, Object, Level, Duration, Change)
+function Buff_Shielded.OnHit(self, Object, Effect, Change, Result)
+
+	-- Check for incoming damage
+	if Change.Damage > 0 then
+		Change.BuffSound = self.ID
+	end
 
 	-- Reduce shield
-	Level = Level - Change.Damage
+	Level = Effect.Level - Change.Damage
+	Duration = Effect.Duration
 
 	-- Check for shield breaking
 	if Level <= 0 then
@@ -382,8 +392,6 @@ function Buff_Shielded.OnHit(self, Object, Level, Duration, Change)
 		Change.Damage = 0
 		Object.UpdateBuff(self.ID, Level, Duration)
 	end
-
-	Change.BuffSound = self.ID
 end
 
 function Buff_Shielded.PlaySound(self, Level)

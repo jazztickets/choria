@@ -21,7 +21,7 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		for i = 1, #Target.StatusEffects do
 			Effect = Target.StatusEffects[i]
 			if Effect.Buff.OnHit ~= nil then
-				Effect.Buff:OnHit(Target, Effect.Level, Effect.Duration, Change)
+				Effect.Buff:OnHit(Target, Effect, Change, Result)
 				if Change.Stamina ~= nil then
 					StaminaChange = StaminaChange + Change.Stamina
 				end

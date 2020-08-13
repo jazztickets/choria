@@ -1280,7 +1280,12 @@ function Skill_Parry.GetDamageReduction(self, Level)
 end
 
 function Skill_Parry.GetInfo(self, Source, Item)
-	return "Block [c green]" .. self:GetDamageReduction(Item.Level) .. "% [c white]attack damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
+	Plural = ""
+	if Buff_Parry.StunDuration ~= 1 then
+		Plural = "s"
+	end
+
+	return "Block [c green]" .. self:GetDamageReduction(Item.Level) .. "% [c white]attack damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked\nThe attacker is stunned for [c green]" .. Buff_Parry.StunDuration .. "[c white] second" .. Plural
 end
 
 function Skill_Parry.Use(self, Level, Duration, Source, Target, Result)
