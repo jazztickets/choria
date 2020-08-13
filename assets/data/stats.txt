@@ -2912,7 +2912,7 @@ INSERT INTO item VALUES(190,5,2,0,0,0,0,7,'Silver Edge','textures/items/short_sw
 INSERT INTO item VALUES(191,10,0,1,1,0,0,0,'Teleport Scroll','textures/items/scroll.png','','Item_TeleportScroll','',0,20,1,0,0,0,3.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(192,10,2,2,2,0,0,0,'Poison Knives','textures/items/poison_knives.png','','Item_PoisonKnives','',0,20,1,20,0,0,10.0,0.0,1,50,150,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(193,10,0,8,3,0,0,0,'Swamp Glob','textures/items/swamp_glob.png','','Item_SwampGlob','',0,35,1,30,0,0,10.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(194,3,0,0,0,0,6,5,'Black Vest','textures/items/black_vest.png','','','',0,1200,1,0,20,0,0.0,0.0,1,0,0,2,1,0,10,0,0,0,0,10,5,0,0,0,0,4,0,0);
+INSERT INTO item VALUES(194,3,0,0,0,0,6,5,'Black Vest','textures/items/black_vest.png','','','',0,1200,1,0,20,0,0.0,0.0,1,0,0,2,0,0,10,0,0,0,0,10,5,0,0,0,0,4,0,0);
 INSERT INTO item VALUES(195,3,0,0,0,0,8,8,'Iron Armor','textures/items/iron_armor.png','','','',0,2250,1,0,20,0,0.0,0.0,1,0,0,18,4,0,10,0,0,0,0,-8,-4,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(196,3,0,0,0,0,8,12,'Steel Armor','textures/items/steel_armor.png','','','',0,22500,1,0,50,0,0.0,0.0,1,0,0,36,8,0,20,0,0,0,0,-10,-6,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(197,4,0,0,0,0,6,5,'Black Slippers','textures/items/black_slippers.png','','','',0,600,1,0,20,0,0.0,0.0,1,0,0,1,0,0,4,0,0,0,0,5,10,0,0,0,0,2,0,0);
@@ -2954,7 +2954,7 @@ INSERT INTO item VALUES(238,13,0,0,0,0,0,0,'Lost Key','textures/items/key1.png',
 INSERT INTO item VALUES(239,13,0,0,0,0,0,0,'Bridge Key','textures/items/key2.png','','','',0,2000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(240,10,0,1,2,0,0,0,'Stinger','textures/items/stinger.png','','Item_Stinger','',0,80,1,15,0,0,15.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(241,5,2,0,0,0,0,11,'Light Blade','textures/items/light_blade.png','','SetBonus_LightBlade','Proc_Haste',0,12000,1,30,50,15,3.0,0.0,1,400,900,0,0,0,0,0,0,0,0,15,5,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(242,14,2,0,0,0,0,5,'Moon Blade','textures/items/moon_blade.png','','SetBonus_MoonBlade','Proc_Bleed',0,8000,1,80,50,20,5.0,0.0,1,360,360,0,10,40,0,0,20,0,0,30,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(242,14,2,0,0,0,0,9,'Moon Blade','textures/items/moon_blade.png','','SetBonus_MoonBlade','Proc_Bleed',0,8000,1,80,50,20,5.0,0.0,1,360,360,0,10,40,0,0,20,0,0,30,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(243,5,2,0,0,0,0,10,'Arcane Wand','textures/items/arcane_wand.png','','SetBonus_ArcaneWand','Proc_Mana',0,6000,1,100,50,15,0.0,0.0,1,20,60,0,0,0,0,0,80,0,4,0,0,0,0,1,0,0,30,0);
 INSERT INTO item VALUES(244,6,2,0,0,0,0,11,'Greatsword','textures/items/greatsword.png','','SetBonus_Greatsword','Proc_Empowered',0,25000,1,15,50,15,5.0,0.0,1,1400,2500,-15,0,0,0,0,0,0,0,-20,-15,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(245,5,2,0,0,0,0,3,'Spider Sword','textures/items/spider_sword.png','','SetBonus_SpiderSword','Proc_Slow',0,350,1,30,20,15,3.0,0.0,1,70,130,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0);
@@ -3042,12 +3042,12 @@ INSERT INTO item VALUES(326,10,0,1,1,0,0,0,'Ultimate Battle Potion','textures/it
 INSERT INTO item VALUES(327,10,0,1,1,0,0,0,'Belligerent Potion','textures/items/attractant.png','','Item_BelligerentPotion','',0,150,1,2,0,0,10.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(328,2,0,0,0,0,0,10,'Arcane Hat','textures/items/arcane_hat.png','','','',0,7000,1,0,50,0,0.0,0.0,1,0,0,4,0,0,0,0,60,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(329,2,0,0,0,0,7,11,'Warrior''s Helm','textures/items/warriors_helm.png','','','',0,6500,1,0,50,0,0.0,0.0,1,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(330,2,0,0,0,0,6,9,'Elusive Hood','textures/items/elusive_hood.png','','','',0,600,1,0,20,0,0.0,0.0,1,0,0,1,0,0,4,0,0,0,0,5,5,0,0,0,0,2,0,0);
+INSERT INTO item VALUES(330,2,0,0,0,0,6,9,'Elusive Hood','textures/items/elusive_hood.png','','','',0,6000,1,0,50,0,0.0,0.0,1,0,0,2,0,0,8,0,0,0,0,6,6,0,0,0,0,3,0,0);
 INSERT INTO item VALUES(331,3,0,0,0,0,0,10,'Arcane Robes','textures/items/arcane_robes.png','','','',0,15000,1,0,50,0,0.0,0.0,1,0,0,7,0,0,0,0,50,0,5,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(332,3,0,0,0,0,7,11,'Warrior''s Jerkin','textures/items/warriors_jerkin.png','','','',0,13000,1,0,50,0,0.0,0.0,1,0,0,20,4,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(333,3,0,0,0,0,6,9,'Elusive Vest','textures/items/elusive_vest.png','','','',0,1200,1,0,20,0,0.0,0.0,1,0,0,2,1,0,10,0,0,0,0,10,5,0,0,0,0,4,0,0);
+INSERT INTO item VALUES(333,3,0,0,0,0,6,9,'Elusive Vest','textures/items/elusive_vest.png','','','',0,12000,1,0,50,0,0.0,0.0,1,0,0,4,0,0,20,0,0,0,0,13,6,0,0,0,0,6,0,0);
 INSERT INTO item VALUES(334,4,0,0,0,0,0,10,'Arcane Slippers','textures/items/arcane_slippers.png','','','',0,5000,1,0,50,0,0.0,0.0,1,0,0,4,0,0,0,0,40,0,0,0,10,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(335,4,0,0,0,0,6,9,'Elusive Slippers','textures/items/elusive_slippers.png','','','',0,60,1,0,10,0,0.0,0.0,1,0,0,0,0,0,2,0,0,0,0,4,7,0,0,0,0,1,0,0);
+INSERT INTO item VALUES(335,4,0,0,0,0,6,9,'Elusive Slippers','textures/items/elusive_slippers.png','','','',0,6000,1,0,50,0,0.0,0.0,1,0,0,2,0,0,8,0,0,0,0,6,13,0,0,0,0,3,0,0);
 INSERT INTO item VALUES(336,4,0,0,0,0,7,11,'Warrior''s Boots','textures/items/warriors_boots.png','','','',0,5500,1,0,50,0,0.0,0.0,1,0,0,8,0,0,8,0,0,0,0,0,7,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(337,7,2,0,0,0,0,11,'Warrior''s Buckler','textures/items/warriors_buckler.png','','SetBonus_WarriorsBuckler','',0,10000,1,0,50,0,0.0,0.0,1,180,550,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrops" (

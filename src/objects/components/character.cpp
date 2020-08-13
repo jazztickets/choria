@@ -538,7 +538,7 @@ void _Character::CalculateStats() {
 	Attributes["MaxDamage"].Int = std::max(Attributes["MaxDamage"].Int, 0);
 	Attributes["Pierce"].Int = std::max(Attributes["Pierce"].Int, 0);
 	Attributes["DamageBlock"].Int = std::max(Attributes["DamageBlock"].Int, 0);
-	Attributes["ConsumeChance"].Int = std::clamp(Attributes["ConsumeChance"].Int, 0, 100);
+	Attributes["ConsumeChance"].Int = std::clamp(Attributes["ConsumeChance"].Int, 5, 100);
 	Attributes["EnergyField"].Int = std::clamp(Attributes["EnergyField"].Int, 0, 100);
 
 	Attributes["MaxHealth"].Int *= Attributes["HealthBonus"].Mult();

@@ -86,10 +86,10 @@ Set_Cloth.Attributes = {
 	BattleSpeed = { "5%", "20%" },
 	BleedPower = { "10%", "50%" },
 	BleedResist = { "10%", "25%" },
+	ConsumeChance = { "-5%", "-15%" },
 	Evasion = { "5%", "15%" },
 	Initiative = { "20%", "40%" },
 	MaxHealth = { "10", "100" },
-	PoisonResist = { "10%", "25%" },
 }
 
 Set_Black = Base_Set:New()
@@ -97,10 +97,21 @@ Set_Black.Attributes = {
 	BattleSpeed = { "15%", "35%" },
 	BleedPower = { "25%", "100%" },
 	BleedResist = { "15%", "45%" },
+	ConsumeChance = { "-10%", "-25%" },
 	Evasion = { "10%", "30%" },
 	Initiative = { "30%", "50%" },
 	MaxHealth = { "50", "200" },
-	PoisonResist = { "15%", "45%" },
+}
+
+Set_Elusive = Base_Set:New()
+Set_Elusive.Attributes = {
+	BattleSpeed = { "25%", "75%" },
+	BleedPower = { "50%", "250%" },
+	BleedResist = { "25%", "75%" },
+	ConsumeChance = { "-15%", "-50%" },
+	Evasion = { "20%", "50%" },
+	Initiative = { "40%", "75%" },
+	MaxHealth = { "125", "500" },
 }
 
 Set_Mage = Base_Set:New()
