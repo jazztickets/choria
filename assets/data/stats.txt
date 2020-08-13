@@ -2722,6 +2722,11 @@ INSERT INTO "set" VALUES(12,'Steel','Set_Steel',4);
 INSERT INTO "set" VALUES(13,'Dark','Set_Dark',2);
 INSERT INTO "set" VALUES(14,'Healers','Set_Healers',2);
 INSERT INTO "set" VALUES(15,'Spirit','Set_Spirit',2);
+INSERT INTO "set" VALUES(16,'Fire','Set_Fire',2);
+INSERT INTO "set" VALUES(17,'Cold','Set_Cold',2);
+INSERT INTO "set" VALUES(18,'Lightning','Set_Lightning',2);
+INSERT INTO "set" VALUES(19,'Poison','Set_Poison',2);
+INSERT INTO "set" VALUES(20,'Bleed','Set_Bleed',2);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES "itemtype"(id) ON DELETE CASCADE,
@@ -2911,19 +2916,19 @@ INSERT INTO item VALUES(168,8,0,0,0,0,1,0,'Ulimate Prismatic Ring','textures/ite
 INSERT INTO item VALUES(169,8,0,0,0,0,2,0,'Physical Ring','textures/items/ring.png','','','',0,1000,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(170,8,0,0,0,0,2,0,'Greater Physical Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(171,8,0,0,0,0,2,0,'Ultimate Physical Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(172,8,0,0,0,0,3,0,'Fire Ring','textures/items/ring.png','','Item_FirePower','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(172,8,0,0,0,0,3,16,'Fire Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(173,8,0,0,0,0,3,0,'Greater Fire Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(174,8,0,0,0,0,3,0,'Ultimate Fire Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(175,8,0,0,0,0,4,0,'Cold Ring','textures/items/ring.png','','Item_ColdPower','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(175,8,0,0,0,0,4,17,'Cold Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(176,8,0,0,0,0,4,0,'Greater Cold Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(177,8,0,0,0,0,4,0,'Ultimate Cold Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(178,8,0,0,0,0,5,0,'Lightning Ring','textures/items/ring.png','','Item_LightningPower','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(178,8,0,0,0,0,5,18,'Lightning Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(179,8,0,0,0,0,5,0,'Greater Lightning Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(180,8,0,0,0,0,5,0,'Ultimate Lightning Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(181,8,0,0,0,0,6,0,'Poison Ring','textures/items/ring.png','','Item_PoisonPower','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(181,8,0,0,0,0,6,19,'Poison Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(182,8,0,0,0,0,6,0,'Greater Poison Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(183,8,0,0,0,0,6,0,'Ultimate Poison Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(184,8,0,0,0,0,7,0,'Bleed Ring','textures/items/ring.png','','Item_BleedPower','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(184,8,0,0,0,0,7,20,'Bleed Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(185,8,0,0,0,0,7,0,'Greater Bleed Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(186,8,0,0,0,0,7,0,'Ultimate Bleed Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(187,8,0,0,0,0,8,0,'Stun Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0);

@@ -217,6 +217,31 @@ Set_Spirit.Attributes = {
 	ManaPower = { "10%", "50%" },
 }
 
+Set_Fire = Base_Set:New()
+Set_Fire.Attributes = {
+	FirePower = { "25%", "75%" },
+}
+
+Set_Cold = Base_Set:New()
+Set_Cold.Attributes = {
+	ColdPower = { "25%", "75%" },
+}
+
+Set_Lightning = Base_Set:New()
+Set_Lightning.Attributes = {
+	LightningPower = { "25%", "75%" },
+}
+
+Set_Poison = Base_Set:New()
+Set_Poison.Attributes = {
+	PoisonPower = { "25%", "75%" },
+}
+
+Set_Bleed = Base_Set:New()
+Set_Bleed.Attributes = {
+	BleedPower = { "25%", "75%" },
+}
+
 -- Added Bonus --
 -- Names need to start with SetBonus for the tooltip description to work correctly --
 
