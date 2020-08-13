@@ -819,6 +819,23 @@ function SetBonus_DimensionalSlippers.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Lava Boots --
+
+SetBonus_LavaBoots = Base_Set:New()
+SetBonus_LavaBoots.Attributes = {
+	MoveSpeed = { "5%", "15%" },
+}
+
+function SetBonus_LavaBoots.GetInfo(self, Source, Item)
+	return "[c yellow]Grants immunity to lava\n\n" .. self:GetAddedInfo(Source, Item)
+end
+
+function SetBonus_LavaBoots.Stats(self, Item, Object, Change)
+	Change.LavaProtection = true
+
+	return Change
+end
+
 -- Diagonal --
 
 Item_Diagonal = { }
