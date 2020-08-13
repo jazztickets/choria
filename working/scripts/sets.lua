@@ -212,6 +212,11 @@ Set_Healers.Attributes = {
 	HealPower = { "10%", "50%" },
 }
 
+Set_Spirit = Base_Set:New()
+Set_Spirit.Attributes = {
+	ManaPower = { "10%", "50%" },
+}
+
 -- Added Bonus --
 -- Names need to start with SetBonus for the tooltip description to work correctly --
 

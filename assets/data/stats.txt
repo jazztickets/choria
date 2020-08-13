@@ -2721,6 +2721,7 @@ INSERT INTO "set" VALUES(11,'Warrior''s','Set_Warriors',4);
 INSERT INTO "set" VALUES(12,'Steel','Set_Steel',4);
 INSERT INTO "set" VALUES(13,'Dark','Set_Dark',2);
 INSERT INTO "set" VALUES(14,'Healers','Set_Healers',2);
+INSERT INTO "set" VALUES(15,'Spirit','Set_Spirit',2);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES "itemtype"(id) ON DELETE CASCADE,
@@ -2877,14 +2878,14 @@ INSERT INTO item VALUES(134,10,0,1,2,0,0,0,'Crab Legs','textures/items/crab_legs
 INSERT INTO item VALUES(135,7,0,0,0,0,0,6,'Wizard Book','textures/items/wizard_book.png','','SetBonus_WizardBook','',0,1300,1,0,20,0,0.0,0.0,1,0,0,0,4,0,0,0,25,0,2,0,0,0,0,0,0,0,20,0);
 INSERT INTO item VALUES(136,7,0,0,0,0,0,2,'Mage Book','textures/items/mage_book.png','','SetBonus_MageBook','',0,130,1,0,10,0,0.0,0.0,1,0,0,0,2,0,0,0,13,0,1,0,0,0,0,0,0,0,10,0);
 INSERT INTO item VALUES(137,13,0,0,0,0,0,0,'Tower Key','textures/items/key0.png','','','',0,350,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(138,8,0,0,0,0,0,14,'Troll''s Ring','textures/items/ring.png','','','',0,250,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,7,0,-25,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(138,8,0,0,0,0,0,14,'Troll''s Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,7,0,-25,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(139,11,0,0,0,0,0,0,'Crab Trophy','textures/items/crab_trophy.png','','','',0,300,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(140,11,0,0,0,0,0,0,'Slime Trophy','textures/items/slime_trophy.png','','','',0,750,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(141,5,2,0,0,0,0,7,'Scimitar','textures/items/scimitar.png','','SetBonus_Scimitar','Proc_Haste',0,750,1,30,20,15,3.0,0.0,1,90,170,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(142,5,2,0,0,0,0,6,'Wizard Wand','textures/items/wizard_wand.png','','SetBonus_WizardWand','Proc_Mana',0,600,1,30,20,15,0.0,0.0,1,10,30,0,0,0,0,0,40,0,2,0,0,0,0,1,0,0,20,0);
 INSERT INTO item VALUES(143,3,0,0,0,0,6,1,'Cloth Vest','textures/items/cloth_vest.png','','','',0,120,1,0,10,0,0.0,0.0,1,0,0,1,0,0,5,0,0,0,0,7,4,0,0,0,0,3,0,0);
 INSERT INTO item VALUES(144,3,0,0,0,0,0,6,'Wizard Robes','textures/items/wizard_robes.png','','','',0,1500,1,0,20,0,0.0,0.0,1,0,0,4,0,0,0,0,25,0,2,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(145,8,0,0,0,0,0,14,'Ring of Health','textures/items/ring.png','','','',0,125,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(145,8,0,0,0,0,0,14,'Ring of Health','textures/items/ring.png','','','',0,200,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(146,10,0,1,2,0,0,0,'Spectral Dust','textures/items/spectral_dust.png','','Item_SpectralDust','',0,25,1,25,0,0,15.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(147,5,2,0,0,0,0,4,'Morning Star','textures/items/morning_star.png','','SetBonus_MorningStar','Proc_Stun',0,250,1,1,20,15,2.0,0.0,1,50,110,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(148,2,0,0,0,0,0,2,'Cap','textures/items/cap.png','','SetBonus_Cap','',0,15,1,0,10,0,0.0,0.0,1,0,0,1,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,0);
@@ -2897,8 +2898,8 @@ INSERT INTO item VALUES(154,6,2,0,0,0,0,7,'Claymore','textures/items/claymore.pn
 INSERT INTO item VALUES(155,10,0,1,1,0,0,0,'Ghostly Potion','textures/items/ghostly_potion.png','','Item_InvisPotion','',0,150,1,0,0,0,30.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(156,10,0,8,3,0,0,0,'Poison','textures/items/poison.png','','Item_PoisonPotion','',0,25,1,10,0,0,10.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(157,3,0,0,0,0,7,7,'Reinforced Jerkin','textures/items/reinforced_jerkin.png','','','',0,1300,1,0,20,0,0.0,0.0,1,0,0,10,2,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(158,8,0,0,0,0,0,0,'Magic Ring','textures/items/ring.png','','Item_ManaPower','',0,150,1,5,10,0,0.0,0.0,1,0,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(159,8,0,0,0,0,0,0,'Glowing Ring','textures/items/glowing_ring.png','','Item_ManaPower','',0,800,1,5,10,0,0.0,0.0,1,0,0,0,0,0,0,0,35,0,3,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(158,8,0,0,0,0,0,15,'Magic Ring','textures/items/ring.png','','','',0,250,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,20,0,1,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(159,8,0,0,0,0,0,15,'Glowing Ring','textures/items/glowing_ring.png','','','',0,1000,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,35,0,3,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(160,4,0,0,0,0,6,1,'Cloth Slippers','textures/items/cloth_slippers.png','','','',0,60,1,0,10,0,0.0,0.0,1,0,0,0,0,0,2,0,0,0,0,4,7,0,0,0,0,1,0,0);
 INSERT INTO item VALUES(161,11,0,0,0,0,0,0,'Ghost Trophy','textures/items/ghost_trophy.png','','','',0,1250,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(162,8,0,0,0,0,0,0,'Ring of Jem','textures/items/ring.png','','Item_AttackPower','',0,1500,1,10,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,0,0,0,0);
