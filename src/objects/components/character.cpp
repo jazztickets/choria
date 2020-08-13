@@ -387,7 +387,7 @@ void _Character::CalculateStats() {
 		Attributes["Evasion"].Int += Item->GetEvasion(Upgrades);
 		Attributes["AllSkills"].Int += Item->GetAllSkills(Upgrades);
 		Attributes["SpellDamage"].Int += Item->GetSpellDamage(Upgrades);
-		Attributes["Cooldown"].Int += Item->GetCooldownReduction(Upgrades);
+		Attributes["Cooldowns"].Int += Item->GetCooldownReduction(Upgrades);
 		Attributes["ExperienceBonus"].Int += Item->GetExperienceBonus(Upgrades);
 		Attributes["GoldBonus"].Int += Item->GetGoldBonus(Upgrades);
 
@@ -532,7 +532,7 @@ void _Character::CalculateStats() {
 	Attributes["Evasion"].Int = std::clamp(Attributes["Evasion"].Int, 0, GAME_MAX_EVASION);
 	Attributes["MoveSpeed"].Int = std::max(Attributes["MoveSpeed"].Int, PLAYER_MIN_MOVESPEED);
 	Attributes["BattleSpeed"].Int = std::max(Attributes["BattleSpeed"].Int, BATTLE_MIN_SPEED);
-	Attributes["Cooldown"].Int = std::max(Attributes["Cooldown"].Int, 0);
+	Attributes["Cooldowns"].Int = std::max(Attributes["Cooldowns"].Int, 0);
 
 	Attributes["MinDamage"].Int = std::max(Attributes["MinDamage"].Int, 0);
 	Attributes["MaxDamage"].Int = std::max(Attributes["MaxDamage"].Int, 0);

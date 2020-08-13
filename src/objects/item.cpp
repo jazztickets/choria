@@ -199,7 +199,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(!IsEquippable() && Cooldown > 0.0) {
 		DrawPosition.y += RewindSpacingY;
 		std::stringstream Buffer;
-		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldown"].Mult() << " second cooldown";
+		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldowns"].Mult() << " second cooldown";
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 		DrawPosition.y += LargeSpacingY;
 	}
@@ -1288,7 +1288,7 @@ float _Item::GetExperienceBonus(int Upgrades) const {
 
 // Get cooldown reduction
 float _Item::GetCooldownReduction(int Upgrades) const {
-	return -GetUpgradedValue<float>("Cooldown", Upgrades, -Cooldown);
+	return -GetUpgradedValue<float>("Cooldowns", Upgrades, -Cooldown);
 }
 
 // Get + all skills

@@ -37,7 +37,7 @@ Base_Set = {
 
 				Sign = "+"
 				if UpgradedValue < 0 then
-					Sign = "-"
+					Sign = ""
 				end
 
 				PercentPosition = string.find(Value, "%%")
@@ -121,6 +121,16 @@ Set_Wizard.Attributes = {
 	MaxMana = { "100", "300" },
 }
 
+Set_Arcane = Base_Set:New()
+Set_Arcane.Attributes = {
+	AllSkills = { "1", "5" },
+	Cooldowns = { "-5%", "-25%" },
+	ElementalResist = { "25%", "60%" },
+	ManaRegen = { "5", "20" },
+	MaxHealth = { "50", "250" },
+	MaxMana = { "200", "750" },
+}
+
 Set_Leather = Base_Set:New()
 Set_Leather.Attributes = {
 	Armor = { "2", "10" },
@@ -174,7 +184,7 @@ SetBonus_WizardWand.Attributes = {
 
 SetBonus_ArcaneWand = Base_Set:New()
 SetBonus_ArcaneWand.Attributes = {
-	SpellDamage = { "25%", "100%" },
+	SpellDamage = { "25%", "125%" },
 }
 
 SetBonus_ShortSword = Base_Set:New()
@@ -355,7 +365,7 @@ SetBonus_WizardBook.Attributes = {
 
 SetBonus_ArcaneBook = Base_Set:New()
 SetBonus_ArcaneBook.Attributes = {
-	ManaPower = { "25%", "75%" },
+	ManaPower = { "25%", "125%" },
 }
 
 SetBonus_LeatherBuckler = Base_Set:New()
