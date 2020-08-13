@@ -2,11 +2,23 @@
 
 Base_Attack = {
 
+	Targets = 1,
+	TargetsPerLevel = 0,
+
 	New = function(self, Object)
 		Object = Object or {}
 		setmetatable(Object, self)
 		self.__index = self
 		return Object
+	end,
+
+	GetTargetCount = function(self, Level, Fraction)
+		Value = self.Targets + self.TargetsPerLevel * Level
+		if Fraction == nil or Fraction == false then
+			return math.floor(Value)
+		else
+			return Value
+		end
 	end,
 
 	GetPierce = function(self, Source)
@@ -642,7 +654,7 @@ end
 Skill_Cleave = Base_Attack:New()
 Skill_Cleave.DamageBase = 50
 Skill_Cleave.DamagePerLevel = 1.75
-Skill_Cleave.BaseTargets = 3
+Skill_Cleave.Targets = 3
 Skill_Cleave.TargetsPerLevel = 0
 
 function Skill_Cleave.CanUse(self, Level, Source, Target)
@@ -665,10 +677,6 @@ end
 
 function Skill_Cleave.GenerateDamage(self, Level, Source)
 	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
-end
-
-function Skill_Cleave.GetTargetCount(self, Level)
-	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
 end
 
 function Skill_Cleave.GetInfo(self, Source, Item)
@@ -694,7 +702,7 @@ end
 Skill_BladeDance = Base_Attack:New()
 Skill_BladeDance.BaseChance = 75
 Skill_BladeDance.ChancePerLevel = 0
-Skill_BladeDance.BaseTargets = 4
+Skill_BladeDance.Targets = 4
 Skill_BladeDance.TargetsPerLevel = 0.08
 Skill_BladeDance.DamageBase = 75
 Skill_BladeDance.DamagePerLevel = 2
@@ -737,10 +745,6 @@ function Skill_BladeDance.GetBleedLevel(self, Source, Level)
 	return math.floor((self.BleedingLevel + self.IncreasePerLevel * (Level - 1) + Level * Level * self.BleedScale) * Source.BleedPower * 0.01)
 end
 
-function Skill_BladeDance.GetTargetCount(self, Level)
-	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
-end
-
 function Skill_BladeDance.GetInfo(self, Source, Item)
 	TextColor = "yellow"
 	if not self:CanUse(Item.Level, Source, nil) then
@@ -758,7 +762,7 @@ function Skill_BladeDance.GetInfo(self, Source, Item)
 		BleedDamageValue = self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds"
 	end
 
-	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] enemies with [c green]" .. DamageValue .. "[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. BleedDamageValue .. "\n[c " .. TextColor .. "]Requires two off-hand weapons"
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies with [c green]" .. DamageValue .. "[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. BleedDamageValue .. "\n[c " .. TextColor .. "]Requires two off-hand weapons"
 end
 
 function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -1088,17 +1092,22 @@ function Skill_PetMastery.GetPower(self, Level)
 	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
 end
 
-function Skill_PetMastery.GetSummonLimit(self, Level)
-	return math.floor(self.SummonLimit + self.SummonLimitPerLevel * (Level - 1))
+function Skill_PetMastery.GetSummonLimit(self, Level, Fraction)
+	Value = self.SummonLimit + self.SummonLimitPerLevel * (Level - 1)
+	if Fraction == true then
+		return Value
+	else
+		return math.floor(Value)
+	end
 end
 
 function Skill_PetMastery.GetInfo(self, Source, Item)
-	return "Increase pet stats by [c green]" .. self:GetPower(Item.Level) .. "%\nIncrease summon limit by [c green]" .. self:GetSummonLimit(Item.Level)
+	return "Increase pet stats by [c green]" .. self:GetPower(Item.Level) .. "%\nIncrease summon limit by [c green]" .. self:GetSummonLimit(Item.Level, Item.MoreInfo)
 end
 
 function Skill_PetMastery.Stats(self, Level, Object, Change)
 	Change.PetPower = self:GetPower(Level)
-	Change.SummonLimit = self:GetSummonLimit(Level)
+	Change.SummonLimit = self:GetSummonLimit(Level, false)
 
 	return Change
 end
@@ -1284,12 +1293,12 @@ end
 
 -- Taunt --
 
-Skill_Taunt = {}
+Skill_Taunt = Base_Attack:New()
 Skill_Taunt.Armor = 10
 Skill_Taunt.ArmorPerLevel = 0.5
 Skill_Taunt.Duration = 3.01
 Skill_Taunt.DurationPerLevel = 0.02
-Skill_Taunt.BaseTargets = 2
+Skill_Taunt.Targets = 2
 Skill_Taunt.TargetsPerLevel = 0.2
 
 function Skill_Taunt.GetDuration(self, Level)
@@ -1300,12 +1309,8 @@ function Skill_Taunt.GetArmor(self, Level)
 	return math.floor(self.Armor + self.ArmorPerLevel * Level)
 end
 
-function Skill_Taunt.GetTargetCount(self, Level)
-	return math.floor(self.BaseTargets + self.TargetsPerLevel * Level)
-end
-
 function Skill_Taunt.GetInfo(self, Source, Item)
-	Count = self:GetTargetCount(Item.Level)
+	Count = self:GetTargetCount(Item.Level, Item.MoreInfo)
 	Plural = "enemies"
 	if Count == 1 then
 		Plural = "enemy"
