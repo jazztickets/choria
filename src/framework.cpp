@@ -456,6 +456,7 @@ void _Framework::LoadAssets() {
 
 	// Load textures
 	ae::Assets.LoadTextureDirectory("textures/buffs/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/buttonbar/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/builds/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/hud/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", false, true);

@@ -214,27 +214,27 @@
 	</element>
 	<element id="element_buttonbar" size_x="288" size_y="48" alignment_y="0" index="1">
 		<element id="button_buttonbar_join" style="style_buttonbar_slot" hover_style="style_menu_hover" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true">
-			<element id="image_buttonbar_join" texture="textures/hud/join.png" size_x="48" size_y="48"/>
+			<element id="image_buttonbar_join" texture="textures/buttonbar/join.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_join" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
 		<element id="button_buttonbar_inventory" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true">
-			<element id="image_buttonbar_inventory" texture="textures/hud/inventory.png" size_x="48" size_y="48"/>
+			<element id="image_buttonbar_inventory" texture="textures/buttonbar/inventory.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_inventory" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
 		<element id="button_buttonbar_trade" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="96" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true">
-			<element id="image_buttonbar_trade" texture="textures/hud/trade.png" size_x="48" size_y="48"/>
+			<element id="image_buttonbar_trade" texture="textures/buttonbar/trade.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_trade" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
 		<element id="button_buttonbar_skills" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="144" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true">
-			<element id="image_buttonbar_skills" texture="textures/hud/skills.png" size_x="48" size_y="48"/>
+			<element id="image_buttonbar_skills" texture="textures/buttonbar/skills.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_skills" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
 		<element id="button_buttonbar_party" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="192" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true">
-			<element id="image_buttonbar_party" texture="textures/hud/party.png" size_x="48" size_y="48"/>
+			<element id="image_buttonbar_party" texture="textures/buttonbar/party.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_party" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
 		<element id="button_buttonbar_menu" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="240" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true">
-			<element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48"/>
+			<element id="image_buttonbar_menu" texture="textures/buttonbar/menu.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
 	</element>
