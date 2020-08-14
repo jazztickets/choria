@@ -77,3 +77,4 @@ done | parallel
 
 # clean up
 rm -f export/_*
+rm -f export/none.png
