@@ -1157,7 +1157,7 @@ void _HUD::DrawHudEffects() {
 			StatusEffect->HUDElement->BaseOffset = Offset;
 			StatusEffect->HUDElement->CalculateBounds();
 			StatusEffect->Render(StatusEffect->HUDElement, glm::vec4(1.0f));
-			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
+			Offset.x += UI_BUFF_SIZE.x + 2;
 		}
 	}
 }
@@ -1234,7 +1234,7 @@ void _HUD::DrawActionBar() {
 		const _Item *Item = Player->Character->ActionBar[i].Item;
 		if(Item) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
+			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture, UI_SLOT_SIZE);
 
 			// Draw cooldown
 			auto CooldownIterator = Player->Character->Cooldowns.find(Item->ID);
@@ -1330,16 +1330,16 @@ void _HUD::DrawRecentItems() {
 
 		// Draw item
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawScaledImage(DrawPosition, RecentItem.Item->Texture, Color);
+		ae::Graphics.DrawScaledImage(DrawPosition, RecentItem.Item->Texture, UI_SLOT_SIZE, Color);
 
 		// Draw count
 		ae::Assets.Fonts["hud_small"]->DrawText("+" + std::to_string(RecentItem.Count), DrawPosition + glm::vec2(-35, 7) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
 
 		// Update position
-		DrawPosition.y -= (RecentItem.Item->Texture->Size.y + 5) * ae::_Element::GetUIScale();
+		DrawPosition.y -= (UI_SLOT_SIZE.y + 5) * ae::_Element::GetUIScale();
 
 		// Don't draw off screen
-		if(DrawPosition.y < (RecentItem.Item->Texture->Size.y * ae::_Element::GetUIScale()))
+		if(DrawPosition.y < (UI_SLOT_SIZE.y * ae::_Element::GetUIScale()))
 			break;
 	}
 
@@ -1380,7 +1380,7 @@ void _HUD::DrawCursorItem() {
 	if(Cursor.InventorySlot.Item) {
 		glm::vec2 DrawPosition = ae::Input.GetMouse();
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawScaledImage(DrawPosition, Cursor.InventorySlot.Item->Texture, ae::Assets.Colors["itemfade"]);
+		ae::Graphics.DrawScaledImage(DrawPosition, Cursor.InventorySlot.Item->Texture, UI_SLOT_SIZE, ae::Assets.Colors["itemfade"]);
 	}
 }
 

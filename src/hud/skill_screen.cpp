@@ -77,7 +77,7 @@ void _SkillScreen::Init() {
 		Button->Name = "button_skills_skill";
 		Button->Parent = Element;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = Skill->Texture->Size;
+		Button->BaseSize = UI_SLOT_SIZE;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
 		Button->Index = (int)Skill->ID;
@@ -139,9 +139,9 @@ void _SkillScreen::Init() {
 		MinusButton->Children.push_back(MinusLabel);
 
 		// Update position
-		Offset.x += Skill->Texture->Size.x + Spacing.x;
-		if(Offset.x > Element->BaseSize.x - Skill->Texture->Size.x) {
-			Offset.y += Skill->Texture->Size.y + Spacing.y;
+		Offset.x += UI_SLOT_SIZE.x + Spacing.x;
+		if(Offset.x > Element->BaseSize.x - UI_SLOT_SIZE.x) {
+			Offset.y += UI_SLOT_SIZE.y + Spacing.y;
 			Offset.x = Start.x;
 		}
 

@@ -134,7 +134,7 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 
 			// Draw item
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawScaledImage(DrawPosition, Item->Item->Texture);
+			ae::Graphics.DrawScaledImage(DrawPosition, Item->Item->Texture, UI_SLOT_SIZE);
 
 			// Draw count
 			if(Item->Count > 1)

@@ -455,24 +455,21 @@ void _Framework::HandleCommand(ae::_Console *Console) {
 void _Framework::LoadAssets() {
 
 	// Load textures
-	ae::Assets.LoadTextureDirectory("textures/battle/");
-	ae::Assets.LoadTextureDirectory("textures/buffs/");
-	ae::Assets.LoadTextureDirectory("textures/builds/");
-	ae::Assets.LoadTextureDirectory("textures/editor/");
-	ae::Assets.LoadTextureDirectory("textures/hud/");
+	ae::Assets.LoadTextureDirectory("textures/buffs/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/builds/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/hud/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", false, true);
-	ae::Assets.LoadTextureDirectory("textures/interface/");
-	ae::Assets.LoadTextureDirectory("textures/items/");
+	ae::Assets.LoadTextureDirectory("textures/items/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/lights/");
 	ae::Assets.LoadTextureDirectory("textures/map/");
 	ae::Assets.LoadTextureDirectory("textures/map_nearest/", false, false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/menu/");
-	ae::Assets.LoadTextureDirectory("textures/minigames/");
-	ae::Assets.LoadTextureDirectory("textures/monsters/");
-	ae::Assets.LoadTextureDirectory("textures/portraits/");
-	ae::Assets.LoadTextureDirectory("textures/models/");
-	ae::Assets.LoadTextureDirectory("textures/skills/");
-	ae::Assets.LoadTextureDirectory("textures/status/");
+	ae::Assets.LoadTextureDirectory("textures/menu/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/minigames/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/models/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/monsters/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/portraits/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/skills/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/status/", false, false, true);
 
 	// Load tables
 	ae::Assets.LoadLayers("tables/layers.tsv");

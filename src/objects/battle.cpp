@@ -125,7 +125,7 @@ void _Battle::Update(double FrameTime) {
 			if(BattleElement && ActionResult.Source.Object && ActionResult.Target.Object) {
 
 				// Find start position
-				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(ActionResult.Source.Object->Character->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0) * ae::_Element::GetUIScale();
+				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(UI_PORTRAIT_SIZE.x/2 + UI_SLOT_SIZE.x/2 + 10, 0) * ae::_Element::GetUIScale();
 				ActionResult.LastPosition = ActionResult.Position;
 
 				// Interpolate between start and end position of action used
@@ -178,8 +178,8 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 	if(ActionResult.ActionUsed.Item && !ActionResult.ActionUsed.Item->IsSkill())
-		ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
-	ae::Graphics.DrawScaledImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
+		ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], UI_SLOT_SIZE, WhiteAlpha);
+	ae::Graphics.DrawScaledImage(DrawPosition, ActionResult.Texture, UI_SLOT_SIZE, WhiteAlpha);
 
 	// Get damage value and color
 	glm::vec4 TextColor = glm::vec4(1.0f);

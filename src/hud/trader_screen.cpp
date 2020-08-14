@@ -84,7 +84,7 @@ void _TraderScreen::Render(double BlendFactor) {
 		// Draw item
 		const _Item *Item = HUD->Player->Character->Trader->Items[i].Item;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
+		ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture, UI_SLOT_SIZE);
 
 		glm::vec4 Color;
 		if(!HUD->Player->Inventory->IsValidSlot(RequiredItemSlots[i]))
@@ -102,7 +102,7 @@ void _TraderScreen::Render(double BlendFactor) {
 	// Draw item
 	if(HUD->Player->Character->Trader->RewardItem) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawScaledImage(DrawPosition, HUD->Player->Character->Trader->RewardItem->Texture);
+		ae::Graphics.DrawScaledImage(DrawPosition, HUD->Player->Character->Trader->RewardItem->Texture, UI_SLOT_SIZE);
 
 		if(HUD->Player->Character->Trader->Count > 1)
 			ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(HUD->Player->Character->Trader->Count), DrawPosition + CountOffset, ae::RIGHT_BASELINE);

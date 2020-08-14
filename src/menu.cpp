@@ -626,7 +626,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Name = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = Portrait.Texture->Size;
+		Button->BaseSize = UI_PORTRAIT_SIZE;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
@@ -635,9 +635,9 @@ void _Menu::LoadPortraitButtons() {
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
-		Offset.x += Portrait.Texture->Size.x + 14;
-		if(Offset.x > PortraitsElement->BaseSize.x - Portrait.Texture->Size.x - 14) {
-			Offset.y += Portrait.Texture->Size.y + 14;
+		Offset.x += UI_PORTRAIT_SIZE.x + 14;
+		if(Offset.x > PortraitsElement->BaseSize.x - UI_PORTRAIT_SIZE.x - 14) {
+			Offset.y += UI_PORTRAIT_SIZE.y + 14;
 			Offset.x = 14;
 		}
 
@@ -681,7 +681,7 @@ void _Menu::LoadBuildButtons() {
 		Button->Name = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = Build.Texture->Size;
+		Button->BaseSize = UI_PORTRAIT_SIZE;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Build.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
@@ -701,8 +701,8 @@ void _Menu::LoadBuildButtons() {
 
 		// Update position
 		Offset.x += 114;
-		if(Offset.x > BuildsElement->BaseSize.x - Build.Texture->Size.x - 14) {
-			Offset.y += Build.Texture->Size.y + 32;
+		if(Offset.x > BuildsElement->BaseSize.x - UI_PORTRAIT_SIZE.x - 14) {
+			Offset.y += UI_PORTRAIT_SIZE.y + 32;
 			Offset.x = 14;
 		}
 
@@ -1625,7 +1625,7 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 				// Set portrait
 				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);
 				if(CharacterSlots[Slot].Image->Texture)
-					CharacterSlots[Slot].Image->BaseSize = CharacterSlots[Slot].Image->Texture->Size;
+					CharacterSlots[Slot].Image->BaseSize = UI_PORTRAIT_SIZE;
 
 				CharacterSlots[Slot].Image->CalculateBounds();
 			}

@@ -89,7 +89,7 @@ void _StatusEffect::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 // Create element for hud
 ae::_Element *_StatusEffect::CreateUIElement(ae::_Element *Parent) {
 	ae::_Element *Element = new ae::_Element();
-	Element->BaseSize = glm::vec2(Buff->Texture->Size);
+	Element->BaseSize = UI_BUFF_SIZE;
 	Element->Alignment = ae::LEFT_TOP;
 	Element->Active = true;
 	Element->Index = 0;

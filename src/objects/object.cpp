@@ -440,7 +440,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 	// Portrait
 	if(Character->Portrait) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawScaledImage(SlotPosition + glm::vec2(Character->Portrait->Size/2) * ae::_Element::GetUIScale(), Character->Portrait, GlobalColor);
+		ae::Graphics.DrawScaledImage(SlotPosition + UI_PORTRAIT_SIZE * 0.5f * ae::_Element::GetUIScale(), Character->Portrait, UI_PORTRAIT_SIZE, GlobalColor);
 	}
 
 	// Get health/mana bar positions
@@ -529,11 +529,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 	// Draw the action used
 	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide && Character->Action.Item) {
-		glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2((-ItemBackTexture->Size.x/2 - 16) * ae::_Element::GetUIScale(), Fighter->BattleElement->Size.y/2);
+		glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2((-UI_SLOT_SIZE.x/2 - 16) * ae::_Element::GetUIScale(), Fighter->BattleElement->Size.y/2);
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		if(!Character->Action.Item->IsSkill())
-			ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
-		ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
+			ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, UI_SLOT_SIZE, GlobalColor);
+		ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, UI_SLOT_SIZE, GlobalColor);
 	}
 
 	// Draw potential action to use
@@ -562,14 +562,14 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 12 * ae::_Element::GetUIScale(), SlotPosition.y + Fighter->BattleElement->Size.y/2);
 			if(ClientPlayer->Fighter->PotentialAction.Item && !ClientPlayer->Fighter->PotentialAction.Item->IsSkill()) {
-				DrawPosition.x += ItemBackTexture->Size.x/2 * ae::_Element::GetUIScale();
-				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, Color);
+				DrawPosition.x += UI_SLOT_SIZE.x/2 * ae::_Element::GetUIScale();
+				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, UI_SLOT_SIZE, Color);
 			}
 			else
-				DrawPosition.x += Texture->Size.x/2 * ae::_Element::GetUIScale();
+				DrawPosition.x += UI_SLOT_SIZE.x/2 * ae::_Element::GetUIScale();
 
 			// Draw item
-			ae::Graphics.DrawScaledImage(DrawPosition, Texture, Color);
+			ae::Graphics.DrawScaledImage(DrawPosition, Texture,  UI_SLOT_SIZE, Color);
 		}
 	}
 
@@ -580,7 +580,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 			StatusEffect->BattleElement->BaseOffset = Offset;
 			StatusEffect->BattleElement->CalculateBounds();
 			StatusEffect->Render(StatusEffect->BattleElement, GlobalColor);
-			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
+			Offset.x += UI_BUFF_SIZE.x + 2;
 		}
 	}
 }

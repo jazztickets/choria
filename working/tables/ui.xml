@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <element base_height="1080">
 	<element id="element_menu_title" style="style_hud_bg" size_x="720" size_y="984">
-		<element id="image_menu_title_logo" texture="textures/menu/logo.png" offset_y="-325" size_x="512" size_y="173"/>
+		<element id="image_menu_title_logo" texture="textures/menu/logo.png" offset_y="-325" size_x="512" size_y="256"/>
 		<element id="button_menu_title_play" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-84" size_x="280" size_y="66" clickable="true">
 			<element id="label_menu_title_play" font="menu_buttons" text="Play" offset_y="44" alignment_y="3"/>
 		</element>
