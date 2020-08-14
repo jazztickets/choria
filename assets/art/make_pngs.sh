@@ -51,8 +51,10 @@ fi
 density=$((96 * $scale))
 
 # get size of each image
-size=`identify -density 96 -format "%[fx:w/10]" "$file"`
-size=$(($size * $scale))
+width=`identify -density 96 -format "%[fx:w/10]" "$file"`
+height=`identify -density 96 -format "%[fx:h/10]" "$file"`
+width=$(($width * $scale))
+height=$(($height * $scale))
 
 # get list of objects
 names=`xmllint --xpath "//*[local-name()='svg']/*[local-name()='metadata']//*[local-name()='description']/text()" "$file"`
@@ -62,7 +64,7 @@ mkdir -p export
 rm -f export/*.png
 
 # export pngs
-convert -density ${density} -background none ${file} -crop ${size}x${size} -depth 8 +repage PNG32:export/_out.png
+convert -density ${density} -background none ${file} -crop ${width}x${height} -depth 8 +repage PNG32:export/_out.png
 
 # name files and optimize in parallel
 i=0
