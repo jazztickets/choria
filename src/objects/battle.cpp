@@ -677,7 +677,7 @@ void _Battle::ServerEndBattle() {
 			std::vector<_Object *> ObjectArray { std::begin(RewardObjects), std::end(RewardObjects) };
 
 			// Get items from zonedrops if present
-			Stats->Database->PrepareQuery("SELECT item_id, count FROM zonedrops WHERE zone_id = @zone_id");
+			Stats->Database->PrepareQuery("SELECT item_id, count FROM zonedrop WHERE zone_id = @zone_id");
 			Stats->Database->BindInt(1, Zone);
 			std::list<uint32_t> ItemDrops;
 			while(Stats->Database->FetchRow()) {
