@@ -53,6 +53,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(!Player)
 		return;
 
+	bool Blacksmith = (Tooltip.Window == _HUD::WINDOW_BLACKSMITH);
+	bool ShowAltText = ae::Input.ModKeyDown(KMOD_ALT);
+	bool ShowFractions = ae::Input.ModKeyDown(KMOD_ALT) || Blacksmith;
+
 	ae::_Element *TooltipElement = ae::Assets.Elements["element_item_tooltip"];
 	ae::_Element *TooltipName = ae::Assets.Elements["label_item_tooltip_name"];
 	ae::_Element *TooltipType = ae::Assets.Elements["label_item_tooltip_type"];
@@ -264,7 +268,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Draw proc info
-	bool Blacksmith = (Tooltip.Window == _HUD::WINDOW_BLACKSMITH);
 	DrawDescription(true, Player, Proc, DrawPosition, Blacksmith, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
 
 	// Draw set info
@@ -285,11 +288,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	bool StatDrawn = false;
 
 	// Damage
-	int DrawMinDamage = (int)GetMinDamage(Upgrades);
-	int DrawMaxDamage = (int)GetMaxDamage(Upgrades);
+	int DrawMinDamage = std::floor(GetMinDamage(Upgrades));
+	int DrawMaxDamage = std::floor(GetMaxDamage(Upgrades));
 	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
 		std::stringstream Buffer;
-		if(ae::Input.ModKeyDown(KMOD_ALT))
+		if(ShowAltText)
 			Buffer << ae::Round((DrawMinDamage + DrawMaxDamage) / 2.0f);
 		else if(DrawMinDamage != DrawMaxDamage)
 			Buffer << DrawMinDamage << " - " << DrawMaxDamage;
@@ -317,8 +320,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Pierce
-	int DrawPierce = (int)GetPierce(Upgrades);
-	if(DrawPierce != 0) {
+	float DrawPierce = GetPierce(Upgrades);
+	if(DrawPierce != 0.0f) {
+		if(!ShowFractions)
+			DrawPierce = std::floor(DrawPierce);
+
 		std::stringstream Buffer;
 		Buffer << DrawPierce;
 
@@ -333,8 +339,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Armor
-	int DrawArmor = (int)GetArmor(Upgrades);
-	if(DrawArmor != 0) {
+	float DrawArmor = GetArmor(Upgrades);
+	if(DrawArmor != 0.0f) {
+		if(!ShowFractions)
+			DrawArmor = std::floor(DrawArmor);
+
 		std::stringstream Buffer;
 		Buffer << (DrawArmor < 0 ? "" : "+") << DrawArmor;
 
@@ -349,8 +358,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Damage block
-	int DrawDamageBlock = (int)GetDamageBlock(Upgrades);
-	if(DrawDamageBlock != 0) {
+	float DrawDamageBlock = GetDamageBlock(Upgrades);
+	if(DrawDamageBlock != 0.0f) {
+		if(!ShowFractions)
+			DrawDamageBlock = std::floor(DrawDamageBlock);
+
 		std::stringstream Buffer;
 		Buffer << (DrawDamageBlock < 0 ? "" : "+") << DrawDamageBlock;
 
@@ -365,8 +377,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Max health
-	int DrawMaxHealth = (int)GetMaxHealth(Upgrades);
-	if(DrawMaxHealth != 0) {
+	float DrawMaxHealth = GetMaxHealth(Upgrades);
+	if(DrawMaxHealth != 0.0f) {
+		if(!ShowFractions)
+			DrawMaxHealth = std::floor(DrawMaxHealth);
+
 		std::stringstream Buffer;
 		Buffer << (DrawMaxHealth < 0 ? "" : "+") << DrawMaxHealth;
 
@@ -381,8 +396,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Max mana
-	int DrawMaxMana = (int)GetMaxMana(Upgrades);
-	if(DrawMaxMana != 0) {
+	float DrawMaxMana = GetMaxMana(Upgrades);
+	if(DrawMaxMana != 0.0f) {
+		if(!ShowFractions)
+			DrawMaxMana = std::floor(DrawMaxMana);
+
 		std::stringstream Buffer;
 		Buffer << (DrawMaxMana < 0 ? "" : "+") << DrawMaxMana;
 
@@ -398,7 +416,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Resistance
 	if(ResistanceTypeID) {
-		int DrawResistance = (int)GetResistance(Upgrades);
+		float DrawResistance = GetResistance(Upgrades);
+		if(!ShowFractions)
+			DrawResistance = std::floor(DrawResistance);
+
 		std::stringstream Buffer;
 		Buffer << (DrawResistance < 0 ? "" : "+") << DrawResistance << "%";
 
@@ -413,8 +434,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Move speed
-	int DrawMoveSpeed = (int)GetMoveSpeed(Upgrades);
-	if(DrawMoveSpeed != 0) {
+	float DrawMoveSpeed = GetMoveSpeed(Upgrades);
+	if(DrawMoveSpeed != 0.0f) {
+		if(!ShowFractions)
+			DrawMoveSpeed = std::floor(DrawMoveSpeed);
+
 		std::stringstream Buffer;
 		Buffer << (DrawMoveSpeed < 0 ? "" : "+") << DrawMoveSpeed << "%";
 
@@ -429,8 +453,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Battle speed
-	int DrawBattleSpeed = (int)GetBattleSpeed(Upgrades);
-	if(DrawBattleSpeed != 0) {
+	float DrawBattleSpeed = GetBattleSpeed(Upgrades);
+	if(DrawBattleSpeed != 0.0f) {
+		if(!ShowFractions)
+			DrawBattleSpeed = std::floor(DrawBattleSpeed);
+
 		std::stringstream Buffer;
 		Buffer << (DrawBattleSpeed < 0 ? "" : "+") << DrawBattleSpeed << "%";
 
@@ -445,8 +472,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Evasion
-	int DrawEvasion = (int)GetEvasion(Upgrades);
-	if(DrawEvasion != 0) {
+	float DrawEvasion = GetEvasion(Upgrades);
+	if(DrawEvasion != 0.0f) {
+		if(!ShowFractions)
+			DrawEvasion = std::floor(DrawEvasion);
+
 		std::stringstream Buffer;
 		Buffer << (DrawEvasion < 0 ? "" : "+") << DrawEvasion << "%";
 
@@ -461,8 +491,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Health regen
-	int DrawHealthRegen = (int)GetHealthRegen(Upgrades);
-	if(DrawHealthRegen != 0) {
+	float DrawHealthRegen = GetHealthRegen(Upgrades);
+	if(DrawHealthRegen != 0.0f) {
+		if(!ShowFractions)
+			DrawHealthRegen = std::floor(DrawHealthRegen);
+
 		std::stringstream Buffer;
 		Buffer << (DrawHealthRegen < 0 ? "" : "+") << DrawHealthRegen;
 
@@ -477,8 +510,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Mana regen
-	int DrawManaRegen = (int)GetManaRegen(Upgrades);
-	if(DrawManaRegen != 0) {
+	float DrawManaRegen = GetManaRegen(Upgrades);
+	if(DrawManaRegen != 0.0f) {
+		if(!ShowFractions)
+			DrawManaRegen = std::floor(DrawManaRegen);
+
 		std::stringstream Buffer;
 		Buffer << (DrawManaRegen < 0 ? "" : "+") << DrawManaRegen;
 
@@ -493,8 +529,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Gold bonus
-	int DrawGoldBonus = (int)GetGoldBonus(Upgrades);
-	if(DrawGoldBonus != 0) {
+	float DrawGoldBonus = GetGoldBonus(Upgrades);
+	if(DrawGoldBonus != 0.0f) {
+		if(!ShowFractions)
+			DrawGoldBonus = std::floor(DrawGoldBonus);
+
 		std::stringstream Buffer;
 		Buffer << (DrawGoldBonus < 0 ? "" : "+") << DrawGoldBonus << "%";
 
@@ -509,10 +548,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Experience bonus
-	int DrawExpBonus = (int)GetExperienceBonus(Upgrades);
-	if(DrawExpBonus != 0) {
+	float DrawExperienceBonus = GetExperienceBonus(Upgrades);
+	if(DrawExperienceBonus != 0.0f) {
+		if(!ShowFractions)
+			DrawExperienceBonus = std::floor(DrawExperienceBonus);
+
 		std::stringstream Buffer;
-		Buffer << (DrawExpBonus < 0 ? "" : "+") << DrawExpBonus << "%";
+		Buffer << (DrawExperienceBonus < 0 ? "" : "+") << DrawExperienceBonus << "%";
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
@@ -525,8 +567,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Cooldown reduction
-	int DrawCooldownReduction = (int)GetCooldownReduction(Upgrades);
-	if(IsEquippable() && DrawCooldownReduction != 0) {
+	float DrawCooldownReduction = GetCooldownReduction(Upgrades);
+	if(IsEquippable() && DrawCooldownReduction != 0.0f) {
+		if(!ShowFractions)
+			DrawCooldownReduction = std::floor(DrawCooldownReduction);
+
 		std::stringstream Buffer;
 		Buffer << (DrawCooldownReduction < 0 ? "" : "+") << DrawCooldownReduction << "%";
 
@@ -541,8 +586,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Spell Damage
-	int DrawSpellDamage = (int)GetSpellDamage(Upgrades);
-	if(DrawSpellDamage != 0) {
+	float DrawSpellDamage = GetSpellDamage(Upgrades);
+	if(DrawSpellDamage != 0.0f) {
+		if(!ShowFractions)
+			DrawSpellDamage = std::floor(DrawSpellDamage);
+
 		std::stringstream Buffer;
 		Buffer << (DrawSpellDamage < 0 ? "" : "+") << DrawSpellDamage << "%";
 
@@ -557,8 +605,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// + all skills
-	int DrawAllSkills = (int)GetAllSkills(Upgrades);
-	if(DrawAllSkills != 0) {
+	float DrawAllSkills = GetAllSkills(Upgrades);
+	if(DrawAllSkills != 0.0f) {
+		if(!ShowFractions)
+			DrawAllSkills = std::floor(DrawAllSkills);
+
 		std::stringstream Buffer;
 		Buffer << (DrawAllSkills < 0 ? "" : "+") << DrawAllSkills;
 
@@ -990,41 +1041,41 @@ int _Item::GetEnchantCost(int Level) {
 int _Item::GetAttributeCount(int Upgrades) const {
 	int Count = 0;
 
-	if((int)GetMinDamage(Upgrades) != 0 || (int)GetMaxDamage(Upgrades))
+	if(std::floor(GetMinDamage(Upgrades)) != 0 || std::floor(GetMaxDamage(Upgrades)) != 0)
 		Count++;
 	if(!IsSkill() && DamageTypeID > 1)
 		Count++;
-	if((int)GetPierce(Upgrades) != 0)
+	if(GetPierce(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetArmor(Upgrades) != 0)
+	if(GetArmor(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetDamageBlock(Upgrades) != 0)
+	if(GetDamageBlock(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetMaxHealth(Upgrades) != 0)
+	if(GetMaxHealth(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetMaxMana(Upgrades) != 0)
+	if(GetMaxMana(Upgrades) != 0.0f)
 		Count++;
 	if(ResistanceTypeID)
 		Count++;
-	if((int)GetMoveSpeed(Upgrades) != 0)
+	if(GetMoveSpeed(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetBattleSpeed(Upgrades) != 0)
+	if(GetBattleSpeed(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetEvasion(Upgrades) != 0)
+	if(GetEvasion(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetHealthRegen(Upgrades) != 0)
+	if(GetHealthRegen(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetManaRegen(Upgrades) != 0)
+	if(GetManaRegen(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetGoldBonus(Upgrades) != 0)
+	if(GetGoldBonus(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetExperienceBonus(Upgrades) != 0)
+	if(GetExperienceBonus(Upgrades) != 0.0f)
 		Count++;
-	if(IsEquippable() && (int)GetCooldownReduction(Upgrades) != 0)
+	if(IsEquippable() && GetCooldownReduction(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetSpellDamage(Upgrades) != 0)
+	if(GetSpellDamage(Upgrades) != 0.0f)
 		Count++;
-	if((int)GetAllSkills(Upgrades) != 0)
+	if(GetAllSkills(Upgrades) != 0.0f)
 		Count++;
 
 	return Count;

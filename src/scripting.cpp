@@ -636,10 +636,10 @@ void _Scripting::PushItem(lua_State *LuaState, const _Stats *Stats, const _Item 
 	lua_pushinteger(LuaState, Item->DamageTypeID);
 	lua_setfield(LuaState, -2, "DamageType");
 
-	lua_pushinteger(LuaState, (int)Item->GetDamageBlock(Upgrades));
+	lua_pushinteger(LuaState, std::floor(Item->GetDamageBlock(Upgrades)));
 	lua_setfield(LuaState, -2, "DamageBlock");
 
-	lua_pushinteger(LuaState, (int)Item->GetPierce(Upgrades));
+	lua_pushinteger(LuaState, std::floor(Item->GetPierce(Upgrades)));
 	lua_setfield(LuaState, -2, "Pierce");
 
 	lua_pushinteger(LuaState, Upgrades);
@@ -1376,7 +1376,7 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 	if(!Object)
 		return 0;
 
-	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
+	lua_pushinteger(LuaState, ae::GetRandomInt((int)std::floor(Item->GetMinDamage(Upgrades)), (int)std::floor(Item->GetMaxDamage(Upgrades))) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
 
 	return 1;
 }
