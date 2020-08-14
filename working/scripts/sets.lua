@@ -369,22 +369,22 @@ SetBonus_DiabolicStaff.Attributes = {
 
 SetBonus_Axe = Base_Set:New()
 SetBonus_Axe.Attributes = {
-	Armor = { "1", "5" },
+	AttackPower = { "20%", "40%" },
 }
 
 SetBonus_BattleAxe = Base_Set:New()
 SetBonus_BattleAxe.Attributes = {
-	Armor = { "3", "10" },
+	AttackPower = { "25%", "50%" },
 }
 
 SetBonus_Claymore = Base_Set:New()
 SetBonus_Claymore.Attributes = {
-	Armor = { "5", "15" },
+	AttackPower = { "25%", "60%" },
 }
 
 SetBonus_Greatsword = Base_Set:New()
 SetBonus_Greatsword.Attributes = {
-	Armor = { "10", "20" },
+	AttackPower = { "25%", "75%" },
 }
 
 SetBonus_Icebrand = Base_Set:New()
