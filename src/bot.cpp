@@ -424,12 +424,12 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			StatChange.Object = Player;
 
 			// Get ending stats
-			Player->Character->PlayerKills = Data.Read<int>();
-			Player->Character->MonsterKills = Data.Read<int>();
-			Player->Character->GoldLost = Data.Read<int>();
-			Player->Character->Bounty = Data.Read<int>();
-			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
-			StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
+			Player->Character->Attributes["PlayerKills"].Int = Data.Read<int>();
+			Player->Character->Attributes["MonsterKills"].Int = Data.Read<int>();
+			Player->Character->Attributes["GoldLost"].Int = Data.Read<int>();
+			Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
+			StatChange.Values["Experience"].Int = Data.Read<int>();
+			StatChange.Values["Gold"].Int = Data.Read<int>();
 			uint8_t ItemCount = Data.Read<uint8_t>();
 			for(uint8_t i = 0; i < ItemCount; i++) {
 
@@ -510,7 +510,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 					// No damage dealt
 					if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
-					   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0) || ActionResult.Target.HasStat(StatType::MISS))) {
+					   && ((ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Int == 0) || ActionResult.Target.HasStat("Miss"))) {
 						ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 						ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 					}
@@ -530,13 +530,13 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			HandleStatChange(Data, StatChange);
 		} break;
 		case PacketType::WORLD_HUD: {
-			Player->Character->Health = Data.Read<int>();
-			Player->Character->Mana = Data.Read<int>();
-			Player->Character->MaxHealth = Data.Read<int>();
-			Player->Character->MaxMana = Data.Read<int>();
-			Player->Character->Experience = Data.Read<int64_t>();
-			Player->Character->Gold = Data.Read<int>();
-			Player->Character->Bounty = Data.Read<int>();
+			Player->Character->Attributes["Health"].Int = Data.Read<int>();
+			Player->Character->Attributes["Mana"].Int = Data.Read<int>();
+			Player->Character->Attributes["MaxHealth"].Int = Data.Read<int>();
+			Player->Character->Attributes["MaxMana"].Int = Data.Read<int>();
+			Player->Character->Attributes["Experience"].Int64 = Data.Read<int64_t>();
+			Player->Character->Attributes["Gold"].Int = Data.Read<int>();
+			Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
 			double Clock = Data.Read<double>();
 
 			Player->Character->CalculateStats();
@@ -584,6 +584,7 @@ _Object *_Bot::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID) {
 	Object->Stats = Stats;
 	Object->Map = Map;
 	Object->Character->CalcLevelStats = false;
+	Object->Character->Init();
 	Object->UnserializeCreate(Data);
 
 	// Add to map

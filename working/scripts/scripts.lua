@@ -10,19 +10,16 @@ function Script_Rejuv.Activate(self, Level, Object, Change)
 	return Change
 end
 
-Script_Lava = { BaseHealth = -10 }
+Script_Lava = { BaseDamage = 10 }
 
 function Script_Lava.Activate(self, Level, Object, Change)
-	if Object.LavaProtection == 1 then
+	if Object.LavaProtection == true then
 		Change.ClearBuff = Buff_Invis.Pointer
 		return Change
 	end
 
-	Damage = -self.BaseHealth * Level * Object.GetDamageReduction(DamageType["Fire"])
-
-	Update = ResolveManaReductionRatio(Object, Damage)
-	Change.Health = Update.Health
-	Change.Mana = Update.Mana
+	Damage = self.BaseDamage * Level * Object.GetDamageReduction(DamageType["Fire"])
+	Change.Health = -Damage
 	Change.Buff = Buff_Burning.Pointer
 	Change.BuffLevel = Level * 2
 	Change.BuffDuration = 10
@@ -50,9 +47,9 @@ end
 Script_Fall = { }
 
 function Script_Fall.Activate(self, Level, Object, Change)
-	Change.Health = -1000
+	Change.Health = -5000
 	Change.Buff = Buff_Bleeding.Pointer
-	Change.BuffLevel = 100
+	Change.BuffLevel = 1000
 	Change.BuffDuration = 10
 	Change.MapChange = Level
 

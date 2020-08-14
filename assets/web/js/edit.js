@@ -1,3 +1,4 @@
+var use_sum = false;
 var hot = null;
 var last_search = "";
 var container = null;
@@ -90,7 +91,7 @@ $(document).ready(function() {
 			},
 			afterChange: function(changes, source) {
 				update_buttons(0);
-				if(source != "external" && source != "loadData" && changes) {
+				if(use_sum && source != "external" && source != "loadData" && changes) {
 
 					// Get unique columns to update
 					column_updates = [];
@@ -145,12 +146,18 @@ function link_renderer(instance, td, row, col, prop, value, cellProperties) {
 
 // Calculate sum for each column
 function calculate_all_sum(data) {
+	if(!use_sum)
+		return;
+
 	for(col in column_names)
 		calculate_sum(data, col);
 }
 
 // Calculate sum for each column
 function calculate_sum(data, col, load=false) {
+	if(!use_sum)
+		return;
+
 	if(col == 0 || column_names[col] == "" || references.hasOwnProperty(column_names[col]))
 		return;
 
@@ -336,8 +343,12 @@ function save() {
 	// Convert dropdowns back to ids
 	var headers = hot.getColHeader();
 	var data = hot.getData();
+	remove_row = -1;
 	for(var row in data) {
-
+		if(data[row][0] == "sum") {
+			remove_row = row;
+			continue;
+		}
 		for(var col in headers) {
 
 			// Remove empty columns from data array
@@ -359,15 +370,15 @@ function save() {
 		}
 	}
 
-	// Remove last row
-	save_data = data;
-	save_data.splice(data.length-1, 1);
+	// Remove sum row
+	if(remove_row != -1)
+		data.splice(remove_row, 1);
 
 	// Send request
 	var request = $.ajax({
 		type: "POST",
 		url: "/save" + querystring,
-		data: jQuery.param({'data': save_data}),
+		data: jQuery.param({'data': data}),
 		dataType: "html",
 		success: function(response, text_status, jqxhr) {
 			ajax_success(response, text_status, jqxhr);

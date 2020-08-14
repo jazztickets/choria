@@ -1,5 +1,5 @@
-
 -- Base Proc --
+
 Base_Proc = {
 
 	New = function(self, Object)
@@ -30,10 +30,19 @@ Base_Proc = {
 		return math.floor(self:GetLevel(Source, Item) * self:GetDuration(Item))
 	end,
 
-	AddBuff = function(self, Change, Buff, Source, Item)
+	GetDamageText = function(self, Source, Item)
+		if Item.MoreInfo == true then
+			Text = "[c green]" .. self:GetLevel(Source, Item) .. "[c white] " .. self.DamageTypeName .. " DPS"
+		else
+			Text = "[c green]" .. self:GetTotal(Source, Item) .. "[c white] " .. self.DamageTypeName .. " damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+		end
+
+		return Text
+	end,
+
+	AddBuff = function(self, Change, Buff, Source, Item, Level)
 
 		-- Get stats from item
-		Level = self:GetLevel(Source, Item)
 		Duration = self:GetDuration(Item)
 
 		-- Check for existing buff
@@ -49,20 +58,30 @@ Base_Proc = {
 			return
 		end
 
-		-- Take better level or duration
-		if Level > Change.BuffLevel then
-			Change.BuffLevel = Level
-		elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
-			Change.BuffDuration = Duration
+		if self.Additive == true then
+
+			-- Add to buff level
+			Change.BuffLevel = Change.BuffLevel + Level
+			if Duration >= Change.BuffDuration then
+				Change.BuffDuration = Duration
+			end
+		else
+
+			-- Take better level or duration
+			if Level > Change.BuffLevel then
+				Change.BuffLevel = Level
+			elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
+				Change.BuffDuration = Duration
+			end
 		end
 	end,
 
 	Proc = function(self, Roll, Item, Source, Target, Result)
 		if Roll <= self:GetChance(Item) then
 			if self.OnSelf == true then
-				self:AddBuff(Result.Source, self.Buff.Pointer, Source, Item)
+				self:AddBuff(Result.Source, self.Buff.Pointer, Source, Item, self:GetLevel(Source, Item))
 			else
-				self:AddBuff(Result.Target, self.Buff.Pointer, Source, Item)
+				self:AddBuff(Result.Target, self.Buff.Pointer, Source, Item, self:GetLevel(Source, Item))
 			end
 
 			return true
@@ -75,9 +94,11 @@ Base_Proc = {
 	OnSelf = false,
 	SpellOnly = false,
 	MaxLevel = nil,
+	Additive = false,
 	ChancePerLevel = 0,
 	LevelPerLevel = 0,
-	DurationPerLevel = 0
+	DurationPerLevel = 0,
+	DamageTypeName = "",
 }
 
 -- Stun --
@@ -108,13 +129,14 @@ Proc_Poison.Buff = Buff_Poisoned
 Proc_Poison.ChancePerLevel = 1
 Proc_Poison.PercentPerLevel = 10
 Proc_Poison.DurationPerLevel = 0
+Proc_Poison.DamageTypeName = "poison"
 
 function Proc_Poison.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] poison damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for " .. self:GetDamageText(Source, Item)
 end
 
 function Proc_Poison.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.PoisonPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.PoisonPower * 0.01)
 end
 
 -- Slow --
@@ -137,44 +159,60 @@ Proc_Ignite.Buff = Buff_Burning
 Proc_Ignite.ChancePerLevel = 1
 Proc_Ignite.PercentPerLevel = 10
 Proc_Ignite.DurationPerLevel = 0
+Proc_Ignite.DamageTypeName = "fire"
 
 function Proc_Ignite.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] fire damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for " .. self:GetDamageText(Source, Item)
 end
 
 function Proc_Ignite.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.FirePower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.FirePower * 0.01)
 end
 
 -- Bleed --
 
 Proc_Bleed = Base_Proc:New()
 Proc_Bleed.Buff = Buff_Bleeding
+Proc_Bleed.Additive = true
 Proc_Bleed.ChancePerLevel = 1
 Proc_Bleed.PercentPerLevel = 10
 Proc_Bleed.DurationPerLevel = 0
+Proc_Bleed.DamageTypeName = "bleeding"
 
 function Proc_Bleed.GetInfo(self, Source, Item)
-	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for [c green]" .. self:GetTotal(Source, Item) .. "[c white] bleeding damage over [c green]" .. self:GetDuration(Item) .. "[c white] seconds"
+	return "[c green]" .. self:GetChance(Item) .. "%[c white] chance for " .. self:GetDamageText(Source, Item)
 end
 
 function Proc_Bleed.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower * 0.01)
 end
 
 -- Bloodlet --
 
 Proc_Bloodlet = Base_Proc:New()
+Proc_Bloodlet.Additive = true
 Proc_Bloodlet.ChancePerLevel = 1
 Proc_Bloodlet.PercentPerLevel = 10
 Proc_Bloodlet.DurationPerLevel = 0
+Proc_Bloodlet.HealMultiplier = 0.25
+Proc_Bloodlet.DamageTypeName = "bleeding"
 
 function Proc_Bloodlet.GetInfo(self, Source, Item)
-	Bleeding = self:GetTotal(Source, Item)
-	Duration = self:GetDuration(Item)
 	Chance = self:GetChance(Item)
-	Healing = self:GetHealingTotal(Source, Item)
-	return "[c green]" .. Chance .. "%[c white] chance for [c green]" .. Bleeding .. "[c white] bleeding damage and [c green]" .. Healing .. "[c white] healing over [c green]" .. Duration .. "[c white] seconds"
+
+	return "[c green]" .. Chance .. "%[c white] chance for " .. self:GetDamageText(Source, Item) .. " and " .. self:GetHealingText(Source, Item)
+end
+
+function Proc_Bloodlet.GetHealingText(self, Source, Item)
+	if Item.MoreInfo == true then
+		Text = "[c green]" .. self:GetHealingLevel(Source, Item) .. "[c white] HPS"
+	else
+		Healing = self:GetHealingTotal(Source, Item)
+		Duration = self:GetDuration(Item)
+		Text = "[c green]" .. Healing .. "[c white] healing over [c green]" .. Duration .. "[c white] seconds"
+	end
+
+	return Text
 end
 
 function Proc_Bloodlet.GetHealingTotal(self, Source, Item)
@@ -182,11 +220,11 @@ function Proc_Bloodlet.GetHealingTotal(self, Source, Item)
 end
 
 function Proc_Bloodlet.GetHealingLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.HealPower * 0.5)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.HealPower * 0.01 * self.HealMultiplier)
 end
 
 function Proc_Bloodlet.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower)
+	return math.floor((Item.Level + Item.Level * Item.Upgrades * self.PercentPerLevel * 0.01) * Source.BleedPower * 0.01)
 end
 
 function Proc_Bloodlet.Proc(self, Roll, Item, Source, Target, Result)
@@ -198,32 +236,6 @@ function Proc_Bloodlet.Proc(self, Roll, Item, Source, Target, Result)
 	end
 
 	return false
-end
-
-function Proc_Bloodlet.AddBuff(self, Change, Buff, Source, Item, Level)
-
-	-- Get stats from item
-	Duration = self:GetDuration(Item)
-
-	-- Check for existing buff
-	if Change.Buff == nil then
-		Change.Buff = Buff
-		Change.BuffLevel = Level
-		Change.BuffDuration = Duration
-		return
-	end
-
-	-- Buff exists, but is different
-	if Change.Buff ~= Buff then
-		return
-	end
-
-	-- Take better level or duration
-	if Level > Change.BuffLevel then
-		Change.BuffLevel = Level
-	elseif Level == Change.BuffLevel and Duration > Change.BuffDuration then
-		Change.BuffDuration = Duration
-	end
 end
 
 -- Haste --
@@ -302,7 +314,7 @@ function Proc_Health.GetInfo(self, Source, Item)
 end
 
 function Proc_Health.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.HealPower)
+	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.HealPower * 0.01)
 end
 
 function Proc_Health.Proc(self, Roll, Item, Source, Target, Result)
@@ -330,7 +342,7 @@ function Proc_Mana.GetInfo(self, Source, Item)
 end
 
 function Proc_Mana.GetLevel(self, Source, Item)
-	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.ManaPower)
+	return math.floor((Item.Level + math.floor(Item.Upgrades * self.LevelPerLevel)) * Source.ManaPower * 0.01)
 end
 
 function Proc_Mana.Proc(self, Roll, Item, Source, Target, Result)

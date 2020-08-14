@@ -66,6 +66,13 @@ struct _Script {
 	int Level;
 };
 
+struct _Set {
+	uint32_t ID;
+	std::string Name;
+	std::string Script;
+	int Count;
+};
+
 struct _Level {
 	int Level;
 	int64_t Experience;
@@ -100,6 +107,7 @@ struct _Vendor {
 
 	uint32_t ID;
 	std::string Name;
+	std::string Sort;
 	float BuyPercent;
 	float SellPercent;
 	std::vector<const _Item *> Items;
@@ -120,6 +128,8 @@ struct _Trader {
 };
 
 struct _Blacksmith {
+	bool CanUpgrade(const _Item *Item, int Upgrades) const;
+
 	uint32_t ID;
 	std::string Name;
 	int Level;
@@ -158,10 +168,27 @@ struct _LightType {
 	float Radius;
 };
 
+struct _Attribute {
+	uint8_t ID;
+	std::string Name;
+	std::string Label;
+	StatValueType Type;
+	StatUpdateType UpdateType;
+	_Value Default;
+	float UpgradeScale;
+	int Show;
+	bool Calculate;
+	bool Save;
+	bool Script;
+	bool Network;
+};
+
 // Classes
 class _Stats {
 
 	public:
+
+		static std::vector<std::string> ResistNames;
 
 		_Stats(bool Headless=false);
 		~_Stats();
@@ -189,6 +216,8 @@ class _Stats {
 		std::vector<_EventName> EventNames;
 		std::vector<_Level> Levels;
 
+		std::vector<std::string> AttributeRank;
+		std::unordered_map<std::string, _Attribute> Attributes;
 		std::unordered_map<uint32_t, _MapStat> Maps;
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
@@ -196,12 +225,13 @@ class _Stats {
 		std::unordered_map<uint32_t, _Enchanter> Enchanters;
 		std::unordered_map<uint32_t, _MinigameType> Minigames;
 		std::unordered_map<uint32_t, _Script> Scripts;
+		std::unordered_map<uint32_t, _Set> Sets;
+		std::unordered_map<uint32_t, std::string> Unlocks;
 		std::unordered_map<uint32_t, _Model> Models;
 		std::unordered_map<uint32_t, _LightType> Lights;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
 		std::unordered_map<uint32_t, _DamageType> DamageTypes;
-		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;
 		std::unordered_map<uint32_t, const _Object *> Builds;
@@ -212,12 +242,12 @@ class _Stats {
 
 	private:
 
+		void LoadAttributes();
 		void LoadMaps();
 		void LoadEvents();
 		void LoadLevels();
 		void LoadBuffs();
 		void LoadItemTypes();
-		void LoadStatTypes();
 		void LoadTargetTypes();
 		void LoadDamageTypes();
 		void LoadItems();
@@ -229,6 +259,8 @@ class _Stats {
 		void LoadModels();
 		void LoadBuilds();
 		void LoadScripts();
+		void LoadSets();
+		void LoadUnlocks();
 		void LoadLights();
 
 };

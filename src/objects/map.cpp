@@ -1039,7 +1039,7 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 			continue;
 
 		// Check level restrictions
-		if(Object->Character->Rebirths != Player->Character->Rebirths || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE)
+		if(Object->Character->Attributes["Rebirths"].Int != Player->Character->Attributes["Rebirths"].Int || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE)
 			continue;
 
 		// Check party name
@@ -1091,7 +1091,7 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 			continue;
 		}
 
-		if(Object->Character->Rebirths != Player->Character->Rebirths || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE) {
+		if(Object->Character->Attributes["Rebirths"].Int != Player->Character->Attributes["Rebirths"].Int || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE) {
 			HitLevelRestriction = true;
 			continue;
 		}
@@ -1141,7 +1141,7 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 			continue;
 
 		// Can only bounty hunt players with a bounty
-		if(!UsePVPZone && !Object->Character->Bounty)
+		if(!UsePVPZone && !Object->Character->Attributes["Bounty"].Int)
 			continue;
 
 		// Can't attack same party member
@@ -1149,7 +1149,7 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 			continue;
 
 		// Check for rank
-		if(Object->Character->Rebirths != Attacker->Character->Rebirths)
+		if(Object->Character->Attributes["Rebirths"].Int != Attacker->Character->Attributes["Rebirths"].Int)
 			continue;
 
 		if(std::abs(Object->Character->Level - Attacker->Character->Level) > BATTLE_LEVEL_RANGE)
@@ -1188,7 +1188,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 		if(Object->Character->Hardcore != Player->Character->Hardcore)
 			continue;
 
-		if(Object->Character->Rebirths != Player->Character->Rebirths)
+		if(Object->Character->Attributes["Rebirths"].Int != Player->Character->Attributes["Rebirths"].Int)
 			continue;
 
 		if(GAME_TRADING_LEVEL_RANGE && std::abs(Object->Character->Level - Player->Character->Level) > GAME_TRADING_LEVEL_RANGE)

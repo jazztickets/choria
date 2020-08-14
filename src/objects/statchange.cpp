@@ -47,15 +47,16 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 	for(auto Iterator : Values) {
 
 		// Write type
-		Data.Write<uint8_t>((uint8_t)Iterator.first);
+		const _Attribute &Attribute = Object->Stats->Attributes.at(Iterator.first);
+		Data.Write<uint8_t>(Attribute.ID);
 
 		// Write data
-		if(Iterator.first == StatType::BUFF) {
+		if(Attribute.Type == StatValueType::POINTER) {
 			_Buff *Buff = (_Buff *)(Iterator.second.Pointer);
 			Data.Write<uint32_t>(Buff->ID);
 		}
 		else
-			Data.Write<int>(Iterator.second.Integer);
+			Data.Write<int>(Iterator.second.Int);
 	}
 }
 
@@ -79,16 +80,17 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 	for(int i = 0; i < Count; i++) {
 
 		// Get type
-		StatType Type = (StatType)Data.Read<uint8_t>();
+		uint8_t AttributeID = Data.Read<uint8_t>();
+		const _Attribute &Attribute = Object->Stats->Attributes.at(Object->Stats->AttributeRank[AttributeID]);
 
 		// Get data
-		if(Type == StatType::BUFF) {
+		if(Attribute.Type == StatValueType::POINTER) {
 			uint32_t BuffID = Data.Read<uint32_t>();
 			if(Object)
-				Values[Type].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
+				Values[Attribute.Name].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
 		}
 		else
-			Values[Type].Integer = Data.Read<int>();
+			Values[Attribute.Name].Int = Data.Read<int>();
 	}
 }
 

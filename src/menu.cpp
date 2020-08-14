@@ -285,7 +285,7 @@ void _Menu::ExitGame() {
 
 // Browse LAN servers
 void _Menu::InitBrowseServers(bool UseConfig, bool ConnectNow) {
-	PlayState.Network->Disconnect();
+	PlayState.Network->Disconnect(false, 1);
 
 	ChangeLayout("element_menu_browse");
 	ae::Audio.PlayMusic(ae::Assets.Music["intro.ogg"]);
@@ -1027,7 +1027,7 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 						}
 					} break;
 					case Action::MENU_BACK:
-						PlayState.Network->Disconnect();
+						PlayState.Network->Disconnect(false, 1);
 					break;
 				}
 			}
@@ -1246,7 +1246,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						PlayClickSound();
 					}
 					else if(Clicked->Name == "button_menu_characters_back") {
-						PlayState.Network->Disconnect();
+						PlayState.Network->Disconnect(false, 1);
 						PlayClickSound();
 					}
 					else if(Clicked->Name == CharacterButtonPrefix) {
@@ -1330,7 +1330,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					// Clicked cancel button
 					if(!PlayState.Network->IsDisconnected()) {
-						PlayState.Network->Disconnect(true);
+						PlayState.Network->Disconnect(true, 1);
 						InitBrowseServers(false);
 					}
 					// Clicked connect button
@@ -1574,7 +1574,7 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 			BadGameVersion = false;
 			if(Version != GAME_VERSION || (BuildNumber > 0 && BuildNumber != BUILD_NUMBER)) {
 				BadGameVersion = true;
-				PlayState.Network->Disconnect();
+				PlayState.Network->Disconnect(false, 1);
 			}
 		} break;
 		case PacketType::ACCOUNT_SUCCESS: {

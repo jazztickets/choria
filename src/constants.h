@@ -23,7 +23,7 @@
 
 //     Config
 const  int          DEFAULT_CONFIG_VERSION          =  8;
-const  int          DEFAULT_SAVE_VERSION            =  6;
+const  int          DEFAULT_SAVE_VERSION            =  7;
 const  glm::ivec2   DEFAULT_WINDOW_SIZE             =  glm::ivec2(1024,768);
 const  int          DEFAULT_FULLSCREEN              =  0;
 const  int          DEFAULT_AUDIOENABLED            =  1;
@@ -91,7 +91,6 @@ const  double       BATTLE_MAX_START_TURNTIMER      =  0.35;
 const  float        BATTLE_HEALTHBAR_WIDTH          =  126;
 const  float        BATTLE_HEALTHBAR_HEIGHT         =  30;
 const  int          BATTLE_MIN_SPEED                =  5;
-const  float        BATTLE_SUMMON_SHARE_PERCENT     =  0;
 const  int          BATTLE_PVP_VICTIM_SIDE          =  0;
 const  int          BATTLE_PVP_ATTACKER_SIDE        =  1;
 const  float        BATTLE_PVP_DISTANCE             =  1.42f*1.42f;
@@ -99,8 +98,8 @@ const  float        BATTLE_JOIN_DISTANCE            =  1.42f*1.42f;
 const  float        BATTLE_COOP_DISTANCE            =  7.0f*7.0f;
 const  int          BATTLE_LEVEL_RANGE              =  10;
 const  int          BATTLE_BOSS_DIFFICULTY_PER_KILL =  50;
-const  int          BATTLE_DIFFICULTY_DAMAGE_START  =  100;
-const  float        BATTLE_DIFFICULTY_DAMAGE        =  0.1f;
+const  int          BATTLE_DIFFICULTY_DAMAGE_START  =  0;
+const  float        BATTLE_DIFFICULTY_DAMAGE        =  0.2f;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
@@ -110,24 +109,26 @@ const  int          PLAYER_NAME_SIZE                =  15;
 const  float        PLAYER_INVIS_ALPHA              =  0.27f;
 const  int          PLAYER_MAX_GOLD                 =  1000000000;
 const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
+const  double       PLAYER_IDLE_TIME                =  60.0;
 //     Game
 const  int          GAME_MAX_RESISTANCE             =  75;
 const  int          GAME_MIN_RESISTANCE             =  -200;
 const  int          GAME_MAX_EVASION                =  90;
-const  int          GAME_BASE_DIFFICULTY            =  100;
 const  int          GAME_DIFFICULTY_PER_PLAYER      =  10;
 const  int          GAME_DIFFICULTY_PER_PLAYER_BOSS =  25;
-const  float        GAME_UPGRADE_COST_MULTIPLIER    =  0.25f;
-const  int          GAME_BASE_UPGRADE_COST          =  5;
-const  int          GAME_ENCHANT_BASE_COST          =  5;
-const  int          GAME_ENCHANT_INCREASE_AMOUNT    =  50;
-const  int          GAME_ENCHANT_INCREASE_LEVEL     =  5;
-const  float        GAME_UPGRADE_AMOUNT             =  0.25f;
+const  int          GAME_ENCHANT_COST_BASE          =  5;
+const  int          GAME_ENCHANT_COST_POWER         =  3;
+const  int          GAME_ENCHANT_COST_RATE          =  5;
+const  float        GAME_UPGRADE_COST_MULTIPLIER    =  0.2f;
+const  int          GAME_UPGRADE_BASE_COST          =  0;
+const  float        GAME_UPGRADE_AMOUNT             =  0.2f;
 const  float        GAME_NEGATIVE_UPGRADE_SCALE     =  0.25f;
 const  int          GAME_TRADING_LEVEL              =  3;
 const  int          GAME_TRADING_LEVEL_RANGE        =  10;
 const  int          GAME_DEFAULT_MAX_SKILL_LEVEL    =  5;
 const  int          GAME_MAX_SKILL_UNLOCKS          =  10;
+const  int          GAME_MAX_SKILL_LEVEL            =  50;
+const  double       GAME_REBIRTH_WEALTH_MULTIPLIER  =  0.1;
 //     Actionbar
 const  int          ACTIONBAR_BELT_STARTS           =  10;
 const  int          ACTIONBAR_DEFAULT_BELTSIZE      =  1;

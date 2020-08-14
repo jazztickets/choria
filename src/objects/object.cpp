@@ -154,16 +154,16 @@ void _Object::Update(double FrameTime) {
 
 		// Check turn timer
 		if(Character->Battle) {
-			if(Character->Stunned)
-				Fighter->TurnTimer += FrameTime * (1.0 / BATTLE_DEFAULTATTACKPERIOD) * BATTLE_STUNNED_BATTLESPEED / 100.0;
+			if(Character->Attributes["Stunned"].Int)
+				Fighter->TurnTimer += FrameTime * (1.0 / BATTLE_DEFAULTATTACKPERIOD) * BATTLE_STUNNED_BATTLESPEED * 0.01f;
 			else
-				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->BattleSpeed / 100.0;
+				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->Attributes["BattleSpeed"].Mult();
 		}
 		else
 			Fighter->TurnTimer = 1.0;
 
 		// Resolve action
-		if(!Character->Stunned && Fighter->TurnTimer >= 1.0) {
+		if(!Character->Attributes["Stunned"].Int && Fighter->TurnTimer >= 1.0) {
 			Fighter->TurnTimer = 1.0;
 
 			if(Server && Character->Action.IsSet()) {
@@ -191,10 +191,12 @@ void _Object::Update(double FrameTime) {
 		Character->Update(FrameTime);
 
 		// Update playtime
-		Character->PlayTime += FrameTime;
-		Character->RebirthTime += FrameTime;
+		Character->IdleTime += FrameTime;
+		Character->Attributes["PlayTime"].Double += FrameTime;
+		if(Character->Attributes["Rebirths"].Int)
+			Character->Attributes["RebirthTime"].Double += FrameTime;
 		if(Character->Battle)
-			Character->BattleTime += FrameTime;
+			Character->Attributes["BattleTime"].Double += FrameTime;
 	}
 
 	// Update teleport time
@@ -227,14 +229,14 @@ void _Object::Update(double FrameTime) {
 			Changed = true;
 		if(Light != OldLight)
 			Changed = true;
-		if(Character->Bounty != OldBounty)
+		if(Character->Attributes["Bounty"].Int != OldBounty)
 			Changed = true;
 	}
 
 	OldPosition = Position;
 	OldStatus = Character->Status;
 	OldInvisible = Character->Invisible;
-	OldBounty = Character->Bounty;
+	OldBounty = Character->Attributes["Bounty"].Int;
 	OldLight = Light;
 }
 
@@ -251,6 +253,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 	// Set input
 	if(Character->AcceptingMoveInput()) {
+		Character->IdleTime = 0.0;
 		int InputState = 0;
 
 		// Call ai input script
@@ -373,17 +376,17 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
 	std::string Color = SameParty ? "green" : "white";
 	std::string NameText = "[c " + Color + "]" + Name + "[c white]";
-	if(Character->Bounty > 0)
-		NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
+	if(Character->Attributes["Bounty"].Int > 0)
+		NameText += " ([c cyan]" + std::to_string(Character->Attributes["Bounty"].Int) + "[c white])";
 
 	std::string Prefix;
-	if(Character->Rebirths)
-		Prefix = "[c gold]" + std::to_string(Character->Rebirths) + "[c white] ";
+	if(Character->Attributes["Rebirths"].Int)
+		Prefix = "[c gold]" + std::to_string(Character->Attributes["Rebirths"].Int) + "[c white] ";
 
 	// Cap name to screen
 	glm::vec2 NamePosition = DrawPosition;
 	float OffsetY = -0.5f;
-	if(SameParty || Character->Bounty > 0) {
+	if(SameParty || Character->Attributes["Bounty"].Int > 0) {
 		ae::_TextBounds TextBounds;
 		ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
 		float HalfWidth = TextBounds.Width * 0.5f / ModelTexture->Size.x;
@@ -455,6 +458,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 	// Get text size
 	ae::_Font *SmallFont = ae::Assets.Fonts["hud_small"];
 	ae::_Font *TinyFont = ae::Assets.Fonts["hud_tiny"];
+	ae::_Font *MicroFont = ae::Assets.Fonts["hud_micro"];
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
@@ -466,17 +470,19 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 	// Draw health text
 	ae::_Font *HealthFont = SmallFont;
-	if(Character->MaxHealth > 9999)
+	if(Character->Attributes["MaxHealth"].Int > 999999)
+		HealthFont = MicroFont;
+	else if(Character->Attributes["MaxHealth"].Int > 9999)
 		HealthFont = TinyFont;
 	int TextOffsetY = (HealthFont->MaxAbove - HealthFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
 
-	Buffer << Character->Health << " / " << Character->MaxHealth;
+	Buffer << Character->Attributes["Health"].Int << " / " << Character->Attributes["MaxHealth"].Int;
 	HealthFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
 	// Draw mana
-	if(Character->MaxMana > 0) {
-		float ManaPercent = Character->MaxMana > 0 ? Character->Mana / (float)Character->MaxMana : 0;
+	if(Character->Attributes["MaxMana"].Int > 0) {
+		float ManaPercent = Character->Attributes["MaxMana"].Int > 0 ? Character->Attributes["Mana"].Int / (float)Character->Attributes["MaxMana"].Int : 0;
 
 		// Get ui size
 		BarOffset.y += BarSize.y + BarPaddingY;
@@ -494,10 +500,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 		// Draw mana text
 		ae::_Font *ManaFont = SmallFont;
-		if(Character->MaxHealth > 9999)
+		if(Character->Attributes["MaxMana"].Int > 999999)
+			ManaFont = MicroFont;
+		else if(Character->Attributes["MaxMana"].Int > 9999)
 			ManaFont = TinyFont;
 		int TextOffsetY = (ManaFont->MaxAbove - ManaFont->MaxBelow) / 2 + (int)(2.5 * ae::_Element::GetUIScale());
-		Buffer << Character->Mana << " / " << Character->MaxMana;
+		Buffer << Character->Attributes["Mana"].Int << " / " << Character->Attributes["MaxMana"].Int;
 		ManaFont->DrawText(Buffer.str(), glm::ivec2(BarCenter) + glm::ivec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
@@ -582,51 +590,47 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write stats
 	Json::Value StatsNode;
-	StatsNode["hardcore"] = Character->Hardcore;
-	StatsNode["map_x"] = Position.x;
-	StatsNode["map_y"] = Position.y;
-	StatsNode["spawnmap_id"] = Character->SpawnMapID;
-	StatsNode["spawnpoint"] = Character->SpawnPoint;
-	StatsNode["build_id"] = Character->BuildID;
-	StatsNode["portrait_id"] = Character->PortraitID;
-	StatsNode["model_id"] = ModelID;
-	StatsNode["belt_size"] = Character->BeltSize;
-	StatsNode["skillbar_size"] = Character->SkillBarSize;
-	StatsNode["skillpoints_unlocked"] = Character->SkillPointsUnlocked;
-	StatsNode["health"] = Character->Health;
-	StatsNode["mana"] = Character->Mana;
-	StatsNode["experience"] = (Json::Value::Int64)Character->Experience;
-	StatsNode["gold"] = Character->Gold;
-	StatsNode["goldlost"] = Character->GoldLost;
-	StatsNode["playtime"] = Character->PlayTime;
-	StatsNode["rebirthtime"] = Character->RebirthTime;
-	StatsNode["battletime"] = Character->BattleTime;
-	StatsNode["deaths"] = Character->Deaths;
-	StatsNode["monsterkills"] = Character->MonsterKills;
-	StatsNode["playerkills"] = Character->PlayerKills;
-	StatsNode["gamesplayed"] = Character->GamesPlayed;
-	StatsNode["bounty"] = Character->Bounty;
-	StatsNode["nextbattle"] = Character->NextBattle;
-	StatsNode["rebirths"] = Character->Rebirths;
-	StatsNode["seed"] = Character->Seed;
-	StatsNode["partyname"] = Character->PartyName;
-	StatsNode["eternal_strength"] = Character->EternalStrength;
-	StatsNode["eternal_guard"] = Character->EternalGuard;
-	StatsNode["eternal_fortitude"] = Character->EternalFortitude;
-	StatsNode["eternal_spirit"] = Character->EternalSpirit;
-	StatsNode["eternal_wisdom"] = Character->EternalWisdom;
-	StatsNode["eternal_wealth"] = Character->EternalWealth;
-	StatsNode["eternal_alacrity"] = Character->EternalAlacrity;
-	StatsNode["eternal_knowledge"] = Character->EternalKnowledge;
-	StatsNode["eternal_pain"] = Character->EternalPain;
-	StatsNode["rebirth_wealth"] = Character->RebirthWealth;
-	StatsNode["rebirth_wisdom"] = Character->RebirthWisdom;
-	StatsNode["rebirth_knowledge"] = Character->RebirthKnowledge;
-	StatsNode["rebirth_power"] = Character->RebirthPower;
-	StatsNode["rebirth_girth"] = Character->RebirthGirth;
-	StatsNode["rebirth_proficiency"] = Character->RebirthProficiency;
-	StatsNode["rebirth_insight"] = Character->RebirthInsight;
-	StatsNode["rebirth_passage"] = Character->RebirthPassage;
+	StatsNode["Hardcore"] = Character->Hardcore;
+	StatsNode["MapX"] = Position.x;
+	StatsNode["MapY"] = Position.y;
+	StatsNode["SpawnMapID"] = Character->SpawnMapID;
+	StatsNode["SpawnPoint"] = Character->SpawnPoint;
+	StatsNode["BuildID"] = Character->BuildID;
+	StatsNode["PortraitID"] = Character->PortraitID;
+	StatsNode["ModelID"] = ModelID;
+	StatsNode["BeltSize"] = Character->BeltSize;
+	StatsNode["SkillBarSize"] = Character->SkillBarSize;
+	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
+	StatsNode["NextBattle"] = Character->NextBattle;
+	StatsNode["Seed"] = Character->Seed;
+	StatsNode["PartyName"] = Character->PartyName;
+
+	// Save attributes
+	for(const auto &Attribute : Stats->Attributes) {
+		if(!Attribute.second.Save)
+			continue;
+
+		const _Value &AttributeStorage = Character->Attributes.at(Attribute.second.Name);
+		switch(Attribute.second.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				StatsNode[Attribute.second.Name] = AttributeStorage.Int;
+			break;
+			case StatValueType::INTEGER64:
+				StatsNode[Attribute.second.Name] = (Json::Value::Int64)AttributeStorage.Int64;
+			break;
+			case StatValueType::FLOAT:
+				StatsNode[Attribute.second.Name] = AttributeStorage.Float;
+			break;
+			case StatValueType::TIME:
+				StatsNode[Attribute.second.Name] = AttributeStorage.Double;
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported save type: " + Attribute.second.Name);
+			break;
+		}
+	}
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -745,52 +749,49 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Get stats
 	Json::Value StatsNode = Data["stats"];
-	Character->LoadMapID = (ae::NetworkIDType)StatsNode["map_id"].asUInt();
-	Position.x = StatsNode["map_x"].asInt();
-	Position.y = StatsNode["map_y"].asInt();
-	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["spawnmap_id"].asUInt();
-	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
-	Character->Hardcore = StatsNode["hardcore"].asBool();
-	Character->BuildID = StatsNode["build_id"].asUInt();
-	Character->PortraitID = StatsNode["portrait_id"].asUInt();
-	ModelID = StatsNode["model_id"].asUInt();
-	Character->BeltSize = StatsNode["belt_size"].asInt();
-	Character->SkillBarSize = StatsNode["skillbar_size"].asInt();
-	Character->SkillPointsUnlocked = StatsNode["skillpoints_unlocked"].asInt();
-	Character->Health = StatsNode["health"].asInt();
-	Character->Mana = StatsNode["mana"].asInt();
-	Character->Experience = StatsNode["experience"].asInt64();
-	Character->Gold = StatsNode["gold"].asInt();
-	Character->GoldLost = StatsNode["goldlost"].asInt();
-	Character->PlayTime = StatsNode["playtime"].asDouble();
-	Character->RebirthTime = StatsNode["rebirthtime"].asDouble();
-	Character->BattleTime = StatsNode["battletime"].asDouble();
-	Character->Deaths = StatsNode["deaths"].asInt();
-	Character->MonsterKills = StatsNode["monsterkills"].asInt();
-	Character->PlayerKills = StatsNode["playerkills"].asInt();
-	Character->GamesPlayed = StatsNode["gamesplayed"].asInt();
-	Character->Bounty = StatsNode["bounty"].asInt();
-	Character->NextBattle = StatsNode["nextbattle"].asInt();
-	Character->Rebirths = StatsNode["rebirths"].asInt();
-	Character->Seed = StatsNode["seed"].asUInt();
-	Character->PartyName = StatsNode["partyname"].asString();
-	Character->EternalStrength = StatsNode["eternal_strength"].asInt();
-	Character->EternalGuard = StatsNode["eternal_guard"].asInt();
-	Character->EternalFortitude = StatsNode["eternal_fortitude"].asInt();
-	Character->EternalSpirit = StatsNode["eternal_spirit"].asInt();
-	Character->EternalWisdom = StatsNode["eternal_wisdom"].asInt();
-	Character->EternalWealth = StatsNode["eternal_wealth"].asInt();
-	Character->EternalAlacrity = StatsNode["eternal_alacrity"].asInt();
-	Character->EternalKnowledge = StatsNode["eternal_knowledge"].asInt();
-	Character->EternalPain = StatsNode["eternal_pain"].asInt();
-	Character->RebirthWealth = StatsNode["rebirth_wealth"].asInt();
-	Character->RebirthWisdom = StatsNode["rebirth_wisdom"].asInt();
-	Character->RebirthKnowledge = StatsNode["rebirth_knowledge"].asInt();
-	Character->RebirthPower = StatsNode["rebirth_power"].asInt();
-	Character->RebirthGirth = StatsNode["rebirth_girth"].asInt();
-	Character->RebirthProficiency = StatsNode["rebirth_proficiency"].asInt();
-	Character->RebirthInsight = StatsNode["rebirth_insight"].asInt();
-	Character->RebirthPassage = StatsNode["rebirth_passage"].asInt();
+	Character->LoadMapID = (ae::NetworkIDType)StatsNode["MapID"].asUInt();
+	Position.x = StatsNode["MapX"].asInt();
+	Position.y = StatsNode["MapY"].asInt();
+	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["SpawnMapID"].asUInt();
+	Character->SpawnPoint = StatsNode["SpawnPoint"].asUInt();
+	Character->Hardcore = StatsNode["Hardcore"].asBool();
+	Character->BuildID = StatsNode["BuildID"].asUInt();
+	Character->PortraitID = StatsNode["PortraitID"].asUInt();
+	ModelID = StatsNode["ModelID"].asUInt();
+	Character->BeltSize = StatsNode["BeltSize"].asInt();
+	Character->SkillBarSize = StatsNode["SkillBarSize"].asInt();
+	Character->SkillPointsUnlocked = StatsNode["SkillPointsUnlocked"].asInt();
+	Character->NextBattle = StatsNode["NextBattle"].asInt();
+	Character->Seed = StatsNode["Seed"].asUInt();
+	Character->PartyName = StatsNode["PartyName"].asString();
+
+	// Load attributes
+	for(const auto &Attribute : Stats->Attributes) {
+		if(!Attribute.second.Save)
+			continue;
+
+		switch(Attribute.second.Type) {
+			case StatValueType::BOOLEAN:
+				Character->Attributes[Attribute.second.Name].Int = StatsNode[Attribute.second.Name].asBool();
+			break;
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				Character->Attributes[Attribute.second.Name].Int = StatsNode[Attribute.second.Name].asInt();
+			break;
+			case StatValueType::INTEGER64:
+				Character->Attributes[Attribute.second.Name].Int64 = StatsNode[Attribute.second.Name].asInt64();
+			break;
+			case StatValueType::FLOAT:
+				Character->Attributes[Attribute.second.Name].Float = StatsNode[Attribute.second.Name].asFloat();
+			break;
+			case StatValueType::TIME:
+				Character->Attributes[Attribute.second.Name].Double = StatsNode[Attribute.second.Name].asDouble();
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported save type: " + Attribute.second.Name);
+			break;
+		}
+	}
 
 	if(!Character->BeltSize)
 		Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
@@ -809,7 +810,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		for(const Json::Value &ItemNode : *BagNode) {
 			_InventorySlot InventorySlot;
 			InventorySlot.Item = Stats->Items.at(ItemNode["id"].asUInt());
-			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
+			InventorySlot.Upgrades = std::clamp(ItemNode["upgrades"].asInt(), 0, InventorySlot.Item->MaxLevel);
 			InventorySlot.Count = ItemNode["count"].asInt();
 			BagType Bag = (BagType)std::stoul(BagNode.name());
 			if(Inventory->GetBag(Bag).StaticSize)
@@ -891,10 +892,28 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	else
 		Data.Write<uint32_t>(0);
 	Data.Write<uint32_t>(ModelID);
-	Data.Write<int>(Character->Rebirths);
+	Data.Write<int>(Character->Attributes["Rebirths"].Int);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 	Data.WriteBit(Character->Offline);
+}
+
+// Unserialize for ObjectCreate
+void _Object::UnserializeCreate(ae::_Buffer &Data) {
+	Position = Data.Read<glm::ivec2>();
+	Name = Data.ReadString();
+	Character->PartyName = Data.ReadString();
+	uint32_t PortraitID = Data.Read<uint32_t>();
+	if(PortraitID && Character)
+		Character->PortraitID = PortraitID;
+	ModelID = Data.Read<uint32_t>();
+	Character->Attributes["Rebirths"].Int = Data.Read<int>();
+	Light = Data.Read<uint8_t>();
+	Character->Invisible = Data.ReadBit();
+	Character->Offline = Data.ReadBit();
+
+	Character->Portrait = Stats->GetPortraitImage(Character->PortraitID);
+	ModelTexture = Stats->Models.at(ModelID).Texture;
 }
 
 // Serialize for ObjectUpdate
@@ -905,9 +924,9 @@ void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<uint8_t>(Character->Status);
 	Data.WriteBit(Light);
 	Data.WriteBit(Character->Invisible);
-	Data.WriteBit(Character->Bounty);
-	if(Character->Bounty)
-		Data.Write<int>(Character->Bounty);
+	Data.WriteBit(Character->Attributes["Bounty"].Int);
+	if(Character->Attributes["Bounty"].Int)
+		Data.Write<int>(Character->Attributes["Bounty"].Int);
 	if(Light)
 		Data.Write<uint8_t>(Light);
 }
@@ -921,42 +940,37 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.WriteString(Character->PartyName.c_str());
 	Data.Write<uint8_t>(Character->BeltSize);
 	Data.Write<uint8_t>(Character->SkillBarSize);
-	Data.Write<int>(Character->Health);
-	Data.Write<int>(Character->MaxHealth);
-	Data.Write<int>(Character->Mana);
-	Data.Write<int>(Character->MaxMana);
-	Data.Write<int64_t>(Character->Experience);
-	Data.Write<int>(Character->Gold);
 	Data.Write<int>(Character->SkillPointsUnlocked);
 	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
-	Data.Write<int>(Character->GoldLost);
-	Data.Write<double>(Character->PlayTime);
-	Data.Write<double>(Character->RebirthTime);
-	Data.Write<double>(Character->BattleTime);
-	Data.Write<int>(Character->Deaths);
-	Data.Write<int>(Character->MonsterKills);
-	Data.Write<int>(Character->PlayerKills);
-	Data.Write<int>(Character->GamesPlayed);
-	Data.Write<int>(Character->Bounty);
-	Data.Write<int>(Character->Rebirths);
-	Data.Write<int>(Character->EternalStrength);
-	Data.Write<int>(Character->EternalGuard);
-	Data.Write<int>(Character->EternalFortitude);
-	Data.Write<int>(Character->EternalSpirit);
-	Data.Write<int>(Character->EternalWisdom);
-	Data.Write<int>(Character->EternalWealth);
-	Data.Write<int>(Character->EternalAlacrity);
-	Data.Write<int>(Character->EternalKnowledge);
-	Data.Write<int>(Character->EternalPain);
-	Data.Write<int>(Character->RebirthWealth);
-	Data.Write<int>(Character->RebirthWisdom);
-	Data.Write<int>(Character->RebirthKnowledge);
-	Data.Write<int>(Character->RebirthPower);
-	Data.Write<int>(Character->RebirthGirth);
-	Data.Write<int>(Character->RebirthProficiency);
-	Data.Write<int>(Character->RebirthInsight);
-	Data.Write<int>(Character->RebirthPassage);
+
+	// Serialize attributes
+	for(const auto &AttributeName : Stats->AttributeRank) {
+		const _Attribute &Attribute = Stats->Attributes.at(AttributeName);
+		if(!Attribute.Network)
+			continue;
+
+		_Value &AttributeStorage = Character->Attributes[AttributeName];
+		switch(Attribute.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				Data.Write<int>(AttributeStorage.Int);
+			break;
+			case StatValueType::INTEGER64:
+				Data.Write<int64_t>(AttributeStorage.Int64);
+			break;
+			case StatValueType::FLOAT:
+				Data.Write<float>(AttributeStorage.Float);
+			break;
+			case StatValueType::TIME:
+				Data.Write<float>(AttributeStorage.Double);
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported network type: " + Attribute.Name);
+			break;
+		}
+	}
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -1001,48 +1015,6 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	}
 }
 
-// Serialize object for battle
-void _Object::SerializeBattle(ae::_Buffer &Data) {
-	Data.Write<ae::NetworkIDType>(NetworkID);
-	Data.Write<uint32_t>(Monster->DatabaseID);
-	Data.Write<glm::ivec2>(Position);
-	Data.Write<int>(Character->Level);
-	Data.Write<int>(Character->Health);
-	Data.Write<int>(Character->MaxHealth);
-	Data.Write<int>(Character->Mana);
-	Data.Write<int>(Character->MaxMana);
-	Data.Write<int>(Character->EquipmentBattleSpeed);
-	Data.Write<double>(Fighter->TurnTimer);
-	Data.Write<uint8_t>(Fighter->BattleSide);
-
-	SerializeStatusEffects(Data);
-}
-
-// Serialize status effects
-void _Object::SerializeStatusEffects(ae::_Buffer &Data) {
-	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
-	for(auto &StatusEffect : Character->StatusEffects)
-		StatusEffect->Serialize(Data);
-}
-
-// Unserialize for ObjectCreate
-void _Object::UnserializeCreate(ae::_Buffer &Data) {
-	Position = Data.Read<glm::ivec2>();
-	Name = Data.ReadString();
-	Character->PartyName = Data.ReadString();
-	uint32_t PortraitID = Data.Read<uint32_t>();
-	if(PortraitID && Character)
-		Character->PortraitID = PortraitID;
-	ModelID = Data.Read<uint32_t>();
-	Character->Rebirths = Data.Read<int>();
-	Light = Data.Read<uint8_t>();
-	Character->Invisible = Data.ReadBit();
-	Character->Offline = Data.ReadBit();
-
-	Character->Portrait = Stats->GetPortraitImage(Character->PortraitID);
-	ModelTexture = Stats->Models.at(ModelID).Texture;
-}
-
 // Unserialize object stats
 void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Name = Data.ReadString();
@@ -1052,42 +1024,37 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->PartyName = Data.ReadString();
 	Character->BeltSize = Data.Read<uint8_t>();
 	Character->SkillBarSize = Data.Read<uint8_t>();
-	Character->Health = Data.Read<int>();
-	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
-	Character->Mana = Data.Read<int>();
-	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
-	Character->Experience = Data.Read<int64_t>();
-	Character->Gold = Data.Read<int>();
 	Character->SkillPointsUnlocked = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
-	Character->GoldLost = Data.Read<int>();
-	Character->PlayTime = Data.Read<double>();
-	Character->RebirthTime = Data.Read<double>();
-	Character->BattleTime = Data.Read<double>();
-	Character->Deaths = Data.Read<int>();
-	Character->MonsterKills = Data.Read<int>();
-	Character->PlayerKills = Data.Read<int>();
-	Character->GamesPlayed = Data.Read<int>();
-	Character->Bounty = Data.Read<int>();
-	Character->Rebirths = Data.Read<int>();
-	Character->EternalStrength = Data.Read<int>();
-	Character->EternalGuard = Data.Read<int>();
-	Character->EternalFortitude = Data.Read<int>();
-	Character->EternalSpirit = Data.Read<int>();
-	Character->EternalWisdom = Data.Read<int>();
-	Character->EternalWealth = Data.Read<int>();
-	Character->EternalAlacrity = Data.Read<int>();
-	Character->EternalKnowledge = Data.Read<int>();
-	Character->EternalPain = Data.Read<int>();
-	Character->RebirthWealth = Data.Read<int>();
-	Character->RebirthWisdom = Data.Read<int>();
-	Character->RebirthKnowledge = Data.Read<int>();
-	Character->RebirthPower = Data.Read<int>();
-	Character->RebirthGirth = Data.Read<int>();
-	Character->RebirthProficiency = Data.Read<int>();
-	Character->RebirthInsight = Data.Read<int>();
-	Character->RebirthPassage = Data.Read<int>();
+
+	// Serialize attributes
+	for(const auto &AttributeName : Stats->AttributeRank) {
+		const _Attribute &Attribute = Stats->Attributes.at(AttributeName);
+		if(!Attribute.Network)
+			continue;
+
+		_Value &AttributeStorage = Character->Attributes[AttributeName];
+		switch(Attribute.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				AttributeStorage.Int = Data.Read<int>();
+			break;
+			case StatValueType::INTEGER64:
+				AttributeStorage.Int64 = Data.Read<int64_t>();
+			break;
+			case StatValueType::FLOAT:
+				AttributeStorage.Float = Data.Read<float>();
+			break;
+			case StatValueType::TIME:
+				AttributeStorage.Double = Data.Read<float>();
+			break;
+			default:
+				throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Unsupported network type: " + Attribute.Name);
+			break;
+		}
+	}
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1149,6 +1116,23 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->CalculateStats();
 }
 
+// Serialize object for battle
+void _Object::SerializeBattle(ae::_Buffer &Data) {
+	Data.Write<ae::NetworkIDType>(NetworkID);
+	Data.Write<uint32_t>(Monster->DatabaseID);
+	Data.Write<glm::ivec2>(Position);
+	Data.Write<int>(Character->Level);
+	Data.Write<int>(Character->Attributes["Health"].Int);
+	Data.Write<int>(Character->Attributes["MaxHealth"].Int);
+	Data.Write<int>(Character->Attributes["Mana"].Int);
+	Data.Write<int>(Character->Attributes["MaxMana"].Int);
+	Data.Write<int>(Character->EquipmentBattleSpeed);
+	Data.Write<double>(Fighter->TurnTimer);
+	Data.Write<uint8_t>(Fighter->BattleSide);
+
+	SerializeStatusEffects(Data);
+}
+
 // Unserialize battle stats
 void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Controller->InputStates.clear();
@@ -1156,10 +1140,10 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	// Get object type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
 	Character->Level = Data.Read<int>();
-	Character->Health = Data.Read<int>();
-	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
-	Character->Mana = Data.Read<int>();
-	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
+	Character->Attributes["Health"].Int = Data.Read<int>();
+	Character->BaseMaxHealth = Character->Attributes["MaxHealth"].Int = Data.Read<int>();
+	Character->Attributes["Mana"].Int = Data.Read<int>();
+	Character->BaseMaxMana = Character->Attributes["MaxMana"].Int = Data.Read<int>();
 	Character->EquipmentBattleSpeed = Data.Read<int>();
 	if(!IsClient)
 		Character->BaseBattleSpeed = Character->EquipmentBattleSpeed;
@@ -1167,6 +1151,13 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Fighter->BattleSide = Data.Read<uint8_t>();
 
 	UnserializeStatusEffects(Data);
+}
+
+// Serialize status effects
+void _Object::SerializeStatusEffects(ae::_Buffer &Data) {
+	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
+	for(auto &StatusEffect : Character->StatusEffects)
+		StatusEffect->Serialize(Data);
 }
 
 // Unserialize status effects
@@ -1188,25 +1179,25 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Rebirth
 	if(Server) {
-		if(StatChange.HasStat(StatType::REBIRTH)) {
-			if(StatChange.HasStat(StatType::MAXDAMAGE))
-				Server->QueueRebirth(this, 1, StatChange.Values[StatType::MAXDAMAGE].Integer);
-			else if(StatChange.HasStat(StatType::ARMOR))
-				Server->QueueRebirth(this, 2, StatChange.Values[StatType::ARMOR].Integer);
-			else if(StatChange.HasStat(StatType::HEALTH))
-				Server->QueueRebirth(this, 3, StatChange.Values[StatType::HEALTH].Integer);
-			else if(StatChange.HasStat(StatType::MANA))
-				Server->QueueRebirth(this, 4, StatChange.Values[StatType::MANA].Integer);
-			else if(StatChange.HasStat(StatType::EXPERIENCE))
-				Server->QueueRebirth(this, 5, StatChange.Values[StatType::EXPERIENCE].Integer);
-			else if(StatChange.HasStat(StatType::GOLD))
-				Server->QueueRebirth(this, 6, StatChange.Values[StatType::GOLD].Integer);
-			else if(StatChange.HasStat(StatType::BATTLESPEED))
-				Server->QueueRebirth(this, 7, StatChange.Values[StatType::BATTLESPEED].Integer);
-			else if(StatChange.HasStat(StatType::SKILLPOINT))
-				Server->QueueRebirth(this, 8, StatChange.Values[StatType::SKILLPOINT].Integer);
-			else if(StatChange.HasStat(StatType::REBIRTH))
-				Server->QueueRebirth(this, 9, StatChange.Values[StatType::DIFFICULTY].Integer);
+		if(StatChange.HasStat("Rebirth")) {
+			if(StatChange.HasStat("MaxDamage"))
+				Server->QueueRebirth(this, 1, StatChange.Values["MaxDamage"].Int);
+			else if(StatChange.HasStat("Armor"))
+				Server->QueueRebirth(this, 2, StatChange.Values["Armor"].Int);
+			else if(StatChange.HasStat("Health"))
+				Server->QueueRebirth(this, 3, StatChange.Values["Health"].Int);
+			else if(StatChange.HasStat("Mana"))
+				Server->QueueRebirth(this, 4, StatChange.Values["Mana"].Int);
+			else if(StatChange.HasStat("Experience"))
+				Server->QueueRebirth(this, 5, StatChange.Values["Experience"].Int);
+			else if(StatChange.HasStat("Gold"))
+				Server->QueueRebirth(this, 6, StatChange.Values["Gold"].Int);
+			else if(StatChange.HasStat("BattleSpeed"))
+				Server->QueueRebirth(this, 7, StatChange.Values["BattleSpeed"].Int);
+			else if(StatChange.HasStat("SkillPoint"))
+				Server->QueueRebirth(this, 8, StatChange.Values["SkillPoint"].Int);
+			else if(StatChange.HasStat("Difficulty"))
+				Server->QueueRebirth(this, 9, StatChange.Values["Difficulty"].Int);
 
 			return nullptr;
 		}
@@ -1215,11 +1206,11 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	_StatusEffect *StatusEffect = nullptr;
 
 	// Add buffs
-	if(StatChange.HasStat(StatType::BUFF)) {
+	if(StatChange.HasStat("Buff")) {
 		StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = (const _Buff *)StatChange.Values[StatType::BUFF].Pointer;
-		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
-		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
+		StatusEffect->Buff = (const _Buff *)StatChange.Values["Buff"].Pointer;
+		StatusEffect->Level = StatChange.Values["BuffLevel"].Int;
+		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values["BuffDuration"].Float;
 		StatusEffect->Source = Source;
 		if(StatusEffect->Duration < 0.0) {
 			StatusEffect->Infinite = true;
@@ -1239,8 +1230,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Clear buff
-	if(Server && StatChange.HasStat(StatType::CLEAR_BUFF)) {
-		_Buff *ClearBuff = (_Buff *)StatChange.Values[StatType::CLEAR_BUFF].Pointer;
+	if(Server && StatChange.HasStat("ClearBuff")) {
+		_Buff *ClearBuff = (_Buff *)StatChange.Values["ClearBuff"].Pointer;
 
 		// Find existing buff
 		for(auto &ExistingEffect : Character->StatusEffects) {
@@ -1252,8 +1243,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Update gold
-	if(StatChange.HasStat(StatType::GOLD)) {
-		int GoldUpdate = StatChange.Values[StatType::GOLD].Integer;
+	if(StatChange.HasStat("Gold")) {
+		int GoldUpdate = StatChange.Values["Gold"].Int;
 		if(Character->Battle && GoldUpdate < 0 && Fighter->GoldStolen) {
 			Fighter->GoldStolen += GoldUpdate;
 			if(Fighter->GoldStolen < 0)
@@ -1264,8 +1255,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Update gold stolen
-	if(StatChange.HasStat(StatType::GOLDSTOLEN)) {
-		int Amount = StatChange.Values[StatType::GOLDSTOLEN].Integer;
+	if(StatChange.HasStat("GoldStolen")) {
+		int Amount = StatChange.Values["GoldStolen"].Int;
 		Fighter->GoldStolen += Amount;
 		if(Fighter->GoldStolen > PLAYER_MAX_GOLD)
 			Fighter->GoldStolen = PLAYER_MAX_GOLD;
@@ -1274,14 +1265,14 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Update experience
-	if(StatChange.HasStat(StatType::EXPERIENCE)) {
-		Character->UpdateExperience(StatChange.Values[StatType::EXPERIENCE].Integer);
+	if(StatChange.HasStat("Experience")) {
+		Character->UpdateExperience(StatChange.Values["Experience"].Int);
 	}
 
 	// Update health
 	bool WasAlive = Character->IsAlive();
-	if(StatChange.HasStat(StatType::HEALTH))
-		Character->UpdateHealth(StatChange.Values[StatType::HEALTH].Integer);
+	if(StatChange.HasStat("Health"))
+		Character->UpdateHealth(StatChange.Values["Health"].Int);
 
 	// Just died
 	if(WasAlive && !Character->IsAlive()) {
@@ -1303,57 +1294,65 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Mana change
-	if(StatChange.HasStat(StatType::MANA))
-		Character->UpdateMana(StatChange.Values[StatType::MANA].Integer);
+	if(StatChange.HasStat("Mana"))
+		Character->UpdateMana(StatChange.Values["Mana"].Int);
 
 	// Stamina change
-	if(StatChange.HasStat(StatType::STAMINA)) {
-		Fighter->TurnTimer += StatChange.Values[StatType::STAMINA].Float;
+	if(StatChange.HasStat("Stamina")) {
+		Fighter->TurnTimer += StatChange.Values["Stamina"].Float;
 		Fighter->TurnTimer = glm::clamp(Fighter->TurnTimer, 0.0, 1.0);
 	}
 
 	// Skill bar upgrade
-	if(StatChange.HasStat(StatType::SKILLBARSIZE)) {
-		Character->SkillBarSize += StatChange.Values[StatType::SKILLBARSIZE].Integer;
+	if(StatChange.HasStat("SkillBarSize")) {
+		Character->SkillBarSize += StatChange.Values["SkillBarSize"].Int;
 		if(Character->SkillBarSize >= ACTIONBAR_MAX_SKILLBARSIZE)
 			Character->SkillBarSize = ACTIONBAR_MAX_SKILLBARSIZE;
 	}
 
 	// Belt size upgrade
-	if(StatChange.HasStat(StatType::BELTSIZE)) {
-		Character->BeltSize += StatChange.Values[StatType::BELTSIZE].Integer;
+	if(StatChange.HasStat("BeltSize")) {
+		Character->BeltSize += StatChange.Values["BeltSize"].Int;
 		if(Character->BeltSize >= ACTIONBAR_MAX_BELTSIZE)
 			Character->BeltSize = ACTIONBAR_MAX_BELTSIZE;
 	}
 
 	// Skill point unlocked
-	if(StatChange.HasStat(StatType::SKILLPOINT)) {
-		Character->SkillPointsUnlocked += StatChange.Values[StatType::SKILLPOINT].Integer;
+	if(StatChange.HasStat("SkillPoint")) {
+		Character->SkillPointsUnlocked += StatChange.Values["SkillPoint"].Int;
 		Character->CalculateStats();
 	}
 
+	// Boss cooldowns
+	if(StatChange.HasStat("BossCooldowns")) {
+		for(auto &BattleCooldown : Character->BattleCooldown)
+			BattleCooldown.second *= 1.0 - StatChange.Values["BossCooldowns"].Mult();
+	}
+
 	// Rebirth bonus
-	if(StatChange.HasStat(StatType::REBIRTH_WEALTH))
-		Character->RebirthWealth += StatChange.Values[StatType::REBIRTH_WEALTH].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_WISDOM))
-		Character->RebirthWisdom += StatChange.Values[StatType::REBIRTH_WISDOM].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_KNOWLEDGE))
-		Character->RebirthKnowledge += StatChange.Values[StatType::REBIRTH_KNOWLEDGE].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_GIRTH))
-		Character->RebirthGirth += StatChange.Values[StatType::REBIRTH_GIRTH].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_PROFICIENCY))
-		Character->RebirthProficiency += StatChange.Values[StatType::REBIRTH_PROFICIENCY].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_INSIGHT))
-		Character->RebirthInsight += StatChange.Values[StatType::REBIRTH_INSIGHT].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_PASSAGE))
-		Character->RebirthPassage += StatChange.Values[StatType::REBIRTH_PASSAGE].Integer;
-	if(StatChange.HasStat(StatType::REBIRTH_POWER)) {
-		Character->RebirthPower += StatChange.Values[StatType::REBIRTH_POWER].Integer;
+	if(StatChange.HasStat("RebirthWealth"))
+		Character->Attributes["RebirthWealth"].Int += StatChange.Values["RebirthWealth"].Int;
+	if(StatChange.HasStat("RebirthWisdom"))
+		Character->Attributes["RebirthWisdom"].Int += StatChange.Values["RebirthWisdom"].Int;
+	if(StatChange.HasStat("RebirthKnowledge"))
+		Character->Attributes["RebirthKnowledge"].Int += StatChange.Values["RebirthKnowledge"].Int;
+	if(StatChange.HasStat("RebirthGirth"))
+		Character->Attributes["RebirthGirth"].Int += StatChange.Values["RebirthGirth"].Int;
+	if(StatChange.HasStat("RebirthProficiency"))
+		Character->Attributes["RebirthProficiency"].Int += StatChange.Values["RebirthProficiency"].Int;
+	if(StatChange.HasStat("RebirthInsight"))
+		Character->Attributes["RebirthInsight"].Int += StatChange.Values["RebirthInsight"].Int;
+	if(StatChange.HasStat("RebirthPassage"))
+		Character->Attributes["RebirthPassage"].Int += StatChange.Values["RebirthPassage"].Int;
+	if(StatChange.HasStat("RebirthEnchantment"))
+		Character->Attributes["RebirthEnchantment"].Int += StatChange.Values["RebirthEnchantment"].Int;
+	if(StatChange.HasStat("RebirthPower")) {
+		Character->Attributes["RebirthPower"].Int += StatChange.Values["RebirthPower"].Int;
 		Character->CalculateStats();
 	}
 
 	// Reset skills
-	if(StatChange.HasStat(StatType::RESPEC)) {
+	if(StatChange.HasStat("Respec")) {
 		for(const auto &SkillLevel : Character->Skills) {
 			const _Item *Skill = Stats->Items.at(SkillLevel.first);
 			if(Skill && SkillLevel.second > 0) {
@@ -1377,14 +1376,14 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Flee from battle
-	if(StatChange.HasStat(StatType::FLEE)) {
+	if(StatChange.HasStat("Flee")) {
 		if(Fighter)
 			Fighter->FleeBattle = true;
 	}
 
 	// Use corpse
-	if(StatChange.HasStat(StatType::CORPSE)) {
-		Fighter->Corpse += StatChange.Values[StatType::CORPSE].Integer;
+	if(StatChange.HasStat("Corpse")) {
+		Fighter->Corpse += StatChange.Values["Corpse"].Int;
 		if(Fighter->Corpse < 0)
 			Fighter->Corpse = 0;
 		else if(Fighter->Corpse > 1)
@@ -1396,27 +1395,29 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		if(!Character->Battle) {
 
 			// Start teleport
-			if(StatChange.HasStat(StatType::TELEPORT))
-				Server->StartTeleport(this, StatChange.Values[StatType::TELEPORT].Float);
+			if(StatChange.HasStat("Teleport"))
+				Server->StartTeleport(this, StatChange.Values["Teleport"].Float);
 
 			// Start battle
-			if(StatChange.HasStat(StatType::BATTLE))
-				Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true, false, 0.0f, 0.0f);
+			if(StatChange.HasStat("Battle")) {
+				Character->GenerateNextBattle();
+				Server->QueueBattle(this, (uint32_t)StatChange.Values["Battle"].Int, true, false, 0.0f, 0.0f);
+			}
 
 			// Start PVP
-			if(StatChange.HasStat(StatType::HUNT))
-				Server->QueueBattle(this, 0, false, true, StatChange.Values[StatType::HUNT].Float, 0.0f);
-			if(StatChange.HasStat(StatType::BOUNTYHUNT))
-				Server->QueueBattle(this, 0, false, true, 0.0f, StatChange.Values[StatType::BOUNTYHUNT].Float);
+			if(StatChange.HasStat("Hunt"))
+				Server->QueueBattle(this, 0, false, true, StatChange.Values["Hunt"].Float, 0.0f);
+			if(StatChange.HasStat("BountyHunt"))
+				Server->QueueBattle(this, 0, false, true, 0.0f, StatChange.Values["BountyHunt"].Float);
 		}
 
 		// Set clock
-		if(StatChange.HasStat(StatType::CLOCK))
-			Server->SetClock(StatChange.Values[StatType::CLOCK].Float);
+		if(StatChange.HasStat("Clock"))
+			Server->SetClock(StatChange.Values["Clock"].Float);
 
 		// Map Change
-		if(StatChange.HasStat(StatType::MAP_CHANGE))
-			QueuedMapChange = StatChange.Values[StatType::MAP_CHANGE].Integer;
+		if(StatChange.HasStat("MapChange"))
+			QueuedMapChange = StatChange.Values["MapChange"].Int;
 	}
 
 	return StatusEffect;
@@ -1428,7 +1429,7 @@ int _Object::Move() {
 		return 0;
 
 	// Check timer
-	if(Controller->MoveTime < PLAYER_MOVETIME / (Character->MoveSpeed / 100.0))
+	if(Controller->MoveTime < PLAYER_MOVETIME / (Character->Attributes["MoveSpeed"].Mult()))
 		return 0;
 
 	Controller->MoveTime = 0;
@@ -1529,20 +1530,20 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 
 // Update death count and gold loss
 void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
-	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
-	int OldBounty = Character->Bounty;
+	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Attributes["Gold"].Int) * Penalty + 0.5f);
+	int OldBounty = Character->Attributes["Bounty"].Int;
 
 	// Update stats
 	Character->UpdateGold(-GoldPenalty);
-	Character->Deaths++;
-	Character->GoldLost += GoldPenalty;
-	Character->Bounty -= BountyLoss;
-	if(Character->Bounty < 0)
-		Character->Bounty = 0;
+	Character->Attributes["Deaths"].Int++;
+	Character->Attributes["GoldLost"].Int += GoldPenalty;
+	Character->Attributes["Bounty"].Int -= BountyLoss;
+	if(Character->Attributes["Bounty"].Int < 0)
+		Character->Attributes["Bounty"].Int = 0;
 
 	// Send message
 	if(Server) {
-		if(BountyLoss > 0 && Character->Bounty == 0) {
+		if(BountyLoss > 0 && Character->Attributes["Bounty"].Int == 0) {
 			std::string BountyMessage = "Player " + Name + "'s bounty of " + std::to_string(OldBounty) + " gold has been claimed!";
 			Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
 			Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
@@ -1555,7 +1556,7 @@ void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 
 			Server->SendPlayerPosition(Peer);
 			Server->SendMessage(Peer, std::string(Text + "and lost " + std::to_string(GoldPenalty) + " gold"), "red");
-			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Deaths << " )" << std::endl;
+			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Attributes["Gold"].Int << " deaths=" << Character->Attributes["Deaths"].Int << " hardcore=" << Character->Hardcore << " )" << std::endl;
 		}
 	}
 }
@@ -1698,7 +1699,7 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 	if(InputState & MOVE_RIGHT)
 		Direction.x += 1;
 
-	if(Character->DiagonalMovement)
+	if(Character->Attributes["DiagonalMovement"].Int)
 		return;
 
 	// Remove diagonols

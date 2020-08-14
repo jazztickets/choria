@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <hud/blacksmith_screen.h>
+#include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
 #include <hud/hud.h>
 #include <objects/object.h>
@@ -38,6 +39,7 @@ void _BlacksmithScreen::Init() {
 	UpgradeSlot.Type = BagType::NONE;
 
 	Element->SetActive(true);
+	HUD->CharacterScreen->Element->SetActive(true);
 	ae::Assets.Elements["label_blacksmith_cost"]->SetActive(false);
 	ae::Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
 }
@@ -105,7 +107,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 
 			// Check upgrade conditions
 			bool Disabled = false;
-			if(HUD->Player->Character->Gold < Cost)
+			if(HUD->Player->Character->Attributes["Gold"].Int < Cost)
 				Disabled = true;
 
 			// Check blacksmith level

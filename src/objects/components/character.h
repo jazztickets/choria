@@ -44,6 +44,14 @@ struct _Unlock {
 	int Level;
 };
 
+struct _SetData {
+	_SetData() : EquippedCount(0), MaxLevel(0), Level(0) { }
+
+	int EquippedCount;
+	int MaxLevel;
+	int Level;
+};
+
 struct _Cooldown {
 	_Cooldown() : Duration(0), MaxDuration(0) { }
 
@@ -74,6 +82,9 @@ class _Character {
 		_Character(_Object *Object);
 		~_Character();
 
+		// Initialize
+		void Init();
+
 		// Updates
 		void Update(double FrameTime);
 		void UpdateHealth(int &Value);
@@ -81,14 +92,16 @@ class _Character {
 		void UpdateGold(int Value);
 		void UpdateExperience(int64_t Value);
 		void UpdateStatus();
+		void UpdateAllResist(int Value);
+		void UpdateElementalResist(int Value);
 
 		// Stats
 		void CalculateStats();
 		void CalculateLevelStats();
 		float GetNextLevelPercent() const;
-		bool IsAlive() const { return Health > 0; }
-		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
-		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
+		bool IsAlive() const { return Attributes.at("Health").Int > 0; }
+		float GetHealthPercent() const { return Attributes.at("MaxHealth").Int > 0 ? Attributes.at("Health").Int / (float)Attributes.at("MaxHealth").Int : 0; }
+		float GetManaPercent() const { return Attributes.at("MaxMana").Int > 0 ? Attributes.at("Mana").Int / (float)Attributes.at("MaxMana").Int : 0; }
 
 		// Input
 		bool AcceptingMoveInput();
@@ -104,7 +117,8 @@ class _Character {
 		bool IsZoneOnCooldown(uint32_t Zone) { return BattleCooldown.find(Zone) != BattleCooldown.end(); }
 		void GenerateNextBattle();
 		int GenerateDamage();
-		float GetDamagePower(int DamageTypeID);
+		float GetAverageDamage() const { return (Attributes.at("MinDamage").Int + Attributes.at("MaxDamage").Int) / 2.0f; }
+		float GetDamagePowerMultiplier(int DamageTypeID);
 
 		// Actions
 		ScopeType GetScope() { return Battle ? ScopeType::BATTLE : ScopeType::WORLD; }
@@ -150,52 +164,16 @@ class _Character {
 		std::unordered_map<uint32_t, double> BattleCooldown;
 		std::unordered_map<uint32_t, int> BossKills;
 		std::string PartyName;
-		int Gold;
+		double IdleTime;
 		int NextBattle;
 		int Invisible;
-		int Stunned;
-		bool DiagonalMovement;
-		bool LavaProtection;
 		bool Hardcore;
 		bool Offline;
 		uint8_t Status;
 
-		// Records
-		double PlayTime;
-		double RebirthTime;
-		double BattleTime;
-		int Deaths;
-		int MonsterKills;
-		int PlayerKills;
-		int GamesPlayed;
-		int Bounty;
-		int GoldLost;
-		int Rebirths;
-
-		// Rebirths
-		int EternalStrength;
-		int EternalGuard;
-		int EternalFortitude;
-		int EternalSpirit;
-		int EternalWisdom;
-		int EternalWealth;
-		int EternalAlacrity;
-		int EternalKnowledge;
-		int EternalPain;
-		int RebirthWealth;
-		int RebirthWisdom;
-		int RebirthKnowledge;
-		int RebirthPower;
-		int RebirthGirth;
-		int RebirthProficiency;
-		int RebirthInsight;
-		int RebirthPassage;
-
 		// Levels
 		bool CalcLevelStats;
 		int Level;
-		int RebirthTier;
-		int64_t Experience;
 		int64_t ExperienceNeeded;
 		int64_t ExperienceNextLevel;
 
@@ -211,47 +189,10 @@ class _Character {
 		double BaseAttackPeriod;
 
 		// Final attributes
-		int Health;
-		int MaxHealth;
-		int Mana;
-		int MaxMana;
-		int HealthRegen;
-		int ManaRegen;
-		float ExperienceMultiplier;
-		float GoldMultiplier;
-		float MaxHealthMultiplier;
-		float MaxManaMultiplier;
-		float ManaReductionRatio;
-		float HealthUpdateMultiplier;
-		float AttackPower;
-		float PhysicalPower;
-		float FirePower;
-		float ColdPower;
-		float LightningPower;
-		float BleedPower;
-		float PoisonPower;
-		float PetPower;
-		float HealPower;
-		float ManaPower;
-		int MinDamage;
-		int MaxDamage;
-		int Armor;
-		int DamageBlock;
-		int Pierce;
-		int MoveSpeed;
-		int BattleSpeed;
+		std::unordered_map<std::string, _Value> Attributes;
+		std::unordered_map<std::string, int> BaseResistances;
+		std::unordered_map<uint32_t, _SetData> Sets;
 		int EquipmentBattleSpeed;
-		int Evasion;
-		int SpellDamage;
-		int HitChance;
-		int AllSkills;
-		int SummonLimit;
-		int Difficulty;
-		int MinigameSpeed;
-		int ConsumeChance;
-		float CooldownMultiplier;
-		std::unordered_map<uint32_t, int> BaseResistances;
-		std::unordered_map<uint32_t, int> Resistances;
 
 		// Status effects
 		std::list<_StatusEffect *> StatusEffects;

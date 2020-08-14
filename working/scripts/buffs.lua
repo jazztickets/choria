@@ -1,4 +1,5 @@
 -- Base Buff --
+
 Base_Buff = {
 
 	New = function(self, Object)
@@ -32,9 +33,7 @@ function Buff_Bleeding.Update(self, Level, Source, Change)
 	Damage = Level * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(Damage, 0)
 
-	Update = ResolveManaReductionRatio(Source, Damage)
-	Change.Health = Update.Health
-	Change.Mana = Update.Mana
+	Change.Health = -Damage
 
 	return Change
 end
@@ -105,7 +104,7 @@ function Buff_Stunned.GetInfo(self, Level)
 end
 
 function Buff_Stunned.Stats(self, Level, Source, Change)
-	Change.Stunned = 1
+	Change.Stunned = true
 
 	return Change
 end
@@ -165,7 +164,7 @@ end
 Buff_Mighty = Base_Buff:New()
 
 function Buff_Mighty.GetInfo(self, Level)
-	return "Attack damage increased by [c green]" .. Level
+	return "Weapon damage increased by [c green]" .. Level
 end
 
 function Buff_Mighty.Stats(self, Level, Source, Change)
@@ -206,17 +205,21 @@ end
 -- Parry --
 
 Buff_Parry = Base_Buff:New()
-Buff_Parry.DamageReduction = 1
 Buff_Parry.StaminaGain = 0.2
+Buff_Parry.StunDuration = 1
 
 function Buff_Parry.GetInfo(self, Level)
 	return "Blocking attacks"
 end
 
-function Buff_Parry.OnHit(self, Object, Level, Duration, Change)
+function Buff_Parry.OnHit(self, Object, Effect, Change, Result)
 	Change.BuffSound = self.ID
-	Change.Damage = math.max(math.floor(Change.Damage * (1.0 - (Level / 100.0))), 0)
+	Change.Damage = math.max(math.floor(Change.Damage * (1.0 - (Effect.Level / 100.0))), 0)
 	Change.Stamina = self.StaminaGain
+
+	Result.Source.Buff = Buff_Stunned.Pointer
+	Result.Source.BuffLevel = 1
+	Result.Source.BuffDuration = self.StunDuration
 end
 
 function Buff_Parry.PlaySound(self, Level)
@@ -226,20 +229,17 @@ end
 -- Poisoned --
 
 Buff_Poisoned = {}
-Buff_Poisoned.HealthUpdateMultiplier = -0.5
+Buff_Poisoned.HealthUpdateMultiplier = -50
 Buff_Poisoned.DamageType = DamageType["Poison"]
 
 function Buff_Poisoned.GetInfo(self, Level)
-	return "Healing reduced by [c red]" .. math.abs(math.floor(self.HealthUpdateMultiplier * 100)) .. "%[c white] and taking [c red]" .. Level .. " [c white]damage"
+	return "Healing reduced by [c red]" .. math.abs(self.HealthUpdateMultiplier) .. "%[c white] and taking [c red]" .. Level .. " [c white]damage"
 end
 
 function Buff_Poisoned.Update(self, Level, Source, Change)
 	Damage = Level * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(math.floor(Damage), 0)
-
-	Update = ResolveManaReductionRatio(Source, Damage)
-	Change.Health = Update.Health
-	Change.Mana = Update.Mana
+	Change.Health = -Damage
 
 	return Change
 end
@@ -262,10 +262,7 @@ end
 function Buff_Burning.Update(self, Level, Source, Change)
 	Damage = Level * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(math.floor(Damage), 0)
-
-	Update = ResolveManaReductionRatio(Source, Damage)
-	Change.Health = Update.Health
-	Change.Mana = Update.Mana
+	Change.Health = -Damage
 
 	return Change
 end
@@ -279,8 +276,7 @@ function Buff_BleedResist.GetInfo(self, Level)
 end
 
 function Buff_BleedResist.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["Bleed"]
-	Change.Resist = Level
+	Change.BleedResist = Level
 
 	return Change
 end
@@ -294,8 +290,7 @@ function Buff_PoisonResist.GetInfo(self, Level)
 end
 
 function Buff_PoisonResist.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["Poison"]
-	Change.Resist = Level
+	Change.PoisonResist = Level
 
 	return Change
 end
@@ -309,8 +304,7 @@ function Buff_ColdResist.GetInfo(self, Level)
 end
 
 function Buff_ColdResist.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["Cold"]
-	Change.Resist = Level
+	Change.ColdResist = Level
 
 	return Change
 end
@@ -324,7 +318,7 @@ function Buff_Weak.GetInfo(self, Level)
 end
 
 function Buff_Weak.Stats(self, Level, Source, Change)
-	Change.AttackPower = -Level / 100.0
+	Change.AttackPower = -Level
 
 	return Change
 end
@@ -338,8 +332,7 @@ function Buff_Flayed.GetInfo(self, Level)
 end
 
 function Buff_Flayed.Stats(self, Level, Source, Change)
-	Change.ResistType = DamageType["All"]
-	Change.Resist = -Level
+	Change.AllResist = -Level
 
 	return Change
 end
@@ -380,10 +373,16 @@ function Buff_Shielded.GetInfo(self, Level)
 	return "Blocking [c green]" .. Level .. "[c white] damage before breaking"
 end
 
-function Buff_Shielded.OnHit(self, Object, Level, Duration, Change)
+function Buff_Shielded.OnHit(self, Object, Effect, Change, Result)
+
+	-- Check for incoming damage
+	if Change.Damage > 0 then
+		Change.BuffSound = self.ID
+	end
 
 	-- Reduce shield
-	Level = Level - Change.Damage
+	Level = Effect.Level - Change.Damage
+	Duration = Effect.Duration
 
 	-- Check for shield breaking
 	if Level <= 0 then
@@ -393,8 +392,6 @@ function Buff_Shielded.OnHit(self, Object, Level, Duration, Change)
 		Change.Damage = 0
 		Object.UpdateBuff(self.ID, Level, Duration)
 	end
-
-	Change.BuffSound = self.ID
 end
 
 function Buff_Shielded.PlaySound(self, Level)
@@ -410,7 +407,7 @@ function Buff_Empowered.GetInfo(self, Level)
 end
 
 function Buff_Empowered.Stats(self, Level, Source, Change)
-	Change.AttackPower = Level / 100.0
+	Change.AttackPower = Level
 
 	return Change
 end
@@ -517,6 +514,20 @@ end
 
 function Buff_Difficult.Stats(self, Level, Source, Change)
 	Change.Difficulty = Level
+
+	return Change
+end
+
+-- Attractant --
+
+Buff_Attractant = Base_Buff:New()
+
+function Buff_Attractant.GetInfo(self, Level)
+	return "Getting into battle more often"
+end
+
+function Buff_Attractant.Stats(self, Level, Source, Change)
+	Change.Attractant = Level
 
 	return Change
 end

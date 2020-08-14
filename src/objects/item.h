@@ -60,9 +60,9 @@ class _Item {
 		static int GetEnchantCost(int Level);
 
 		int GetAttributeCount(int Upgrades) const;
-		int GetDescriptionLineCount(_Scripting *Scripting, _Object *Object, int DrawLevel, int Upgrades, float Width) const;
 		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
-		void DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int PlayerMaxLevelSkill, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const;
+		int DrawDescription(bool Render, _Object *Object, const std::string &Function, glm::vec2 &DrawPosition, bool Blacksmith, int DrawLevel, int PlayerMaxLevelSkill, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const;
+		int DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosition, bool Blacksmith, float Width, float SpacingY) const;
 
 		bool IsSkill() const { return Type == ItemType::SKILL; }
 		bool IsConsumable() const { return Type == ItemType::CONSUMABLE; }
@@ -85,7 +85,7 @@ class _Item {
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel, int MaxSetLevel) const;
 		void PlaySound(_Scripting *Scripting) const;
 
 		float GetAverageDamage(int Upgrades) const;
@@ -104,16 +104,17 @@ class _Item {
 		float GetSpellDamage(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
 		float GetGoldBonus(int Upgrades) const;
-		float GetExpBonus(int Upgrades) const;
+		float GetExperienceBonus(int Upgrades) const;
 		float GetCooldownReduction(int Upgrades) const;
 		float GetAllSkills(int Upgrades) const;
-		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
+		template<typename T> T GetUpgradedValue(const std::string &AttributeName, int Upgrades, T Value) const;
 
 		const _Stats *Stats;
 
 		uint32_t ID;
 		std::string Name;
 		std::string Script;
+		std::string Proc;
 		const ae::_Texture *Texture;
 		const ae::_Texture *AltTexture;
 		ItemType Type;
@@ -125,6 +126,7 @@ class _Item {
 		double Cooldown;
 		int Cost;
 		uint32_t DamageTypeID;
+		uint32_t SetID;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;

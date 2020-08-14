@@ -15,6 +15,9 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 # mingw
 if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
+
+	# disable console window
+	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")
 endif()
 
 # enable editor

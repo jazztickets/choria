@@ -38,10 +38,12 @@ class _InventoryScreen : public _Screen {
 
 		void DrawBag(BagType Type);
 		void DrawKeys();
+		void DrawUnlocks();
 
 		ae::_Element *EquipmentElement;
 		ae::_Element *InventoryElement;
 		ae::_Element *KeysElement;
+		ae::_Element *UnlocksElement;
 
 	private:
 

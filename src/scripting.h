@@ -59,7 +59,7 @@ class _Scripting {
 		void PushStatusEffect(_StatusEffect *StatusEffect);
 		void PushObjectList(std::list<_Object *> &Objects);
 		void PushObjectStatusEffects(_Object *Object);
-		void PushItemParameters(int Chance, int Level, double Duration, int Upgrades);
+		void PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel, int MaxSetLevel, int MoreInfo);
 		void PushBoolean(bool Value);
 		void PushInt(int Value);
 		void PushReal(double Value);
@@ -70,7 +70,7 @@ class _Scripting {
 		std::string GetString(int Index);
 		void *GetPointer(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
-		void GetStatChange(int Index, _StatChange &StatChange);
+		void GetStatChange(int Index, const _Stats *Stats, _StatChange &StatChange);
 		void GetSummon(int Index, _Summon &Summon);
 
 		bool StartMethodCall(const std::string &TableName, const std::string &Function);
@@ -85,7 +85,7 @@ class _Scripting {
 
 	private:
 
-		static void PushItem(lua_State *LuaState, const _Item *Item, int Upgrades);
+		static void PushItem(lua_State *LuaState, const _Stats *Stats, const _Item *Item, int Upgrades);
 
 		static int RandomGetInt(lua_State *LuaState);
 		static int AudioPlay(lua_State *LuaState);
@@ -99,6 +99,7 @@ class _Scripting {
 		static int ObjectSpendSkillPoints(lua_State *LuaState);
 		static int ObjectSetAction(lua_State *LuaState);
 		static int ObjectGenerateDamage(lua_State *LuaState);
+		static int ObjectGetAverageDamage(lua_State *LuaState);
 		static int ObjectGetDamageReduction(lua_State *LuaState);
 		static int ObjectFindPath(lua_State *LuaState);
 		static int ObjectFindEvent(lua_State *LuaState);
@@ -113,6 +114,7 @@ class _Scripting {
 		static int ObjectHasBuff(lua_State *LuaState);
 
 		static int ItemGenerateDamage(lua_State *LuaState);
+		static int ItemGetAverageDamage(lua_State *LuaState);
 
 		lua_State *LuaState;
 		int CurrentTableIndex;

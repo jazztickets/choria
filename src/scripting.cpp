@@ -104,8 +104,6 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	// Add damage types
 	lua_newtable(LuaState);
 	for(const auto &Iterator : Stats->DamageTypes) {
-
-		// Add pointer to table
 		lua_pushstring(LuaState, Iterator.second.Name.c_str());
 		lua_pushinteger(LuaState, Iterator.first);
 		lua_settable(LuaState, -3);
@@ -121,8 +119,14 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "MAX_SKILLBAR_SIZE");
 	lua_pushinteger(LuaState, GAME_MAX_SKILL_UNLOCKS);
 	lua_setglobal(LuaState, "MAX_SKILL_UNLOCKS");
+	lua_pushinteger(LuaState, GAME_MAX_SKILL_LEVEL);
+	lua_setglobal(LuaState, "MAX_SKILL_LEVEL");
+	lua_pushinteger(LuaState, GAME_DEFAULT_MAX_SKILL_LEVEL);
+	lua_setglobal(LuaState, "DEFAULT_MAX_SKILL_LEVEL");
 	lua_pushinteger(LuaState, PLAYER_MAX_GOLD);
 	lua_setglobal(LuaState, "MAX_GOLD");
+	lua_pushnumber(LuaState, GAME_REBIRTH_WEALTH_MULTIPLIER);
+	lua_setglobal(LuaState, "REBIRTH_WEALTH_MULTIPLIER");
 	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_BELTSIZE);
 	lua_setglobal(LuaState, "DEFAULT_BELTSIZE");
 	lua_pushinteger(LuaState, ACTIONBAR_DEFAULT_SKILLBARSIZE);
@@ -202,7 +206,7 @@ void _Scripting::InjectItemPointers(const _Stats *Stats) {
 		}
 
 		// Add item pointer
-		PushItem(LuaState, Item, 0);
+		PushItem(LuaState, Stats, Item, 0);
 		lua_setfield(LuaState, -2, "Item");
 
 		lua_pop(LuaState, 1);
@@ -372,9 +376,43 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_newtable(LuaState);
 
+	// Push object attributes
+	for(const auto &Attribute : Object->Stats->Attributes) {
+		if(!Attribute.second.Script)
+			continue;
+
+		_Value &AttributeStorage = Object->Character->Attributes[Attribute.second.Name];
+		switch(Attribute.second.Type) {
+			case StatValueType::BOOLEAN:
+				lua_pushboolean(LuaState, AttributeStorage.Int);
+			break;
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				lua_pushinteger(LuaState, AttributeStorage.Int);
+			break;
+			case StatValueType::INTEGER64:
+				lua_pushinteger(LuaState, AttributeStorage.Int64);
+			break;
+			case StatValueType::FLOAT:
+				lua_pushnumber(LuaState, AttributeStorage.Float);
+			break;
+			case StatValueType::POINTER:
+				if(AttributeStorage.Pointer)
+					lua_pushlightuserdata(LuaState, AttributeStorage.Pointer);
+				else
+					lua_pushnil(LuaState);
+			break;
+			case StatValueType::TIME:
+				lua_pushnumber(LuaState, AttributeStorage.Double);
+			break;
+		}
+		lua_setfield(LuaState, -2, Attribute.second.Name.c_str());
+	}
+
 	PushObjectStatusEffects(Object);
 	lua_setfield(LuaState, -2, "StatusEffects");
 
+	// Push functions
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectAddTarget, 1);
 	lua_setfield(LuaState, -2, "AddTarget");
@@ -406,6 +444,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectGenerateDamage, 1);
 	lua_setfield(LuaState, -2, "GenerateDamage");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetAverageDamage, 1);
+	lua_setfield(LuaState, -2, "GetAverageDamage");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectGetDamageReduction, 1);
@@ -485,116 +527,11 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushlightuserdata(LuaState, Object->Monster->Owner);
 	lua_setfield(LuaState, -2, "Owner");
 
-	lua_pushinteger(LuaState, Object->Character->SummonLimit);
-	lua_setfield(LuaState, -2, "SummonLimit");
-
-	lua_pushinteger(LuaState, Object->Character->LavaProtection);
-	lua_setfield(LuaState, -2, "LavaProtection");
-
 	lua_pushinteger(LuaState, Object->Fighter->Corpse);
 	lua_setfield(LuaState, -2, "Corpse");
 
-	lua_pushinteger(LuaState, Object->Character->Rebirths);
-	lua_setfield(LuaState, -2, "Rebirths");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthWealth);
-	lua_setfield(LuaState, -2, "RebirthWealth");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthWisdom);
-	lua_setfield(LuaState, -2, "RebirthWisdom");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthKnowledge);
-	lua_setfield(LuaState, -2, "RebirthKnowledge");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthPower);
-	lua_setfield(LuaState, -2, "RebirthPower");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthGirth);
-	lua_setfield(LuaState, -2, "RebirthGirth");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthProficiency);
-	lua_setfield(LuaState, -2, "RebirthProficiency");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthInsight);
-	lua_setfield(LuaState, -2, "RebirthInsight");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthPassage);
-	lua_setfield(LuaState, -2, "RebirthPassage");
-
-	lua_pushinteger(LuaState, Object->Character->EternalPain);
-	lua_setfield(LuaState, -2, "EternalPain");
-
-	lua_pushinteger(LuaState, Object->Character->Gold);
-	lua_setfield(LuaState, -2, "Gold");
-
 	lua_pushinteger(LuaState, Object->Fighter->GoldStolen);
 	lua_setfield(LuaState, -2, "GoldStolen");
-
-	lua_pushinteger(LuaState, Object->Character->Experience);
-	lua_setfield(LuaState, -2, "Experience");
-
-	lua_pushinteger(LuaState, Object->Character->RebirthTier);
-	lua_setfield(LuaState, -2, "RebirthTier");
-
-	lua_pushinteger(LuaState, Object->Character->Health);
-	lua_setfield(LuaState, -2, "Health");
-
-	lua_pushinteger(LuaState, Object->Character->MaxHealth);
-	lua_setfield(LuaState, -2, "MaxHealth");
-
-	lua_pushinteger(LuaState, Object->Character->Mana);
-	lua_setfield(LuaState, -2, "Mana");
-
-	lua_pushinteger(LuaState, Object->Character->MaxMana);
-	lua_setfield(LuaState, -2, "MaxMana");
-
-	lua_pushnumber(LuaState, Object->Character->ManaReductionRatio);
-	lua_setfield(LuaState, -2, "ManaReductionRatio");
-
-	lua_pushnumber(LuaState, Object->Character->AttackPower);
-	lua_setfield(LuaState, -2, "AttackPower");
-
-	lua_pushnumber(LuaState, Object->Character->PhysicalPower);
-	lua_setfield(LuaState, -2, "PhysicalPower");
-
-	lua_pushnumber(LuaState, Object->Character->FirePower);
-	lua_setfield(LuaState, -2, "FirePower");
-
-	lua_pushnumber(LuaState, Object->Character->ColdPower);
-	lua_setfield(LuaState, -2, "ColdPower");
-
-	lua_pushnumber(LuaState, Object->Character->LightningPower);
-	lua_setfield(LuaState, -2, "LightningPower");
-
-	lua_pushnumber(LuaState, Object->Character->BleedPower);
-	lua_setfield(LuaState, -2, "BleedPower");
-
-	lua_pushnumber(LuaState, Object->Character->PoisonPower);
-	lua_setfield(LuaState, -2, "PoisonPower");
-
-	lua_pushnumber(LuaState, Object->Character->PetPower);
-	lua_setfield(LuaState, -2, "PetPower");
-
-	lua_pushnumber(LuaState, Object->Character->HealPower);
-	lua_setfield(LuaState, -2, "HealPower");
-
-	lua_pushnumber(LuaState, Object->Character->ManaPower);
-	lua_setfield(LuaState, -2, "ManaPower");
-
-	lua_pushinteger(LuaState, Object->Character->HitChance);
-	lua_setfield(LuaState, -2, "HitChance");
-
-	lua_pushinteger(LuaState, Object->Character->DamageBlock);
-	lua_setfield(LuaState, -2, "DamageBlock");
-
-	lua_pushinteger(LuaState, Object->Character->Pierce);
-	lua_setfield(LuaState, -2, "Pierce");
-
-	lua_pushinteger(LuaState, Object->Character->Evasion);
-	lua_setfield(LuaState, -2, "Evasion");
-
-	lua_pushinteger(LuaState, Object->Character->SpellDamage);
-	lua_setfield(LuaState, -2, "SpellDamage");
 
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
@@ -625,15 +562,17 @@ void _Scripting::PushObject(_Object *Object) {
 }
 
 // Push item onto stack
-void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) {
+void _Scripting::PushItem(lua_State *LuaState, const _Stats *Stats, const _Item *Item, int Upgrades) {
 	if(!Item) {
 		lua_pushnil(LuaState);
 		return;
 	}
 
+	if(!Stats)
+		throw std::runtime_error("PushItem: Stats is null!");
+
 	lua_newtable(LuaState);
 
-	lua_checkstack(LuaState, 0);
 	lua_getglobal(LuaState, Item->Script.c_str());
 	if(!lua_istable(LuaState, -1)) {
 		lua_pop(LuaState, 1);
@@ -641,8 +580,29 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	}
 	lua_setfield(LuaState, -2, "Script");
 
+	lua_getglobal(LuaState, Item->Proc.c_str());
+	if(!lua_istable(LuaState, -1)) {
+		lua_pop(LuaState, 1);
+		lua_pushnil(LuaState);
+	}
+	lua_setfield(LuaState, -2, "Proc");
+
 	lua_pushinteger(LuaState, (int)Item->ID);
 	lua_setfield(LuaState, -2, "ID");
+
+	if(Stats->Sets.find(Item->SetID) != Stats->Sets.end()) {
+		const _Set &Set = Stats->Sets.at(Item->SetID);
+		lua_newtable(LuaState);
+
+		lua_pushinteger(LuaState, Set.Count);
+		lua_setfield(LuaState, -2, "Count");
+
+		lua_pushstring(LuaState, Set.Name.c_str());
+		lua_setfield(LuaState, -2, "Name");
+	}
+	else
+		lua_pushnil(LuaState);
+	lua_setfield(LuaState, -2, "Set");
 
 	lua_pushinteger(LuaState, Item->Level);
 	lua_setfield(LuaState, -2, "Level");
@@ -668,6 +628,10 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	lua_pushlightuserdata(LuaState, (void *)Item);
 	lua_pushcclosure(LuaState, &ItemGenerateDamage, 1);
 	lua_setfield(LuaState, -2, "GenerateDamage");
+
+	lua_pushlightuserdata(LuaState, (void *)Item);
+	lua_pushcclosure(LuaState, &ItemGetAverageDamage, 1);
+	lua_setfield(LuaState, -2, "GetAverageDamage");
 
 	lua_pushinteger(LuaState, Item->DamageTypeID);
 	lua_setfield(LuaState, -2, "DamageType");
@@ -755,7 +719,7 @@ void _Scripting::PushObjectStatusEffects(_Object *Object) {
 }
 
 // Push varying parameters for an item
-void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int Upgrades) {
+void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel, int MaxSetLevel, int MoreInfo) {
 	lua_newtable(LuaState);
 
 	lua_pushinteger(LuaState, Chance);
@@ -769,6 +733,15 @@ void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int 
 
 	lua_pushinteger(LuaState, Upgrades);
 	lua_setfield(LuaState, -2, "Upgrades");
+
+	lua_pushinteger(LuaState, SetLevel);
+	lua_setfield(LuaState, -2, "SetLevel");
+
+	lua_pushinteger(LuaState, MaxSetLevel);
+	lua_setfield(LuaState, -2, "MaxSetLevel");
+
+	lua_pushboolean(LuaState, MoreInfo);
+	lua_setfield(LuaState, -2, "MoreInfo");
 }
 
 // Push boolean value
@@ -827,12 +800,12 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 
 	lua_pushstring(LuaState, "Source");
 	lua_gettable(LuaState, -2);
-	GetStatChange(-1, ActionResult.Source);
+	GetStatChange(-1, ActionResult.Source.Object->Stats, ActionResult.Source);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Target");
 	lua_gettable(LuaState, -2);
-	GetStatChange(-1, ActionResult.Target);
+	GetStatChange(-1, ActionResult.Source.Object->Stats, ActionResult.Target);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Summon");
@@ -842,7 +815,7 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 }
 
 // Get return value as stat change
-void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
+void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &StatChange) {
 	if(Index != -1)
 		Index += CurrentTableIndex;
 
@@ -857,27 +830,30 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 		// Get key name
 		std::string Key = lua_tostring(LuaState, -2);
 
-		// Turn key into StatType
-		auto Iterator = StatStringToType.find(Key);
+		// Find attribute
+		const _Attribute &Attribute = Stats->Attributes.at(Key);
 
-		// Get value type
-		if(Iterator != StatStringToType.end()) {
-
-			// Get value from lua
-			switch(Iterator->second.ValueType) {
-				case StatValueType::INTEGER:
-					StatChange.Values[Iterator->second.Type].Integer = (int)lua_tonumber(LuaState, -1);
-				break;
-				case StatValueType::FLOAT:
-					StatChange.Values[Iterator->second.Type].Float = (float)lua_tonumber(LuaState, -1);
-				break;
-				case StatValueType::BOOLEAN:
-					StatChange.Values[Iterator->second.Type].Integer = lua_toboolean(LuaState, -1);
-				break;
-				case StatValueType::POINTER:
-					StatChange.Values[Iterator->second.Type].Pointer = lua_touserdata(LuaState, -1);
-				break;
-			}
+		// Get value from lua
+		switch(Attribute.Type) {
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				StatChange.Values[Key].Int = (int)lua_tonumber(LuaState, -1);
+			break;
+			case StatValueType::INTEGER64:
+				StatChange.Values[Key].Int64 = (int64_t)lua_tonumber(LuaState, -1);
+			break;
+			case StatValueType::FLOAT:
+				StatChange.Values[Key].Float = (float)lua_tonumber(LuaState, -1);
+			break;
+			case StatValueType::BOOLEAN:
+				StatChange.Values[Key].Int = lua_toboolean(LuaState, -1);
+			break;
+			case StatValueType::POINTER:
+				StatChange.Values[Key].Pointer = lua_touserdata(LuaState, -1);
+			break;
+			case StatValueType::TIME:
+				StatChange.Values[Key].Double = lua_tonumber(LuaState, -1);
+			break;
 		}
 
 		lua_pop(LuaState, 1);
@@ -1075,7 +1051,7 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 	}
 
 	// Push item
-	PushItem(LuaState, Item, Upgrades);
+	PushItem(LuaState, Object->Stats, Item, Upgrades);
 
 	return 1;
 }
@@ -1166,13 +1142,23 @@ int _Scripting::ObjectGenerateDamage(lua_State *LuaState) {
 	return 1;
 }
 
+// Get average weapon damage
+int _Scripting::ObjectGetAverageDamage(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	lua_pushnumber(LuaState, Object->Character->GetAverageDamage());
+
+	return 1;
+}
+
 // Get damage reduction amount from a type of resistance
 int _Scripting::ObjectGetDamageReduction(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
+	std::string ResistName = Object->Stats->DamageTypes.at(DamageTypeID).Name + "Resist";
 
-	lua_pushnumber(LuaState, 1.0 - (double)Object->Character->Resistances[DamageTypeID] / 100.0);
+	lua_pushnumber(LuaState, 1.0 - Object->Character->Attributes[ResistName].Int * 0.01);
 
 	return 1;
 }
@@ -1390,7 +1376,22 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 	if(!Object)
 		return 0;
 
-	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)) * Object->Character->GetDamagePower(Item->DamageTypeID));
+	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
+
+	return 1;
+}
+
+// Get average item damage
+int _Scripting::ItemGetAverageDamage(lua_State *LuaState) {
+
+	// Get self pointer
+	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	_Object *Object = (_Object *)lua_touserdata(LuaState, 1);
+	int Upgrades = (int)lua_tointeger(LuaState, 2);
+	if(!Object)
+		return 0;
+
+	lua_pushnumber(LuaState, (Item->GetMinDamage(Upgrades) + Item->GetMaxDamage(Upgrades)) * 0.5f * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
 
 	return 1;
 }

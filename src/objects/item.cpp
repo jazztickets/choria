@@ -78,6 +78,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	// Set up window size
 	std::list<std::string> HelpTextList;
 	glm::vec2 Size;
+	glm::vec2 DrawPosition;
 	Size.x = INVENTORY_TOOLTIP_WIDTH * ae::_Element::GetUIScale();
 	float SidePadding = 36 * ae::_Element::GetUIScale();
 	float SpacingY = 36 * ae::_Element::GetUIScale();
@@ -103,11 +104,19 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		Size.y += SpacingY;
 	if(Player->Character->IsTrading())
 		Size.y += SpacingY;
+	if(Player->Character->Blacksmith)
+		Size.y += SpacingY + LargeSpacingY;
 	if(Type == ItemType::MAP)
 		Size.y = INVENTORY_TOOLTIP_MAP_HEIGHT;
 
 	// Increase size for description
-	int DescriptionLines = GetDescriptionLineCount(Scripting, Player, 50, 50, Size.x - SidePadding * 2);
+	int DescriptionWidth = Size.x - SidePadding * 2;
+	int DescriptionLines = DrawDescription(false, Player, Script, DrawPosition, false, 0, 0, 0, 0, true, DescriptionWidth, 0);
+	if(!Proc.empty()) {
+		DescriptionLines += DrawDescription(false, Player, Proc, DrawPosition, false, 0, 0, 0, 0, false, DescriptionWidth, 0);
+	}
+	if(SetID)
+		DescriptionLines += DrawSetDescription(false, Player, DrawPosition, false, DescriptionWidth, 0) + 1;
 	float DescriptionSizeY = DescriptionLines * INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 	Size.y += DescriptionSizeY;
 
@@ -148,7 +157,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	TooltipElement->SetActive(false);
 
 	// Set draw position to center of window
-	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
+	DrawPosition = glm::vec2((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
 	DrawPosition.y += LargeSpacingY;
 
 	// Draw map
@@ -190,7 +199,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(!IsEquippable() && Cooldown > 0.0) {
 		DrawPosition.y += RewindSpacingY;
 		std::stringstream Buffer;
-		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->CooldownMultiplier << " second cooldown";
+		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldowns"].Mult() << " second cooldown";
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 		DrawPosition.y += LargeSpacingY;
 	}
@@ -219,8 +228,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			if(SkillIterator != Player->Character->Skills.end()) {
 				PlayerMaxSkillLevel = Player->Character->MaxSkillLevels[ID];
 				DrawLevel = SkillIterator->second;
-				if(!ae::Input.ModKeyDown(KMOD_ALT) && SkillIterator->second > 0) {
-					DrawLevel += Player->Character->AllSkills;
+				if(!(Tooltip.Window == _HUD::WINDOW_SKILLS && ae::Input.ModKeyDown(KMOD_ALT)) && SkillIterator->second > 0) {
+					DrawLevel += Player->Character->Attributes["AllSkills"].Int;
 					DrawLevel = std::min(DrawLevel, PlayerMaxSkillLevel);
 				}
 			}
@@ -254,12 +263,19 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		}
 	}
 
-	// Draw description
-	DrawDescription(Player, DrawPosition, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, Size.x - SidePadding * 2, SpacingY);
+	// Draw proc info
+	bool Blacksmith = (Tooltip.Window == _HUD::WINDOW_BLACKSMITH);
+	DrawDescription(true, Player, Proc, DrawPosition, Blacksmith, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
+
+	// Draw set info
+	DrawSetDescription(true, Player, DrawPosition, Blacksmith, DescriptionWidth, SpacingY);
+
+	// Draw item info
+	DrawDescription(true, Player, Script, DrawPosition, Blacksmith, DrawLevel, PlayerMaxSkillLevel, EnchanterMaxLevel, Upgrades, ShowLevel, DescriptionWidth, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS)
-		DrawDescription(Player, DrawPosition, DrawLevel+1, PlayerMaxSkillLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(true, Player, Script, DrawPosition, false, DrawLevel+1, PlayerMaxSkillLevel, EnchanterMaxLevel, 0, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -358,7 +374,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetMaxHealth(Upgrades), CompareInventory.Item->GetMaxHealth(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Health", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Max Health", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -374,7 +390,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetMaxMana(Upgrades), CompareInventory.Item->GetMaxMana(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Mana", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText("Max Mana", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -493,14 +509,14 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Experience bonus
-	int DrawExpBonus = (int)GetExpBonus(Upgrades);
+	int DrawExpBonus = (int)GetExperienceBonus(Upgrades);
 	if(DrawExpBonus != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawExpBonus < 0 ? "" : "+") << DrawExpBonus << "%";
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetExpBonus(Upgrades), CompareInventory.Item->GetExpBonus(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetExperienceBonus(Upgrades), CompareInventory.Item->GetExperienceBonus(CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("XP Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -576,6 +592,19 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				HelpTextList.push_back("Right-click to sell");
 			else
 				HelpTextList.push_back("Shift+Right-click to sell");
+		}
+	}
+	else if(Player->Character->Blacksmith) {
+		std::stringstream Buffer;
+		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
+			glm::vec4 Color = ae::Assets.Colors["gold"];
+			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Int)
+				Color = ae::Assets.Colors["red"];
+
+			Buffer << "Upgrade for " << Tooltip.Cost << " gold";
+			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
+			DrawPosition.y += SpacingY;
+			HelpTextList.push_back("Ctrl+click to buy upgrade");
 		}
 	}
 
@@ -668,12 +697,16 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Move hint
-	if(Player->Character->IsTrading() && Tradable)
+	if(Player->Character->IsTrading() && Tradable && !(Cursed && Tooltip.Window == _HUD::WINDOW_EQUIPMENT))
 		HelpTextList.push_back("Shift+click to move");
 
 	// Split hint
 	if(Tooltip.InventorySlot.Count > 1)
 		HelpTextList.push_back("Ctrl+click to split");
+
+	// Set hint
+	if(SetID || Script.find("SetBonus") == 0)
+		HelpTextList.push_back("Hold Alt for more info");
 
 	// Draw ui hints
 	for(const auto &Text : HelpTextList) {
@@ -683,16 +716,23 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 }
 
 // Draw item description
-void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLevel, int PlayerMaxSkillLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
+int _Item::DrawDescription(bool Render, _Object *Object, const std::string &Function, glm::vec2 &DrawPosition, bool Blacksmith, int DrawLevel, int PlayerMaxSkillLevel, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const {
 	_Scripting *Scripting = Object->Scripting;
+	int LineCount = 0;
 
 	// Check for scripting function
 	std::string Info = "";
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+	if(Scripting->StartMethodCall(Function, "GetInfo")) {
+		int SetLevel = 0;
+		int MaxSetLevel = 0;
+		if(SetID) {
+			SetLevel = std::min(Object->Character->Sets[SetID].Level + Blacksmith, MaxLevel);
+			MaxSetLevel = Object->Character->Sets[SetID].MaxLevel;
+		}
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades);
+		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades, SetLevel, MaxSetLevel, ae::Input.ModKeyDown(KMOD_ALT));
 		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -711,13 +751,15 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 			}
 			else if(!EnchanterMaxLevel && DrawLevel >= PlayerMaxSkillLevel) {
 				if(DrawLevel > MaxLevel)
-					return;
+					return LineCount;
 
 				Text = "Enchanter required for level " + std::to_string(DrawLevel);
 				Color = ae::Assets.Colors["red"];
 			}
-			ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, Color);
-			DrawPosition.y += SpacingY;
+			if(Render) {
+				ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, Color);
+				DrawPosition.y += SpacingY;
+			}
 		}
 
 		std::stringstream Buffer(Info);
@@ -729,13 +771,80 @@ void _Item::DrawDescription(_Object *Object, glm::vec2 &DrawPosition, int DrawLe
 			std::list<std::string> Strings;
 			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
 			for(const auto &LineToken : Strings) {
-				ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
-				DrawPosition.y += TextSpacingY;
+				if(Render) {
+					ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
+					DrawPosition.y += TextSpacingY;
+				}
+				LineCount++;
+			}
+		}
+
+		if(Render)
+			DrawPosition.y += SpacingY;
+
+		LineCount++;
+	}
+
+	return LineCount;
+}
+
+// Draw set description
+int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosition, bool Blacksmith, float Width, float SpacingY) const {
+	if(!SetID)
+		return 0;
+
+	// Don't draw full set description for added bonus items
+	if(Script.find("SetBonus") == 0)
+		return 0;
+
+	_Scripting *Scripting = Object->Scripting;
+	const _Set &Set = Object->Stats->Sets.at(SetID);
+	int LineCount = 0;
+
+	// Check for scripting function
+	std::string Info = "";
+	if(Scripting->StartMethodCall(Set.Script, "GetSetInfo")) {
+		int EquippedCount = Object->Character->Sets[SetID].EquippedCount;
+		int Upgrades = std::min(Object->Character->Sets[SetID].Level + Blacksmith, MaxLevel);
+		int MaxSetLevel = Object->Character->Sets[SetID].MaxLevel;
+
+		// Get description from script
+		Scripting->PushObject(Object);
+		Scripting->PushInt(Upgrades);
+		Scripting->PushInt(MaxSetLevel);
+		Scripting->PushBoolean(ae::Input.ModKeyDown(KMOD_ALT));
+		Scripting->MethodCall(4, 1);
+		Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+
+		std::stringstream Buffer(Info);
+		std::string Token;
+		float TextSpacingY = INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
+
+		// Draw header
+		if(Render) {
+			ae::Assets.Fonts["hud_small"]->DrawTextFormatted("[c light_green]" + Set.Name + " Set Bonus" + " (" + std::to_string(EquippedCount) + "/" + std::to_string(Set.Count) + ")", DrawPosition, ae::CENTER_BASELINE);
+			DrawPosition.y += TextSpacingY;
+		}
+		LineCount++;
+
+		// Draw description
+		while(std::getline(Buffer, Token, '\n')) {
+			std::list<std::string> Strings;
+			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
+			for(const auto &LineToken : Strings) {
+				if(Render) {
+					ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
+					DrawPosition.y += TextSpacingY;
+				}
+				LineCount++;
 			}
 		}
 
 		DrawPosition.y += SpacingY;
 	}
+
+	return LineCount;
 }
 
 // Get target count based on target type
@@ -759,7 +868,7 @@ int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTa
 				int SkillLevel = 1;
 				auto SkillIterator = Object->Character->Skills.find(ID);
 				if(SkillIterator != Object->Character->Skills.end()) {
-					SkillLevel = SkillIterator->second + Object->Character->AllSkills;
+					SkillLevel = SkillIterator->second + Object->Character->Attributes["AllSkills"].Int;
 					if(Object->Character->MaxSkillLevels.find(ID) != Object->Character->MaxSkillLevels.end())
 						SkillLevel = std::min(SkillLevel, Object->Character->MaxSkillLevels.at(ID));
 				}
@@ -868,13 +977,13 @@ int _Item::GetUpgradeCost(int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
-	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_BASE_UPGRADE_COST));
+	return (int)(std::floor(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_UPGRADE_BASE_COST));
 }
 
 // Get enchant cost
 int _Item::GetEnchantCost(int Level) {
-	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL + 1;
-	return std::max(0, (int)(std::ceil(Index * (GAME_ENCHANT_BASE_COST + GAME_ENCHANT_INCREASE_AMOUNT * (Index / GAME_ENCHANT_INCREASE_LEVEL)))));
+	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL;
+	return std::floor(std::pow(Index, GAME_ENCHANT_COST_POWER) + Index * GAME_ENCHANT_COST_RATE + GAME_ENCHANT_COST_BASE);
 }
 
 // Get count of drawable attributes
@@ -909,7 +1018,7 @@ int _Item::GetAttributeCount(int Upgrades) const {
 		Count++;
 	if((int)GetGoldBonus(Upgrades) != 0)
 		Count++;
-	if((int)GetExpBonus(Upgrades) != 0)
+	if((int)GetExperienceBonus(Upgrades) != 0)
 		Count++;
 	if(IsEquippable() && (int)GetCooldownReduction(Upgrades) != 0)
 		Count++;
@@ -919,33 +1028,6 @@ int _Item::GetAttributeCount(int Upgrades) const {
 		Count++;
 
 	return Count;
-}
-
-// Get number of lines in a description
-int _Item::GetDescriptionLineCount(_Scripting *Scripting, _Object *Object, int DrawLevel, int Upgrades, float Width) const {
-
-	// Check for scripting function
-	int Lines = 0;
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
-
-		// Get description from script
-		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades);
-		Scripting->MethodCall(2, 1);
-		std::string Info = Scripting->GetString(1);
-		Scripting->FinishMethodCall();
-
-		// Get line count
-		std::stringstream Buffer(Info);
-		std::string Token;
-		while(std::getline(Buffer, Token, '\n')) {
-			std::list<std::string> Strings;
-			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
-			Lines += Strings.size();
-		}
-	}
-
-	return Lines;
 }
 
 // Return true if the item can be used
@@ -1097,16 +1179,16 @@ void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Get passive stats
-void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel, int MaxSetLevel) const {
 	if(Scripting->StartMethodCall(Script, "Stats")) {
 		if(IsSkill())
 			Scripting->PushInt(ActionResult.ActionUsed.Level);
 		else
-			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level);
+			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level, SetLevel, MaxSetLevel, 0);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushStatChange(&ActionResult.Source);
 		Scripting->MethodCall(3, 1);
-		Scripting->GetStatChange(1, ActionResult.Source);
+		Scripting->GetStatChange(1, ActionResult.Source.Object->Stats, ActionResult.Source);
 		Scripting->FinishMethodCall();
 	}
 }
@@ -1119,98 +1201,99 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 	}
 }
 
+// Get average damage
 float _Item::GetAverageDamage(int Upgrades) const {
-	return (GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
+	return (GetUpgradedValue<float>("MinDamage", Upgrades, MinDamage) + GetUpgradedValue<float>("MaxDamage", Upgrades, MaxDamage)) / 2.0f;
 }
 
 // Get min damage
 float _Item::GetMinDamage(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage);
+	return GetUpgradedValue<float>("MinDamage", Upgrades, MinDamage);
 }
 
 // Get max damage
 float _Item::GetMaxDamage(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage);
+	return GetUpgradedValue<float>("MaxDamage", Upgrades, MaxDamage);
 }
 
 // Get armor
 float _Item::GetArmor(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::ARMOR, Upgrades, Armor);
+	return GetUpgradedValue<float>("Armor", Upgrades, Armor);
 }
 
 // Get damage block
 float _Item::GetDamageBlock(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::DAMAGEBLOCK, Upgrades, DamageBlock);
+	return GetUpgradedValue<float>("DamageBlock", Upgrades, DamageBlock);
 }
 
 // Get pierce
 float _Item::GetPierce(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::PIERCE, Upgrades, Pierce);
+	return GetUpgradedValue<float>("Pierce", Upgrades, Pierce);
 }
 
 // Get max health
 float _Item::GetMaxHealth(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXHEALTH, Upgrades, MaxHealth);
+	return GetUpgradedValue<float>("MaxHealth", Upgrades, MaxHealth);
 }
 
 // Get max mana
 float _Item::GetMaxMana(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXMANA, Upgrades, MaxMana);
+	return GetUpgradedValue<float>("MaxMana", Upgrades, MaxMana);
 }
 
 // Get health regen
 float _Item::GetHealthRegen(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::HEALTHREGEN, Upgrades, HealthRegen);
+	return GetUpgradedValue<float>("HealthRegen", Upgrades, HealthRegen);
 }
 
 // Get mana regen
 float _Item::GetManaRegen(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MANAREGEN, Upgrades, ManaRegen);
+	return GetUpgradedValue<float>("ManaRegen", Upgrades, ManaRegen);
 }
 
 // Get battle speed
 float _Item::GetBattleSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::BATTLESPEED, Upgrades, BattleSpeed);
+	return GetUpgradedValue<float>("BattleSpeed", Upgrades, BattleSpeed);
 }
 
 // Get move speed
 float _Item::GetMoveSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MOVESPEED, Upgrades, MoveSpeed);
+	return GetUpgradedValue<float>("MoveSpeed", Upgrades, MoveSpeed);
 }
 
 // Get evasion
 float _Item::GetEvasion(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::EVASION, Upgrades, Evasion);
+	return GetUpgradedValue<float>("Evasion", Upgrades, Evasion);
 }
 
 // Get spell damage
 float _Item::GetSpellDamage(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::SPELL_DAMAGE, Upgrades, SpellDamage);
+	return GetUpgradedValue<float>("SpellDamage", Upgrades, SpellDamage);
 }
 
 // Get resistance
 float _Item::GetResistance(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::RESIST, Upgrades, Resistance);
+	return GetUpgradedValue<float>("Resist", Upgrades, Resistance);
 }
 
 // Get gold bonus
 float _Item::GetGoldBonus(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::GOLD_BONUS, Upgrades, GoldBonus);
+	return GetUpgradedValue<float>("GoldBonus", Upgrades, GoldBonus);
 }
 
 // Get experience bonus
-float _Item::GetExpBonus(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::EXP_BONUS, Upgrades, ExpBonus);
+float _Item::GetExperienceBonus(int Upgrades) const {
+	return GetUpgradedValue<float>("ExperienceBonus", Upgrades, ExpBonus);
 }
 
 // Get cooldown reduction
 float _Item::GetCooldownReduction(int Upgrades) const {
-	return -GetUpgradedValue<float>(StatType::COOLDOWN, Upgrades, -Cooldown);
+	return -GetUpgradedValue<float>("Cooldowns", Upgrades, -Cooldown);
 }
 
 // Get + all skills
 float _Item::GetAllSkills(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::ALLSKILLS, Upgrades, AllSkills);
+	return GetUpgradedValue<float>("AllSkills", Upgrades, AllSkills);
 }
 
 // Get appropriate text color when comparing items
@@ -1224,12 +1307,13 @@ glm::vec4 _Item::GetCompareColor(float ItemValue, float EquippedValue) const {
 }
 
 // Return value of a stat after upgrades
-template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Value) const {
+template<typename T> T _Item::GetUpgradedValue(const std::string &AttributeName, int Upgrades, T Value) const {
 	if(MaxLevel <= 0)
 		return Value;
 
+	float UpgradedValue = Stats->Attributes.at(AttributeName).UpgradeScale * GAME_UPGRADE_AMOUNT * Upgrades * std::abs(Value);
 	if(Value < 0)
-		return std::min(0.0f, Value + (T)(GAME_NEGATIVE_UPGRADE_SCALE * GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value)));
+		return std::min(0.0f, Value + (T)(GAME_NEGATIVE_UPGRADE_SCALE * UpgradedValue));
 	else
-		return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
+		return Value + (T)(UpgradedValue);
 }

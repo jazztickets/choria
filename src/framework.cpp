@@ -177,6 +177,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			Console->CommandList.push_back("battle");
 			Console->CommandList.push_back("bounty");
 			Console->CommandList.push_back("clock");
+			Console->CommandList.push_back("clearkills");
 			Console->CommandList.push_back("clearunlocks");
 			Console->CommandList.push_back("event");
 			Console->CommandList.push_back("experience");
@@ -408,7 +409,7 @@ void _Framework::HandleCommand(ae::_Console *Console) {
 		}
 	}
 	else if(Console->Command == "paste") {
-		if(Parameters.size() == 1 && PlayState.Network->IsDisconnected()) {
+		if(SDL_HasClipboardText() && Parameters.size() == 1 && PlayState.Network->IsDisconnected()) {
 			uint32_t CharacterID = ae::ToNumber<int>(Console->Parameters);
 
 			char *PastedText = SDL_GetClipboardText();

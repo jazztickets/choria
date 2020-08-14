@@ -448,6 +448,13 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			else
 				Console->AddMessage("usage: " + Console->Command + " [+-][amount]");
 		}
+		else if(Console->Command == "clearkills") {
+			if(Player && Network && Network->IsConnected()) {
+				Player->Character->BattleCooldown.clear();
+				Player->Character->BossKills.clear();
+				Network->SendPacket(Packet);
+			}
+		}
 		else if(Console->Command == "clearunlocks") {
 			if(Player && Network && Network->IsConnected()) {
 				Player->Character->ClearUnlocks();
@@ -1108,7 +1115,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			else {
 				Object->Position = Position;
 				Object->Character->Invisible = Invisible;
-				Object->Character->Bounty = Bounty;
+				Object->Character->Attributes["Bounty"].Int = Bounty;
 			}
 			Object->Light = Light;
 			Object->ServerPosition = Position;
@@ -1319,7 +1326,7 @@ void _PlayState::HandleInventoryGold(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->Character->Gold = Data.Read<int>();
+	Player->Character->Attributes["Gold"].Int = Data.Read<int>();
 	Player->Character->CalculateStats();
 
 	PlayCoinSound();
@@ -1404,7 +1411,7 @@ void _PlayState::HandleTradeExchange(ae::_Buffer &Data) {
 		return;
 
 	// Get gold offer
-	Player->Character->Gold = Data.Read<int>();
+	Player->Character->Attributes["Gold"].Int = Data.Read<int>();
 	Player->Inventory->Unserialize(Data, Stats);
 	Player->Character->CalculateStats();
 
@@ -1493,12 +1500,12 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	StatChange.Object = Player;
 
 	// Get ending stats
-	Player->Character->PlayerKills = Data.Read<int>();
-	Player->Character->MonsterKills = Data.Read<int>();
-	Player->Character->GoldLost = Data.Read<int>();
-	Player->Character->Bounty = Data.Read<int>();
-	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
-	StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
+	Player->Character->Attributes["PlayerKills"].Int = Data.Read<int>();
+	Player->Character->Attributes["MonsterKills"].Int = Data.Read<int>();
+	Player->Character->Attributes["GoldLost"].Int = Data.Read<int>();
+	Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
+	StatChange.Values["Experience"].Int = Data.Read<int>();
+	StatChange.Values["Gold"].Int = Data.Read<int>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		_RecentItem RecentItem;
@@ -1515,7 +1522,7 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 
 	// Update client death count
 	if(!Player->Character->IsAlive()) {
-		Player->Character->Deaths++;
+		Player->Character->Attributes["Deaths"].Int++;
 		PlayDeathSound();
 	}
 
@@ -1558,9 +1565,9 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	_Object *SourceObject = ActionResult.Source.Object;
 	const _Item *ItemUsed = ActionResult.ActionUsed.Item;
 	if(ItemUsed) {
-		if(SourceObject && ItemUsed->Cooldown > 0.0) {
-			SourceObject->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown * SourceObject->Character->CooldownMultiplier;
-			SourceObject->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown * SourceObject->Character->CooldownMultiplier;
+		if(SourceObject && !SkillUnlocked && ItemUsed->Cooldown > 0.0) {
+			SourceObject->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown * SourceObject->Character->Attributes["Cooldowns"].Mult();
+			SourceObject->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown * SourceObject->Character->Attributes["Cooldowns"].Mult();
 		}
 
 		// Set texture
@@ -1609,11 +1616,11 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 
 			// No damage dealt
 			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
-			   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0) || ActionResult.Target.HasStat(StatType::MISS))) {
+			   && ((ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Int == 0) || ActionResult.Target.HasStat("Miss"))) {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 
-				if(ActionResult.Target.HasStat(StatType::MISS)) {
+				if(ActionResult.Target.HasStat("Miss")) {
 					std::stringstream Buffer;
 					Buffer << "miss" << ae::GetRandomInt(0, 2) << ".ogg";
 					ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
@@ -1657,8 +1664,8 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 
 			// Play buff sounds
-			if(StatChange.HasStat(StatType::BUFFSOUND)) {
-				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values[StatType::BUFFSOUND].Integer);
+			if(StatChange.HasStat("BuffSound")) {
+				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values["BuffSound"].Int);
 				if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
 					Scripting->MethodCall(0, 0);
 					Scripting->FinishMethodCall();
@@ -1666,11 +1673,11 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 			}
 
 			// Update action bar
-			if(StatChange.HasStat(StatType::SKILLBARSIZE) || StatChange.HasStat(StatType::BELTSIZE))
+			if(StatChange.HasStat("SkillBarSize") || StatChange.HasStat("BeltSize"))
 				HUD->UpdateActionBarSize();
 
 			// Play death sound
-			if(!Player->Character->Battle && Player->Character->Health <= 0 && WasAlive)
+			if(!Player->Character->Battle && Player->Character->Attributes["Health"].Int <= 0 && WasAlive)
 				PlayDeathSound();
 		}
 
@@ -1686,13 +1693,13 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 
 	int OldLevel = Player->Character->Level;
 
-	Player->Character->Health = Data.Read<int>();
-	Player->Character->Mana = Data.Read<int>();
-	Player->Character->MaxHealth = Data.Read<int>();
-	Player->Character->MaxMana = Data.Read<int>();
-	Player->Character->Experience = Data.Read<int64_t>();
-	Player->Character->Gold = Data.Read<int>();
-	Player->Character->Bounty = Data.Read<int>();
+	Player->Character->Attributes["Health"].Int = Data.Read<int>();
+	Player->Character->Attributes["Mana"].Int = Data.Read<int>();
+	Player->Character->Attributes["MaxHealth"].Int = Data.Read<int>();
+	Player->Character->Attributes["MaxMana"].Int = Data.Read<int>();
+	Player->Character->Attributes["Experience"].Int64 = Data.Read<int64_t>();
+	Player->Character->Attributes["Gold"].Int = Data.Read<int>();
+	Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
 	double Clock = Data.Read<double>();
 
 	Player->Character->CalculateStats();
@@ -1785,6 +1792,7 @@ _Object *_PlayState::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID
 	Object->Stats = Stats;
 	Object->Map = Map;
 	Object->Character->CalcLevelStats = false;
+	Object->Character->Init();
 	Object->UnserializeCreate(Data);
 
 	// Add to map

@@ -270,6 +270,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	_Object Object;
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
+	Object.Character->Init();
 	Object.Character->Hardcore = Hardcore;
 	Object.Character->BuildID = BuildID;
 	Object.Character->PortraitID = PortraitID;
@@ -282,8 +283,8 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Character->CalculateStats();
 
 	// Set health/mana
-	Object.Character->Health = Object.Character->MaxHealth;
-	Object.Character->Mana = Object.Character->MaxMana;
+	Object.Character->Attributes["Health"].Int = Object.Character->Attributes["MaxHealth"].Int;
+	Object.Character->Attributes["Mana"].Int = Object.Character->Attributes["MaxMana"].Int;
 	Object.Character->GenerateNextBattle();
 
 	// Save new character
@@ -317,7 +318,7 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 	// Get player stats
 	Json::Value Data;
 	Player->SerializeSaveData(Data);
-	Data["stats"]["map_id"] = MapID;
+	Data["stats"]["MapID"] = MapID;
 
 	// Get JSON string
 	Json::StreamWriterBuilder Writer;
@@ -335,16 +336,16 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 		*Log
 			<< "[SAVE] Saving player " << Player->Name
 			<< " ( character_id=" << Player->Character->CharacterID
-			<< " exp=" << Player->Character->Experience
-			<< " gold=" << Player->Character->Gold
-			<< " playtime=" << Player->Character->PlayTime
-			<< " monsterkills=" << Player->Character->MonsterKills
-			<< " deaths=" << Player->Character->Deaths
-			<< " battletime=" << Player->Character->BattleTime
-			<< " bounty=" << Player->Character->Bounty
-			<< " gamesplayed=" << Player->Character->GamesPlayed
-			<< " rebirths=" << Player->Character->Rebirths
-			<< " rebirthtime=" << Player->Character->RebirthTime
+			<< " exp=" << Player->Character->Attributes["Experience"].Int64
+			<< " gold=" << Player->Character->Attributes["Gold"].Int
+			<< " playtime=" << Player->Character->Attributes["PlayTime"].Double
+			<< " monsterkills=" << Player->Character->Attributes["MonsterKills"].Int
+			<< " deaths=" << Player->Character->Attributes["Deaths"].Int
+			<< " battletime=" << Player->Character->Attributes["BattleTime"].Double
+			<< " bounty=" << Player->Character->Attributes["Bounty"].Int
+			<< " gamesplayed=" << Player->Character->Attributes["GamesPlayed"].Int
+			<< " rebirths=" << Player->Character->Attributes["Rebirths"].Int
+			<< " rebirthtime=" << Player->Character->Attributes["RebirthTime"].Double
 			<< " )" << std::endl;
 	}
 }
@@ -366,7 +367,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 
 	// Max sure player has health
 	if(!Player->Character->IsAlive() && !Player->Character->Hardcore)
-		Player->Character->Health = Player->Character->MaxHealth / 2;
+		Player->Character->Attributes["Health"].Int = Player->Character->Attributes["MaxHealth"].Int / 2;
 }
 
 // Get save version from database

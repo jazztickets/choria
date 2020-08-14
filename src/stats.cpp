@@ -28,6 +28,16 @@
 #include <algorithm>
 #include <iostream>
 
+// Resistances
+std::vector<std::string> _Stats::ResistNames = {
+	"FireResist",
+	"ColdResist",
+	"LightningResist",
+	"PoisonResist",
+	"BleedResist",
+	"StunResist",
+};
+
 // Constructor
 _Stats::_Stats(bool Headless) :
 	Headless(Headless) {
@@ -36,12 +46,12 @@ _Stats::_Stats(bool Headless) :
 	Database = new ae::_Database("stats/stats.db", true);
 
 	// Load spreadsheet data
+	LoadAttributes();
 	LoadMaps();
 	LoadEvents();
 	LoadLevels();
 	LoadBuffs();
 	LoadItemTypes();
-	LoadStatTypes();
 	LoadTargetTypes();
 	LoadDamageTypes();
 	LoadItems();
@@ -53,6 +63,8 @@ _Stats::_Stats(bool Headless) :
 	LoadModels();
 	LoadBuilds();
 	LoadScripts();
+	LoadSets();
+	LoadUnlocks();
 	LoadLights();
 }
 
@@ -178,20 +190,6 @@ void _Stats::LoadItemTypes() {
 	Database->CloseQuery();
 }
 
-// Load upgrade scales from stat types
-void _Stats::LoadStatTypes() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM stattype");
-
-	// Get data
-	while(Database->FetchRow()) {
-		StatType ID = (StatType)Database->GetInt<uint32_t>("id");
-		UpgradeScale[ID] = Database->GetReal("upgrade_scale");
-	}
-	Database->CloseQuery();
-}
-
 // Load target type strings
 void _Stats::LoadTargetTypes() {
 
@@ -246,6 +244,7 @@ void _Stats::LoadItems() {
 		Item->Texture = ae::Assets.Textures[TexturePath];
 		Item->AltTexture = ae::Assets.Textures[AltTexturePath];
 		Item->Script = Database->GetString("script");
+		Item->Proc = Database->GetString("proc");
 		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
 		Item->Category = Database->GetInt<int>("category");
 		Item->Level = Database->GetInt<int>("level");
@@ -254,6 +253,7 @@ void _Stats::LoadItems() {
 		Item->Cooldown = Database->GetReal("cooldown");
 		Item->Cost = Database->GetInt<int>("cost");
 		Item->DamageTypeID = Database->GetInt<uint32_t>("damagetype_id");
+		Item->SetID = Database->GetInt<uint32_t>("set_id");
 		Item->MinDamage = Database->GetInt<int>("mindamage");
 		Item->MaxDamage = Database->GetInt<int>("maxdamage");
 		Item->Armor = Database->GetInt<int>("armor");
@@ -310,12 +310,18 @@ void _Stats::LoadVendors() {
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt<uint32_t>("id");
 		Vendor.Name = Database->GetString("name");
+		Vendor.Sort = Database->GetString("sort");
 		Vendor.BuyPercent = (float)Database->GetReal("buy_percent");
 		Vendor.SellPercent = (float)Database->GetReal("sell_percent");
 		Vendor.Items.clear();
 
+		// Set order by for items
+		std::string OrderBy = "i.cost";
+		if(Vendor.Sort == "set")
+			OrderBy = "i.set_id, i.cost";
+
 		// Get items
-		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
+		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i WHERE vi.vendor_id = @vendor_id AND i.id = vi.item_id ORDER BY " + OrderBy, 1);
 		Database->BindInt(1, Vendor.ID, 1);
 		while(Database->FetchRow(1)) {
 			Vendor.Items.push_back(Items[Database->GetInt<uint32_t>("item_id", 1)]);
@@ -521,6 +527,43 @@ void _Stats::LoadScripts() {
 	Database->CloseQuery();
 }
 
+// Load sets
+void _Stats::LoadSets() {
+	Sets.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM \"set\"");
+
+	// Get data
+	_Set Set;
+	while(Database->FetchRow()) {
+		Set.ID = Database->GetInt<uint32_t>("id");
+		Set.Name = Database->GetString("name");
+		Set.Script = Database->GetString("script");
+		Set.Count = Database->GetInt<int>("count");
+
+		Sets[Set.ID] = Set;
+	}
+	Database->CloseQuery();
+}
+
+// Load unlocks
+void _Stats::LoadUnlocks() {
+	Unlocks.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM unlock");
+
+	// Get data
+	while(Database->FetchRow()) {
+		uint32_t ID = Database->GetInt<uint32_t>("id");
+		std::string Name = Database->GetString("name");
+
+		Unlocks[ID] = Name;
+	}
+	Database->CloseQuery();
+}
+
 // Load lights
 void _Stats::LoadLights() {
 	Lights.clear();
@@ -582,18 +625,20 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 
 		// Copy build
 		Object->Inventory->Bags = Build->Inventory->GetBags();
+		Object->Character->SkillBarSize = ACTIONBAR_MAX_SKILLBARSIZE;
+		Object->Character->BeltSize = ACTIONBAR_MAX_BELTSIZE;
 		Object->Character->ActionBar = Build->Character->ActionBar;
 		Object->Character->Skills = Build->Character->Skills;
-		Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
-		Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
-		Object->Character->Gold = Object->Monster->GoldGiven;
+		Object->Character->Attributes["Health"].Int = Object->Character->Attributes["MaxHealth"].Int = Object->Character->BaseMaxHealth;
+		Object->Character->Attributes["Mana"].Int = Object->Character->Attributes["MaxMana"].Int = Object->Character->BaseMaxMana;
+		Object->Character->Attributes["Gold"].Int = Object->Monster->GoldGiven;
 		Object->Character->CalcLevelStats = false;
-		Object->Character->BaseResistances[3] = Database->GetInt<int>("fire_res");
-		Object->Character->BaseResistances[4] = Database->GetInt<int>("cold_res");
-		Object->Character->BaseResistances[5] = Database->GetInt<int>("lightning_res");
-		Object->Character->BaseResistances[6] = Database->GetInt<int>("poison_res");
-		Object->Character->BaseResistances[7] = Database->GetInt<int>("bleed_res");
-		Object->Character->BaseResistances[8] = Database->GetInt<int>("stun_res");
+		Object->Character->BaseResistances["FireResist"] = Database->GetInt<int>("fire_res");
+		Object->Character->BaseResistances["ColdResist"] = Database->GetInt<int>("cold_res");
+		Object->Character->BaseResistances["LightningResist"] = Database->GetInt<int>("lightning_res");
+		Object->Character->BaseResistances["PoisonResist"] = Database->GetInt<int>("poison_res");
+		Object->Character->BaseResistances["BleedResist"] = Database->GetInt<int>("bleed_res");
+		Object->Character->BaseResistances["StunResist"] = Database->GetInt<int>("stun_res");
 	}
 
 	// Free memory
@@ -829,6 +874,57 @@ const _Level *_Stats::FindLevel(int64_t Experience) const {
 	return &Levels[Levels.size()-1];
 }
 
+// Load attributes
+void _Stats::LoadAttributes() {
+	Attributes.clear();
+	AttributeRank.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM attribute");
+
+	// Get data
+	_Attribute Attribute;
+	uint8_t ID = 0;
+	while(Database->FetchRow()) {
+		Attribute.ID = ID++;
+		if(ID == 0)
+			throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " - Hit attribute limit");
+		Attribute.Name = Database->GetString("name");
+		Attribute.Label = Database->GetString("label");
+		Attribute.Type = (StatValueType)Database->GetInt<int>("valuetype_id");
+		Attribute.UpdateType = (StatUpdateType)Database->GetInt<int>("updatetype_id");
+		Attribute.UpgradeScale = Database->GetReal("upgrade_scale");
+		Attribute.Show = Database->GetInt<int>("show");
+		Attribute.Calculate = Database->GetInt<int>("calc");
+		Attribute.Save = Database->GetInt<int>("save");
+		Attribute.Script = Database->GetInt<int>("script");
+		Attribute.Network = Database->GetInt<int>("network");
+		switch(Attribute.Type) {
+			case StatValueType::BOOLEAN:
+			case StatValueType::INTEGER:
+			case StatValueType::PERCENT:
+				Attribute.Default.Int = Database->GetInt<int>("default");
+			break;
+			case StatValueType::INTEGER64:
+				Attribute.Default.Int64 = Database->GetInt64("default");
+			break;
+			case StatValueType::FLOAT:
+				Attribute.Default.Float = (float)Database->GetReal("default");
+			break;
+			case StatValueType::POINTER:
+				Attribute.Default.Pointer = nullptr;
+			break;
+			case StatValueType::TIME:
+				Attribute.Default.Double = Database->GetReal("default");
+			break;
+		}
+
+		Attributes[Attribute.Name] = Attribute;
+		AttributeRank.push_back(Attribute.Name);
+	}
+	Database->CloseQuery();
+}
+
 // Convert vendor slot from item id
 size_t _Vendor::GetSlotFromID(uint32_t ID) const {
 
@@ -841,4 +937,21 @@ size_t _Vendor::GetSlotFromID(uint32_t ID) const {
 	}
 
 	return NOSLOT;
+}
+
+// Determine if a blacksmith can upgrade an item
+bool _Blacksmith::CanUpgrade(const _Item *Item, int Upgrades) const {
+	if(!Item)
+	   return false;
+
+	if(!Item->IsEquippable())
+		return false;
+
+	if(Upgrades >= Item->MaxLevel)
+		return false;
+
+	if(Upgrades >= Level)
+		return false;
+
+	return true;
 }

@@ -30,6 +30,7 @@
 #include <ae/input.h>
 #include <stats.h>
 #include <sstream>
+#include <algorithm>
 #include <SDL_keycode.h>
 
 // Constructor
@@ -39,10 +40,12 @@ _InventoryScreen::_InventoryScreen(_HUD *HUD, ae::_Element *Element) :
 	EquipmentElement = ae::Assets.Elements["element_equipment"];
 	InventoryElement = ae::Assets.Elements["element_inventory"];
 	KeysElement = ae::Assets.Elements["element_keys"];
+	UnlocksElement = ae::Assets.Elements["element_unlocks"];
 
 	EquipmentElement->SetActive(false);
 	InventoryElement->SetActive(false);
 	KeysElement->SetActive(false);
+	UnlocksElement->SetActive(false);
 }
 
 // Close screen
@@ -54,6 +57,7 @@ bool _InventoryScreen::Close(bool SendNotify) {
 	EquipmentElement->SetActive(false);
 	InventoryElement->SetActive(false);
 	KeysElement->SetActive(false);
+	UnlocksElement->SetActive(false);
 	HUD->CharacterScreen->Element->SetActive(false);
 
 	return WasOpen;
@@ -98,6 +102,10 @@ void _InventoryScreen::Render(double BlendFactor) {
 		KeysElement->Render();
 		DrawKeys();
 	}
+	else if(UnlocksElement->Active) {
+		UnlocksElement->Render();
+		DrawUnlocks();
+	}
 }
 
 // Initialize an inventory tab
@@ -109,12 +117,16 @@ void _InventoryScreen::InitInventoryTab(int Index) {
 	EquipmentElement->SetActive(false);
 	InventoryElement->SetActive(false);
 	KeysElement->SetActive(false);
+	UnlocksElement->SetActive(false);
 	if(Index == 0) {
 		EquipmentElement->SetActive(true);
 		InventoryElement->SetActive(true);
 	}
 	else if(Index == 1) {
 		KeysElement->SetActive(true);
+	}
+	else if(Index == 2) {
+		UnlocksElement->SetActive(true);
 	}
 }
 
@@ -205,6 +217,48 @@ void _InventoryScreen::DrawKeys() {
 				Column++;
 				Row = 0;
 			}
+		}
+	}
+}
+
+// Draw unlocks
+void _InventoryScreen::DrawUnlocks() {
+
+	glm::vec2 StartOffset = glm::vec2(14, 26) * ae::_Element::GetUIScale();
+	glm::vec2 Spacing = glm::vec2(168, 20) * ae::_Element::GetUIScale();
+	int Column = 0;
+	int Row = 0;
+
+	const auto &Unlocks = HUD->Player->Character->Unlocks;
+
+	// Check for unlocks
+	if(!Unlocks.size()) {
+		glm::vec2 DrawPosition = UnlocksElement->Bounds.Start + StartOffset;
+		ae::Assets.Fonts["hud_tiny"]->DrawText("No unlocks", DrawPosition, ae::LEFT_BASELINE, ae::Assets.Colors["gray"]);
+
+		return;
+	}
+
+	// Sort by id
+	std::vector<uint32_t> UnlockIDs;
+	UnlockIDs.reserve(Unlocks.size());
+	for(const auto &Unlock : Unlocks) {
+		UnlockIDs.push_back(Unlock.first);
+	}
+	std::sort(UnlockIDs.begin(), UnlockIDs.end());
+
+	// Draw names
+	for(const auto &UnlockID : UnlockIDs) {
+
+		// Get position
+		glm::vec2 DrawPosition = UnlocksElement->Bounds.Start + StartOffset + glm::vec2(Spacing.x * Column, Spacing.y * Row);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(HUD->Player->Stats->Unlocks.at(UnlockID), DrawPosition);
+
+		// Update position
+		Row++;
+		if(Row >= 18) {
+			Column++;
+			Row = 0;
 		}
 	}
 }

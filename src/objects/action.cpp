@@ -104,16 +104,16 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 			}
 
 			// Roll to consume item
-			if(ConsumeRoll <= Source->Character->ConsumeChance) {
+			if(ConsumeRoll <= Source->Character->Attributes["ConsumeChance"].Int) {
 				Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 				DecrementItem = true;
 			}
 		}
 
 		// Set cooldown
-		if(ItemUsed->Cooldown > 0.0) {
-			Source->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown * Source->Character->CooldownMultiplier;
-			Source->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown * Source->Character->CooldownMultiplier;
+		if(!SkillUnlocked && ItemUsed->Cooldown > 0.0) {
+			Source->Character->Cooldowns[ItemUsed->ID].Duration = ItemUsed->Cooldown * Source->Character->Attributes["Cooldowns"].Mult();
+			Source->Character->Cooldowns[ItemUsed->ID].MaxDuration = ItemUsed->Cooldown * Source->Character->Attributes["Cooldowns"].Mult();
 		}
 	}
 
@@ -170,6 +170,8 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		Source->Fighter->FleeBattle = false;
 	}
 
+	Source->Character->IdleTime = 0;
+
 	return true;
 }
 
@@ -214,18 +216,18 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		else if(ExistingSummons.size()) {
 
 			// Get lowest health summon
-			int LowestHealth = ExistingSummons[0]->Character->Health;
+			int LowestHealth = ExistingSummons[0]->Character->Attributes["Health"].Int;
 			_Object *LowestHealthSummon = ExistingSummons[0];
 			for(auto &ExistingSummon : ExistingSummons) {
-				if(ExistingSummon->Character->Health < LowestHealth) {
-					LowestHealth = ExistingSummon->Character->Health;
+				if(ExistingSummon->Character->Attributes["Health"].Int < LowestHealth) {
+					LowestHealth = ExistingSummon->Character->Attributes["Health"].Int;
 					LowestHealthSummon = ExistingSummon;
 				}
 			}
 
 			_StatChange Heal;
 			Heal.Object = LowestHealthSummon;
-			Heal.Values[StatType::HEALTH].Integer = LowestHealthSummon->Character->MaxHealth;
+			Heal.Values["Health"].Int = LowestHealthSummon->Character->Attributes["MaxHealth"].Int;
 			LowestHealthSummon->UpdateStats(Heal);
 
 			ae::_Buffer Packet;

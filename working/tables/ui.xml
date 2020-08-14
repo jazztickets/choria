@@ -256,12 +256,15 @@
 		<element id="button_actionbar_12" style="style_hud_slot_belt" hover_style="style_menu_hover" disabled_style="style_hud_slot_belt_disabled" offset_x="256" offset_y="-48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" index="12"/>
 		<element id="button_actionbar_13" style="style_hud_slot_belt" hover_style="style_menu_hover" disabled_style="style_hud_slot_belt_disabled" offset_x="304" offset_y="-48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" index="13"/>
 	</element>
-	<element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-565" offset_y="-215" size_x="96" size_y="48" index="13">
+	<element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-541" offset_y="-215" size_x="144" size_y="48" index="13">
 		<element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" index="0">
 			<element id="image_inventory_tabs_bag" texture="textures/hud/tab_inventory.png" size_x="48" size_y="48"/>
 		</element>
 		<element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" index="1">
 			<element id="image_inventory_tabs_key" texture="textures/hud/tab_key.png" size_x="48" size_y="48"/>
+		</element>
+		<element id="button_inventory_tabs_unlock" hover_style="style_equipment_bg" offset_x="96" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" index="2">
+			<element id="image_inventory_tabs_unlock" texture="textures/hud/tab_unlock.png" size_x="48" size_y="48"/>
 		</element>
 	</element>
 	<element id="element_equipment" style="style_equipment_bg" offset_x="-494" size_x="238" size_y="384" clickable="true" index="4">
@@ -421,6 +424,7 @@
 		</element>
 	</element>
 	<element id="element_keys" style="style_equipment_bg" offset_x="-334" size_x="558" size_y="384" index="14"/>
+	<element id="element_unlocks" style="style_equipment_bg" offset_x="-334" size_x="558" size_y="384" index="16"/>
 	<element id="element_dark_overlay" style="style_hud_bg" size_x="100%" size_y="100%"/>
 	<element id="element_skills" style="style_hud_bg" size_x="794" size_y="766" index="11"/>
 	<element id="element_enchanter" style="style_hud_bg" size_x="794" size_y="766" index="15"/>
@@ -433,7 +437,7 @@
 		<element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
 		<element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
 	</element>
-	<element id="element_character" style="style_hud_bg" size_x="350" size_y="900" alignment_x="2"/>
+	<element id="element_character" style="style_hud_bg" size_x="350" size_y="1000" alignment_x="2"/>
 	<element id="element_teleport" style="style_hud_bg" offset_y="-140" size_x="210" size_y="66">
 		<element id="label_teleport_timeleft" font="hud_medium" offset_y="44" alignment_y="3"/>
 	</element>

@@ -1,9 +1,10 @@
 require("scripts/battle")
-require("scripts/items")
 require("scripts/buffs")
 require("scripts/procs")
 require("scripts/skills")
 require("scripts/spells")
+require("scripts/sets")
+require("scripts/items")
 require("scripts/ai")
 require("scripts/bot")
 require("scripts/scripts")
@@ -19,4 +20,8 @@ function Game.GetDifficulty(self, Clock)
 	end
 
 	return 0
+end
+
+function Round(Value)
+	return math.floor(Value * 10) / 10.0
 end

@@ -215,7 +215,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
 					PlayState.Network->SendPacket(Packet);
 
-					Player->Character->GamesPlayed++;
+					Player->Character->Attributes["GamesPlayed"].Int++;
 					PlayState.PlayCoinSound();
 				}
 			}
@@ -239,8 +239,16 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(ae::Input.ModKeyDown(KMOD_CTRL))
-							SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
+						if(ae::Input.ModKeyDown(KMOD_CTRL)) {
+							if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, Tooltip.InventorySlot.Upgrades)) {
+								ae::_Buffer Packet;
+								Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
+								Tooltip.Slot.Serialize(Packet);
+								PlayState.Network->SendPacket(Packet);
+							}
+							else
+								SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
+						}
 						else if(ae::Input.ModKeyDown(KMOD_SHIFT))
 							Transfer(Tooltip.Slot);
 						else
@@ -552,8 +560,15 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_TRADEYOURS: {
 				if(Player->Inventory->IsValidSlot(Tooltip.Slot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
-					if(Tooltip.InventorySlot.Item && Player->Character->Vendor)
-						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Scripting, Player, Player->Character->Vendor, Tooltip.InventorySlot.Count, false, Tooltip.InventorySlot.Upgrades);
+					if(Tooltip.InventorySlot.Item) {
+						if(Player->Character->Vendor) {
+							Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Scripting, Player, Player->Character->Vendor, Tooltip.InventorySlot.Count, false, Tooltip.InventorySlot.Upgrades);
+						}
+						else if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, Tooltip.InventorySlot.Upgrades)) {
+							Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
+							Tooltip.Cost = Tooltip.InventorySlot.Item->GetUpgradeCost(Tooltip.InventorySlot.Upgrades + 1);
+						}
+					}
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
@@ -584,8 +599,9 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_BLACKSMITH: {
 				if(Player->Character->Blacksmith && Player->Inventory->IsValidSlot(BlacksmithScreen->UpgradeSlot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(BlacksmithScreen->UpgradeSlot);
-					if(Tooltip.InventorySlot.Item && Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
+					if(Tooltip.InventorySlot.Item && Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel) {
 						Tooltip.InventorySlot.Upgrades++;
+					}
 				}
 			} break;
 			case WINDOW_SKILLS:
@@ -669,7 +685,7 @@ void _HUD::Update(double FrameTime) {
 
 	// Update minigame
 	if(Minigame) {
-		for(int i = 0; i < Player->Character->MinigameSpeed; i++) {
+		for(int i = 0; i < Player->Character->Attributes["MinigameSpeed"].Int; i++) {
 			Minigame->Update(FrameTime);
 			if(Minigame->State == _Minigame::StateType::DONE) {
 				ae::_Buffer Packet;
@@ -769,7 +785,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ExperienceElement->Render();
 
 		// Draw health bar
-		Buffer << Player->Character->Health << " / " << Player->Character->MaxHealth;
+		Buffer << Player->Character->Attributes["Health"].Int << " / " << Player->Character->Attributes["MaxHealth"].Int;
 		ae::Assets.Elements["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
 		ae::Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->Character->GetHealthPercent());
@@ -777,7 +793,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		HealthElement->Render();
 
 		// Draw mana bar
-		Buffer << Player->Character->Mana << " / " << Player->Character->MaxMana;
+		Buffer << Player->Character->Attributes["Mana"].Int << " / " << Player->Character->Attributes["MaxMana"].Int;
 		ae::Assets.Elements["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
 		ae::Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->Character->GetManaPercent());
@@ -939,7 +955,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 		return;
 
 	if(PlayState.DevMode && !Force)
-		PlayState.Network->Disconnect();
+		PlayState.Network->Disconnect(false, 1);
 	else {
 		Menu.ShowExitWarning = Player->Character->Battle;
 		Menu.ShowRespawn = !Player->Character->Battle && !Player->Character->IsAlive() && !Player->Character->Hardcore;
@@ -1378,7 +1394,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 
 	// Color
 	glm::vec4 Color;
-	if(Buy && Player->Character->Gold < Price)
+	if(Buy && Player->Character->Attributes["Gold"].Int < Price)
 		Color = ae::Assets.Colors["red"];
 	else
 		Color = ae::Assets.Colors["light_gold"];
@@ -1594,10 +1610,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.Values.size() == 0 || !StatChange.Object)
 		return;
 
-	if(StatChange.HasStat(StatType::HEALTH)) {
+	if(StatChange.HasStat("Health")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Integer;
+		StatChangeUI.Change = StatChange.Values["Health"].Int;
 		if(StatChangeUI.Object->Character->Battle) {
 			float OffsetX = 55;
 			if(StatChangeUI.Change < 0)
@@ -1613,10 +1629,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(StatChange.HasStat(StatType::MANA)) {
+	if(StatChange.HasStat("Mana")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.Change = StatChange.Values[StatType::MANA].Integer;
+		StatChangeUI.Change = StatChange.Values["Mana"].Int;
 		if(StatChangeUI.Object->Character->Battle) {
 			float OffsetX = 55;
 			if(StatChangeUI.Change < 0)
@@ -1632,11 +1648,11 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(StatChange.HasStat(StatType::EXPERIENCE)) {
+	if(StatChange.HasStat("Experience")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -150 * ae::_Element::GetUIScale());
-		StatChangeUI.Change = StatChange.Values[StatType::EXPERIENCE].Integer;
+		StatChangeUI.Change = StatChange.Values["Experience"].Int;
 		StatChangeUI.Direction = -1.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = ae::Assets.Fonts["battle_large"];
@@ -1644,7 +1660,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(StatChange.HasStat(StatType::GOLD) || StatChange.HasStat(StatType::GOLDSTOLEN)) {
+	if(StatChange.HasStat("Gold") || StatChange.HasStat("GoldStolen")) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 
@@ -1660,10 +1676,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		}
 
 		// Get amount
-		if(StatChange.HasStat(StatType::GOLD))
-			StatChangeUI.Change = StatChange.Values[StatType::GOLD].Integer;
+		if(StatChange.HasStat("Gold"))
+			StatChangeUI.Change = StatChange.Values["Gold"].Int;
 		else
-			StatChangeUI.Change = StatChange.Values[StatType::GOLDSTOLEN].Integer;
+			StatChangeUI.Change = StatChange.Values["GoldStolen"].Int;
 
 		StatChangeUI.Direction = -1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
@@ -1713,10 +1729,10 @@ void _HUD::UpdateLabels() {
 	ae::Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
-	Buffer << Player->Character->Gold;
+	Buffer << Player->Character->Attributes["Gold"].Int;
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
-	if(Player->Character->Gold < 0)
+	if(Player->Character->Attributes["Gold"].Int < 0)
 		GoldElement->Color = ae::Assets.Colors["red"];
 	else
 		GoldElement->Color = ae::Assets.Colors["gold"];
