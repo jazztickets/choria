@@ -12,8 +12,8 @@ style_hud_died_bg	died		ortho_pos			1
 style_buttonbar_slot			ortho_pos_uv	textures/hud/slot_small.png		1
 style_hud_slot			ortho_pos_uv	textures/hud/slot.png		1
 style_hud_slot_disabled			ortho_pos_uv	textures/hud/slot_disabled.png		1
-style_hud_slot_belt			ortho_pos_uv	textures/hud/slot_belt.png		1
-style_hud_slot_belt_disabled			ortho_pos_uv	textures/hud/slot_belt_disabled.png		1
+style_hud_slot_belt			ortho_pos_uv	textures/hud/slot_small.png		1
+style_hud_slot_belt_disabled			ortho_pos_uv	textures/hud/slot_small_disabled.png		1
 style_hud_slot_alpha			ortho_pos_uv	textures/hud/slot_border.png	inventory_slot_trans	1
 style_hud_slot_alpha_ring			ortho_pos_uv	textures/hud/slot_ring.png	inventory_slot_trans	1
 style_hud_slot_alpha_amulet			ortho_pos_uv	textures/hud/slot_amulet.png	inventory_slot_trans	1
