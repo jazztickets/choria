@@ -2373,9 +2373,9 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Difficulty += BossKillCount * BATTLE_BOSS_DIFFICULTY_PER_KILL;
 
 		// Get difficulty increase
-		int DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER;
+		int DifficultyAdjust = BATTLE_DIFFICULTY_PER_PLAYER;
 		if(Boss)
-			DifficultyAdjust = GAME_DIFFICULTY_PER_PLAYER_BOSS;
+			DifficultyAdjust = BATTLE_DIFFICULTY_PER_PLAYER_BOSS;
 
 		// Add players to battle
 		Difficulty -= DifficultyAdjust;
