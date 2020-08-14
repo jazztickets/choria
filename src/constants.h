@@ -100,8 +100,8 @@ const  int          BATTLE_LEVEL_RANGE                 =  10;
 const  int          BATTLE_BOSS_DIFFICULTY_PER_KILL    =  50;
 const  int          BATTLE_DIFFICULTY_DAMAGE_START     =  0;
 const  float        BATTLE_DIFFICULTY_DAMAGE           =  0.2f;
-const  int          BATTLE_DIFFICULTY_PER_PLAYER       =  10;
-const  int          BATTLE_DIFFICULTY_PER_PLAYER_BOSS  =  25;
+const  int          BATTLE_DIFFICULTY_PER_PLAYER       =  20;
+const  int          BATTLE_DIFFICULTY_PER_PLAYER_BOSS  =  50;
 //     Player
 const  double       PLAYER_TELEPORT_TIME               =  3.0;
 const  double       PLAYER_MOVETIME                    =  0.15;
