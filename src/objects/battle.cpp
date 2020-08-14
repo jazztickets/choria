@@ -177,8 +177,10 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	// Draw icon
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	if(ActionResult.ActionUsed.Item && !ActionResult.ActionUsed.Item->IsSkill())
+	if(ActionResult.ActionUsed.Item && !ActionResult.ActionUsed.Item->IsSkill()) {
+		WhiteAlpha = glm::vec4(1.0f, 1.0f, 1.0f, AlphaPercent);
 		ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], UI_SLOT_SIZE, WhiteAlpha);
+	}
 	ae::Graphics.DrawScaledImage(DrawPosition, ActionResult.Texture, UI_SLOT_SIZE, WhiteAlpha);
 
 	// Get damage value and color
