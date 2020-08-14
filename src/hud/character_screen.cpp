@@ -70,15 +70,19 @@ void _CharacterScreen::Render(double BlendFactor) {
 		if(!Attribute.Show)
 			continue;
 
+		// Get category
+		int Category = std::abs(Attribute.Show);
+		bool AlwaysShow = Attribute.Show < 0;
+
 		_Value &AttributeStorage = HUD->Player->Character->Attributes[AttributeName];
 		if(Attribute.UpdateType == StatUpdateType::MULTIPLICATIVE && AttributeStorage.Int == 0)
 			continue;
 
-		if(AttributeStorage.Int == Attribute.Default.Int)
+		if(!AlwaysShow && AttributeStorage.Int == Attribute.Default.Int)
 			continue;
 
 		// Separator
-		if(LastCategory != Attribute.Show)
+		if(LastCategory != Category)
 			DrawPosition.y += SpacingY;
 
 		if(Attribute.Type == StatValueType::TIME) {
@@ -96,6 +100,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 
-		LastCategory = Attribute.Show;
+		LastCategory = Category;
 	}
 }
