@@ -458,6 +458,11 @@ SetBonus_ReinforcedBuckler.Attributes = {
 	DamageBlock = { "15", "50" },
 }
 
+SetBonus_WarriorsBuckler = Base_Set:New()
+SetBonus_WarriorsBuckler.Attributes = {
+	DamageBlock = { "25", "125" },
+}
+
 SetBonus_BronzeShield = Base_Set:New()
 SetBonus_BronzeShield.Attributes = {
 	DamageBlock = { "10", "50" },
