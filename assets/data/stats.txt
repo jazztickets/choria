@@ -1435,14 +1435,14 @@ INSERT INTO vendor VALUES(15,'wym_vendor',1.0,0.5,'');
 INSERT INTO vendor VALUES(16,'wym_weapons',1.0,0.5,'');
 INSERT INTO vendor VALUES(17,'graveyard_skills',1.0,0.5500000000000000444,'');
 INSERT INTO vendor VALUES(18,'ancient_vendor',1.0,0.5,'');
-INSERT INTO vendor VALUES(19,'hideout_shop',1.0,0.5,'');
+INSERT INTO vendor VALUES(19,'hideout_shop',1.0,0.5,'set');
 INSERT INTO vendor VALUES(20,'ruins_skills',1.0,0.5,'');
 INSERT INTO vendor VALUES(21,'library_vendor',1.0,0.5,'');
 INSERT INTO vendor VALUES(22,'garden_vendor',1.0,0.75,'');
 INSERT INTO vendor VALUES(23,'chamber_vendor',1.0,0.5,'');
 INSERT INTO vendor VALUES(24,'rebirth_vendor',1.0,0.5,'');
 INSERT INTO vendor VALUES(25,'wym_armor',1.0,0.5,'set');
-INSERT INTO vendor VALUES(26,'library_gear',1.0,0.5,'set');
+INSERT INTO vendor VALUES(26,'library_gear',1.0,0.5,'');
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES "vendor"(id) ON DELETE CASCADE,
