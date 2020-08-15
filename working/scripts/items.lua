@@ -747,6 +747,22 @@ function Item_GreaterBattlePotion.Use(self, Level, Duration, Source, Target, Res
 	return Result
 end
 
+-- Lava Potion --
+
+Item_LavaPotion = Base_Potion:New()
+
+function Item_LavaPotion.GetInfo(self, Source, Item)
+	return "Grants lava immunity for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Item_LavaPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_LavaImmune.Pointer
+	Result.Target.BuffLevel = 0
+	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
 -- Ultimate Battle Potion --
 
 Item_UltimateBattlePotion = Base_Potion:New()

@@ -1754,6 +1754,7 @@ INSERT INTO buff VALUES(29,'Cold Resist','Buff_ColdResist','textures/buffs/cold_
 INSERT INTO buff VALUES(30,'Ice Imps','Buff_SummonIceImp','textures/buffs/summon_ice_imp.png',1,1,2);
 INSERT INTO buff VALUES(31,'Difficult','Buff_Difficult','textures/buffs/difficult.png',1,0,0);
 INSERT INTO buff VALUES(32,'Attractant','Buff_Attractant','textures/buffs/attractant.png',1,0,0);
+INSERT INTO buff VALUES(33,'Lava Immune','Buff_LavaImmune','textures/buffs/lava_immunity.png',1,0,1);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2176,6 +2177,7 @@ INSERT INTO trader VALUES(78,'warding_amulet',321,1);
 INSERT INTO trader VALUES(79,'ultimate_battle_potion',326,1);
 INSERT INTO trader VALUES(80,'belligerent_potion',327,1);
 INSERT INTO trader VALUES(81,'building_key',342,1);
+INSERT INTO trader VALUES(82,'lava_potion',343,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -2390,6 +2392,9 @@ INSERT INTO traderitem VALUES(236,81,338,1);
 INSERT INTO traderitem VALUES(237,81,339,1);
 INSERT INTO traderitem VALUES(238,81,340,1);
 INSERT INTO traderitem VALUES(239,81,341,1);
+INSERT INTO traderitem VALUES(240,82,233,10);
+INSERT INTO traderitem VALUES(241,82,223,1);
+INSERT INTO traderitem VALUES(242,82,247,1);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -3083,6 +3088,7 @@ INSERT INTO item VALUES(339,11,0,0,0,0,0,0,'Blue Runestone Fragment','textures/i
 INSERT INTO item VALUES(340,11,0,0,0,0,0,0,'Green Runestone Fragment','textures/items/fragment_green.png','','','',0,100,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(341,11,0,0,0,0,0,0,'Black Runestone Fragment','textures/items/fragment_black.png','','','',0,100,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(342,13,0,0,0,0,0,0,'Building Key','textures/items/key0.png','','','',0,1000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(343,10,0,1,1,0,0,0,'Lava Potion','textures/items/lava_potion.png','','Item_LavaPotion','',0,1000,1,0,0,0,60.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,

@@ -38,4 +38,10 @@ for f in armors boots helms shields weapons items rebirth; do
 	mv export/*.png "$dest/items/"
 done
 
+# remove old items
 rm "$dest/items/metal_"*
+
+# make zip
+pushd 4k
+zip -r "choria_4k_textures.zip" "textures/"
+popd

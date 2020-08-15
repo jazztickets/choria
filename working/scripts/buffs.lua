@@ -531,3 +531,17 @@ function Buff_Attractant.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Lava Immune --
+
+Buff_LavaImmune = Base_Buff:New()
+
+function Buff_LavaImmune.GetInfo(self, Level)
+	return "Immune to lava"
+end
+
+function Buff_LavaImmune.Stats(self, Level, Source, Change)
+	Change.LavaProtection = true
+
+	return Change
+end
