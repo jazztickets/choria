@@ -4,3 +4,4 @@ set key right top
 set xlabel 'play_time' noenhanced
 set ylabel 'gold' noenhanced
 plot for [data in files] data using 1:2 title data noenhanced with lines
+#pause mouse close
