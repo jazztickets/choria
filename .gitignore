@@ -2,7 +2,7 @@
 *.swp
 *.~lock*
 *.zip
-.vscode
+/.vscode
 /*.sh
 /CMakeLists.txt.user
 /bin/
@@ -11,7 +11,6 @@
 /assets/art/4k/
 /src/tags
 /src/version.h
-/assets/data/graphs/
 /working/stats/*.txt
 /working/choria*
 /deployment/*.exe
