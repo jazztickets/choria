@@ -1022,24 +1022,11 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 	if(Player && Player->Character->Offline)
 		return;
 
+	bool HitLevelRestriction = false;
 	for(const auto &Object : Objects) {
-		if(!Object->Character)
-			continue;
 
-		// Skip self target
-		if(Object == Player)
-			continue;
-
-		// Check hardcore
-		if(Object->Character->Hardcore != Player->Character->Hardcore)
-			continue;
-
-		// Check offline mode
-		if(Object->Character->Offline)
-			continue;
-
-		// Check level restrictions
-		if(Object->Character->Attributes["Rebirths"].Int != Player->Character->Attributes["Rebirths"].Int || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE)
+		// Check interaction
+		if(!Player->CanInteractWith(Object, BATTLE_LEVEL_RANGE, HitLevelRestriction))
 			continue;
 
 		// Check party name
@@ -1061,16 +1048,12 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 		return nullptr;
 
 	for(const auto &Object : Objects) {
-		if(!Object->Character)
-			continue;
 
-		if(Object == Player)
+		// Check interaction
+		if(!Player->CanInteractWith(Object, BATTLE_LEVEL_RANGE, HitLevelRestriction))
 			continue;
 
 		if(!Object->Character->IsAlive())
-			continue;
-
-		if(Object->Character->Offline)
 			continue;
 
 		if(!Object->Character->Battle)
@@ -1079,20 +1062,12 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 		if(Object->Character->Battle->PVP)
 			continue;
 
-		if(Object->Character->Hardcore != Player->Character->Hardcore)
-			continue;
-
 		glm::vec2 Delta = Object->Position - Player->Position;
 		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
 			continue;
 
 		if(Object->Character->Battle->SideCount[0] >= BATTLE_MAX_OBJECTS_PER_SIDE) {
 			HitFullBattle = true;
-			continue;
-		}
-
-		if(Object->Character->Attributes["Rebirths"].Int != Player->Character->Attributes["Rebirths"].Int || std::abs(Object->Character->Level - Player->Character->Level) > BATTLE_LEVEL_RANGE) {
-			HitLevelRestriction = true;
 			continue;
 		}
 
@@ -1114,22 +1089,11 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 	if(UsePVPZone && !IsPVPZone(Attacker->Position))
 		return;
 
+	bool HitLevelRestriction = false;
 	for(const auto &Object : Objects) {
 
-		// Skip self target
-		if(Object == Attacker)
-			continue;
-
-		// Check for character
-		if(!Object->Character)
-			continue;
-
-		// Check offline
-		if(Object->Character->Offline)
-			continue;
-
-		// Check hardcore
-		if(Object->Character->Hardcore != Attacker->Character->Hardcore)
+		// Check interaction
+		if(!Attacker->CanInteractWith(Object, BATTLE_LEVEL_RANGE, HitLevelRestriction))
 			continue;
 
 		// Check if target can PVP
@@ -1148,13 +1112,6 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players,
 		if(Object->Character->PartyName != "" && Object->Character->PartyName == Attacker->Character->PartyName)
 			continue;
 
-		// Check for rank
-		if(Object->Character->Attributes["Rebirths"].Int != Attacker->Character->Attributes["Rebirths"].Int)
-			continue;
-
-		if(std::abs(Object->Character->Level - Attacker->Character->Level) > BATTLE_LEVEL_RANGE)
-			continue;
-
 		// Check distance
 		glm::vec2 Delta = Object->Position - Attacker->Position;
 		if(glm::dot(Delta, Delta) <= BATTLE_PVP_DISTANCE)
@@ -1169,29 +1126,17 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 
 	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
+	bool HitLevelRestriction = false;
 	for(const auto &Object : Objects) {
-		if(!Object->Character)
-			continue;
 
-		if(Object == Player)
+		// Check interaction
+		if(!Player->CanInteractWith(Object, GAME_TRADING_LEVEL_RANGE, HitLevelRestriction))
 			continue;
 
 		if(!Object->Character->WaitingForTrade)
 			continue;
 
-		if(Object->Character->Offline)
-			continue;
-
 		if(Object->Character->TradePlayer)
-			continue;
-
-		if(Object->Character->Hardcore != Player->Character->Hardcore)
-			continue;
-
-		if(Object->Character->Attributes["Rebirths"].Int != Player->Character->Attributes["Rebirths"].Int)
-			continue;
-
-		if(GAME_TRADING_LEVEL_RANGE && std::abs(Object->Character->Level - Player->Character->Level) > GAME_TRADING_LEVEL_RANGE)
 			continue;
 
 		glm::vec2 Delta = Object->Position - Player->Position;
@@ -1212,14 +1157,14 @@ _Object *_Map::FindDeadPlayer(const _Object *Player, float MaxDistanceSquared) {
 
 	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
+	bool HitLevelRestriction = false;
 	for(const auto &Object : Objects) {
-		if(!Object->Character)
+
+		// Check interaction
+		if(!Player->CanInteractWith(Object, -1, HitLevelRestriction))
 			continue;
 
 		if(Object->Character->IsAlive())
-			continue;
-
-		if(Object->Character->Offline)
 			continue;
 
 		if(Object->Character->Hardcore)
@@ -1228,13 +1173,11 @@ _Object *_Map::FindDeadPlayer(const _Object *Player, float MaxDistanceSquared) {
 		if(Object->Character->Battle)
 			continue;
 
-		if(Object != Player) {
-			glm::vec2 Delta = Object->Position - Player->Position;
-			float DistanceSquared = glm::dot(Delta, Delta);
-			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
-				ClosestDistanceSquared = DistanceSquared;
-				ClosestPlayer = Object;
-			}
+		glm::vec2 Delta = Object->Position - Player->Position;
+		float DistanceSquared = glm::dot(Delta, Delta);
+		if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
+			ClosestDistanceSquared = DistanceSquared;
+			ClosestPlayer = Object;
 		}
 	}
 

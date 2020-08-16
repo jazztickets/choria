@@ -1656,6 +1656,40 @@ bool _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 	return true;
 }
 
+// Determine if a player can interact with another
+bool _Object::CanInteractWith(const _Object *Object, int LevelRange, bool &HitLevelRestriction) const {
+
+	// Check for character
+	if(!Object->Character)
+		return false;
+
+	// Skip self target
+	if(Object == this)
+		return false;
+
+	// Check hardcore
+	if(Object->Character->Hardcore != Character->Hardcore)
+		return false;
+
+	// Check offline mode
+	if(Object->Character->Offline)
+		return false;
+
+	// Check rebirths
+	if(Object->Character->Attributes["Rebirths"].Int != Character->Attributes["Rebirths"].Int) {
+		HitLevelRestriction = true;
+		return false;
+	}
+
+	// Check level range
+	if(LevelRange != -1 && std::abs(Object->Character->Level - Character->Level) > LevelRange) {
+		HitLevelRestriction = true;
+		return false;
+	}
+
+	return true;
+}
+
 // Accept a trade from a trader
 void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
 	if(!Character->Trader)

@@ -112,6 +112,7 @@ class _Object : public ae::_BaseObject {
 
 		// Actions
 		bool SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager);
+		bool CanInteractWith(const _Object *Object, int LevelRange, bool &HitLevelRestriction) const;
 
 		// Movement
 		void GetDirectionFromInput(int InputState, glm::ivec2 &Direction);
