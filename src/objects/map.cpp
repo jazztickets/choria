@@ -658,23 +658,23 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 			// Draw wall
 			if(Tile->Wall) {
 				if(RenderFlags & MAP_RENDER_WALL)
-					ae::Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
+					ae::Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / (UI_TILE_SIZE.x * ae::_Element::GetUIScale()));
 			}
 			else {
 
 				// Draw zone number
 				if((RenderFlags & MAP_RENDER_ZONE) && Tile->Zone > 0)
-					ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
+					ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / (UI_TILE_SIZE.x * ae::_Element::GetUIScale()));
 
 				// Draw PVP
 				if((RenderFlags & MAP_RENDER_PVP) && Tile->PVP)
-					ae::Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition) - glm::vec2(0, 0.25), ae::CENTER_MIDDLE, ae::Assets.Colors["red"], 1.0f / 64.0f);
+					ae::Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition) - glm::vec2(0, 0.25), ae::CENTER_MIDDLE, ae::Assets.Colors["red"], 1.0f / (UI_TILE_SIZE.x * ae::_Element::GetUIScale()));
 			}
 
 			// Draw event info
 			if(Tile->Event.Type > 0) {
 				std::string EventText = Stats->EventNames[Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
-				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition) - glm::vec2(0, -0.25), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 64.0f);
+				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition) - glm::vec2(0, -0.25), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / (UI_TILE_SIZE.x * ae::_Element::GetUIScale()));
 			}
 		}
 	}

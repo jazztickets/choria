@@ -62,6 +62,7 @@ const  std::string  MAP_DEFAULT_TILESET                =  "atlas0.png";
 const  glm::vec2    UI_PORTRAIT_SIZE                   =  glm::vec2(100,100);
 const  glm::vec2    UI_SLOT_SIZE                       =  glm::vec2(64,64);
 const  glm::vec2    UI_BUFF_SIZE                       =  glm::vec2(48,48);
+const  glm::vec2    UI_TILE_SIZE                       =  glm::vec2(64,64);
 //     HUD
 const  int          HUD_CHAT_MESSAGES                  =  15;
 const  int          HUD_CHAT_TIMEOUT                   =  10;
