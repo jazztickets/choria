@@ -427,7 +427,7 @@ void _Character::CalculateStats() {
 
 		// Get set level from nth highest level piece, where n is the set count
 		auto SetPieceLevelsArray = SetPieceLevels[SetData.first];
-		std::sort(SetPieceLevelsArray.begin(), SetPieceLevelsArray.end(), std::greater());
+		std::sort(SetPieceLevelsArray.begin(), SetPieceLevelsArray.end(), std::greater<int>());
 		SetData.second.Level = SetPieceLevelsArray[Set.Count-1];
 
 		// Get stat bonuses when set is complete
