@@ -23,6 +23,7 @@ gitver=`git log --oneline | wc -l`
 build() {
 
 	bits=$1
+	build_4k=$2
 
 	# get mingw prefix
 	if [ $bits -eq "32" ]; then
@@ -51,12 +52,16 @@ build() {
 
 	# create new working dir
 	archive_base=${project}-${version}r${gitver}-win${bits}
+	archive=${archive_base}.zip
+	if [ "${build_4k}" -eq 1 ]; then
+		archive=${archive_base}_4k.zip
+	fi
 	rm -rf "${archive_base}"
-	cp -rl "${projectdir}/working" "${archive_base}"
+	cp -r "${projectdir}/working" "${archive_base}"
 	rm "${projectdir}/working/${project}.exe"
 
 	# remove linux only files
-	rm "${archive_base}"/"${project}"{,_debug}
+	rm -f "${archive_base}"/"${project}"{,_debug}
 
 	# copy dlls
 	cp /usr/$arch/bin/{OpenAL32.dll,libbz2-1.dll,libfreetype-6.dll,libssp-0.dll,libgcc_*.dll,libsqlite3-0.dll,libstdc++-6.dll,libwinpthread-1.dll,lua53.dll,libvorbisfile-3.dll,libvorbis-0.dll,libogg-0.dll,SDL2.dll,SDL2_image.dll,libpng16-16.dll,zlib1.dll,libjsoncpp.dll,libtinyxml2.dll} "${archive_base}"/
@@ -74,8 +79,11 @@ build() {
 	echo -e "${project}.exe -benchmark\npause" > "${archive_base}"/run_benchmark.bat
 	chmod +x "${archive_base}"/*.bat
 
-	# create zip
-	archive=${archive_base}.zip
+	if [ "${build_4k}" -eq 1 ]; then
+		cp -r "$projectdir/assets/art/4k/textures" "${archive_base}/"
+	fi
+
+	# zip
 	zip -r "${archive}" "${archive_base}"
 
 	# upload zip to server
@@ -97,5 +105,5 @@ fi
 rm -f "$outputdir"/"${project}-${version}"*.zip
 
 # build project
-#build 32
-build 64
+build 64 0
+build 64 1
