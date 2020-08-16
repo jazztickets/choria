@@ -89,10 +89,12 @@ struct _DamageType {
 };
 
 struct _Zone {
-	_Zone() : MonsterID(0), Odds(0), Max(0), Difficulty(0) { }
+	_Zone() : MonsterID(0), Odds(0), Boss(false), Cooldown(0.0), Max(0), Difficulty(0) { }
 
 	uint32_t MonsterID;
 	uint32_t Odds;
+	bool Boss;
+	double Cooldown;
 	int Max;
 	int Difficulty;
 };
@@ -202,6 +204,7 @@ class _Stats {
 		const ae::_Texture *GetPortraitImage(uint32_t PortraitID) const;
 
 		// Monsters
+		void GetZone(uint32_t ZoneID, _Zone &Zone) const;
 		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const;
 		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops) const;
 

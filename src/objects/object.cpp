@@ -1400,8 +1400,13 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 			// Start battle
 			if(StatChange.HasStat("Battle")) {
-				Character->GenerateNextBattle();
-				Server->QueueBattle(this, (uint32_t)StatChange.Values["Battle"].Int, true, false, 0.0f, 0.0f);
+				uint32_t ZoneID = (uint32_t)StatChange.Values["Battle"].Int;
+				_Zone Zone;
+				Stats->GetZone(ZoneID, Zone);
+				if(!Zone.Boss)
+					Character->GenerateNextBattle();
+
+				Server->QueueBattle(this, ZoneID, true, false, 0.0f, 0.0f);
 			}
 
 			// Start PVP

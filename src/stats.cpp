@@ -694,6 +694,19 @@ const ae::_Texture *_Stats::GetPortraitImage(uint32_t PortraitID) const {
 	return Image;
 }
 
+// Get information about zone
+void _Stats::GetZone(uint32_t ZoneID, _Zone &Zone) const {
+
+	// Get zone info
+	Database->PrepareQuery("SELECT boss, cooldown, minspawn, maxspawn FROM zone WHERE id = @zone_id");
+	Database->BindInt(1, ZoneID);
+	if(Database->FetchRow()) {
+		Zone.Boss = Database->GetInt<int>("boss");
+		Zone.Cooldown = Database->GetReal("cooldown");
+	}
+	Database->CloseQuery();
+}
+
 // Randomly generates a list of monsters from a zone
 void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const {
 	if(ZoneID == 0)
