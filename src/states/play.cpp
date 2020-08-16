@@ -1362,6 +1362,8 @@ void _PlayState::HandleTradeRequest(ae::_Buffer &Data) {
 	if(!Player->Character->TradePlayer)
 		return;
 
+	HUD->TradeScreen->EnableAcceptButton(true);
+
 	// Get gold offer
 	Player->Character->TradePlayer->Character->TradeGold = Data.Read<int>();
 	for(size_t i = 0; i < INVENTORY_MAX_TRADE_ITEMS; i++)

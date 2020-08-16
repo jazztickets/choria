@@ -38,8 +38,11 @@ class _TradeScreen : public _Screen {
 		void Render(double BlendFactor) override;
 
 		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
+
+		void EnableAcceptButton(bool Value);
 		void UpdateAcceptButton();
 		void ResetAcceptButton();
+
 		void ResetTradeTheirsWindow();
 		void SendTradeRequest();
 		void SendTradeCancel();

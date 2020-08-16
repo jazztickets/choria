@@ -51,6 +51,7 @@ void _TradeScreen::Init() {
 	SendTradeRequest();
 
 	// Reset UI
+	EnableAcceptButton(false);
 	ResetAcceptButton();
 
 	// Reset their trade UI
@@ -145,6 +146,11 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 	}
 }
 
+// Set enabled state of accept button
+void _TradeScreen::EnableAcceptButton(bool Value) {
+	ae::Assets.Elements["button_trade_accept_yours"]->SetEnabled(Value);
+}
+
 // Update accept button label text
 void _TradeScreen::UpdateAcceptButton() {
 	ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
@@ -183,6 +189,8 @@ void _TradeScreen::ResetTradeTheirsWindow() {
 	}
 	else
 		RestrictLabel->SetActive(false);
+
+	EnableAcceptButton(false);
 }
 
 // Trade with another player
