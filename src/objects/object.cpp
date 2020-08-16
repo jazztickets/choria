@@ -579,7 +579,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		if(StatusEffect->BattleElement) {
 			StatusEffect->BattleElement->BaseOffset = Offset;
 			StatusEffect->BattleElement->CalculateBounds();
-			StatusEffect->Render(StatusEffect->BattleElement, GlobalColor);
+			StatusEffect->Render(StatusEffect->BattleElement, Time);
 			Offset.x += UI_BUFF_SIZE.x + 2;
 		}
 	}

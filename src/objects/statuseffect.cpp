@@ -28,6 +28,7 @@
 #include <SDL_keycode.h>
 #include <stdexcept>
 #include <sstream>
+#include <iostream>
 
 // Constructor
 _StatusEffect::_StatusEffect() :
@@ -102,7 +103,15 @@ ae::_Element *_StatusEffect::CreateUIElement(ae::_Element *Parent) {
 }
 
 // Render the status effect
-void _StatusEffect::Render(ae::_Element *Element, const glm::vec4 &Color) {
+void _StatusEffect::Render(ae::_Element *Element, double Timer) {
+
+	// Warning flash
+	glm::vec4 Color(glm::vec4(1.0f));
+	if(Buff->WarningTime > 0 && Duration <= Buff->WarningTime) {
+		double FastTime = Timer * 4;
+		if(FastTime - (int)FastTime < 0.5)
+			Color *= 0.5f;
+	}
 
 	// Draw buff icon
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);

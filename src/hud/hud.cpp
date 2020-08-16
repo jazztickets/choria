@@ -1156,7 +1156,7 @@ void _HUD::DrawHudEffects() {
 		if(StatusEffect->HUDElement) {
 			StatusEffect->HUDElement->BaseOffset = Offset;
 			StatusEffect->HUDElement->CalculateBounds();
-			StatusEffect->Render(StatusEffect->HUDElement, glm::vec4(1.0f));
+			StatusEffect->Render(StatusEffect->HUDElement, PlayState.Time);
 			Offset.x += UI_BUFF_SIZE.x + 2;
 		}
 	}

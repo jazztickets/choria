@@ -169,6 +169,7 @@ void _Stats::LoadBuffs() {
 		Buff->PauseDuringBattle = Database->GetInt<int>("pause");
 		Buff->ShowLevel = Database->GetInt<int>("show_level");
 		Buff->Dismiss = Database->GetInt<int>("dismiss");
+		Buff->WarningTime = (double)Database->GetInt<int>("warning");
 		Buffs[Buff->ID] = Buff;
 	}
 	Database->CloseQuery();

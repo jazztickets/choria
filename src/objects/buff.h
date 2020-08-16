@@ -45,6 +45,7 @@ class _Buff {
 		bool PauseDuringBattle;
 		bool ShowLevel;
 		int Dismiss;
+		double WarningTime;
 
 	private:
 

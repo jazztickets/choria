@@ -1102,7 +1102,7 @@ function Skill_PetMastery.GetSummonLimit(self, Level, Fraction)
 end
 
 function Skill_PetMastery.GetInfo(self, Source, Item)
-	return "Increase pet stats by [c green]" .. self:GetPower(Item.Level) .. "%\nIncrease summon limit by [c green]" .. self:GetSummonLimit(Item.Level, Item.MoreInfo)
+	return "Increase pet power by [c green]" .. self:GetPower(Item.Level) .. "%\nIncrease summon limit by [c green]" .. self:GetSummonLimit(Item.Level, Item.MoreInfo)
 end
 
 function Skill_PetMastery.Stats(self, Level, Object, Change)

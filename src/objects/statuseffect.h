@@ -44,7 +44,7 @@ class _StatusEffect {
 
 		ae::_Element *CreateUIElement(ae::_Element *Parent);
 
-		void Render(ae::_Element *Element, const glm::vec4 &Color);
+		void Render(ae::_Element *Element, double Timer);
 
 		const _Buff *Buff;
 		ae::_Element *BattleElement;
