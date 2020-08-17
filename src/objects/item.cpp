@@ -265,7 +265,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 			DrawPosition.y += LargeSpacingY;
 
-			// Show upgrade level if holding ctrl and the item is not in the blacksmith slot
+			// Show next upgrade stats if holding ctrl and item is not in the blacksmith slot
 			if(Player->Character->Blacksmith && ae::Input.ModKeyDown(KMOD_CTRL) && CompareSlot.Index != NOSLOT && Tooltip.Window != _HUD::WINDOW_BLACKSMITH)
 				Upgrades = std::min(Upgrades + 1, MaxLevel);
 		}
@@ -693,7 +693,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 				InfoText = "Cursed items cannot be unequipped";
 				InfoColor = ae::Assets.Colors["red"];
 			}
-			else if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY && !(Player->Character->Vendor && Config.RightClickSell))
+			else if((Tooltip.Slot.Type == BagType::INVENTORY || Tooltip.Slot.Type == BagType::TRADE) && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to equip");
 		break;
 		case ItemType::CONSUMABLE:
