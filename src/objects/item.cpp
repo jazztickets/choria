@@ -264,6 +264,10 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			DrawPosition.y += RewindSpacingY;
 			ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 			DrawPosition.y += LargeSpacingY;
+
+			// Show upgrade level if holding ctrl and the item is not in the blacksmith slot
+			if(Player->Character->Blacksmith && ae::Input.ModKeyDown(KMOD_CTRL) && CompareSlot.Index != NOSLOT && Tooltip.Window != _HUD::WINDOW_BLACKSMITH)
+				Upgrades = std::min(Upgrades + 1, MaxLevel);
 		}
 	}
 
