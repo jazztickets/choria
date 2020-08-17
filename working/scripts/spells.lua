@@ -265,6 +265,14 @@ function Skill_Resurrect.GetInfo(self, Source, Item)
 	return "Resurrect an ally with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Can be used outside of battle"
 end
 
+function Skill_Resurrect.CanTarget(self, Source, Target, Alive)
+	if Target == nil then
+		return false
+	end
+
+	return Target.Corpse > 0 and Target.Health == 0
+end
+
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Health = self:GetHeal(Source, Level)
 	Result.Target.Corpse = 1

@@ -197,13 +197,14 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 	-- Chance to resurrect
 	if Random.GetInt(1, 2) == 1 then
 
-		CanUse = Object.SetAction(1)
-		if CanUse then
-			for i = 1, #Allies do
-				if Allies[i].Health == 0 then
-					Object.AddTarget(Allies[i].Pointer)
+		for i = 1, #Allies do
+			if Allies[i].Health == 0 then
+				Object.AddTarget(Allies[i].Pointer)
+				if Object.SetAction(1) then
 					return
 				end
+
+				Object.ClearTargets()
 			end
 		end
 	end
