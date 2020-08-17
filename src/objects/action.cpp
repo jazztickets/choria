@@ -228,6 +228,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			_StatChange Heal;
 			Heal.Object = LowestHealthSummon;
 			Heal.Values["Health"].Int = LowestHealthSummon->Character->Attributes["MaxHealth"].Int;
+			Heal.Values["Mana"].Int = LowestHealthSummon->Character->Attributes["MaxMana"].Int;
 			LowestHealthSummon->UpdateStats(Heal);
 
 			ae::_Buffer Packet;
