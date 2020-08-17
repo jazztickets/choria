@@ -695,6 +695,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			}
 			else if((Tooltip.Slot.Type == BagType::INVENTORY || Tooltip.Slot.Type == BagType::TRADE) && !(Player->Character->Vendor && Config.RightClickSell))
 				HelpTextList.push_back("Right-click to equip");
+			else if(Tooltip.Slot.Type == BagType::EQUIPMENT)
+				HelpTextList.push_back("Right-click to unequip");
 		break;
 		case ItemType::CONSUMABLE:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && CheckScope(ScopeType::WORLD) && !(Player->Character->Vendor && Config.RightClickSell))

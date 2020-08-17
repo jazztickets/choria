@@ -1066,16 +1066,24 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Check for equipment
 	if(Item->IsEquippable()) {
+
+		// Unequip
 		_Slot TargetSlot;
-		Item->GetEquipmentSlot(TargetSlot);
+		if(Slot.Type == BagType::EQUIPMENT) {
+			TargetSlot = Player->Inventory->FindSlotForItemInBag(BagType::INVENTORY, Item, 0, 1);
+		}
+		// Equip item
+		else {
+			Item->GetEquipmentSlot(TargetSlot);
 
-		// Check for empty second ring slot
-		if(Alternate || (TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::RING2].Item))
-			TargetSlot.Index = EquipmentType::RING2;
+			// Check for empty second ring slot
+			if(Alternate || (TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::RING2].Item))
+				TargetSlot.Index = EquipmentType::RING2;
 
-		// Check for empty main hand when equipping off-hand
-		if(Item->Type == ItemType::OFFHAND && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item)
-			TargetSlot.Index = EquipmentType::HAND1;
+			// Check for empty main hand when equipping off-hand
+			if(Item->Type == ItemType::OFFHAND && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item)
+				TargetSlot.Index = EquipmentType::HAND1;
+		}
 
 		// Attempt to move
 		ae::_Buffer Packet;
