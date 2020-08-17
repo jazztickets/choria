@@ -147,7 +147,7 @@ void _Menu::ChangeLayout(const std::string &ElementName) {
 // Initialize
 void _Menu::InitTitle(bool Disconnect) {
 	if(Disconnect)
-		PlayState.Network->Disconnect(true);
+		PlayState.Network->Disconnect(true, 1);
 
 	std::string BuildNumber = "";
 	if(BUILD_NUMBER)
@@ -273,7 +273,6 @@ void _Menu::ExitGame() {
 	// Notify server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_EXIT);
-	Packet.WriteBit(0);
 	PlayState.Network->SendPacket(Packet);
 
 	// Shutdown game

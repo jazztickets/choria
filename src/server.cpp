@@ -356,9 +356,7 @@ void _Server::HandleDisconnect(ae::_NetworkEvent &Event) {
 	Log << "[DISCONNECT] " << (Event.EventData ? "Disconnect" : "Timeout") << " from " << Buffer << ":" << Address->port << std::endl;
 
 	ae::_Buffer Data;
-	Data.WriteBit(1);
-	Data.StartRead();
-	HandleExit(Data, Event.Peer, true);
+	HandleExit(Data, Event.Peer, Event.EventData);
 
 	// Delete peer from network
 	Network->DeletePeer(Event.Peer);
@@ -397,7 +395,7 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 			HandleJoin(Data, Peer);
 		break;
 		case PacketType::WORLD_EXIT:
-			HandleExit(Data, Peer);
+			HandleExit(Data, Peer, true);
 		break;
 		case PacketType::WORLD_UPDATEID:
 			HandleUpdateID(Data, Peer);
@@ -1797,11 +1795,9 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 }
 
 // Handle client exit command
-void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect) {
+void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool Penalize) {
 	if(!Peer)
 	   return;
-
-	bool Disconnect = Data.ReadBit();
 
 	// Get object
 	_Object *Player = Peer->Object;
@@ -1822,7 +1818,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 				Player->Character->Attributes["Gold"].Int -= Player->Fighter->GoldStolen;
 
 			// Apply penalty
-			if(!FromDisconnect) {
+			if(Penalize) {
 				Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
 				Player->Character->Attributes["Health"].Int = 0;
 				Player->Character->Attributes["Mana"].Int = Player->Character->Attributes["MaxMana"].Int / 2;
@@ -1849,9 +1845,6 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect
 		Player->Deleted = true;
 		Peer->Object = nullptr;
 	}
-
-	if(Disconnect)
-		Network->DisconnectPeer(Peer);
 }
 
 // Handle console commands

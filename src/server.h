@@ -131,7 +131,7 @@ class _Server {
 		void HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer);
-		void HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool FromDisconnect=false);
+		void HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool Penalize);
 		void HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleUpdateID(ae::_Buffer &Data, ae::_Peer *Peer);
 

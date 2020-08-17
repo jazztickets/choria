@@ -584,11 +584,7 @@ void _PlayState::HandleWindow(uint8_t Event) {
 // Handle quit events
 void _PlayState::HandleQuit() {
 	if(Network && Network->IsConnected()) {
-		ae::_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::WORLD_EXIT);
-		Packet.WriteBit(1);
-		Network->SendPacket(Packet);
-
+		Network->Disconnect(false, 1);
 		DoneOnDisconnect = true;
 	}
 	else
