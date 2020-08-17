@@ -102,15 +102,22 @@ end
 AI_Boss = {}
 
 function AI_Boss.Update(self, Object, Enemies, Allies)
+	local Storage = Battles[Object.BattleID]
+	if Storage[Object.ID] == nil then
+		Storage[Object.ID] = { Turns = 0 }
+	end
 
 	-- Chance to do special attack
-	if Random.GetInt(1, 5) == 1 then
-		for i = 1, #Enemies do
-			Object.AddTarget(Enemies[i].Pointer)
-		end
+	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 5) == 1 then
 
-		Object.SetAction(1)
-		return
+		CanUse = Object.SetAction(1)
+		if CanUse then
+			for i = 1, #Enemies do
+				Object.AddTarget(Enemies[i].Pointer)
+			end
+
+			return
+		end
 	end
 
 	-- Get random target
@@ -120,18 +127,24 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 	AI_AddTarget(Object, Enemies[Target], true)
 
 	-- Set skill
-	Object.SetAction(0)
+	if Object.SetAction(0) then
+		Storage[Object.ID].Turns = Storage[Object.ID].Turns + 1
+	end
 end
 
 AI_DeadQueen = {}
 
 function AI_DeadQueen.Update(self, Object, Enemies, Allies)
+	local Storage = Battles[Object.BattleID]
+	if Storage[Object.ID] == nil then
+		Storage[Object.ID] = { Turns = 0 }
+	end
 
 	-- Chance to do special attack
-	if Random.GetInt(1, 5) == 1 then
+	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 5) == 1 then
 
 		CanUse = Object.SetAction(1)
-		if CanUse == true then
+		if CanUse then
 			for i = 1, #Enemies do
 				Object.AddTarget(Enemies[i].Pointer)
 			end
@@ -148,9 +161,13 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 
 	-- Set skill
 	if Random.GetInt(1, 10) <= 7 then
-		Object.SetAction(0)
+		ActionSet = Object.SetAction(0)
 	else
-		Object.SetAction(2)
+		ActionSet = Object.SetAction(2)
+	end
+
+	if ActionSet then
+		Storage[Object.ID].Turns = Storage[Object.ID].Turns + 1
 	end
 end
 
@@ -171,7 +188,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 			end
 		end
 
-		if ShouldUse == true then
+		if ShouldUse then
 			Object.AddTarget(Object.Pointer)
 			return
 		end
@@ -181,7 +198,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 	if Random.GetInt(1, 2) == 1 then
 
 		CanUse = Object.SetAction(1)
-		if CanUse == true then
+		if CanUse then
 			for i = 1, #Allies do
 				if Allies[i].Health == 0 then
 					Object.AddTarget(Allies[i].Pointer)
@@ -211,7 +228,7 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 
 			-- See if target can be healed
 			Object.AddTarget(Allies[i].Pointer)
-			if Object.SetAction(1) == true then
+			if Object.SetAction(1) then
 				return
 			end
 
@@ -257,7 +274,7 @@ function AI_GoblinThief.Update(self, Object, Enemies, Allies)
 		Target = Random.GetInt(1, #Enemies)
 		AI_AddTarget(Object, Enemies[Target], true)
 
-		if Random.GetInt(1, 10) <= 7 and Object.SetAction(1) == true then
+		if Random.GetInt(1, 10) <= 7 and Object.SetAction(1) then
 			Storage[Object.ID].Steals = Storage[Object.ID].Steals + 1
 			return
 		end
@@ -335,9 +352,9 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Summon demon
-	if SummonDemon == true then
+	if SummonDemon then
 		Object.AddTarget(Object.Pointer)
-		if Object.SetAction(1) == true then
+		if Object.SetAction(1) then
 			return
 		end
 
@@ -350,7 +367,7 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 
 		-- Ice nova
 		CanCast = Object.SetAction(2)
-		if CanCast == true then
+		if CanCast then
 			for i = 1, #Enemies do
 				Object.AddTarget(Enemies[i].Pointer)
 			end
@@ -361,7 +378,7 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 
 		-- Enfeeble or Flay
 		CanCast = Object.SetAction(Random.GetInt(3, 4))
-		if CanCast == true then
+		if CanCast then
 			Target = Random.GetInt(1, #Enemies)
 			AI_AddTarget(Object, Enemies[Target], false)
 
@@ -385,12 +402,13 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Chance to do special attack
-	if Storage[Object.ID].Turns > 2 and Random.GetInt(1, 3) == 1 then
-		for i = 1, #Enemies do
-			Object.AddTarget(Enemies[i].Pointer)
-		end
+	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 3) == 1 then
+		CanUse = Object.SetAction(1)
+		if CanUse then
+			for i = 1, #Enemies do
+				Object.AddTarget(Enemies[i].Pointer)
+			end
 
-		if Object.SetAction(1) then
 			return
 		end
 	end
@@ -427,7 +445,7 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 		-- See if target can be healed
 		if Healing == false then
 			Object.AddTarget(Object.Pointer)
-			if Object.SetAction(10) == true then
+			if Object.SetAction(10) then
 				return
 			end
 
@@ -442,7 +460,7 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 			Object.AddTarget(Enemies[i].Pointer)
 		end
 
-		if Object.SetAction(11) == true then
+		if Object.SetAction(11) then
 			return
 		end
 	end
@@ -467,9 +485,11 @@ function AI_Zog.Update(self, Object, Enemies, Allies)
 			Object.AddTarget(Enemies[i].Pointer)
 		end
 
-		if Object.SetAction(Random.GetInt(1, 5)) == true then
+		if Object.SetAction(Random.GetInt(1, 5)) then
 			return
 		end
+
+		Object.ClearTargets()
 	end
 
 	-- Get random target
