@@ -763,24 +763,25 @@ void _Character::GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffec
 
 			// Get level of skill
 			_ActionResult ActionResult;
+			ActionResult.Summons.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 			if(!GetActionFromActionBar(ActionResult.ActionUsed, Action.ActionBarSlot))
 				break;
 
 			// Get summon stats
 			ActionResult.Source.Object = Object;
-			ActionResult.Summon.SummonBuff = StatusEffect->Buff;
+			ActionResult.SummonBuff = StatusEffect->Buff;
 			Action.Item->Use(Object->Scripting, ActionResult);
 
 			// Get summon limit for skill
 			if(SummonLimits.find(SummonSkill) == SummonLimits.end())
-				SummonLimits[SummonSkill] = ActionResult.Summon.Limit;
+				SummonLimits[SummonSkill] = ActionResult.Summons[0].Limit;
 
 			// Add summons to list
-			if(ActionResult.Summon.ID) {
+			if(ActionResult.Summons[0].ID) {
 				int AllowedSummons = std::min(StatusEffect->Level, SummonLimits[SummonSkill]);
 				for(int i = 0; i < AllowedSummons; i++) {
 					SummonLimits[SummonSkill]--;
-					Summons.push_back(std::pair<_Summon, _StatusEffect *>(ActionResult.Summon, StatusEffect));
+					Summons.push_back(std::pair<_Summon, _StatusEffect *>(ActionResult.Summons[0], StatusEffect));
 				}
 			}
 		}

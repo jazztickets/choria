@@ -177,7 +177,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 // Handle summon actions
 void _Action::HandleSummons(_ActionResult &ActionResult) {
-	if(!ActionResult.Summon.ID)
+	if(ActionResult.Summons.empty())
 		return;
 
 	_Object *SourceObject = ActionResult.Source.Object;
@@ -185,7 +185,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 	if(!Battle)
 		return;
 
-	for(int i = 0; i < ActionResult.Summon.Count; i++) {
+	for(const auto &Summon : ActionResult.Summons) {
 
 		// Check for existing summons and get count of fighters on player's side
 		std::vector<_Object *>ExistingSummons;
@@ -193,7 +193,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		int SideCount = 0;
 		for(auto &Object : Battle->Objects) {
 			if(Object->Fighter->BattleSide == SourceObject->Fighter->BattleSide) {
-				if(Object->Monster->Owner == SourceObject && Object->Monster->SpellID == ActionResult.Summon.SpellID)
+				if(Object->Monster->Owner == SourceObject && Object->Monster->SpellID == Summon.SpellID)
 					ExistingSummons.push_back(Object);
 
 				SideCount++;
@@ -201,10 +201,10 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		}
 
 		// Create new summon if below limit
-		if(SideCount < BATTLE_MAX_OBJECTS_PER_SIDE && (int)ExistingSummons.size() < ActionResult.Summon.Limit) {
+		if(SideCount < BATTLE_MAX_OBJECTS_PER_SIDE && (int)ExistingSummons.size() < Summon.Limit) {
 
 			// Create object
-			_Object *Object = SourceObject->Server->CreateSummon(SourceObject, ActionResult.Summon);
+			_Object *Object = SourceObject->Server->CreateSummon(SourceObject, Summon);
 
 			// Create packet for new object
 			ae::_Buffer Packet;
@@ -253,6 +253,7 @@ TargetType _Action::GetTargetType() {
 
 // Constructor
 _ActionResult::_ActionResult() :
+	SummonBuff(nullptr),
 	LastPosition(0.0f, 0.0f),
 	Position(0.0f, 0.0f),
 	Texture(nullptr),

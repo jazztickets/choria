@@ -110,6 +110,7 @@ Base_Spell = {
 
 Base_SummonSpell = {
 	Count = 1,
+	CountPerLevel = 0,
 	ManaCostBase = 0,
 	CostPerLevel = 0,
 	DamageScale = 0,
@@ -126,6 +127,15 @@ Base_SummonSpell = {
 		setmetatable(Object, self)
 		self.__index = self
 		return Object
+	end,
+
+	GetCount = function(self, Source, Level, MoreInfo)
+		Value = self.Count + (Level - 1) * self.CountPerLevel
+		if MoreInfo then
+			return Value
+		else
+			return math.floor(Value)
+		end
 	end,
 
 	GetSpecialChance = function(self, Level)
@@ -686,26 +696,26 @@ function Skill_DemonicConjuring.GetInfo(self, Source, Item)
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
-	Result.Summon = {}
-	Result.Summon.Count = self.Count
-	Result.Summon.SpellID = self.Item.ID
-	Result.Summon.ID = self.Monster.ID
-	Result.Summon.Health = self:GetHealth(Source, Level)
-	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
-	Result.Summon.Armor = self:GetArmor(Source, Level)
-	Result.Summon.SummonBuff = Buff_SummonDemon.Pointer
-	Result.Summon.Duration = self:GetDuration(Source, Level)
+	Result.Summons = {}
+	Result.Summons[1] = {}
+	Result.Summons[1].SpellID = self.Item.ID
+	Result.Summons[1].ID = self.Monster.ID
+	Result.Summons[1].Health = self:GetHealth(Source, Level)
+	Result.Summons[1].MinDamage, Result.Summons[1].MaxDamage = self:GetDamage(Source, Level)
+	Result.Summons[1].Armor = self:GetArmor(Source, Level)
+	Result.Summons[1].SummonBuff = Buff_SummonDemon.Pointer
+	Result.Summons[1].Duration = self:GetDuration(Source, Level)
 
 	-- Limit monster summons to 1
 	if Source.MonsterID == 0 then
-		Result.Summon.Limit = self:GetLimit(Source, Level)
+		Result.Summons[1].Limit = self:GetLimit(Source, Level)
 	else
-		Result.Summon.Limit = 1
+		Result.Summons[1].Limit = 1
 	end
 
 	Roll = Random.GetInt(1, 100)
 	if Result.SummonBuff ~= nil then
-		Result.Summon.SummonBuff = Result.SummonBuff
+		Result.Summons[1].SummonBuff = Result.SummonBuff
 		if Result.SummonBuff == Buff_SummonIceImp.Pointer then
 			Roll = 1
 		else
@@ -714,8 +724,8 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	end
 
 	if Roll <= self:GetSpecialChance(Level) then
-		Result.Summon.ID = self.SpecialMonster.ID
-		Result.Summon.SummonBuff = Buff_SummonIceImp.Pointer
+		Result.Summons[1].ID = self.SpecialMonster.ID
+		Result.Summons[1].SummonBuff = Buff_SummonIceImp.Pointer
 	end
 
 	WeaponProc(Source, Target, Result, true)
@@ -731,7 +741,8 @@ end
 
 Skill_RaiseDead = Base_SummonSpell:New()
 Skill_RaiseDead.CostPerLevel = 10
-Skill_RaiseDead.Count = 2
+Skill_RaiseDead.Count = 1.04
+Skill_RaiseDead.CountPerLevel = 0.04
 Skill_RaiseDead.ManaCostBase = 15 - Skill_RaiseDead.CostPerLevel
 Skill_RaiseDead.BaseHealth = 50
 Skill_RaiseDead.BaseMana = 30
@@ -770,43 +781,53 @@ function Skill_RaiseDead.CanUse(self, Level, Source, Target)
 end
 
 function Skill_RaiseDead.GetInfo(self, Source, Item)
+	Count = self:GetCount(Source, Item.Level, Item.MoreInfo)
+
 	Plural = ""
 	if self.Count ~= 1 then
 		Plural = "s"
 	end
 
-	return "Raise [c green]" .. self.Count .. "[c white] skeleton" .. Plural .. " from a corpse with [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Raise [c green]" .. Count .. "[c white] skeleton" .. Plural .. " from a corpse with [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
-	Result.Summon = {}
-	Result.Summon.Count = self.Count
-	Result.Summon.SpellID = self.Item.ID
-	Result.Summon.ID = self.Monster.ID
-	Result.Summon.Health = self:GetHealth(Source, Level)
-	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Source, Level)
-	Result.Summon.Armor = self:GetArmor(Source, Level)
-	Result.Summon.Limit = self:GetLimit(Source, Level)
-	Result.Summon.SkillLevel = self:GetSkillLevel(Source, Level)
-	Result.Summon.Duration = self:GetDuration(Source, Level)
-	Result.Summon.SummonBuff = Buff_SummonSkeleton.Pointer
 
-	Roll = Random.GetInt(1, 100)
+	Count = self:GetCount(Source, Level, false)
 	if Result.SummonBuff ~= nil then
-		Result.Summon.SummonBuff = Result.SummonBuff
-		if Result.SummonBuff == Buff_SummonSkeletonPriest.Pointer then
-			Roll = 1
-		else
-			Roll = 1000
-		end
+		Count = 1
 	end
 
-	if Roll <= self:GetSpecialChance(Level) then
-		Result.Summon.ID = self.SpecialMonster.ID
-		Result.Summon.Mana = self:GetMana(Source, Level)
-		Result.Summon.SummonBuff = Buff_SummonSkeletonPriest.Pointer
-		Result.Summon.MinDamage = math.ceil(Result.Summon.MinDamage * self.SpecialDamage)
-		Result.Summon.MaxDamage = math.ceil(Result.Summon.MaxDamage * self.SpecialDamage)
+	Result.Summons = {}
+	for i = 1, Count do
+		Result.Summons[i] = {}
+		Result.Summons[i].SpellID = self.Item.ID
+		Result.Summons[i].ID = self.Monster.ID
+		Result.Summons[i].Health = self:GetHealth(Source, Level)
+		Result.Summons[i].MinDamage, Result.Summons[i].MaxDamage = self:GetDamage(Source, Level)
+		Result.Summons[i].Armor = self:GetArmor(Source, Level)
+		Result.Summons[i].Limit = self:GetLimit(Source, Level)
+		Result.Summons[i].SkillLevel = self:GetSkillLevel(Source, Level)
+		Result.Summons[i].Duration = self:GetDuration(Source, Level)
+		Result.Summons[i].SummonBuff = Buff_SummonSkeleton.Pointer
+
+		Roll = Random.GetInt(1, 100)
+		if Result.SummonBuff ~= nil then
+			Result.Summons[i].SummonBuff = Result.SummonBuff
+			if Result.SummonBuff == Buff_SummonSkeletonPriest.Pointer then
+				Roll = 1
+			else
+				Roll = 1000
+			end
+		end
+
+		if Roll <= self:GetSpecialChance(Level) then
+			Result.Summons[i].ID = self.SpecialMonster.ID
+			Result.Summons[i].Mana = self:GetMana(Source, Level)
+			Result.Summons[i].SummonBuff = Buff_SummonSkeletonPriest.Pointer
+			Result.Summons[i].MinDamage = math.ceil(Result.Summons[i].MinDamage * self.SpecialDamage)
+			Result.Summons[i].MaxDamage = math.ceil(Result.Summons[i].MaxDamage * self.SpecialDamage)
+		end
 	end
 
 	Result.Target.Corpse = -1

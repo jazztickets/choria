@@ -21,6 +21,7 @@
 #include <lua.hpp>
 #include <list>
 #include <string>
+#include <vector>
 
 // Forward Declarations
 class _Object;
@@ -71,14 +72,14 @@ class _Scripting {
 		void *GetPointer(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 		void GetStatChange(int Index, const _Stats *Stats, _StatChange &StatChange);
-		void GetSummon(int Index, _Summon &Summon);
+		void GetSummons(int Index, std::vector<_Summon> &Summons);
 
 		bool StartMethodCall(const std::string &TableName, const std::string &Function);
 		void MethodCall(int ParameterCount, int ReturnCount);
 		void FinishMethodCall();
 
 		static void PrintStack(lua_State *LuaState);
-		static void PrintTable(lua_State *LuaState);
+		static void PrintTable(lua_State *LuaState, int Level=0);
 
 		static luaL_Reg RandomFunctions[];
 		static luaL_Reg AudioFunctions[];

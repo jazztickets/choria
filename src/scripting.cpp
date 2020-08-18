@@ -659,8 +659,8 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 	PushStatChange(&ActionResult->Target);
 	lua_setfield(LuaState, -2, "Target");
 
-	if(ActionResult->Summon.SummonBuff)
-		lua_pushlightuserdata(LuaState, (void *)ActionResult->Summon.SummonBuff);
+	if(ActionResult->SummonBuff)
+		lua_pushlightuserdata(LuaState, (void *)ActionResult->SummonBuff);
 	else
 		lua_pushnil(LuaState);
 	lua_setfield(LuaState, -2, "SummonBuff");
@@ -808,9 +808,9 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	GetStatChange(-1, ActionResult.Source.Object->Stats, ActionResult.Target);
 	lua_pop(LuaState, 1);
 
-	lua_pushstring(LuaState, "Summon");
+	lua_pushstring(LuaState, "Summons");
 	lua_gettable(LuaState, -2);
-	GetSummon(-1, ActionResult.Summon);
+	GetSummons(-1, ActionResult.Summons);
 	lua_pop(LuaState, 1);
 }
 
@@ -861,7 +861,7 @@ void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &Stat
 }
 
 // Get summon stats
-void _Scripting::GetSummon(int Index, _Summon &Summon) {
+void _Scripting::GetSummons(int Index, std::vector<_Summon> &Summons) {
 	if(Index != -1)
 		Index += CurrentTableIndex;
 
@@ -869,64 +869,76 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 	if(!lua_istable(LuaState, Index))
 		return;
 
-	// Get ID
-	lua_getfield(LuaState, -1, "ID");
-	Summon.ID = (uint32_t)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+	// Iterate over list of summons
+	lua_pushnil(LuaState);
+	while(lua_next(LuaState, -2) != 0) 	{
 
-	// Get Spell ID
-	lua_getfield(LuaState, -1, "SpellID");
-	Summon.SpellID = (uint32_t)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Make sure key is an integer
+		int KeyType = lua_type(LuaState, -2);
+		if(KeyType != LUA_TNUMBER)
+			throw std::runtime_error("GetSummons: Key is not a number!");
 
-	// Get Summon Buff
-	lua_getfield(LuaState, -1, "SummonBuff");
-	Summon.SummonBuff = (const _Buff *)lua_touserdata(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get summon info
+		_Summon Summon;
 
-	// Get Count
-	lua_getfield(LuaState, -1, "Count");
-	Summon.Count = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get ID
+		lua_getfield(LuaState, -1, "ID");
+		Summon.ID = (uint32_t)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	// Get Health
-	lua_getfield(LuaState, -1, "Health");
-	Summon.Health = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Spell ID
+		lua_getfield(LuaState, -1, "SpellID");
+		Summon.SpellID = (uint32_t)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	// Get Mana
-	lua_getfield(LuaState, -1, "Mana");
-	Summon.Mana = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Summon Buff
+		lua_getfield(LuaState, -1, "SummonBuff");
+		Summon.SummonBuff = (const _Buff *)lua_touserdata(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	// Get Armor
-	lua_getfield(LuaState, -1, "Armor");
-	Summon.Armor = (int)lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Health
+		lua_getfield(LuaState, -1, "Health");
+		Summon.Health = (int)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	// Get Limit
-	lua_getfield(LuaState, -1, "Limit");
-	Summon.Limit = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Mana
+		lua_getfield(LuaState, -1, "Mana");
+		Summon.Mana = (int)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	// Get Skill Level
-	lua_getfield(LuaState, -1, "SkillLevel");
-	Summon.SkillLevel = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Armor
+		lua_getfield(LuaState, -1, "Armor");
+		Summon.Armor = (int)lua_tonumber(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	// Get Duration
-	lua_getfield(LuaState, -1, "Duration");
-	Summon.Duration = lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Limit
+		lua_getfield(LuaState, -1, "Limit");
+		Summon.Limit = (int)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	// Get Damage
-	lua_getfield(LuaState, -1, "MinDamage");
-	Summon.MinDamage = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Skill Level
+		lua_getfield(LuaState, -1, "SkillLevel");
+		Summon.SkillLevel = (int)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
 
-	lua_getfield(LuaState, -1, "MaxDamage");
-	Summon.MaxDamage = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get Duration
+		lua_getfield(LuaState, -1, "Duration");
+		Summon.Duration = lua_tonumber(LuaState, -1);
+		lua_pop(LuaState, 1);
+
+		// Get Damage
+		lua_getfield(LuaState, -1, "MinDamage");
+		Summon.MinDamage = (int)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
+
+		lua_getfield(LuaState, -1, "MaxDamage");
+		Summon.MaxDamage = (int)lua_tointeger(LuaState, -1);
+		lua_pop(LuaState, 1);
+
+		Summons.push_back(Summon);
+
+		lua_pop(LuaState, 1);
+	}
 }
 
 // Start a call to a lua class method, return table index
@@ -1440,16 +1452,29 @@ void _Scripting::PrintStack(lua_State *LuaState) {
 }
 
 // Print lua table
-void _Scripting::PrintTable(lua_State *LuaState) {
-	lua_pushnil(LuaState);
+void _Scripting::PrintTable(lua_State *LuaState, int Level) {
+	std::string Spaces = std::string(Level, ' ');
 
+	lua_pushnil(LuaState);
 	while(lua_next(LuaState, -2) != 0) 	{
 		if(lua_isstring(LuaState, -1))
-			std::cout << lua_tostring(LuaState, -2) << " = " << lua_tostring(LuaState, -1) << std::endl;
+			std::cout << Spaces << lua_tostring(LuaState, -2) << " = " << lua_tostring(LuaState, -1) << std::endl;
 		else if(lua_isnumber(LuaState, -1))
-			std::cout << lua_tostring(LuaState, -2) << " = " << lua_tonumber(LuaState, -1) << std::endl;
-		else if(lua_istable(LuaState, -1))
-			PrintTable(LuaState);
+			std::cout << Spaces << lua_tostring(LuaState, -2) << " = " << lua_tonumber(LuaState, -1) << std::endl;
+		else if(lua_istable(LuaState, -1)) {
+			std::cout << Spaces;
+
+			// Print Key
+			int KeyType = lua_type(LuaState, -2);
+			if(KeyType == LUA_TSTRING)
+				std::cout << lua_tostring(LuaState, -2);
+			else
+				std::cout << lua_tointeger(LuaState, -2);
+
+			std::cout << " = {" << std::endl;
+			PrintTable(LuaState, Level + 1);
+			std::cout << Spaces << "}" << std::endl;
+		}
 
 		lua_pop(LuaState, 1);
 	}
