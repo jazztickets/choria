@@ -680,6 +680,7 @@ end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
 	Result.Summon = {}
+	Result.Summon.Count = self.Count
 	Result.Summon.SpellID = self.Item.ID
 	Result.Summon.ID = self.Monster.ID
 	Result.Summon.Health = self:GetHealth(Source, Level)
