@@ -480,6 +480,7 @@ SetBonus_SteelShield.Attributes = {
 
 SetBonus_HandOfZog = Base_Set:New()
 SetBonus_HandOfZog.Attributes = {
+	AttackPower = { "-100%", "-100%" },
 	ManaShield = { "0%", "25%" },
 }
 
