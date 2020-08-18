@@ -478,6 +478,11 @@ SetBonus_SteelShield.Attributes = {
 	DamageBlock = { "50", "250" },
 }
 
+SetBonus_HandOfZog = Base_Set:New()
+SetBonus_HandOfZog.Attributes = {
+	EnergyField = { "0%", "25%" },
+}
+
 -- Helmet --
 
 SetBonus_Cap = Base_Set:New()
