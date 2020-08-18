@@ -109,6 +109,7 @@ Base_Spell = {
 -- Base Summon Spell --
 
 Base_SummonSpell = {
+	Count = 1,
 	ManaCostBase = 0,
 	CostPerLevel = 0,
 	DamageScale = 0,
@@ -722,6 +723,7 @@ end
 
 Skill_RaiseDead = Base_SummonSpell:New()
 Skill_RaiseDead.CostPerLevel = 9
+Skill_RaiseDead.Count = 2
 Skill_RaiseDead.ManaCostBase = 15 - Skill_RaiseDead.CostPerLevel
 Skill_RaiseDead.BaseHealth = 50
 Skill_RaiseDead.BaseMana = 30
@@ -761,12 +763,17 @@ end
 
 function Skill_RaiseDead.GetInfo(self, Source, Item)
 	MinDamage, MaxDamage = self:GetDamage(Source, Item.Level)
+	Plural = ""
+	if self.Count ~= 1 then
+		Plural = "s"
+	end
 
-	return "Raise a skeleton from a corpse with [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Raise [c green]" .. self.Count .. "[c white] skeleton" .. Plural .. " from a corpse with [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and [c green]" .. MinDamage .. "-" .. MaxDamage .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 	Result.Summon = {}
+	Result.Summon.Count = self.Count
 	Result.Summon.SpellID = self.Item.ID
 	Result.Summon.ID = self.Monster.ID
 	Result.Summon.Health = self:GetHealth(Source, Level)

@@ -884,6 +884,11 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 	Summon.SummonBuff = (const _Buff *)lua_touserdata(LuaState, -1);
 	lua_pop(LuaState, 1);
 
+	// Get Count
+	lua_getfield(LuaState, -1, "Count");
+	Summon.Count = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
 	// Get Health
 	lua_getfield(LuaState, -1, "Health");
 	Summon.Health = (int)lua_tointeger(LuaState, -1);

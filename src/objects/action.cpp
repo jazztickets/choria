@@ -182,7 +182,10 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 
 	_Object *SourceObject = ActionResult.Source.Object;
 	_Battle *Battle = SourceObject->Character->Battle;
-	if(Battle) {
+	if(!Battle)
+		return;
+
+	for(int i = 0; i < ActionResult.Summon.Count; i++) {
 
 		// Check for existing summons and get count of fighters on player's side
 		std::vector<_Object *>ExistingSummons;
