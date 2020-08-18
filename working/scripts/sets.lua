@@ -480,7 +480,7 @@ SetBonus_SteelShield.Attributes = {
 
 SetBonus_HandOfZog = Base_Set:New()
 SetBonus_HandOfZog.Attributes = {
-	EnergyField = { "0%", "25%" },
+	ManaShield = { "0%", "25%" },
 }
 
 -- Helmet --

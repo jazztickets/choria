@@ -49,7 +49,7 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		Change.Damage = math.floor(Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source)) + Action:GetPierce(Source))
 
 		-- Handle mana damage reduction
-		Update = ResolveEnergyField(Target, Change.Damage)
+		Update = ResolveManaShield(Target, Change.Damage)
 		Result.Target.Health = Update.Health
 		Result.Target.Mana = Update.Mana
 
@@ -63,13 +63,13 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 end
 
 -- Convert damage into health/mana reduction based on target's mana reduction ratio
-function ResolveEnergyField(Target, Damage)
+function ResolveManaShield(Target, Damage)
 	Update = {}
 	Update.Health = 0
 	Update.Mana = 0
-	if Target.EnergyField > 0 then
-		Update.Health = -Damage * (1.0 - Target.EnergyField * 0.01)
-		Update.Mana = -Damage * Target.EnergyField * 0.01
+	if Target.ManaShield > 0 then
+		Update.Health = -Damage * (1.0 - Target.ManaShield * 0.01)
+		Update.Mana = -Damage * Target.ManaShield * 0.01
 
 		-- Remove fractions from damage
 		Fraction = math.abs(Update.Health) - math.floor(math.abs(Update.Health))

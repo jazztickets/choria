@@ -914,21 +914,21 @@ function Item_LuckyAmulet.Stats(self, Item, Object, Change)
 	return Change
 end
 
--- Energy Field --
+-- Mana Shield--
 
-Item_EnergyField = { }
-Item_EnergyField.ReductionPerUpgrade = 1
+Item_ManaShield = { }
+Item_ManaShield.ReductionPerUpgrade = 1
 
-function Item_EnergyField.GetReduction(self, Item)
+function Item_ManaShield.GetReduction(self, Item)
 	return Item.Level + Item.Upgrades * self.ReductionPerUpgrade
 end
 
-function Item_EnergyField.GetInfo(self, Source, Item)
+function Item_ManaShield.GetInfo(self, Source, Item)
 	return "Convert [c green]" .. self:GetReduction(Item) .. "%[c white] of attack damage taken to mana drain"
 end
 
-function Item_EnergyField.Stats(self, Item, Object, Change)
-	Change.EnergyField = self:GetReduction(Item)
+function Item_ManaShield.Stats(self, Item, Object, Change)
+	Change.ManaShield = self:GetReduction(Item)
 
 	return Change
 end

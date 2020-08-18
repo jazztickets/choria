@@ -919,23 +919,23 @@ function Skill_Evasion.Stats(self, Level, Object, Change)
 	return Change
 end
 
--- Energy Field --
+-- Mana Shield --
 
-Skill_EnergyField = {}
-Skill_EnergyField.Constant = 28
-Skill_EnergyField.BasePercent = 6
-Skill_EnergyField.Multiplier = 100
+Skill_ManaShield = {}
+Skill_ManaShield.Constant = 28
+Skill_ManaShield.BasePercent = 6
+Skill_ManaShield.Multiplier = 100
 
-function Skill_EnergyField.GetReduction(self, Level)
+function Skill_ManaShield.GetReduction(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
-function Skill_EnergyField.GetInfo(self, Source, Item)
+function Skill_ManaShield.GetInfo(self, Source, Item)
 	return "Convert [c green]" .. self:GetReduction(Item.Level) .. "%[c white] of attack damage taken to mana drain"
 end
 
-function Skill_EnergyField.Stats(self, Level, Object, Change)
-	Change.EnergyField = self:GetReduction(Level)
+function Skill_ManaShield.Stats(self, Level, Object, Change)
+	Change.ManaShield = self:GetReduction(Level)
 
 	return Change
 end
