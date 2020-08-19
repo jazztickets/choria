@@ -41,11 +41,19 @@
 #include <algorithm>
 #include <SDL_keycode.h>
 
-const std::string SkillCategories[4] = {
+// Category names
+static const std::string SkillCategories[4] = {
 	"Passive Skill",
 	"Attack Skill",
 	"Spell",
 	"Skill",
+};
+
+// Stats to hide on the item tooltip
+static const std::unordered_map<std::string, int> HiddenStats = {
+	{ "MinDamage", 1 },
+	{ "MaxDamage", 1 },
+	{ "Resist", 1 },
 };
 
 // Draw tooltip
@@ -95,10 +103,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	ae::_TextBounds TextBounds;
 	ae::Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
 	Size.x = std::max(Size.x, (float)TextBounds.Width / ae::_Element::GetUIScale()) + SidePadding * 2;
-	if(ResistanceTypeID)
-		Size.x += 36 * ae::_Element::GetUIScale();
-	else if(IsSkill())
-		Size.x += 42 * ae::_Element::GetUIScale();
 
 	// Set window height
 	Size.y = INVENTORY_TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
@@ -328,96 +332,37 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		StatDrawn = true;
 	}
 
-	// Pierce
-	float DrawPierce = GetAttribute("Pierce", Upgrades);
-	if(DrawPierce != 0.0f) {
+	// Display attributes
+	for(const auto &AttributeName : Stats->AttributeRank) {
+		const _Attribute &Attribute = Stats->Attributes.at(AttributeName);
+		if(HiddenStats.find(AttributeName) != HiddenStats.end())
+			continue;
+
+		if(Attributes.find(AttributeName) == Attributes.end())
+			continue;
+
+		// Get upgraded stat
+		float UpgradedValue = GetAttribute(AttributeName, Upgrades);
+		if(UpgradedValue == 0.0f)
+			continue;
+
+		// Show fractions
 		if(!ShowFractions)
-			DrawPierce = std::floor(DrawPierce);
+			UpgradedValue = std::floor(UpgradedValue);
 
+		// Get value string
 		std::stringstream Buffer;
-		Buffer << DrawPierce;
+		Buffer << (UpgradedValue < 0 ? "" : "+") << UpgradedValue;
+		if(Attribute.Type == StatValueType::PERCENT)
+			Buffer << "%";
 
+		// Get compare color
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("Pierce", Upgrades), CompareInventory.Item->GetAttribute("Pierce", CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute(AttributeName, Upgrades), CompareInventory.Item->GetAttribute(AttributeName, CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText("Pierce", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Armor
-	float DrawArmor = GetAttribute("Armor", Upgrades);
-	if(DrawArmor != 0.0f) {
-		if(!ShowFractions)
-			DrawArmor = std::floor(DrawArmor);
-
-		std::stringstream Buffer;
-		Buffer << (DrawArmor < 0 ? "" : "+") << DrawArmor;
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("Armor", Upgrades), CompareInventory.Item->GetAttribute("Armor", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Armor", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Damage block
-	float DrawDamageBlock = GetAttribute("DamageBlock", Upgrades);
-	if(DrawDamageBlock != 0.0f) {
-		if(!ShowFractions)
-			DrawDamageBlock = std::floor(DrawDamageBlock);
-
-		std::stringstream Buffer;
-		Buffer << (DrawDamageBlock < 0 ? "" : "+") << DrawDamageBlock;
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("DamageBlock", Upgrades), CompareInventory.Item->GetAttribute("DamageBlock", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Block", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Max health
-	float DrawMaxHealth = GetAttribute("MaxHealth", Upgrades);
-	if(DrawMaxHealth != 0.0f) {
-		if(!ShowFractions)
-			DrawMaxHealth = std::floor(DrawMaxHealth);
-
-		std::stringstream Buffer;
-		Buffer << (DrawMaxHealth < 0 ? "" : "+") << DrawMaxHealth;
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("MaxHealth", Upgrades), CompareInventory.Item->GetAttribute("MaxHealth", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Max Health", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Max mana
-	float DrawMaxMana = GetAttribute("MaxMana", Upgrades);
-	if(DrawMaxMana != 0.0f) {
-		if(!ShowFractions)
-			DrawMaxMana = std::floor(DrawMaxMana);
-
-		std::stringstream Buffer;
-		Buffer << (DrawMaxMana < 0 ? "" : "+") << DrawMaxMana;
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("MaxMana", Upgrades), CompareInventory.Item->GetAttribute("MaxMana", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Max Mana", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
+		// Draw label and stat
+		ae::Assets.Fonts["hud_medium"]->DrawText(Attribute.Label, glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -442,139 +387,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		StatDrawn = true;
 	}
 
-	// Move speed
-	float DrawMoveSpeed = GetAttribute("MoveSpeed", Upgrades);
-	if(DrawMoveSpeed != 0.0f) {
-		if(!ShowFractions)
-			DrawMoveSpeed = std::floor(DrawMoveSpeed);
-
-		std::stringstream Buffer;
-		Buffer << (DrawMoveSpeed < 0 ? "" : "+") << DrawMoveSpeed << "%";
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("MoveSpeed", Upgrades), CompareInventory.Item->GetAttribute("MoveSpeed", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Move Speed", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Battle speed
-	float DrawBattleSpeed = GetAttribute("BattleSpeed", Upgrades);
-	if(DrawBattleSpeed != 0.0f) {
-		if(!ShowFractions)
-			DrawBattleSpeed = std::floor(DrawBattleSpeed);
-
-		std::stringstream Buffer;
-		Buffer << (DrawBattleSpeed < 0 ? "" : "+") << DrawBattleSpeed << "%";
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("BattleSpeed", Upgrades), CompareInventory.Item->GetAttribute("BattleSpeed", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Battle Speed", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Evasion
-	float DrawEvasion = GetAttribute("Evasion", Upgrades);
-	if(DrawEvasion != 0.0f) {
-		if(!ShowFractions)
-			DrawEvasion = std::floor(DrawEvasion);
-
-		std::stringstream Buffer;
-		Buffer << (DrawEvasion < 0 ? "" : "+") << DrawEvasion << "%";
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("Evasion", Upgrades), CompareInventory.Item->GetAttribute("Evasion", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Evasion", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Health regen
-	float DrawHealthRegen = GetAttribute("HealthRegen", Upgrades);
-	if(DrawHealthRegen != 0.0f) {
-		if(!ShowFractions)
-			DrawHealthRegen = std::floor(DrawHealthRegen);
-
-		std::stringstream Buffer;
-		Buffer << (DrawHealthRegen < 0 ? "" : "+") << DrawHealthRegen;
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("HealthRegen", Upgrades), CompareInventory.Item->GetAttribute("HealthRegen", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Health Regen", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Mana regen
-	float DrawManaRegen = GetAttribute("ManaRegen", Upgrades);
-	if(DrawManaRegen != 0.0f) {
-		if(!ShowFractions)
-			DrawManaRegen = std::floor(DrawManaRegen);
-
-		std::stringstream Buffer;
-		Buffer << (DrawManaRegen < 0 ? "" : "+") << DrawManaRegen;
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("ManaRegen", Upgrades), CompareInventory.Item->GetAttribute("ManaRegen", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Mana Regen", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Gold bonus
-	float DrawGoldBonus = GetAttribute("GoldBonus", Upgrades);
-	if(DrawGoldBonus != 0.0f) {
-		if(!ShowFractions)
-			DrawGoldBonus = std::floor(DrawGoldBonus);
-
-		std::stringstream Buffer;
-		Buffer << (DrawGoldBonus < 0 ? "" : "+") << DrawGoldBonus << "%";
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("GoldBonus", Upgrades), CompareInventory.Item->GetAttribute("GoldBonus", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Gold Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Experience bonus
-	float DrawExperienceBonus = GetAttribute("ExperienceBonus", Upgrades);
-	if(DrawExperienceBonus != 0.0f) {
-		if(!ShowFractions)
-			DrawExperienceBonus = std::floor(DrawExperienceBonus);
-
-		std::stringstream Buffer;
-		Buffer << (DrawExperienceBonus < 0 ? "" : "+") << DrawExperienceBonus << "%";
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("ExperienceBonus", Upgrades), CompareInventory.Item->GetAttribute("ExperienceBonus", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("XP Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
 	// Cooldown reduction
 	float DrawCooldownReduction = GetCooldownReduction(Upgrades);
 	if(IsEquippable() && DrawCooldownReduction != 0.0f) {
@@ -589,44 +401,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 			Color = GetCompareColor(-GetCooldownReduction(Upgrades), -CompareInventory.Item->GetCooldownReduction(CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Cooldowns", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// Spell Damage
-	float DrawSpellDamage = GetAttribute("SpellDamage", Upgrades);
-	if(DrawSpellDamage != 0.0f) {
-		if(!ShowFractions)
-			DrawSpellDamage = std::floor(DrawSpellDamage);
-
-		std::stringstream Buffer;
-		Buffer << (DrawSpellDamage < 0 ? "" : "+") << DrawSpellDamage << "%";
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("SpellDamage", Upgrades), CompareInventory.Item->GetAttribute("SpellDamage", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Spell Damage", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
-	// + all skills
-	float DrawAllSkills = GetAttribute("AllSkills", Upgrades);
-	if(DrawAllSkills != 0.0f) {
-		if(!ShowFractions)
-			DrawAllSkills = std::floor(DrawAllSkills);
-
-		std::stringstream Buffer;
-		Buffer << (DrawAllSkills < 0 ? "" : "+") << DrawAllSkills;
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAttribute("AllSkills", Upgrades), CompareInventory.Item->GetAttribute("AllSkills", CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("All Skills", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;

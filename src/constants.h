@@ -144,7 +144,7 @@ const  int          ACTIONBAR_MAX_SIZE                 =  ACTIONBAR_BELT_STARTS+
 //     Inventory
 const  int          INVENTORY_TOOLTIP_OFFSET           =  50;
 const  int          INVENTORY_TOOLTIP_PADDING          =  14;
-const  float        INVENTORY_TOOLTIP_WIDTH            =  350;
+const  float        INVENTORY_TOOLTIP_WIDTH            =  400;
 const  float        INVENTORY_TOOLTIP_HEIGHT           =  280;
 const  float        INVENTORY_TOOLTIP_MAP_HEIGHT       =  500;
 const  float        INVENTORY_TOOLTIP_TEXT_SPACING     =  26;
