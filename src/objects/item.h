@@ -88,25 +88,9 @@ class _Item {
 		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel, int MaxSetLevel) const;
 		void PlaySound(_Scripting *Scripting) const;
 
+		float GetAttribute(const std::string &Name, int Upgrades) const;
 		float GetAverageDamage(int Upgrades) const;
-		float GetMinDamage(int Upgrades) const;
-		float GetMaxDamage(int Upgrades) const;
-		float GetArmor(int Upgrades) const;
-		float GetDamageBlock(int Upgrades) const;
-		float GetPierce(int Upgrades) const;
-		float GetMaxHealth(int Upgrades) const;
-		float GetMaxMana(int Upgrades) const;
-		float GetHealthRegen(int Upgrades) const;
-		float GetManaRegen(int Upgrades) const;
-		float GetBattleSpeed(int Upgrades) const;
-		float GetMoveSpeed(int Upgrades) const;
-		float GetEvasion(int Upgrades) const;
-		float GetSpellDamage(int Upgrades) const;
-		float GetResistance(int Upgrades) const;
-		float GetGoldBonus(int Upgrades) const;
-		float GetExperienceBonus(int Upgrades) const;
 		float GetCooldownReduction(int Upgrades) const;
-		float GetAllSkills(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(const std::string &AttributeName, int Upgrades, T Value) const;
 
 		const _Stats *Stats;

@@ -636,10 +636,10 @@ void _Scripting::PushItem(lua_State *LuaState, const _Stats *Stats, const _Item 
 	lua_pushinteger(LuaState, Item->DamageTypeID);
 	lua_setfield(LuaState, -2, "DamageType");
 
-	lua_pushinteger(LuaState, std::floor(Item->GetDamageBlock(Upgrades)));
+	lua_pushinteger(LuaState, std::floor(Item->GetAttribute("DamageBlock", Upgrades)));
 	lua_setfield(LuaState, -2, "DamageBlock");
 
-	lua_pushinteger(LuaState, std::floor(Item->GetPierce(Upgrades)));
+	lua_pushinteger(LuaState, std::floor(Item->GetAttribute("Pierce", Upgrades)));
 	lua_setfield(LuaState, -2, "Pierce");
 
 	lua_pushinteger(LuaState, Upgrades);
@@ -1393,7 +1393,7 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 	if(!Object)
 		return 0;
 
-	lua_pushinteger(LuaState, ae::GetRandomInt((int)std::floor(Item->GetMinDamage(Upgrades)), (int)std::floor(Item->GetMaxDamage(Upgrades))) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
+	lua_pushinteger(LuaState, ae::GetRandomInt((int)std::floor(Item->GetAttribute("MinDamage", Upgrades)), (int)std::floor(Item->GetAttribute("MaxDamage", Upgrades))) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
 
 	return 1;
 }
@@ -1408,7 +1408,7 @@ int _Scripting::ItemGetAverageDamage(lua_State *LuaState) {
 	if(!Object)
 		return 0;
 
-	lua_pushnumber(LuaState, (Item->GetMinDamage(Upgrades) + Item->GetMaxDamage(Upgrades)) * 0.5f * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
+	lua_pushnumber(LuaState, (Item->GetAttribute("MinDamage", Upgrades) + Item->GetAttribute("MaxDamage", Upgrades)) * 0.5f * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
 
 	return 1;
 }

@@ -370,34 +370,34 @@ void _Character::CalculateStats() {
 
 		// Add damage
 		if(Item->Type != ItemType::SHIELD) {
-			ItemMinDamage[Item->DamageTypeID] += std::floor(Item->GetMinDamage(Upgrades));
-			ItemMaxDamage[Item->DamageTypeID] += std::floor(Item->GetMaxDamage(Upgrades));
+			ItemMinDamage[Item->DamageTypeID] += std::floor(Item->GetAttribute("MinDamage", Upgrades));
+			ItemMaxDamage[Item->DamageTypeID] += std::floor(Item->GetAttribute("MaxDamage", Upgrades));
 		}
 
 		// Stat changes
-		Attributes["Armor"].Int += std::floor(Item->GetArmor(Upgrades));
-		Attributes["DamageBlock"].Int += std::floor(Item->GetDamageBlock(Upgrades));
-		Attributes["Pierce"].Int += std::floor(Item->GetPierce(Upgrades));
-		Attributes["MaxHealth"].Int += std::floor(Item->GetMaxHealth(Upgrades));
-		Attributes["MaxMana"].Int += std::floor(Item->GetMaxMana(Upgrades));
-		Attributes["HealthRegen"].Int += std::floor(Item->GetHealthRegen(Upgrades));
-		Attributes["ManaRegen"].Int += std::floor(Item->GetManaRegen(Upgrades));
-		Attributes["BattleSpeed"].Int += std::floor(Item->GetBattleSpeed(Upgrades));
-		Attributes["MoveSpeed"].Int += std::floor(Item->GetMoveSpeed(Upgrades));
-		Attributes["Evasion"].Int += std::floor(Item->GetEvasion(Upgrades));
-		Attributes["AllSkills"].Int += std::floor(Item->GetAllSkills(Upgrades));
-		Attributes["SpellDamage"].Int += std::floor(Item->GetSpellDamage(Upgrades));
+		Attributes["Armor"].Int += std::floor(Item->GetAttribute("Armor", Upgrades));
+		Attributes["DamageBlock"].Int += std::floor(Item->GetAttribute("DamageBlock", Upgrades));
+		Attributes["Pierce"].Int += std::floor(Item->GetAttribute("Pierce", Upgrades));
+		Attributes["MaxHealth"].Int += std::floor(Item->GetAttribute("MaxHealth", Upgrades));
+		Attributes["MaxMana"].Int += std::floor(Item->GetAttribute("MaxMana", Upgrades));
+		Attributes["HealthRegen"].Int += std::floor(Item->GetAttribute("HealthRegen", Upgrades));
+		Attributes["ManaRegen"].Int += std::floor(Item->GetAttribute("ManaRegen", Upgrades));
+		Attributes["BattleSpeed"].Int += std::floor(Item->GetAttribute("BattleSpeed", Upgrades));
+		Attributes["MoveSpeed"].Int += std::floor(Item->GetAttribute("MoveSpeed", Upgrades));
+		Attributes["Evasion"].Int += std::floor(Item->GetAttribute("Evasion", Upgrades));
+		Attributes["AllSkills"].Int += std::floor(Item->GetAttribute("AllSkills", Upgrades));
+		Attributes["SpellDamage"].Int += std::floor(Item->GetAttribute("SpellDamage", Upgrades));
 		Attributes["Cooldowns"].Int += std::floor(Item->GetCooldownReduction(Upgrades));
-		Attributes["ExperienceBonus"].Int += std::floor(Item->GetExperienceBonus(Upgrades));
-		Attributes["GoldBonus"].Int += std::floor(Item->GetGoldBonus(Upgrades));
+		Attributes["ExperienceBonus"].Int += std::floor(Item->GetAttribute("ExperienceBonus", Upgrades));
+		Attributes["GoldBonus"].Int += std::floor(Item->GetAttribute("GoldBonus", Upgrades));
 
 		// Handle all resist
 		if(Item->ResistanceTypeID == 1)
-			UpdateAllResist(std::floor(Item->GetResistance(Upgrades)));
+			UpdateAllResist(std::floor(Item->GetAttribute("Resist", Upgrades)));
 		else if(Item->ResistanceTypeID == 9)
-			UpdateElementalResist(std::floor(Item->GetResistance(Upgrades)));
+			UpdateElementalResist(std::floor(Item->GetAttribute("Resist", Upgrades)));
 		else
-			Attributes[Object->Stats->DamageTypes.at(Item->ResistanceTypeID).Name + "Resist"].Int += std::floor(Item->GetResistance(Upgrades));
+			Attributes[Object->Stats->DamageTypes.at(Item->ResistanceTypeID).Name + "Resist"].Int += std::floor(Item->GetAttribute("Resist", Upgrades));
 
 		// Increment set count
 		if(Item->SetID) {

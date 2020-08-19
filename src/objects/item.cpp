@@ -297,8 +297,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	bool StatDrawn = false;
 
 	// Damage
-	int DrawMinDamage = std::floor(GetMinDamage(Upgrades));
-	int DrawMaxDamage = std::floor(GetMaxDamage(Upgrades));
+	int DrawMinDamage = std::floor(GetAttribute("MinDamage", Upgrades));
+	int DrawMaxDamage = std::floor(GetAttribute("MaxDamage", Upgrades));
 	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
 		std::stringstream Buffer;
 		if(ShowAltText)
@@ -329,7 +329,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Pierce
-	float DrawPierce = GetPierce(Upgrades);
+	float DrawPierce = GetAttribute("Pierce", Upgrades);
 	if(DrawPierce != 0.0f) {
 		if(!ShowFractions)
 			DrawPierce = std::floor(DrawPierce);
@@ -339,7 +339,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetPierce(Upgrades), CompareInventory.Item->GetPierce(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("Pierce", Upgrades), CompareInventory.Item->GetAttribute("Pierce", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Pierce", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -348,7 +348,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Armor
-	float DrawArmor = GetArmor(Upgrades);
+	float DrawArmor = GetAttribute("Armor", Upgrades);
 	if(DrawArmor != 0.0f) {
 		if(!ShowFractions)
 			DrawArmor = std::floor(DrawArmor);
@@ -358,7 +358,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetArmor(Upgrades), CompareInventory.Item->GetArmor(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("Armor", Upgrades), CompareInventory.Item->GetAttribute("Armor", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Armor", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -367,7 +367,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Damage block
-	float DrawDamageBlock = GetDamageBlock(Upgrades);
+	float DrawDamageBlock = GetAttribute("DamageBlock", Upgrades);
 	if(DrawDamageBlock != 0.0f) {
 		if(!ShowFractions)
 			DrawDamageBlock = std::floor(DrawDamageBlock);
@@ -377,7 +377,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetDamageBlock(Upgrades), CompareInventory.Item->GetDamageBlock(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("DamageBlock", Upgrades), CompareInventory.Item->GetAttribute("DamageBlock", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Block", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -386,7 +386,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Max health
-	float DrawMaxHealth = GetMaxHealth(Upgrades);
+	float DrawMaxHealth = GetAttribute("MaxHealth", Upgrades);
 	if(DrawMaxHealth != 0.0f) {
 		if(!ShowFractions)
 			DrawMaxHealth = std::floor(DrawMaxHealth);
@@ -396,7 +396,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetMaxHealth(Upgrades), CompareInventory.Item->GetMaxHealth(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("MaxHealth", Upgrades), CompareInventory.Item->GetAttribute("MaxHealth", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Max Health", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -405,7 +405,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Max mana
-	float DrawMaxMana = GetMaxMana(Upgrades);
+	float DrawMaxMana = GetAttribute("MaxMana", Upgrades);
 	if(DrawMaxMana != 0.0f) {
 		if(!ShowFractions)
 			DrawMaxMana = std::floor(DrawMaxMana);
@@ -415,7 +415,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetMaxMana(Upgrades), CompareInventory.Item->GetMaxMana(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("MaxMana", Upgrades), CompareInventory.Item->GetAttribute("MaxMana", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Max Mana", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -425,7 +425,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 	// Resistance
 	if(ResistanceTypeID) {
-		float DrawResistance = GetResistance(Upgrades);
+		float DrawResistance = GetAttribute("Resist", Upgrades);
 		if(!ShowFractions)
 			DrawResistance = std::floor(DrawResistance);
 
@@ -434,7 +434,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetResistance(Upgrades), CompareInventory.Item->GetResistance(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("Resist", Upgrades), CompareInventory.Item->GetAttribute("Resist", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes.at(ResistanceTypeID).Name + " Resist", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -443,7 +443,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Move speed
-	float DrawMoveSpeed = GetMoveSpeed(Upgrades);
+	float DrawMoveSpeed = GetAttribute("MoveSpeed", Upgrades);
 	if(DrawMoveSpeed != 0.0f) {
 		if(!ShowFractions)
 			DrawMoveSpeed = std::floor(DrawMoveSpeed);
@@ -453,7 +453,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetMoveSpeed(Upgrades), CompareInventory.Item->GetMoveSpeed(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("MoveSpeed", Upgrades), CompareInventory.Item->GetAttribute("MoveSpeed", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Move Speed", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -462,7 +462,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Battle speed
-	float DrawBattleSpeed = GetBattleSpeed(Upgrades);
+	float DrawBattleSpeed = GetAttribute("BattleSpeed", Upgrades);
 	if(DrawBattleSpeed != 0.0f) {
 		if(!ShowFractions)
 			DrawBattleSpeed = std::floor(DrawBattleSpeed);
@@ -472,7 +472,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetBattleSpeed(Upgrades), CompareInventory.Item->GetBattleSpeed(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("BattleSpeed", Upgrades), CompareInventory.Item->GetAttribute("BattleSpeed", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Battle Speed", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -481,7 +481,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Evasion
-	float DrawEvasion = GetEvasion(Upgrades);
+	float DrawEvasion = GetAttribute("Evasion", Upgrades);
 	if(DrawEvasion != 0.0f) {
 		if(!ShowFractions)
 			DrawEvasion = std::floor(DrawEvasion);
@@ -491,7 +491,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetEvasion(Upgrades), CompareInventory.Item->GetEvasion(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("Evasion", Upgrades), CompareInventory.Item->GetAttribute("Evasion", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Evasion", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -500,7 +500,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Health regen
-	float DrawHealthRegen = GetHealthRegen(Upgrades);
+	float DrawHealthRegen = GetAttribute("HealthRegen", Upgrades);
 	if(DrawHealthRegen != 0.0f) {
 		if(!ShowFractions)
 			DrawHealthRegen = std::floor(DrawHealthRegen);
@@ -510,7 +510,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetHealthRegen(Upgrades), CompareInventory.Item->GetHealthRegen(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("HealthRegen", Upgrades), CompareInventory.Item->GetAttribute("HealthRegen", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Health Regen", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -519,7 +519,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Mana regen
-	float DrawManaRegen = GetManaRegen(Upgrades);
+	float DrawManaRegen = GetAttribute("ManaRegen", Upgrades);
 	if(DrawManaRegen != 0.0f) {
 		if(!ShowFractions)
 			DrawManaRegen = std::floor(DrawManaRegen);
@@ -529,7 +529,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetManaRegen(Upgrades), CompareInventory.Item->GetManaRegen(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("ManaRegen", Upgrades), CompareInventory.Item->GetAttribute("ManaRegen", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Mana Regen", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -538,7 +538,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Gold bonus
-	float DrawGoldBonus = GetGoldBonus(Upgrades);
+	float DrawGoldBonus = GetAttribute("GoldBonus", Upgrades);
 	if(DrawGoldBonus != 0.0f) {
 		if(!ShowFractions)
 			DrawGoldBonus = std::floor(DrawGoldBonus);
@@ -548,7 +548,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetGoldBonus(Upgrades), CompareInventory.Item->GetGoldBonus(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("GoldBonus", Upgrades), CompareInventory.Item->GetAttribute("GoldBonus", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Gold Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -557,7 +557,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Experience bonus
-	float DrawExperienceBonus = GetExperienceBonus(Upgrades);
+	float DrawExperienceBonus = GetAttribute("ExperienceBonus", Upgrades);
 	if(DrawExperienceBonus != 0.0f) {
 		if(!ShowFractions)
 			DrawExperienceBonus = std::floor(DrawExperienceBonus);
@@ -567,7 +567,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetExperienceBonus(Upgrades), CompareInventory.Item->GetExperienceBonus(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("ExperienceBonus", Upgrades), CompareInventory.Item->GetAttribute("ExperienceBonus", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("XP Bonus", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -595,7 +595,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// Spell Damage
-	float DrawSpellDamage = GetSpellDamage(Upgrades);
+	float DrawSpellDamage = GetAttribute("SpellDamage", Upgrades);
 	if(DrawSpellDamage != 0.0f) {
 		if(!ShowFractions)
 			DrawSpellDamage = std::floor(DrawSpellDamage);
@@ -605,7 +605,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetSpellDamage(Upgrades), CompareInventory.Item->GetSpellDamage(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("SpellDamage", Upgrades), CompareInventory.Item->GetAttribute("SpellDamage", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("Spell Damage", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -614,7 +614,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 
 	// + all skills
-	float DrawAllSkills = GetAllSkills(Upgrades);
+	float DrawAllSkills = GetAttribute("AllSkills", Upgrades);
 	if(DrawAllSkills != 0.0f) {
 		if(!ShowFractions)
 			DrawAllSkills = std::floor(DrawAllSkills);
@@ -624,7 +624,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 
 		glm::vec4 Color(1.0f);
 		if(CompareInventory.Item)
-			Color = GetCompareColor(GetAllSkills(Upgrades), CompareInventory.Item->GetAllSkills(CompareInventory.Upgrades));
+			Color = GetCompareColor(GetAttribute("AllSkills", Upgrades), CompareInventory.Item->GetAttribute("AllSkills", CompareInventory.Upgrades));
 
 		ae::Assets.Fonts["hud_medium"]->DrawText("All Skills", glm::ivec2(DrawPosition + -Spacing), ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + Spacing), ae::LEFT_BASELINE, Color);
@@ -1052,41 +1052,41 @@ int _Item::GetEnchantCost(int Level) {
 int _Item::GetAttributeCount(int Upgrades) const {
 	int Count = 0;
 
-	if(std::floor(GetMinDamage(Upgrades)) != 0 || std::floor(GetMaxDamage(Upgrades)) != 0)
+	if(std::floor(GetAttribute("MinDamage", Upgrades)) != 0 || std::floor(GetAttribute("MaxDamage", Upgrades)) != 0)
 		Count++;
 	if(!IsSkill() && DamageTypeID > 1)
 		Count++;
-	if(GetPierce(Upgrades) != 0.0f)
+	if(GetAttribute("Pierce", Upgrades) != 0.0f)
 		Count++;
-	if(GetArmor(Upgrades) != 0.0f)
+	if(GetAttribute("Armor", Upgrades) != 0.0f)
 		Count++;
-	if(GetDamageBlock(Upgrades) != 0.0f)
+	if(GetAttribute("DamageBlock", Upgrades) != 0.0f)
 		Count++;
-	if(GetMaxHealth(Upgrades) != 0.0f)
+	if(GetAttribute("MaxHealth", Upgrades) != 0.0f)
 		Count++;
-	if(GetMaxMana(Upgrades) != 0.0f)
+	if(GetAttribute("MaxMana", Upgrades) != 0.0f)
 		Count++;
 	if(ResistanceTypeID)
 		Count++;
-	if(GetMoveSpeed(Upgrades) != 0.0f)
+	if(GetAttribute("MoveSpeed", Upgrades) != 0.0f)
 		Count++;
-	if(GetBattleSpeed(Upgrades) != 0.0f)
+	if(GetAttribute("BattleSpeed", Upgrades) != 0.0f)
 		Count++;
-	if(GetEvasion(Upgrades) != 0.0f)
+	if(GetAttribute("Evasion", Upgrades) != 0.0f)
 		Count++;
-	if(GetHealthRegen(Upgrades) != 0.0f)
+	if(GetAttribute("HealthRegen", Upgrades) != 0.0f)
 		Count++;
-	if(GetManaRegen(Upgrades) != 0.0f)
+	if(GetAttribute("ManaRegen", Upgrades) != 0.0f)
 		Count++;
-	if(GetGoldBonus(Upgrades) != 0.0f)
+	if(GetAttribute("GoldBonus", Upgrades) != 0.0f)
 		Count++;
-	if(GetExperienceBonus(Upgrades) != 0.0f)
+	if(GetAttribute("ExperienceBonus", Upgrades) != 0.0f)
 		Count++;
 	if(IsEquippable() && GetCooldownReduction(Upgrades) != 0.0f)
 		Count++;
-	if(GetSpellDamage(Upgrades) != 0.0f)
+	if(GetAttribute("SpellDamage", Upgrades) != 0.0f)
 		Count++;
-	if(GetAllSkills(Upgrades) != 0.0f)
+	if(GetAttribute("AllSkills", Upgrades) != 0.0f)
 		Count++;
 
 	return Count;
@@ -1263,99 +1263,19 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 	}
 }
 
+// Get upgraded attribute
+float _Item::GetAttribute(const std::string &Name, int Upgrades) const {
+	return GetUpgradedValue<float>(Name, Upgrades, Attributes.at(Name).Int);
+}
+
 // Get average damage
 float _Item::GetAverageDamage(int Upgrades) const {
-	return (GetUpgradedValue<float>("MinDamage", Upgrades, Attributes.at("MinDamage").Int) + GetUpgradedValue<float>("MaxDamage", Upgrades, Attributes.at("MaxDamage").Int)) / 2.0f;
-}
-
-// Get min damage
-float _Item::GetMinDamage(int Upgrades) const {
-	return GetUpgradedValue<float>("MinDamage", Upgrades, Attributes.at("MinDamage").Int);
-}
-
-// Get max damage
-float _Item::GetMaxDamage(int Upgrades) const {
-	return GetUpgradedValue<float>("MaxDamage", Upgrades, Attributes.at("MaxDamage").Int);
-}
-
-// Get armor
-float _Item::GetArmor(int Upgrades) const {
-	return GetUpgradedValue<float>("Armor", Upgrades, Attributes.at("Armor").Int);
-}
-
-// Get damage block
-float _Item::GetDamageBlock(int Upgrades) const {
-	return GetUpgradedValue<float>("DamageBlock", Upgrades, Attributes.at("DamageBlock").Int);
-}
-
-// Get pierce
-float _Item::GetPierce(int Upgrades) const {
-	return GetUpgradedValue<float>("Pierce", Upgrades, Attributes.at("Pierce").Int);
-}
-
-// Get max health
-float _Item::GetMaxHealth(int Upgrades) const {
-	return GetUpgradedValue<float>("MaxHealth", Upgrades, Attributes.at("MaxHealth").Int);
-}
-
-// Get max mana
-float _Item::GetMaxMana(int Upgrades) const {
-	return GetUpgradedValue<float>("MaxMana", Upgrades, Attributes.at("MaxMana").Int);
-}
-
-// Get health regen
-float _Item::GetHealthRegen(int Upgrades) const {
-	return GetUpgradedValue<float>("HealthRegen", Upgrades, Attributes.at("HealthRegen").Int);
-}
-
-// Get mana regen
-float _Item::GetManaRegen(int Upgrades) const {
-	return GetUpgradedValue<float>("ManaRegen", Upgrades, Attributes.at("ManaRegen").Int);
-}
-
-// Get battle speed
-float _Item::GetBattleSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>("BattleSpeed", Upgrades, Attributes.at("BattleSpeed").Int);
-}
-
-// Get move speed
-float _Item::GetMoveSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>("MoveSpeed", Upgrades, Attributes.at("MoveSpeed").Int);
-}
-
-// Get evasion
-float _Item::GetEvasion(int Upgrades) const {
-	return GetUpgradedValue<float>("Evasion", Upgrades, Attributes.at("Evasion").Int);
-}
-
-// Get spell damage
-float _Item::GetSpellDamage(int Upgrades) const {
-	return GetUpgradedValue<float>("SpellDamage", Upgrades, Attributes.at("SpellDamage").Int);
-}
-
-// Get resistance
-float _Item::GetResistance(int Upgrades) const {
-	return GetUpgradedValue<float>("Resist", Upgrades, Attributes.at("Resistance").Int);
-}
-
-// Get gold bonus
-float _Item::GetGoldBonus(int Upgrades) const {
-	return GetUpgradedValue<float>("GoldBonus", Upgrades, Attributes.at("GoldBonus").Int);
-}
-
-// Get experience bonus
-float _Item::GetExperienceBonus(int Upgrades) const {
-	return GetUpgradedValue<float>("ExperienceBonus", Upgrades, Attributes.at("ExpBonus").Int);
+	return (GetAttribute("MinDamage", Upgrades) + GetAttribute("MaxDamage", Upgrades)) / 2.0f;
 }
 
 // Get cooldown reduction
 float _Item::GetCooldownReduction(int Upgrades) const {
 	return -GetUpgradedValue<float>("Cooldowns", Upgrades, -Cooldown);
-}
-
-// Get + all skills
-float _Item::GetAllSkills(int Upgrades) const {
-	return GetUpgradedValue<float>("AllSkills", Upgrades, Attributes.at("AllSkills").Int);
 }
 
 // Get appropriate text color when comparing items

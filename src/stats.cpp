@@ -268,11 +268,11 @@ void _Stats::LoadItems() {
 		Item->Attributes["MoveSpeed"].Int = Database->GetInt<int>("movespeed");
 		Item->Attributes["Evasion"].Int = Database->GetInt<int>("evasion");
 		Item->Attributes["GoldBonus"].Int = Database->GetInt<int>("gold_bonus");
-		Item->Attributes["ExpBonus"].Int = Database->GetInt<int>("exp_bonus");
+		Item->Attributes["ExperienceBonus"].Int = Database->GetInt<int>("exp_bonus");
 		Item->Attributes["AllSkills"].Int = Database->GetInt<int>("allskills");
 		Item->Attributes["SpellProc"].Int = Database->GetInt<int>("spellproc");
 		Item->Attributes["SpellDamage"].Int = Database->GetInt<int>("spell_damage");
-		Item->Attributes["Resistance"].Int = Database->GetInt<int>("res");
+		Item->Attributes["Resist"].Int = Database->GetInt<int>("res");
 		Item->Chance = Database->GetInt<int>("chance");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
 		Item->Tradable = Database->GetInt<int>("tradable");
