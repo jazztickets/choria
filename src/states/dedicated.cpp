@@ -75,6 +75,7 @@ _DedicatedState::_DedicatedState() :
 	Thread(nullptr),
 	NetworkPort(0),
 	Hardcore(false),
+	NoPVP(false),
 	DevMode(false) {
 
 }
@@ -86,10 +87,13 @@ void _DedicatedState::Init() {
 	try {
 		Server = new _Server(NetworkPort);
 		Server->Hardcore = Hardcore;
+		Server->NoPVP = NoPVP;
 		Server->IsTesting = DevMode;
 
 		if(Hardcore)
 			std::cout << "Hardcore only is on" << std::endl;
+		if(NoPVP)
+			std::cout << "PVP is disabled" << std::endl;
 
 		Thread = new std::thread(RunCommandThread, Server);
 	}

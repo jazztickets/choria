@@ -87,6 +87,7 @@ class _PlayState : public ae::_State {
 		// Parameters
 		bool DevMode;
 		bool IsHardcore;
+		bool NoPVP;
 		bool FromEditor;
 		bool ConnectNow;
 

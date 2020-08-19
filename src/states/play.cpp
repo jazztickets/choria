@@ -76,6 +76,7 @@ _PlayState PlayState;
 _PlayState::_PlayState() :
 	DevMode(false),
 	IsHardcore(false),
+	NoPVP(false),
 	FromEditor(false),
 	ConnectNow(false),
 	Stats(nullptr),
@@ -205,6 +206,7 @@ void _PlayState::StartLocalServer() {
 		Server = new _Server(DEFAULT_NETWORKPORT);
 		Server->IsTesting = DevMode;
 		Server->Hardcore = IsHardcore;
+		Server->NoPVP = NoPVP;
 		Server->StartThread();
 	}
 	catch(std::exception &Error) {

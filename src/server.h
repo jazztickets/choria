@@ -138,6 +138,7 @@ class _Server {
 		// Parameters
 		bool IsTesting;
 		bool Hardcore;
+		bool NoPVP;
 
 		// State
 		bool Done;

@@ -869,6 +869,9 @@ void _Server::QueueRebirth(_Object *Object, int Type, int Value) {
 
 // Queue a battle for an object
 void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed) {
+	if(NoPVP)
+	   SendMessage(Object->Peer, "PVP is disabled", "red");
+
 	_BattleEvent BattleEvent;
 	BattleEvent.Object = Object;
 	BattleEvent.Zone = Zone;
@@ -2283,6 +2286,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 	// Handle PVP
 	if(BattleEvent.PVP) {
+		if(NoPVP)
+			return;
 
 		// Get list of players on current tile
 		std::list<_Object *> Players;
