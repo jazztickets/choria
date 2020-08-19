@@ -952,6 +952,25 @@ function Item_ConsumeChance.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Drop Rate --
+
+Item_DropRate = { }
+Item_DropRate.ChancePerUpgrade = 4
+
+function Item_DropRate.GetInfo(self, Source, Item)
+	return "Increase item drop rate from monsters by [c green]" .. self:GetChance(Item) .. "%[c white]"
+end
+
+function Item_DropRate.GetChance(self, Item)
+	return Item.Level + Item.Upgrades * self.ChancePerUpgrade
+end
+
+function Item_DropRate.Stats(self, Item, Object, Change)
+	Change.DropRate = self:GetChance(Item)
+
+	return Change
+end
+
 -- Dark Note --
 
 Item_DarkNote = { }

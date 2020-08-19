@@ -214,6 +214,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	int EnchanterMaxLevel = 0;
 	bool IsLocked = false;
 	bool ShowLevel = false;
+	bool ShowingNextUpgradeLevel = false;
 	if(IsSkill()) {
 
 		// Get max skill level
@@ -266,8 +267,12 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 			DrawPosition.y += LargeSpacingY;
 
 			// Show next upgrade stats if holding ctrl and item is not in the blacksmith slot
-			if(Player->Character->Blacksmith && ae::Input.ModKeyDown(KMOD_CTRL) && CompareSlot.Index != NOSLOT && Tooltip.Window != _HUD::WINDOW_BLACKSMITH)
+			if(Player->Character->Blacksmith && ae::Input.ModKeyDown(KMOD_CTRL) && CompareSlot.Index != NOSLOT && Tooltip.Window != _HUD::WINDOW_BLACKSMITH) {
+				if(Upgrades + 1 <= MaxLevel)
+					ShowingNextUpgradeLevel = true;
+
 				Upgrades = std::min(Upgrades + 1, MaxLevel);
+			}
 		}
 	}
 
@@ -651,7 +656,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	}
 	else if(Player->Character->Blacksmith) {
 		std::stringstream Buffer;
-		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
+		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades - ShowingNextUpgradeLevel) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
 			glm::vec4 Color = ae::Assets.Colors["gold"];
 			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Int)
 				Color = ae::Assets.Colors["red"];

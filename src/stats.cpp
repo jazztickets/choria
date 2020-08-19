@@ -821,7 +821,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops) const {
+void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops, float DropRate) const {
 	if(MonsterID == 0)
 		return;
 
@@ -832,35 +832,47 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 	// Get list of possible drops and build CDT
 	std::list<_ItemDrop> PossibleItemDrops;
 	uint32_t OddsSum = 0;
+	uint32_t AddedOdds = 0;
 	while(Database->FetchRow()) {
 		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
-		uint32_t Odds = Database->GetInt<uint32_t>("odds");
+		uint32_t Odds = 100 * Database->GetInt<uint32_t>("odds");
+		if(ItemID) {
+			uint32_t IncreasedOdds = Odds * DropRate;
+			AddedOdds += IncreasedOdds - Odds;
+			Odds = IncreasedOdds;
+		}
 
 		OddsSum += Odds;
 		PossibleItemDrops.push_back(_ItemDrop(ItemID, OddsSum));
 	}
 	Database->CloseQuery();
 
+	// Adjust odds by added odds
+	OddsSum -= AddedOdds;
+	for(auto &DropChance : PossibleItemDrops) {
+		DropChance.Odds -= AddedOdds;
+	}
+
 	// Check for items
-	if(OddsSum > 0) {
+	if(OddsSum <= 0)
+		return;
 
-		// Generate items
-		for(uint32_t i = 0; i < Count; i++) {
-			uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
+	// Generate items
+	for(uint32_t i = 0; i < Count; i++) {
+		uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
 
-			// Find item id in CDT
-			uint32_t ItemID = 0;
-			for(auto &MonsterDrop : PossibleItemDrops) {
-				if(RandomNumber <= MonsterDrop.Odds) {
-					ItemID = MonsterDrop.ItemID;
-					break;
-				}
+		// Find item id in CDT
+		uint32_t ItemID = 0;
+		for(auto &MonsterDrop : PossibleItemDrops) {
+			if(RandomNumber <= MonsterDrop.Odds) {
+				ItemID = MonsterDrop.ItemID;
+				break;
 			}
-
-			// Populate item list
-			if(ItemID)
-				ItemDrops.push_back(ItemID);
 		}
+
+		// Populate item list
+		if(ItemID)
+			ItemDrops.push_back(ItemID);
 	}
 }
 

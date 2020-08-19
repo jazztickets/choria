@@ -675,32 +675,22 @@ void _Battle::ServerEndBattle() {
 		// Check for reward recipients
 		if(RewardObjects.size() && !PVP) {
 
-			// Convert winning side list to array
-			std::vector<_Object *> ObjectArray { std::begin(RewardObjects), std::end(RewardObjects) };
-
-			// Get items from zonedrops if present
-			Stats->Database->PrepareQuery("SELECT item_id, count FROM zonedrop WHERE zone_id = @zone_id");
-			Stats->Database->BindInt(1, Zone);
-			std::list<uint32_t> ItemDrops;
-			while(Stats->Database->FetchRow()) {
-				uint32_t ItemID = Stats->Database->GetInt<uint32_t>("item_id");
-				int Count = Stats->Database->GetInt<int>("count");
-
-				for(int i = 0; i < Count; i++)
-					ItemDrops.push_back(ItemID);
-			}
-			Stats->Database->CloseQuery();
-
-			// Generate items drops from monsters if zonedrops is empty
-			if(ItemDrops.empty()) {
-				for(auto &Object : SideObjects[!WinningSide]) {
-					if(Object->IsMonster())
-						Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, ItemDrops);
-				}
-			}
-
-			// Boss drops aren't divided up
+			// Boss drops aren't divided up and only come from zonedrop
 			if(Boss) {
+				std::list<uint32_t> ItemDrops;
+
+				// Get items from zonedrops
+				Stats->Database->PrepareQuery("SELECT item_id, count FROM zonedrop WHERE zone_id = @zone_id");
+				Stats->Database->BindInt(1, Zone);
+				while(Stats->Database->FetchRow()) {
+					uint32_t ItemID = Stats->Database->GetInt<uint32_t>("item_id");
+					int Count = Stats->Database->GetInt<int>("count");
+					for(int i = 0; i < Count; i++)
+						ItemDrops.push_back(ItemID);
+				}
+				Stats->Database->CloseQuery();
+
+				// Hand out drops
 				for(auto &ItemID : ItemDrops) {
 					for(auto &Object : RewardObjects) {
 
@@ -710,12 +700,26 @@ void _Battle::ServerEndBattle() {
 					}
 				}
 			}
-			// Give out drops randomly
 			else {
-				for(auto &ItemID : ItemDrops) {
-					std::shuffle(ObjectArray.begin(), ObjectArray.end(), ae::RandomGenerator);
-					_Object *Object = ObjectArray[0];
-					Object->Fighter->ItemDropsReceived.push_back(ItemID);
+
+				// Convert winning side list to array
+				std::vector<_Object *> ObjectArray { std::begin(RewardObjects), std::end(RewardObjects) };
+				std::shuffle(ObjectArray.begin(), ObjectArray.end(), ae::RandomGenerator);
+
+				// Iterate through monsters
+				size_t PlayerIndex = 0;
+				for(auto &Object : SideObjects[!WinningSide]) {
+					if(Object->IsMonster()) {
+						_Object *Player = ObjectArray[PlayerIndex++];
+						if(PlayerIndex >= ObjectArray.size())
+							PlayerIndex = 0;
+
+						// Generate item
+						std::list<uint32_t> ItemDrops;
+						Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, ItemDrops, Player->Character->Attributes["DropRate"].Mult());
+						for(auto &ItemID : ItemDrops)
+							Player->Fighter->ItemDropsReceived.push_back(ItemID);
+					}
 				}
 			}
 		}

@@ -177,43 +177,44 @@ INSERT INTO attribute VALUES(71,'GoldBonus','Gold Bonus',4,1,'100',1.0,3,1,0,0,0
 INSERT INTO attribute VALUES(72,'SummonLimit','Summon Limit',1,1,'0',0.0,3,1,0,1,0);
 INSERT INTO attribute VALUES(73,'Difficulty','Difficulty',4,1,'0',0.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(74,'ConsumeChance','Consume Chance',4,1,'100',0.0,3,1,0,0,0);
-INSERT INTO attribute VALUES(75,'MoveSpeed','Move Speed',4,1,'100',0.10000000000000000555,-3,1,0,0,0);
-INSERT INTO attribute VALUES(76,'BattleSpeed','Battle Speed',4,1,'100',0.10000000000000000555,-3,1,0,0,0);
-INSERT INTO attribute VALUES(77,'Initiative','Initiative',4,1,'0',0.0,3,1,0,0,0);
-INSERT INTO attribute VALUES(78,'Cooldowns','Cooldowns',4,1,'100',0.5,3,1,0,0,0);
-INSERT INTO attribute VALUES(79,'AllSkills','All Skills',1,1,'0',1.0,0,1,0,0,0);
-INSERT INTO attribute VALUES(80,'BeltSize','Belt Size',1,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(81,'SkillBarSize','Skill Bar Size',1,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(82,'MinigameSpeed','Minigame Speed',1,2,'1',0.0,0,1,0,0,0);
-INSERT INTO attribute VALUES(83,'RebirthTier','Rebirth Tier',1,0,'0',0.0,0,1,0,1,0);
-INSERT INTO attribute VALUES(84,'RebirthGirth','Rebirth Girth',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(85,'RebirthInsight','Rebirth Insight',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(86,'RebirthKnowledge','Rebirth Knowledge',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(87,'RebirthPassage','Rebirth Passage',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(88,'RebirthPower','Rebirth Power',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(89,'RebirthProficiency','Rebirth Proficiency',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(90,'RebirthWealth','Rebirth Wealth',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(91,'RebirthWisdom','Rebirth Wisdom',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(92,'RebirthEnchantment','Rebirth Enchantment',1,0,'0',0.0,4,0,1,1,1);
-INSERT INTO attribute VALUES(93,'EternalStrength','Eternal Strength',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(94,'EternalGuard','Eternal Guard',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(95,'EternalFortitude','Eternal Fortitude',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(96,'EternalSpirit','Eternal Spirit',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(97,'EternalWisdom','Eternal Wisdom',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(98,'EternalWealth','Eternal Wealth',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(99,'EternalAlacrity','Eternal Alacrity',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(100,'EternalKnowledge','Eternal Knowledge',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(101,'EternalPain','Eternal Pain',1,0,'0',0.0,0,0,1,1,1);
-INSERT INTO attribute VALUES(102,'PlayTime','Play Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(103,'RebirthTime','Rebirth Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(104,'BattleTime','Battle Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(105,'MonsterKills','Monster Kills',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(106,'PlayerKills','Player Kills',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(107,'Deaths','Deaths',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(108,'GoldLost','Gold Lost',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(109,'Bounty','Bounty',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(110,'GamesPlayed','Games Played',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(111,'Rebirths','Rebirths',1,0,'0',0.0,5,0,1,1,1);
+INSERT INTO attribute VALUES(75,'DropRate','Drop Rate',4,1,'100',0.0,3,1,0,0,0);
+INSERT INTO attribute VALUES(76,'MoveSpeed','Move Speed',4,1,'100',0.10000000000000000555,-3,1,0,0,0);
+INSERT INTO attribute VALUES(77,'BattleSpeed','Battle Speed',4,1,'100',0.10000000000000000555,-3,1,0,0,0);
+INSERT INTO attribute VALUES(78,'Initiative','Initiative',4,1,'0',0.0,3,1,0,0,0);
+INSERT INTO attribute VALUES(79,'Cooldowns','Cooldowns',4,1,'100',0.5,3,1,0,0,0);
+INSERT INTO attribute VALUES(80,'AllSkills','All Skills',1,1,'0',1.0,0,1,0,0,0);
+INSERT INTO attribute VALUES(81,'BeltSize','Belt Size',1,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(82,'SkillBarSize','Skill Bar Size',1,0,'0',0.0,0,0,0,0,0);
+INSERT INTO attribute VALUES(83,'MinigameSpeed','Minigame Speed',1,2,'1',0.0,0,1,0,0,0);
+INSERT INTO attribute VALUES(84,'RebirthTier','Rebirth Tier',1,0,'0',0.0,0,1,0,1,0);
+INSERT INTO attribute VALUES(85,'RebirthGirth','Rebirth Girth',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(86,'RebirthInsight','Rebirth Insight',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(87,'RebirthKnowledge','Rebirth Knowledge',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(88,'RebirthPassage','Rebirth Passage',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(89,'RebirthPower','Rebirth Power',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(90,'RebirthProficiency','Rebirth Proficiency',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(91,'RebirthWealth','Rebirth Wealth',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(92,'RebirthWisdom','Rebirth Wisdom',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(93,'RebirthEnchantment','Rebirth Enchantment',1,0,'0',0.0,4,0,1,1,1);
+INSERT INTO attribute VALUES(94,'EternalStrength','Eternal Strength',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(95,'EternalGuard','Eternal Guard',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(96,'EternalFortitude','Eternal Fortitude',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(97,'EternalSpirit','Eternal Spirit',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(98,'EternalWisdom','Eternal Wisdom',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(99,'EternalWealth','Eternal Wealth',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(100,'EternalAlacrity','Eternal Alacrity',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(101,'EternalKnowledge','Eternal Knowledge',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(102,'EternalPain','Eternal Pain',1,0,'0',0.0,0,0,1,1,1);
+INSERT INTO attribute VALUES(103,'PlayTime','Play Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(104,'RebirthTime','Rebirth Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(105,'BattleTime','Battle Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(106,'MonsterKills','Monster Kills',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(107,'PlayerKills','Player Kills',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(108,'Deaths','Deaths',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(109,'GoldLost','Gold Lost',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(110,'Bounty','Bounty',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(111,'GamesPlayed','Games Played',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(112,'Rebirths','Rebirths',1,0,'0',0.0,5,0,1,1,1);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -3099,6 +3100,7 @@ INSERT INTO item VALUES(342,13,0,0,0,0,0,0,'Building Key','textures/items/key0.p
 INSERT INTO item VALUES(343,10,0,1,1,0,0,0,'Lava Potion','textures/items/lava_potion.png','','Item_LavaPotion','',0,1000,1,0,0,0,60.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(344,7,0,0,0,0,9,10,'Hand of Zog','textures/items/hand_zog.png','','SetBonus_HandOfZog','',0,25000,1,0,50,0,0.0,0.0,1,0,0,0,15,0,5,0,150,0,2,0,0,0,0,0,0,0,20,1);
 INSERT INTO item VALUES(345,15,0,0,0,0,0,0,'Old One''s Map','textures/items/map.png','textures/map_nearest/timeless.png','','',0,5000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(346,9,0,0,0,0,0,0,'Fisherman''s Necklace','textures/items/amulet_teal.png','','Item_DropRate','',0,1500,1,20,20,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
@@ -3138,6 +3140,7 @@ INSERT INTO zonedrop VALUES(32,51,338,1);
 INSERT INTO zonedrop VALUES(33,52,340,1);
 INSERT INTO zonedrop VALUES(34,53,339,1);
 INSERT INTO zonedrop VALUES(35,54,341,1);
+INSERT INTO zonedrop VALUES(36,20,134,2);
 CREATE TABLE IF NOT EXISTS "build" (
 "id" INTEGER PRIMARY KEY,
 "name" TEXT,
