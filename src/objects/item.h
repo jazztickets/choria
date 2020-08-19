@@ -60,7 +60,7 @@ class _Item {
 		static int GetEnchantCost(int Level);
 
 		int GetAttributeCount(int Upgrades) const;
-		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
+		void DrawTooltip(const glm::vec2 &Offset, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
 		int DrawDescription(bool Render, _Object *Object, const std::string &Function, glm::vec2 &DrawPosition, bool Blacksmith, int DrawLevel, int PlayerMaxLevelSkill, int EnchanterMaxLevel, int Upgrades, bool ShowLevel, float Width, float SpacingY) const;
 		int DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosition, bool Blacksmith, float Width, float SpacingY) const;
 

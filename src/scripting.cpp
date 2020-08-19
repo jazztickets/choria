@@ -1408,7 +1408,7 @@ int _Scripting::ItemGetAverageDamage(lua_State *LuaState) {
 	if(!Object)
 		return 0;
 
-	lua_pushnumber(LuaState, (Item->GetAttribute("MinDamage", Upgrades) + Item->GetAttribute("MaxDamage", Upgrades)) * 0.5f * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
+	lua_pushnumber(LuaState, Item->GetAverageDamage(Upgrades) * Object->Character->GetDamagePowerMultiplier(Item->DamageTypeID));
 
 	return 1;
 }

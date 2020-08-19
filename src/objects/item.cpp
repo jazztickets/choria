@@ -49,7 +49,7 @@ const std::string SkillCategories[4] = {
 };
 
 // Draw tooltip
-void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
+void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
@@ -302,7 +302,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, _Objec
 	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
 		std::stringstream Buffer;
 		if(ShowAltText)
-			Buffer << ae::Round((DrawMinDamage + DrawMaxDamage) / 2.0f);
+			Buffer << ae::Round((DrawMinDamage + DrawMaxDamage) * 0.5f);
 		else if(DrawMinDamage != DrawMaxDamage)
 			Buffer << DrawMinDamage << " - " << DrawMaxDamage;
 		else
@@ -1270,7 +1270,7 @@ float _Item::GetAttribute(const std::string &Name, int Upgrades) const {
 
 // Get average damage
 float _Item::GetAverageDamage(int Upgrades) const {
-	return (GetAttribute("MinDamage", Upgrades) + GetAttribute("MaxDamage", Upgrades)) / 2.0f;
+	return (GetAttribute("MinDamage", Upgrades) + GetAttribute("MaxDamage", Upgrades)) * 0.5f;
 }
 
 // Get cooldown reduction
