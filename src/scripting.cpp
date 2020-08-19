@@ -610,7 +610,7 @@ void _Scripting::PushItem(lua_State *LuaState, const _Stats *Stats, const _Item 
 	lua_pushinteger(LuaState, Item->Chance);
 	lua_setfield(LuaState, -2, "Chance");
 
-	lua_pushinteger(LuaState, (int)Item->SpellProc);
+	lua_pushinteger(LuaState, (int)Item->Attributes.at("SpellProc").Int);
 	lua_setfield(LuaState, -2, "SpellProc");
 
 	lua_pushnumber(LuaState, Item->Duration);

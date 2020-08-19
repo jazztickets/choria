@@ -255,35 +255,36 @@ void _Stats::LoadItems() {
 		Item->Cost = Database->GetInt<int>("cost");
 		Item->DamageTypeID = Database->GetInt<uint32_t>("damagetype_id");
 		Item->SetID = Database->GetInt<uint32_t>("set_id");
-		Item->MinDamage = Database->GetInt<int>("mindamage");
-		Item->MaxDamage = Database->GetInt<int>("maxdamage");
-		Item->Armor = Database->GetInt<int>("armor");
-		Item->DamageBlock = Database->GetInt<int>("block");
-		Item->Pierce = Database->GetInt<int>("pierce");
-		Item->MaxHealth = Database->GetInt<int>("maxhealth");
-		Item->MaxMana = Database->GetInt<int>("maxmana");
-		Item->HealthRegen = Database->GetInt<int>("healthregen");
-		Item->ManaRegen = Database->GetInt<int>("manaregen");
-		Item->BattleSpeed = Database->GetInt<int>("battlespeed");
-		Item->MoveSpeed = Database->GetInt<int>("movespeed");
-		Item->Evasion = Database->GetInt<int>("evasion");
-		Item->GoldBonus = Database->GetInt<int>("gold_bonus");
-		Item->ExpBonus = Database->GetInt<int>("exp_bonus");
-		Item->AllSkills = Database->GetInt<int>("allskills");
+		Item->Attributes["MinDamage"].Int = Database->GetInt<int>("mindamage");
+		Item->Attributes["MaxDamage"].Int = Database->GetInt<int>("maxdamage");
+		Item->Attributes["Armor"].Int = Database->GetInt<int>("armor");
+		Item->Attributes["DamageBlock"].Int = Database->GetInt<int>("block");
+		Item->Attributes["Pierce"].Int = Database->GetInt<int>("pierce");
+		Item->Attributes["MaxHealth"].Int = Database->GetInt<int>("maxhealth");
+		Item->Attributes["MaxMana"].Int = Database->GetInt<int>("maxmana");
+		Item->Attributes["HealthRegen"].Int = Database->GetInt<int>("healthregen");
+		Item->Attributes["ManaRegen"].Int = Database->GetInt<int>("manaregen");
+		Item->Attributes["BattleSpeed"].Int = Database->GetInt<int>("battlespeed");
+		Item->Attributes["MoveSpeed"].Int = Database->GetInt<int>("movespeed");
+		Item->Attributes["Evasion"].Int = Database->GetInt<int>("evasion");
+		Item->Attributes["GoldBonus"].Int = Database->GetInt<int>("gold_bonus");
+		Item->Attributes["ExpBonus"].Int = Database->GetInt<int>("exp_bonus");
+		Item->Attributes["AllSkills"].Int = Database->GetInt<int>("allskills");
+		Item->Attributes["SpellProc"].Int = Database->GetInt<int>("spellproc");
+		Item->Attributes["SpellDamage"].Int = Database->GetInt<int>("spell_damage");
+		Item->Attributes["Resistance"].Int = Database->GetInt<int>("res");
 		Item->Chance = Database->GetInt<int>("chance");
-		Item->SpellProc = Database->GetInt<int>("spellproc");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
-		Item->Resistance = Database->GetInt<int>("res");
 		Item->Tradable = Database->GetInt<int>("tradable");
 		Item->TargetAlive = Database->GetInt<int>("target_alive");
 		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
 		Item->Tradable = Database->GetInt<int>("tradable");
-		Item->SpellDamage = Database->GetInt<int>("spell_damage");
 		Item->Cursed = Database->GetInt<int>("cursed");
 		Item->BulkBuy = true;
 
+		// Disable bulk buy on rites
 		if(Item->Category == 5 || Item->Type == ItemType::UNLOCKABLE)
 			Item->BulkBuy = false;
 

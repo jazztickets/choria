@@ -1265,87 +1265,87 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 
 // Get average damage
 float _Item::GetAverageDamage(int Upgrades) const {
-	return (GetUpgradedValue<float>("MinDamage", Upgrades, MinDamage) + GetUpgradedValue<float>("MaxDamage", Upgrades, MaxDamage)) / 2.0f;
+	return (GetUpgradedValue<float>("MinDamage", Upgrades, Attributes.at("MinDamage").Int) + GetUpgradedValue<float>("MaxDamage", Upgrades, Attributes.at("MaxDamage").Int)) / 2.0f;
 }
 
 // Get min damage
 float _Item::GetMinDamage(int Upgrades) const {
-	return GetUpgradedValue<float>("MinDamage", Upgrades, MinDamage);
+	return GetUpgradedValue<float>("MinDamage", Upgrades, Attributes.at("MinDamage").Int);
 }
 
 // Get max damage
 float _Item::GetMaxDamage(int Upgrades) const {
-	return GetUpgradedValue<float>("MaxDamage", Upgrades, MaxDamage);
+	return GetUpgradedValue<float>("MaxDamage", Upgrades, Attributes.at("MaxDamage").Int);
 }
 
 // Get armor
 float _Item::GetArmor(int Upgrades) const {
-	return GetUpgradedValue<float>("Armor", Upgrades, Armor);
+	return GetUpgradedValue<float>("Armor", Upgrades, Attributes.at("Armor").Int);
 }
 
 // Get damage block
 float _Item::GetDamageBlock(int Upgrades) const {
-	return GetUpgradedValue<float>("DamageBlock", Upgrades, DamageBlock);
+	return GetUpgradedValue<float>("DamageBlock", Upgrades, Attributes.at("DamageBlock").Int);
 }
 
 // Get pierce
 float _Item::GetPierce(int Upgrades) const {
-	return GetUpgradedValue<float>("Pierce", Upgrades, Pierce);
+	return GetUpgradedValue<float>("Pierce", Upgrades, Attributes.at("Pierce").Int);
 }
 
 // Get max health
 float _Item::GetMaxHealth(int Upgrades) const {
-	return GetUpgradedValue<float>("MaxHealth", Upgrades, MaxHealth);
+	return GetUpgradedValue<float>("MaxHealth", Upgrades, Attributes.at("MaxHealth").Int);
 }
 
 // Get max mana
 float _Item::GetMaxMana(int Upgrades) const {
-	return GetUpgradedValue<float>("MaxMana", Upgrades, MaxMana);
+	return GetUpgradedValue<float>("MaxMana", Upgrades, Attributes.at("MaxMana").Int);
 }
 
 // Get health regen
 float _Item::GetHealthRegen(int Upgrades) const {
-	return GetUpgradedValue<float>("HealthRegen", Upgrades, HealthRegen);
+	return GetUpgradedValue<float>("HealthRegen", Upgrades, Attributes.at("HealthRegen").Int);
 }
 
 // Get mana regen
 float _Item::GetManaRegen(int Upgrades) const {
-	return GetUpgradedValue<float>("ManaRegen", Upgrades, ManaRegen);
+	return GetUpgradedValue<float>("ManaRegen", Upgrades, Attributes.at("ManaRegen").Int);
 }
 
 // Get battle speed
 float _Item::GetBattleSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>("BattleSpeed", Upgrades, BattleSpeed);
+	return GetUpgradedValue<float>("BattleSpeed", Upgrades, Attributes.at("BattleSpeed").Int);
 }
 
 // Get move speed
 float _Item::GetMoveSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>("MoveSpeed", Upgrades, MoveSpeed);
+	return GetUpgradedValue<float>("MoveSpeed", Upgrades, Attributes.at("MoveSpeed").Int);
 }
 
 // Get evasion
 float _Item::GetEvasion(int Upgrades) const {
-	return GetUpgradedValue<float>("Evasion", Upgrades, Evasion);
+	return GetUpgradedValue<float>("Evasion", Upgrades, Attributes.at("Evasion").Int);
 }
 
 // Get spell damage
 float _Item::GetSpellDamage(int Upgrades) const {
-	return GetUpgradedValue<float>("SpellDamage", Upgrades, SpellDamage);
+	return GetUpgradedValue<float>("SpellDamage", Upgrades, Attributes.at("SpellDamage").Int);
 }
 
 // Get resistance
 float _Item::GetResistance(int Upgrades) const {
-	return GetUpgradedValue<float>("Resist", Upgrades, Resistance);
+	return GetUpgradedValue<float>("Resist", Upgrades, Attributes.at("Resistance").Int);
 }
 
 // Get gold bonus
 float _Item::GetGoldBonus(int Upgrades) const {
-	return GetUpgradedValue<float>("GoldBonus", Upgrades, GoldBonus);
+	return GetUpgradedValue<float>("GoldBonus", Upgrades, Attributes.at("GoldBonus").Int);
 }
 
 // Get experience bonus
 float _Item::GetExperienceBonus(int Upgrades) const {
-	return GetUpgradedValue<float>("ExperienceBonus", Upgrades, ExpBonus);
+	return GetUpgradedValue<float>("ExperienceBonus", Upgrades, Attributes.at("ExpBonus").Int);
 }
 
 // Get cooldown reduction
@@ -1355,7 +1355,7 @@ float _Item::GetCooldownReduction(int Upgrades) const {
 
 // Get + all skills
 float _Item::GetAllSkills(int Upgrades) const {
-	return GetUpgradedValue<float>("AllSkills", Upgrades, AllSkills);
+	return GetUpgradedValue<float>("AllSkills", Upgrades, Attributes.at("AllSkills").Int);
 }
 
 // Get appropriate text color when comparing items
