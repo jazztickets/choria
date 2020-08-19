@@ -828,6 +828,7 @@ int _Item::GetAttributeCount(int Upgrades) const {
 
 	if(std::floor(GetAttribute("MinDamage", Upgrades)) != 0 || std::floor(GetAttribute("MaxDamage", Upgrades)) != 0)
 		Count++;
+
 	if(!IsSkill() && DamageTypeID > 1)
 		Count++;
 
