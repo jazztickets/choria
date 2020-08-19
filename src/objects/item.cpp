@@ -830,37 +830,25 @@ int _Item::GetAttributeCount(int Upgrades) const {
 		Count++;
 	if(!IsSkill() && DamageTypeID > 1)
 		Count++;
-	if(GetAttribute("Pierce", Upgrades) != 0.0f)
+
+	for(const auto &AttributeName : Stats->AttributeRank) {
+		if(HiddenStats.find(AttributeName) != HiddenStats.end())
+			continue;
+
+		if(Attributes.find(AttributeName) == Attributes.end())
+			continue;
+
+		float UpgradedValue = GetAttribute(AttributeName, Upgrades);
+		if(UpgradedValue == 0.0f)
+			continue;
+
 		Count++;
-	if(GetAttribute("Armor", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("DamageBlock", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("MaxHealth", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("MaxMana", Upgrades) != 0.0f)
-		Count++;
-	if(ResistanceTypeID)
-		Count++;
-	if(GetAttribute("MoveSpeed", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("BattleSpeed", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("Evasion", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("HealthRegen", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("ManaRegen", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("GoldBonus", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("ExperienceBonus", Upgrades) != 0.0f)
-		Count++;
+	}
+
 	if(IsEquippable() && GetCooldownReduction(Upgrades) != 0.0f)
 		Count++;
-	if(GetAttribute("SpellDamage", Upgrades) != 0.0f)
-		Count++;
-	if(GetAttribute("AllSkills", Upgrades) != 0.0f)
+
+	if(ResistanceTypeID)
 		Count++;
 
 	return Count;
