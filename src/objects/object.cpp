@@ -1741,7 +1741,7 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 	if(Character->Attributes["DiagonalMovement"].Int)
 		return;
 
-	// Remove diagonols
+	// Remove diagonals
 	if(Direction.x != 0 && Direction.y != 0)
 		Direction.x = 0;
 }
