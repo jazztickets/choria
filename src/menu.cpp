@@ -548,6 +548,7 @@ void _Menu::LoadCharacterSlots() {
 		NameLabel->BaseOffset = glm::vec2(0, 210);
 		NameLabel->Alignment = ae::CENTER_BASELINE;
 		NameLabel->Font = ae::Assets.Fonts["hud_medium"];
+		NameLabel->Format = true;
 		Button->Children.push_back(NameLabel);
 
 		// Add level label
@@ -1595,10 +1596,18 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 			for(size_t i = 0; i < CharacterCount; i++) {
 				size_t Slot = Buffer.Read<uint8_t>();
 				bool Hardcore = Buffer.Read<uint8_t>();
-				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
+				std::string Name = Buffer.ReadString();
 				uint32_t PortraitID = Buffer.Read<uint32_t>();
 				int Health = Buffer.Read<int>();
 				int64_t Experience = Buffer.Read<int64_t>();
+				int Rebirths = Buffer.Read<int>();
+
+				// Set name
+				std::string Prefix;
+				if(Rebirths)
+					Prefix = "[c gold]" + std::to_string(Rebirths) + "[c white] ";
+
+				CharacterSlots[Slot].Name->Text = Prefix + Name;
 
 				// Set level
 				std::stringstream Buffer;

@@ -212,6 +212,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				Data.ReadString();
 				Data.Read<uint32_t>();
 				Data.Read<int>();
+				Data.Read<int64_t>();
 				Data.Read<int>();
 
 				if(FirstSlot == -1)

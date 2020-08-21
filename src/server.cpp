@@ -768,6 +768,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 		Packet.Write<uint32_t>(Player.Character->PortraitID);
 		Packet.Write<int>(Player.Character->Attributes["Health"].Int);
 		Packet.Write<int64_t>(Player.Character->Attributes["Experience"].Int64);
+		Packet.Write<int>(Player.Character->Attributes["Rebirths"].Int);
 	}
 	Save->Database->CloseQuery();
 
