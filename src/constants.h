@@ -116,7 +116,7 @@ const  int          PLAYER_NAME_SIZE                   =  15;
 const  float        PLAYER_INVIS_ALPHA                 =  0.27f;
 const  int          PLAYER_MAX_GOLD                    =  1000000000;
 const  float        PLAYER_DEATH_GOLD_PENALTY          =  0.2f;
-const  double       PLAYER_IDLE_TIME                   =  60.0;
+const  double       PLAYER_IDLE_TIME                   =  120.0;
 //     Game
 const  int          GAME_MAX_RESISTANCE                =  75;
 const  int          GAME_MIN_RESISTANCE                =  -200;

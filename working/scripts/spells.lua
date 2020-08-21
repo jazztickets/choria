@@ -1017,7 +1017,7 @@ function Skill_MagicBarrier.GetLevel(self, Source, Level)
 end
 
 function Skill_MagicBarrier.GetInfo(self, Source, Item)
-	return "Create a magic shield around an ally that absorbs [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Create a magic shield around an ally that absorbs [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nShield increased with [c yellow]mana power\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
