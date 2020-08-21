@@ -354,17 +354,17 @@ SetBonus_MysticStaff.Attributes = {
 
 SetBonus_DarkStaff = Base_Set:New()
 SetBonus_DarkStaff.Attributes = {
-	PetPower = { "15%", "50%" },
+	ManaPower = { "10%", "25%" },
 }
 
 SetBonus_DemonStick = Base_Set:New()
 SetBonus_DemonStick.Attributes = {
-	PetPower = { "25%", "75%" },
+	ManaPower = { "15%", "50%" },
 }
 
 SetBonus_DiabolicStaff = Base_Set:New()
 SetBonus_DiabolicStaff.Attributes = {
-	PetPower = { "50%", "100%" },
+	ManaPower = { "25%", "100%" },
 }
 
 SetBonus_Axe = Base_Set:New()
@@ -481,7 +481,7 @@ SetBonus_SteelShield.Attributes = {
 SetBonus_HandOfZog = Base_Set:New()
 SetBonus_HandOfZog.Attributes = {
 	AttackPower = { "-100%", "-100%" },
-	ManaShield = { "0%", "25%" },
+	ManaShield = { "5%", "25%" },
 }
 
 -- Helmet --
