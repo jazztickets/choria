@@ -755,7 +755,7 @@ void _Battle::ServerEndBattle() {
 
 					// Start cooldown timer
 					if(Cooldown > 0.0)
-						Object->Character->BossCooldown[Zone] = Cooldown;
+						Object->Character->BossCooldowns[Zone] = Cooldown;
 
 					// Add to kill count
 					if(Boss) {

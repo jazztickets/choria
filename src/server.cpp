@@ -1874,7 +1874,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Process command
 	std::string Command = Data.ReadString();
 	if(Command == "battle") {
-		Player->Character->BossCooldown.clear();
+		Player->Character->BossCooldowns.clear();
 
 		uint32_t ZoneID = Data.Read<uint32_t>();
 		QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
@@ -1886,7 +1886,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		SendHUD(Peer);
 	}
 	else if(Command == "clearkills") {
-		Player->Character->BossCooldown.clear();
+		Player->Character->BossCooldowns.clear();
 		Player->Character->BossKills.clear();
 	}
 	else if(Command == "clearunlocks") {
@@ -2342,7 +2342,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 		// Check for cooldown
 		if(BattleEvent.Object->Character->IsZoneOnCooldown(BattleEvent.Zone)) {
-			SendBattleCooldownMessage(BattleEvent.Object->Peer, BattleEvent.Object->Character->BossCooldown[BattleEvent.Zone]);
+			SendBattleCooldownMessage(BattleEvent.Object->Peer, BattleEvent.Object->Character->BossCooldowns[BattleEvent.Zone]);
 			return;
 		}
 
@@ -2466,7 +2466,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
 	Character->SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
 	Character->Cooldowns.clear();
-	Character->BossCooldown.clear();
+	Character->BossCooldowns.clear();
 	Character->BossKills.clear();
 	Character->DeleteStatusEffects();
 

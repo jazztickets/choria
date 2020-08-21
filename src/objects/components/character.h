@@ -114,7 +114,7 @@ class _Character {
 		bool CanPVP() const { return !Battle && IsAlive(); }
 
 		// Battle
-		bool IsZoneOnCooldown(uint32_t Zone) { return BossCooldown.find(Zone) != BossCooldown.end(); }
+		bool IsZoneOnCooldown(uint32_t Zone) { return BossCooldowns.find(Zone) != BossCooldowns.end(); }
 		void GenerateNextBattle();
 		int GenerateDamage();
 		float GetAverageDamage() const { return (Attributes.at("MinDamage").Int + Attributes.at("MaxDamage").Int) / 2.0f; }
@@ -161,7 +161,7 @@ class _Character {
 		uint32_t PortraitID;
 
 		// State
-		std::unordered_map<uint32_t, double> BossCooldown;
+		std::unordered_map<uint32_t, double> BossCooldowns;
 		std::unordered_map<uint32_t, int> BossKills;
 		std::string PartyName;
 		double IdleTime;
