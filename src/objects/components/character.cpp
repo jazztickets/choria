@@ -189,12 +189,12 @@ void _Character::Update(double FrameTime) {
 
 	// Update battle cooldowns
 	if(IdleTime <= PLAYER_IDLE_TIME) {
-		for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
+		for(auto Iterator = BossCooldown.begin(); Iterator != BossCooldown.end(); ) {
 			Iterator->second -= FrameTime;
 
 			// Remove cooldown
 			if(Iterator->second <= 0.0)
-				Iterator = BattleCooldown.erase(Iterator);
+				Iterator = BossCooldown.erase(Iterator);
 			else
 				++Iterator;
 		}

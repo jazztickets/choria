@@ -715,15 +715,15 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	}
 	Data["unlocks"] = UnlocksNode;
 
-	// Write cooldowns
-	Json::Value CooldownsNode;
-	for(auto &Cooldown : Character->BattleCooldown) {
-		Json::Value CooldownNode;
-		CooldownNode["id"] = Cooldown.first;
-		CooldownNode["duration"] = Cooldown.second;
-		CooldownsNode.append(CooldownNode);
+	// Write boss cooldowns
+	Json::Value BossCooldownsNode;
+	for(auto &BossCooldown : Character->BossCooldown) {
+		Json::Value BossCooldownNode;
+		BossCooldownNode["id"] = BossCooldown.first;
+		BossCooldownNode["duration"] = BossCooldown.second;
+		BossCooldownsNode.append(BossCooldownNode);
 	}
-	Data["cooldowns"] = CooldownsNode;
+	Data["bosscooldowns"] = BossCooldownsNode;
 
 	// Write boss kills
 	Json::Value BossKillsNode;
@@ -873,8 +873,8 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		Character->Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
 
 	// Set cooldowns
-	for(const Json::Value &CooldownNode : Data["cooldowns"])
-		Character->BattleCooldown[CooldownNode["id"].asUInt()] = CooldownNode["duration"].asDouble();
+	for(const Json::Value &BossCooldownNode : Data["bosscooldowns"])
+		Character->BossCooldown[BossCooldownNode["id"].asUInt()] = BossCooldownNode["duration"].asDouble();
 
 	// Set boss kills
 	for(const Json::Value &BossKillNode: Data["bosskills"])
@@ -1325,7 +1325,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Boss cooldowns
 	if(StatChange.HasStat("BossCooldowns")) {
-		for(auto &BattleCooldown : Character->BattleCooldown)
+		for(auto &BattleCooldown : Character->BossCooldown)
 			BattleCooldown.second *= 1.0 - StatChange.Values["BossCooldowns"].Mult();
 	}
 

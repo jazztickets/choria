@@ -452,7 +452,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 		}
 		else if(Console->Command == "clearkills") {
 			if(Player && Network && Network->IsConnected()) {
-				Player->Character->BattleCooldown.clear();
+				Player->Character->BossCooldown.clear();
 				Player->Character->BossKills.clear();
 				Network->SendPacket(Packet);
 			}
