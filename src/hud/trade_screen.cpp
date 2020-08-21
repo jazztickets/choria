@@ -122,8 +122,8 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = &Bag.Slots[i];
-		if(Item->Item) {
+		_InventorySlot *Slot = &Bag.Slots[i];
+		if(Slot->Item) {
 
 			// Get bag button
 			std::stringstream Buffer;
@@ -135,11 +135,14 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 
 			// Draw item
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawScaledImage(DrawPosition, Item->Item->Texture, UI_SLOT_SIZE);
+			ae::Graphics.DrawScaledImage(DrawPosition, Slot->Item->Texture, UI_SLOT_SIZE);
+
+			// Draw cooldown overlay
+			HUD->DrawCooldown(Button, Slot->Item);
 
 			// Draw count
-			if(Item->Count > 1)
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(28, 28) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
+			if(Slot->Count > 1)
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(28, 28) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
 		}
 
 		BagIndex++;

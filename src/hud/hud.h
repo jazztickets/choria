@@ -226,6 +226,7 @@ class _HUD {
 		void DrawMessage();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level=0);
 		void DrawCursorItem();
+		void DrawCooldown(const ae::_Element *Button, const _Item *Item);
 
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
 

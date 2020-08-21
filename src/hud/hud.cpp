@@ -1236,30 +1236,8 @@ void _HUD::DrawActionBar() {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture, UI_SLOT_SIZE);
 
-			// Draw cooldown
-			auto CooldownIterator = Player->Character->Cooldowns.find(Item->ID);
-			if(CooldownIterator != Player->Character->Cooldowns.end() && CooldownIterator->second.MaxDuration > 0.0) {
-				double CooldownPercent = CooldownIterator->second.Duration / CooldownIterator->second.MaxDuration;
-
-				// Set up graphics
-				ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
-				ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
-
-				// Draw dark percentage bg
-				float OverlayHeight = (1.0 - CooldownPercent) * (Button->Bounds.End.y - Button->Bounds.Start.y);
-				ae::Graphics.DrawRectangle(Button->Bounds.Start + glm::vec2(0, OverlayHeight), Button->Bounds.End, true);
-
-				// Get size
-				std::stringstream Buffer;
-				Buffer << std::fixed << std::setprecision(1) << ae::Round((float)CooldownIterator->second.Duration);
-				ae::_TextBounds TextBounds;
-				ae::Assets.Fonts["hud_small"]->GetStringDimensions(Buffer.str(), TextBounds);
-				glm::vec2 TextSize(TextBounds.Width + 3, TextBounds.AboveBase + TextBounds.BelowBase + 3);
-
-				// Draw timer and overlay
-				ae::Graphics.DrawRectangle(glm::ivec2(DrawPosition - TextSize * 0.5f), glm::ivec2(DrawPosition + TextSize * 0.5f), true);
-				ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + glm::vec2(0, 7) * ae::_Element::GetUIScale()), ae::CENTER_BASELINE);
-			}
+			// Draw cooldown overlay
+			DrawCooldown(Button, Item);
 
 			// Draw item count
 			if(!Item->IsSkill())
@@ -1382,6 +1360,41 @@ void _HUD::DrawCursorItem() {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.DrawScaledImage(DrawPosition, Cursor.InventorySlot.Item->Texture, UI_SLOT_SIZE, ae::Assets.Colors["itemfade"]);
 	}
+}
+
+// Draw cooldown overlay
+void _HUD::DrawCooldown(const ae::_Element *Button, const _Item *Item) {
+
+	// Check cooldown
+	auto CooldownIterator = Player->Character->Cooldowns.find(Item->ID);
+	if(CooldownIterator == Player->Character->Cooldowns.end())
+		return;
+
+	if(CooldownIterator->second.MaxDuration <= 0.0)
+		return;
+
+	// Draw cooldown
+	double CooldownPercent = CooldownIterator->second.Duration / CooldownIterator->second.MaxDuration;
+
+	// Set up graphics
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
+
+	// Draw dark percentage bg
+	float OverlayHeight = (1.0 - CooldownPercent) * (Button->Bounds.End.y - Button->Bounds.Start.y);
+	ae::Graphics.DrawRectangle(Button->Bounds.Start + glm::vec2(0, OverlayHeight), Button->Bounds.End, true);
+
+	// Get size
+	std::stringstream Buffer;
+	Buffer << std::fixed << std::setprecision(1) << ae::Round((float)CooldownIterator->second.Duration);
+	ae::_TextBounds TextBounds;
+	ae::Assets.Fonts["hud_small"]->GetStringDimensions(Buffer.str(), TextBounds);
+	glm::vec2 TextSize(TextBounds.Width + 3, TextBounds.AboveBase + TextBounds.BelowBase + 3);
+
+	// Draw timer and overlay
+	glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
+	ae::Graphics.DrawRectangle(glm::ivec2(DrawPosition - TextSize * 0.5f), glm::ivec2(DrawPosition + TextSize * 0.5f), true);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::ivec2(DrawPosition + glm::vec2(0, 7) * ae::_Element::GetUIScale()), ae::CENTER_BASELINE);
 }
 
 // Draws an item's price

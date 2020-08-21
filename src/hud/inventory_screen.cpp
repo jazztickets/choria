@@ -152,6 +152,9 @@ void _InventoryScreen::DrawBag(BagType Type) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			ae::Graphics.DrawScaledImage(DrawPosition, Slot->Item->Texture, UI_SLOT_SIZE);
 
+			// Draw cooldown overlay
+			HUD->DrawCooldown(Button, Slot->Item);
+
 			// Draw two handed weapon twice in equipment bag
 			if(Type == BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
