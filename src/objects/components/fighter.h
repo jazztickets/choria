@@ -55,7 +55,7 @@ class _Fighter {
 		_Object *LastTarget[2];
 
 		// State
-		std::list<uint32_t> ItemDropsReceived;
+		std::vector<uint32_t> ItemDropsReceived;
 		double TurnTimer;
 		int GoldStolen;
 		int Corpse;

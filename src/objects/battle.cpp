@@ -677,7 +677,7 @@ void _Battle::ServerEndBattle() {
 
 			// Boss drops aren't divided up and only come from zonedrop
 			if(Boss) {
-				std::list<uint32_t> ItemDrops;
+				std::list<std::pair<uint32_t, int>> ItemDrops;
 
 				// Get items from zonedrops
 				Stats->Database->PrepareQuery("SELECT item_id, count FROM zonedrop WHERE zone_id = @zone_id");
@@ -685,18 +685,20 @@ void _Battle::ServerEndBattle() {
 				while(Stats->Database->FetchRow()) {
 					uint32_t ItemID = Stats->Database->GetInt<uint32_t>("item_id");
 					int Count = Stats->Database->GetInt<int>("count");
-					for(int i = 0; i < Count; i++)
-						ItemDrops.push_back(ItemID);
+					ItemDrops.push_back(std::pair(ItemID, Count));
 				}
 				Stats->Database->CloseQuery();
 
 				// Hand out drops
-				for(auto &ItemID : ItemDrops) {
+				for(auto &ItemDrop : ItemDrops) {
 					for(auto &Object : RewardObjects) {
 
 						// Give drops to players that don't have the boss on cooldown
-						if(!Object->Character->IsZoneOnCooldown(Zone))
-							Object->Fighter->ItemDropsReceived.push_back(ItemID);
+						if(!Object->Character->IsZoneOnCooldown(Zone)) {
+							int Count = ItemDrop.second * (Object->Character->Attributes["DropRate"].Mult() + 0.001f);
+							for(int i = 0; i < Count; i++)
+								Object->Fighter->ItemDropsReceived.push_back(ItemDrop.first);
+						}
 					}
 				}
 			}
