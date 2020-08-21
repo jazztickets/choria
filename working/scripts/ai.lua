@@ -220,22 +220,48 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 end
 
 AI_SkeletonPriest = {}
+AI_SkeletonPriest.HealThreshold = 0.65
 
 function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 
-	-- Heal
+	-- Get heal target
+	PlayerHealIndex = 0
+	OtherHealIndex = 0
+	LowestPlayerHealth = math.huge
+	LowestOtherHealth = math.huge
 	for i = 1, #Allies do
-		if Allies[i].Health > 0 and Allies[i].Health <= Allies[i].MaxHealth * 0.65 then
-
-			-- See if target can be healed
-			Object.AddTarget(Allies[i].Pointer)
-			if Object.SetAction(1) then
-				return
+		if Allies[i].Health > 0 and Allies[i].Health <= Allies[i].MaxHealth * self.HealThreshold then
+			if Allies[i].MonsterID == 0 then
+				if Allies[i].Health < LowestPlayerHealth then
+					PlayerHealIndex = i
+					LowestPlayerPercent = math.min(Allies[i].Health, LowestPlayerHealth)
+				end
+			else
+				if Allies[i].Health < LowestOtherHealth then
+					OtherHealIndex = i
+					LowestOtherHealth = math.min(Allies[i].Health, LowestOtherHealth)
+				end
 			end
-
-			-- Clear targets if heal can't be used
-			Object.ClearTargets()
 		end
+	end
+
+	-- Prioritize players
+	HealIndex = OtherHealIndex
+	if PlayerHealIndex ~= 0 then
+		HealIndex = PlayerHealIndex
+	end
+
+	-- Heal target
+	if HealIndex ~= 0 then
+
+		-- See if target can be healed
+		Object.AddTarget(Allies[HealIndex].Pointer)
+		if Object.SetAction(1) then
+			return
+		end
+
+		-- Clear targets if heal can't be used
+		Object.ClearTargets()
 	end
 
 	-- Find enemy with debuff
