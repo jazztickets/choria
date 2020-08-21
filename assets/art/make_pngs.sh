@@ -27,7 +27,7 @@ type parallel >/dev/null 2>&1 || {
 # function to optimize and rename png
 worker_img() {
 	mv "$1" "$2"
-	pngcrush -brute "$2" "$3"
+	pngcrush -s -brute "$2" "$3"
 }
 
 export -f worker_img
@@ -46,6 +46,8 @@ fi
 if [ -z "$scale" ]; then
 	scale=1
 fi
+echo "$file"
+echo "calculating..."
 
 # calculate density
 density=$((96 * $scale))
@@ -64,9 +66,11 @@ mkdir -p export
 rm -f export/*.png
 
 # export pngs
+echo "exporting..."
 convert -density ${density} -background none ${file} -crop ${width}x${height} -depth 8 +repage PNG32:export/_out.png
 
 # name files and optimize in parallel
+echo "compressing..."
 i=0
 for name in $names; do
 	oldname="export/_out-${i}.png"

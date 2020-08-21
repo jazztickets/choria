@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# check for zip
+type zip >/dev/null 2>&1 || {
+	echo >&2 "zip is not installed ";
+	exit 1;
+}
+
 dest="4k/textures/"
 rm -rf "$dest"
 
