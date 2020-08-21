@@ -1386,7 +1386,11 @@ void _HUD::DrawCooldown(const ae::_Element *Button, const _Item *Item) {
 
 	// Get size
 	std::stringstream Buffer;
-	Buffer << std::fixed << std::setprecision(1) << ae::Round((float)CooldownIterator->second.Duration);
+	double Duration = CooldownIterator->second.Duration;
+	if(Duration > 60.0)
+		Buffer << std::fixed << std::setprecision(1) << (int)(Duration / 60.0) << "m";
+	else
+		Buffer << std::fixed << std::setprecision(1) << ae::Round(Duration);
 	ae::_TextBounds TextBounds;
 	ae::Assets.Fonts["hud_small"]->GetStringDimensions(Buffer.str(), TextBounds);
 	glm::vec2 TextSize(TextBounds.Width + 3, TextBounds.AboveBase + TextBounds.BelowBase + 3);

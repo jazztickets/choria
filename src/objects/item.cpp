@@ -207,7 +207,11 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	if(!IsEquippable() && Cooldown > 0.0) {
 		DrawPosition.y += RewindSpacingY;
 		std::stringstream Buffer;
-		Buffer << std::fixed << std::setprecision(1) << Cooldown * Player->Character->Attributes["Cooldowns"].Mult() << " second cooldown";
+		double Duration = Cooldown * Player->Character->Attributes["Cooldowns"].Mult();
+		if(!ae::Input.ModKeyDown(KMOD_ALT) && Duration > 60.0)
+			Buffer << std::fixed << std::setprecision(1) << (int)(Duration / 60.0) << " minute cooldown";
+		else
+			Buffer << std::fixed << std::setprecision(1) << Duration << " second cooldown";
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 		DrawPosition.y += LargeSpacingY;
 	}

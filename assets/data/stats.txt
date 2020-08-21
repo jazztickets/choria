@@ -2996,8 +2996,8 @@ INSERT INTO item VALUES(220,10,0,1,1,0,0,0,'Torch','textures/items/torch.png',''
 INSERT INTO item VALUES(221,11,0,0,0,0,0,0,'Game Token','textures/items/token.png','','','',0,10,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(222,10,0,1,1,0,0,0,'Medium Torch','textures/items/medium_torch.png','','Item_Torch','',0,35,1,5,0,0,120.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(223,10,0,1,1,0,0,0,'Large Torch','textures/items/large_torch.png','','Item_Torch','',0,75,1,8,0,0,179.99999999999999999,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(224,10,0,1,1,0,0,0,'Bright Potion','textures/items/bright_potion.png','','Item_BrightPotion','',0,200,1,720,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(225,10,0,1,1,0,0,0,'Dark Potion','textures/items/dark_potion.png','','Item_DarkPotion','',0,400,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(224,10,0,1,1,0,0,0,'Bright Potion','textures/items/bright_potion.png','','Item_BrightPotion','',0,200,1,720,0,0,0.0,1440.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(225,10,0,1,1,0,0,0,'Dark Potion','textures/items/dark_potion.png','','Item_DarkPotion','',0,400,1,0,0,0,0.0,1440.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(226,12,0,0,1,21,0,0,'Skill Point I','textures/items/skillpoint1.png','','Item_SkillPoint','',0,250,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(227,12,0,0,1,22,0,0,'Skill Point II','textures/items/skillpoint1.png','','Item_SkillPoint','',0,500,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(228,12,0,0,1,23,0,0,'Skill Point III','textures/items/skillpoint1.png','','Item_SkillPoint','',0,1000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
