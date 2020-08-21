@@ -155,6 +155,22 @@ function Skill_SpiderBite.PlaySound(self, Level)
 	Audio.Play("spider0.ogg")
 end
 
+-- Arach bite --
+
+Skill_ArachBite = Base_Attack:New()
+
+function Skill_ArachBite.Proc(self, Roll, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Slowed.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = 5
+
+	return false
+end
+
+function Skill_ArachBite.PlaySound(self, Level)
+	Audio.Play("spider0.ogg")
+end
+
 -- Fang bite --
 
 Skill_FangBite = Base_Attack:New()

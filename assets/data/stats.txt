@@ -289,6 +289,7 @@ INSERT INTO ai VALUES(11,'AI_Jem');
 INSERT INTO ai VALUES(12,'AI_LavaSpitter');
 INSERT INTO ai VALUES(13,'AI_Zog');
 INSERT INTO ai VALUES(14,'AI_Attract');
+INSERT INTO ai VALUES(15,'AI_Arach');
 CREATE TABLE IF NOT EXISTS "unlock" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None')
@@ -352,6 +353,7 @@ INSERT INTO script VALUES(19,'Script_Boss',51);
 INSERT INTO script VALUES(20,'Script_Boss',52);
 INSERT INTO script VALUES(21,'Script_Boss',53);
 INSERT INTO script VALUES(22,'Script_Boss',54);
+INSERT INTO script VALUES(23,'Script_Boss',48);
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -1815,7 +1817,7 @@ INSERT INTO zone VALUES(44,'lavaspitter_lavaslime_skeletonmage',0,0.0,3,5);
 INSERT INTO zone VALUES(45,'jem',1,7199.9999999999999998,0,0);
 INSERT INTO zone VALUES(46,'zog',1,9999998.9999999999998,0,0);
 INSERT INTO zone VALUES(47,'forestspider_aquaslime_skeletonmage',0,0.0,2,5);
-INSERT INTO zone VALUES(48,'',0,0.0,1,1);
+INSERT INTO zone VALUES(48,'arach_watchers',1,3599.9999999999999999,0,0);
 INSERT INTO zone VALUES(49,'',0,0.0,1,1);
 INSERT INTO zone VALUES(50,'test',0,0.0,1,1);
 INSERT INTO zone VALUES(51,'sentinel_red',1,1440.0,0,0);
@@ -1968,6 +1970,9 @@ INSERT INTO zonedata VALUES(136,51,40,1,0,0);
 INSERT INTO zonedata VALUES(137,52,40,1,0,0);
 INSERT INTO zonedata VALUES(138,53,40,1,0,0);
 INSERT INTO zonedata VALUES(139,54,40,1,0,0);
+INSERT INTO zonedata VALUES(140,48,41,1,0,0);
+INSERT INTO zonedata VALUES(141,48,33,3,0,200);
+INSERT INTO zonedata VALUES(142,48,42,4,0,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2030,6 +2035,8 @@ INSERT INTO monster VALUES(37,'The Elite',1,20,'textures/monsters/the_elite.png'
 INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,1000000,1000000,1000000,10000,20000,100,4000,5.0,75,75,75,75,75,75);
 INSERT INTO monster VALUES(39,'Ice Imp',14,48,'textures/monsters/ice_imp.png',40,35,1200,0,100,225,10,0,2.0,-25,50,0,0,0,0);
 INSERT INTO monster VALUES(40,'Sentinel',1,20,'textures/monsters/sentinel.png',1000,1000,10000,0,1000,1000,100,100,10.0,75,75,75,75,75,25);
+INSERT INTO monster VALUES(41,'Arach',15,49,'textures/monsters/arach.png',5000,5000,50000,0,350,500,10,50,4.0,10,35,35,45,45,25);
+INSERT INTO monster VALUES(42,'Watcher',1,24,'textures/monsters/watcher.png',200,200,5000,0,150,250,5,5,1.8000000000000000444,0,25,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -2562,6 +2569,8 @@ INSERT INTO buildskill VALUES(80,42,40,5);
 INSERT INTO buildskill VALUES(81,5,14,1);
 INSERT INTO buildskill VALUES(82,48,67,1);
 INSERT INTO buildskill VALUES(83,47,27,20);
+INSERT INTO buildskill VALUES(84,49,60,100);
+INSERT INTO buildskill VALUES(85,49,68,70);
 CREATE TABLE IF NOT EXISTS "builditem" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES "build"(id) ON DELETE CASCADE,
@@ -2718,6 +2727,8 @@ INSERT INTO buildactionbar VALUES(94,42,40,5);
 INSERT INTO buildactionbar VALUES(95,5,14,2);
 INSERT INTO buildactionbar VALUES(96,48,67,0);
 INSERT INTO buildactionbar VALUES(97,47,27,6);
+INSERT INTO buildactionbar VALUES(98,49,60,0);
+INSERT INTO buildactionbar VALUES(99,49,68,1);
 CREATE TABLE IF NOT EXISTS "set" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2857,7 +2868,7 @@ INSERT INTO item VALUES(64,1,2,2,2,0,0,0,'Skeleton Attack','textures/skills/mons
 INSERT INTO item VALUES(65,1,3,2,2,0,0,0,'Demon Attack','textures/skills/monster_attack.png','','Skill_DemonAttack','',0,0,0,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(66,1,2,2,2,0,0,0,'Sting','textures/skills/sting.png','','Skill_Sting','',0,0,0,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(67,1,4,2,2,0,0,0,'Ice Imp Attack','textures/skills/monster_attack.png','','Skill_IceImpAttack','',0,0,0,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(68,1,2,2,2,0,0,0,'','','','','',0,0,0,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(68,1,2,2,2,0,0,0,'Arach Bite','textures/skills/spider_bite.png','','Skill_ArachBite','',0,0,0,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(69,1,2,2,2,0,0,0,'','','','','',0,0,0,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(70,1,2,2,2,0,0,0,'','','','','',0,0,0,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(96,12,0,0,1,1,0,0,'Skill Slot I','textures/items/skillslot1.png','','Item_SkillSlot','',0,500,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -3144,6 +3155,9 @@ INSERT INTO zonedrop VALUES(33,52,340,1);
 INSERT INTO zonedrop VALUES(34,53,339,1);
 INSERT INTO zonedrop VALUES(35,54,341,1);
 INSERT INTO zonedrop VALUES(36,20,134,2);
+INSERT INTO zonedrop VALUES(37,48,115,30);
+INSERT INTO zonedrop VALUES(38,48,114,35);
+INSERT INTO zonedrop VALUES(39,48,319,1);
 CREATE TABLE IF NOT EXISTS "build" (
 "id" INTEGER PRIMARY KEY,
 "name" TEXT,
@@ -3201,6 +3215,7 @@ INSERT INTO build VALUES(45,'Jem','',0,0,0);
 INSERT INTO build VALUES(46,'Lava Spitter','',0,0,0);
 INSERT INTO build VALUES(47,'Zog','',0,0,0);
 INSERT INTO build VALUES(48,'Ice Imp','',0,0,0);
+INSERT INTO build VALUES(49,'Arach','',0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

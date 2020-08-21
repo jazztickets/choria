@@ -426,6 +426,41 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 	end
 end
 
+AI_Arach = {}
+
+function AI_Arach.Update(self, Object, Enemies, Allies)
+
+	local Storage = Battles[Object.BattleID]
+	if Storage[Object.ID] == nil then
+		Storage[Object.ID] = { Turns = 0 }
+	end
+
+	-- Special attack
+	if (Storage[Object.ID].Turns % 4) == 0 then
+		for i = 1, #Enemies do
+			Object.AddTarget(Enemies[i].Pointer)
+		end
+
+		if Object.SetAction(1) then
+			Storage[Object.ID].Turns = Storage[Object.ID].Turns + 1
+			return
+		end
+
+		Object.ClearTargets()
+	end
+
+	-- Get random target
+	Target = Random.GetInt(1, #Enemies)
+
+	-- Set target
+	AI_AddTarget(Object, Enemies[Target], true)
+
+	-- Set skill
+	if Object.SetAction(0) then
+		Storage[Object.ID].Turns = Storage[Object.ID].Turns + 1
+	end
+end
+
 AI_Jem = {}
 
 function AI_Jem.Update(self, Object, Enemies, Allies)
