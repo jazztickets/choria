@@ -2890,8 +2890,8 @@ INSERT INTO item VALUES(110,10,0,1,1,0,0,0,'Invisibility Potion','textures/items
 INSERT INTO item VALUES(111,6,2,0,0,0,0,2,'Quarter Staff','textures/items/quarter_staff.png','','SetBonus_QuarterStaff','Proc_Harden',0,120,1,10,10,15,5.0,0.0,1,40,100,0,5,0,0,0,15,0,0,10,0,0,0,2,0,2,0,0,0);
 INSERT INTO item VALUES(112,13,0,0,0,0,0,0,'Cellar Key','textures/items/key0.png','','','',0,100,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(113,3,0,0,0,0,8,4,'Bronze Armor','textures/items/bronze_armor.png','','','',0,225,1,0,10,0,0.0,0.0,1,0,0,9,2,0,5,0,0,0,0,-6,-3,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(114,10,0,1,1,0,0,0,'Crow Feather','textures/items/crow_feather.png','','Item_CrowFeather','',0,8,1,20,0,0,20.0,25.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(115,10,0,1,3,0,0,0,'Spider Leg','textures/items/spider_leg.png','','Item_SpiderLeg','',0,15,1,30,0,0,15.0,20.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(114,10,0,1,1,0,0,0,'Crow Feather','textures/items/crow_feather.png','','Item_CrowFeather','',0,8,1,20,0,0,20.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(115,10,0,1,3,0,0,0,'Spider Leg','textures/items/spider_leg.png','','Item_SpiderLeg','',0,15,1,30,0,0,15.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(116,10,0,5,2,0,0,0,'Elusive Potion','textures/items/elusive_potion.png','','Item_ElusivePotion','',0,200,1,30,0,0,10.0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(117,6,2,0,0,0,0,1,'Axe','textures/items/axe.png','','SetBonus_Axe','Proc_Blind',0,225,1,20,10,15,5.0,0.0,1,60,120,-1,0,0,0,0,0,0,0,-5,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(118,14,2,0,0,0,0,1,'Small Knife','textures/items/small_knife.png','','SetBonus_SmallKnife','Proc_Bleed',0,15,1,10,10,20,5.0,0.0,1,10,10,0,1,5,0,0,0,0,0,15,0,0,0,0,0,0,0,0,0);
@@ -2900,8 +2900,8 @@ INSERT INTO item VALUES(120,4,0,0,0,0,7,3,'Leather Boots','textures/items/leathe
 INSERT INTO item VALUES(121,2,0,0,0,0,7,3,'Leather Helm','textures/items/leather_helm.png','','','',0,65,1,0,10,0,0.0,0.0,1,0,0,2,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(122,4,0,0,0,0,8,4,'Bronze Boots','textures/items/bronze_boots.png','','','',0,90,1,0,10,0,0.0,0.0,1,0,0,4,0,0,2,0,0,0,0,-2,-2,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(123,2,0,0,0,0,8,8,'Iron Helm','textures/items/iron_helm.png','','','',0,1100,1,0,20,0,0.0,0.0,1,0,0,10,0,0,4,0,0,0,0,-4,-3,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(124,10,0,1,3,0,0,0,'Fang','textures/items/fang.png','','Item_Fang','',0,20,1,50,0,0,15.0,20.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(125,10,0,1,3,0,0,0,'Slimy Glob','textures/items/glob.png','','Item_SlimyGlob','',0,10,1,50,0,0,15.0,20.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(124,10,0,1,3,0,0,0,'Fang','textures/items/fang.png','','Item_Fang','',0,20,1,50,0,0,15.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(125,10,0,1,3,0,0,0,'Slimy Glob','textures/items/glob.png','','Item_SlimyGlob','',0,10,1,50,0,0,15.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(126,11,0,0,0,0,0,0,'Bat Trophy','textures/items/bat_trophy.png','','','',0,125,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(127,10,0,1,3,0,0,0,'Soothing Salve','textures/items/soothing_salve.png','','Item_HealingSalve','',0,50,1,150,0,0,5.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(128,10,0,1,3,0,0,0,'Arcane Cider','textures/items/arcane_cider.png','','Item_ManaCider','',0,75,1,50,0,0,10.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
