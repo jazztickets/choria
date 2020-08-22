@@ -713,7 +713,7 @@ void _Battle::ServerEndBattle() {
 
 						// Generate item
 						std::vector<uint32_t> ItemDrops;
-						ItemDrops.reserve(2);
+						ItemDrops.reserve(1);
 						Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, ItemDrops, Player->Character->Attributes["DropRate"].Mult());
 						for(auto &ItemID : ItemDrops)
 							Player->Fighter->ItemDropsReceived.push_back(ItemID);

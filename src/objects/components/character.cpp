@@ -98,6 +98,7 @@ _Character::_Character(_Object *Object) :
 	Bot(false) {
 
 	ActionBar.resize(ACTIONBAR_MAX_SIZE);
+	Targets.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 }
 
 // Destructor

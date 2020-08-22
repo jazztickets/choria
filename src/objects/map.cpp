@@ -1018,7 +1018,7 @@ void _Map::AddObject(_Object *Object) {
 }
 
 // Returns a list of players close to a player that can battle
-void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players) {
+void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::vector<_Object *> &Players) {
 	if(Player && Player->Character->Offline)
 		return;
 
@@ -1081,7 +1081,7 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 }
 
 // Returns target players appropriate for pvp
-void _Map::GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players, bool UsePVPZone) {
+void _Map::GetPVPPlayers(const _Object *Attacker, std::vector<_Object *> &Players, bool UsePVPZone) {
 	if(Attacker && Attacker->Character->Offline)
 		return;
 

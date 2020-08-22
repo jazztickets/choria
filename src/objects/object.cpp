@@ -1633,7 +1633,8 @@ bool _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 			int TargetCount = Item->GetTargetCount(Scripting, this, false);
 
 			// Get list of objects on each side
-			std::list<_Object *> ObjectList;
+			std::vector<_Object *> ObjectList;
+			ObjectList.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 			for(auto &Object : Battle->Objects) {
 				if(Object->Fighter->BattleSide == Target->Fighter->BattleSide)
 					ObjectList.push_back(Object);
@@ -1655,6 +1656,7 @@ bool _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 					if(TargetCount <= 0)
 						break;
 				}
+
 				++Iterator;
 				if(Iterator == ObjectList.end())
 					Iterator = ObjectList.begin();

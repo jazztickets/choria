@@ -2292,7 +2292,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			return;
 
 		// Get list of players on current tile
-		std::list<_Object *> Players;
+		std::vector<_Object *> Players;
+		Players.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 		BattleEvent.Object->Map->GetPVPPlayers(BattleEvent.Object, Players, BattleEvent.BountyEarned > 0);
 		if(!Players.size())
 			return;
@@ -2326,7 +2327,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 	else {
 
 		// Get a list of players
-		std::list<_Object *> Players;
+		std::vector<_Object *> Players;
+		Players.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, BATTLE_COOP_DISTANCE, BATTLE_MAX_OBJECTS_PER_SIDE-1, Players);
 		int AdditionalCount = 0;
 		if(!BattleEvent.Scripted)
@@ -2367,7 +2369,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Players.push_back(BattleEvent.Object);
 
 		// Sort by network id
-		Players.sort(CompareObjects);
+		std::sort(Players.begin(), Players.end(), CompareObjects);
 
 		// Get difficulty
 		int Difficulty = 0;

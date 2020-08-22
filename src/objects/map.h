@@ -129,9 +129,9 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void AddObject(_Object *Object);
 		void RemoveObject(const _Object *RemoveObject);
 		void SendObjectList(ae::_Peer *Peer);
-		void GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players);
+		void GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::vector<_Object *> &Players);
 		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction);
-		void GetPVPPlayers(const _Object *Attacker, std::list<_Object *> &Players, bool UsePVPZone);
+		void GetPVPPlayers(const _Object *Attacker, std::vector<_Object *> &Players, bool UsePVPZone);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		_Object *FindDeadPlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(const _Event &Event, glm::ivec2 &Position) const;

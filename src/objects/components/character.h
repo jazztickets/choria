@@ -229,7 +229,7 @@ class _Character {
 		bool TradeAccepted;
 
 		// Actions
-		std::list<_Object *> Targets;
+		std::vector<_Object *> Targets;
 		_Action Action;
 
 		// Map
