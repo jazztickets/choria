@@ -341,7 +341,8 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 	}
 
 	// Get list of objects on each side
-	std::list<_Object *> ObjectList;
+	std::vector<_Object *> ObjectList;
+	ObjectList.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 	GetObjectList(Side, ObjectList);
 	auto Iterator = ObjectList.begin();
 
@@ -392,7 +393,8 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 		BattleTargetSide = !BattleTargetSide;
 
 	// Get list of objects on target side
-	std::list<_Object *> ObjectList;
+	std::vector<_Object *> ObjectList;
+	ObjectList.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 	GetObjectList(BattleTargetSide, ObjectList);
 
 	// Get iterator to current target
@@ -508,7 +510,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 }
 
 // Get a list of objects from a side
-void _Battle::GetObjectList(int Side, std::list<_Object *> &SideObjects) {
+void _Battle::GetObjectList(int Side, std::vector<_Object *> &SideObjects) {
 
 	for(auto &Object : Objects) {
 		if(Object->Fighter->BattleSide == Side) {
@@ -584,7 +586,9 @@ void _Battle::ServerEndBattle() {
 
 	// Get statistics for each side
 	_BattleResult SideStats[2];
-	std::list<_Object *> SideObjects[2];
+	std::vector<_Object *> SideObjects[2];
+	SideObjects[0].reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
+	SideObjects[1].reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 	for(int Side = 0; Side < 2; Side++) {
 
 		// Get a list of objects that are still in the battle

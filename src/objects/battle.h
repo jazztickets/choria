@@ -21,6 +21,7 @@
 #include <ae/baseobject.h>
 #include <objects/action.h>
 #include <list>
+#include <vector>
 #include <cstdint>
 
 // Forward Declarations
@@ -87,7 +88,7 @@ class _Battle : public ae::_BaseObject {
 		void AddObject(_Object *Object, uint8_t Side, bool Join=false);
 		void RemoveObject(_Object *RemoveObject);
 		void GetSeparateObjectList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies);
-		void GetObjectList(int Side, std::list<_Object *> &SideObjects);
+		void GetObjectList(int Side, std::vector<_Object *> &SideObjects);
 		int GetPeerCount();
 
 		// Updates

@@ -2192,7 +2192,8 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 void _Server::AddBattleSummons(_Battle *Battle, int Side, _Object *JoinPlayer, bool Join) {
 
 	// Get list of objects on a side
-	std::list<_Object *> ObjectList;
+	std::vector<_Object *> ObjectList;
+	ObjectList.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 	Battle->GetObjectList(Side, ObjectList);
 
 	// Iterate over all players in battle, collecting summons for each player
