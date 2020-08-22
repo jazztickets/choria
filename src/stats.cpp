@@ -823,7 +823,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops, float DropRate) const {
+void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::vector<uint32_t> &ItemDrops, float DropRate) const {
 	if(MonsterID == 0)
 		return;
 
@@ -832,7 +832,8 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 	Database->BindInt(1, MonsterID);
 
 	// Get list of possible drops and build CDT
-	std::list<_ItemDrop> PossibleItemDrops;
+	std::vector<_ItemDrop> PossibleItemDrops;
+	PossibleItemDrops.reserve(10);
 	uint32_t OddsSum = 0;
 	uint32_t AddedOdds = 0;
 	while(Database->FetchRow()) {

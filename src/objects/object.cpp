@@ -288,7 +288,9 @@ void _Object::UpdateBot(double FrameTime) {
 				Character->Action.Item = nullptr;
 
 			// Separate object list
-			std::list<_Object *> Allies, Enemies;
+			std::vector<_Object *> Allies, Enemies;
+			Allies.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
+			Enemies.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 			Character->Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
 
 			// Call lua script
@@ -315,7 +317,9 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 	if(Fighter->TurnTimer >= 1.0 && !Character->Action.IsSet()) {
 
 		// Separate object list
-		std::list<_Object *> Allies, Enemies;
+		std::vector<_Object *> Allies, Enemies;
+		Allies.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
+		Enemies.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 		Character->Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
 
 		// Call lua script

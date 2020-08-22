@@ -693,7 +693,7 @@ void _Scripting::PushStatusEffect(_StatusEffect *StatusEffect) {
 }
 
 // Push list of objects
-void _Scripting::PushObjectList(std::list<_Object *> &Objects) {
+void _Scripting::PushObjectList(std::vector<_Object *> &Objects) {
 	lua_newtable(LuaState);
 
 	int Index = 1;

@@ -76,6 +76,7 @@ _Battle::_Battle() :
 	WaitTimer(0),
 	BattleElement(nullptr) {
 
+	Objects.reserve(BATTLE_MAX_OBJECTS_PER_SIDE * 2);
 }
 
 // Destructor
@@ -511,21 +512,9 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 
 // Get a list of objects from a side
 void _Battle::GetObjectList(int Side, std::vector<_Object *> &SideObjects) {
-
 	for(auto &Object : Objects) {
-		if(Object->Fighter->BattleSide == Side) {
+		if(Object->Fighter->BattleSide == Side)
 			SideObjects.push_back(Object);
-		}
-	}
-}
-
-// Get a list of alive objects from a side
-void _Battle::GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects) {
-
-	for(auto &Object : Objects) {
-		if(Object->Fighter->BattleSide == Side && Object->Character->IsAlive()) {
-			AliveObjects.push_back(Object);
-		}
 	}
 }
 
@@ -670,7 +659,8 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// Get list of objects that get rewards
-		std::list<_Object *> RewardObjects;
+		std::vector<_Object *> RewardObjects;
+		RewardObjects.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
 		for(auto &Object : SideObjects[WinningSide]) {
 			if(Object->Character->IsAlive() && !Object->IsMonster())
 				RewardObjects.push_back(Object);
@@ -681,7 +671,8 @@ void _Battle::ServerEndBattle() {
 
 			// Boss drops aren't divided up and only come from zonedrop
 			if(Boss) {
-				std::list<std::pair<uint32_t, int>> ItemDrops;
+				std::vector<std::pair<uint32_t, int>> ItemDrops;
+				ItemDrops.reserve(10);
 
 				// Get items from zonedrops
 				Stats->Database->PrepareQuery("SELECT item_id, count FROM zonedrop WHERE zone_id = @zone_id");
@@ -708,20 +699,21 @@ void _Battle::ServerEndBattle() {
 			}
 			else {
 
-				// Convert winning side list to array
-				std::vector<_Object *> ObjectArray { std::begin(RewardObjects), std::end(RewardObjects) };
-				std::shuffle(ObjectArray.begin(), ObjectArray.end(), ae::RandomGenerator);
+				// Get shuffled copy of reward objects
+				std::vector<_Object *> ShuffledRewardObjects { std::begin(RewardObjects), std::end(RewardObjects) };
+				std::shuffle(ShuffledRewardObjects.begin(), ShuffledRewardObjects.end(), ae::RandomGenerator);
 
 				// Iterate through monsters
 				size_t PlayerIndex = 0;
 				for(auto &Object : SideObjects[!WinningSide]) {
 					if(Object->IsMonster()) {
-						_Object *Player = ObjectArray[PlayerIndex++];
-						if(PlayerIndex >= ObjectArray.size())
+						_Object *Player = ShuffledRewardObjects[PlayerIndex++];
+						if(PlayerIndex >= ShuffledRewardObjects.size())
 							PlayerIndex = 0;
 
 						// Generate item
-						std::list<uint32_t> ItemDrops;
+						std::vector<uint32_t> ItemDrops;
+						ItemDrops.reserve(2);
 						Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, ItemDrops, Player->Character->Attributes["DropRate"].Mult());
 						for(auto &ItemID : ItemDrops)
 							Player->Fighter->ItemDropsReceived.push_back(ItemID);
@@ -1065,7 +1057,7 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 }
 
 // Get list of allies and enemies from object list
-void _Battle::GetSeparateObjectList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies) {
+void _Battle::GetSeparateObjectList(uint8_t Side, std::vector<_Object *> &Allies, std::vector<_Object *> &Enemies) {
 	for(const auto &Object : Objects) {
 		if(Object->Deleted)
 			continue;
