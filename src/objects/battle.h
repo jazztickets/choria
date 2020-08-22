@@ -108,6 +108,7 @@ class _Battle : public ae::_BaseObject {
 		void ClientHandlePlayerAction(ae::_Buffer &Data);
 		void ClientSetAction(uint8_t ActionBarSlot);
 		void ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget);
+		void ClientChangeTarget(int Direction, bool SideDirection);
 
 		// Pointers
 		const _Stats *Stats;
@@ -135,8 +136,6 @@ class _Battle : public ae::_BaseObject {
 		void GetBattleOffset(int SideIndex, _Object *Object);
 		void AdjustBattleElements(int SideIndex, _Object *Object);
 		void CreateBattleElements(int SideIndex, _Object *Object);
-
-		void ChangeTarget(int Direction, bool SideDirection);
 
 		void GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects);
 

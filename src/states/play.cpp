@@ -1641,6 +1641,12 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	// Play audio
 	if(ItemUsed)
 		ItemUsed->PlaySound(Scripting);
+
+	// Update potential targets on client
+	if(Battle) {
+		Battle->ClientChangeTarget(1, false);
+		Battle->ClientChangeTarget(-1, false);
+	}
 }
 
 // Handles a stat change

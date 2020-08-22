@@ -375,7 +375,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 }
 
 // Changes targets
-void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
+void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 	if(!ClientNetwork || !ClientPlayer->Fighter->PotentialAction.IsSet() || !ClientPlayer->Character->IsAlive() || !ClientPlayer->Character->Targets.size())
 		return;
 
@@ -1107,16 +1107,16 @@ bool _Battle::ClientHandleInput(size_t Action, bool MouseCombat) {
 			return MouseCombat;
 		break;
 		case Action::GAME_UP:
-			ChangeTarget(-1, 0);
+			ClientChangeTarget(-1, false);
 			return false;
 		break;
 		case Action::GAME_DOWN:
-			ChangeTarget(1, 0);
+			ClientChangeTarget(1, false);
 			return false;
 		break;
 		case Action::GAME_LEFT:
 		case Action::GAME_RIGHT:
-			ChangeTarget(0, true);
+			ClientChangeTarget(0, true);
 			return false;
 		break;
 	}
