@@ -164,7 +164,6 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		std::map<_Event, std::vector<glm::ivec2>> IndexedEvents;
 
 		// Graphics
-		bool UseAtlas;
 		const ae::_Atlas *TileAtlas;
 		glm::vec4 AmbientLight;
 		glm::vec4 LightFilter;

@@ -86,7 +86,6 @@ const std::vector<double> DayCyclesTime = {
 _Map::_Map() :
 	Tiles(nullptr),
 	Size(0, 0),
-	UseAtlas(false),
 	TileAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	OutsideFlag(1),
@@ -116,7 +115,7 @@ _Map::~_Map() {
 	delete BackgroundMap;
 
 	// Delete atlas
-	if(UseAtlas)
+	if(!Server)
 		CloseAtlas();
 
 	// Delete map data
@@ -799,11 +798,10 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	OutsideFlag = MapStat->Outside;
 
 	// Load background map
-	if(UseAtlas && MapStat->BackgroundMapID) {
+	if(!Server && MapStat->BackgroundMapID) {
 		BackgroundOffset = MapStat->BackgroundOffset;
 
 		BackgroundMap = new _Map();
-		BackgroundMap->UseAtlas = true;
 		try {
 			BackgroundMap->Load(&Stats->Maps.at(MapStat->BackgroundMapID), true);
 		}
@@ -901,9 +899,8 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	IndexEvents();
 
 	// Initialize 2d tile rendering
-	if(UseAtlas) {
+	if(!Server)
 		InitAtlas(MapStat->Atlas, Static);
-	}
 
 	// Initialize path finding
 	Pather = new micropather::MicroPather(this, (unsigned)(Size.x * Size.y), 4);

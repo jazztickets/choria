@@ -57,6 +57,9 @@ void RunCommandThread(_Server *Server) {
 		else if(Input == "b" || Input == "battles") {
 			DedicatedState.ShowBattles();
 		}
+		else if(Input.substr(0, 3) == "say" && Input.size() > 4) {
+			Server->BroadcastMessage(nullptr, Input.substr(4, std::string::npos), "purple");
+		}
 		else if(Input.substr(0, 4) == "slap" && Input.size() > 5) {
 			ae::NetworkIDType PlayerID = std::stoi(Input.substr(5, std::string::npos));
 			Server->Slap(PlayerID, 25);
@@ -125,9 +128,11 @@ void _DedicatedState::Update(double FrameTime) {
 // List available commands
 void _DedicatedState::ShowCommands() {
 	std::cout << std::endl;
-	std::cout << "stop [seconds]" << std::endl;
-	std::cout << "players" << std::endl;
 	std::cout << "battles" << std::endl;
+	std::cout << "players" << std::endl;
+	std::cout << "stop [seconds]" << std::endl;
+	std::cout << "slap [network_id]" << std::endl;
+	std::cout << "say [message]" << std::endl;
 }
 
 // Show all players

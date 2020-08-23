@@ -1253,7 +1253,7 @@ end
 Item_EternalStrength = { Type = 1 }
 
 function Item_EternalStrength.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] damage bonus", Source)
+	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] damage power bonus", Source)
 end
 
 function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result)

@@ -282,7 +282,7 @@ void _Server::Update(double FrameTime) {
 	if(StartShutdownTimer) {
 		ShutdownTime -= FrameTime;
 		if(std::abs(std::fmod(ShutdownTime, 5.0)) >= 4.99)
-			BroadcastMessage(nullptr, "The server will be shutting down in " + std::to_string((int)(ShutdownTime + 0.5)) + " seconds.", "red");
+			BroadcastMessage(nullptr, "The server will be shutting down in " + std::to_string((int)(ShutdownTime + 0.5)) + " seconds", "red");
 
 		if(ShutdownTime <= 0) {
 			StartDisconnect = true;

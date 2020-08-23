@@ -951,7 +951,6 @@ void _EditorState::CreateMap() {
 	// Create map
 	Map = new _Map();
 	Map->Stats = Stats;
-	Map->UseAtlas = true;
 	Map->Size = Size;
 	Map->InitAtlas("textures/map/" + MAP_DEFAULT_TILESET);
 	Map->AllocateMap();
@@ -1032,7 +1031,6 @@ void _EditorState::LoadMap() {
 	// Attempt to load map
 	_Map *NewMap = new _Map();
 	NewMap->Stats = Stats;
-	NewMap->UseAtlas = true;
 	uint32_t OldMapID = MapID;
 	try {
 		MapID = Stats->GetMapIDByPath(Path);
