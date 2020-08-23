@@ -404,7 +404,11 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), ClientPlayer->Character->Targets.front());
 
 	// Get target count
-	size_t TargetCount = ClientPlayer->Character->Targets.size();
+	size_t TargetCount;
+	if(Item->TargetID == TargetType::ENEMY_ALL || Item->TargetID == TargetType::ALLY_ALL)
+		TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
+	else
+		TargetCount = ClientPlayer->Character->Targets.size();
 	ClientPlayer->Character->Targets.clear();
 
 	// Get max available targets

@@ -189,6 +189,7 @@ void _SkillScreen::Render(double BlendFactor) {
 		return;
 
 	Element->Render();
+	glm::vec2 DrawPosition = glm::vec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 42 * ae::_Element::GetUIScale());
 
 	// Show remaining skill points
 	std::string Text = std::to_string(HUD->Player->Character->GetSkillPointsAvailable()) + " skill point";
@@ -213,7 +214,7 @@ void _SkillScreen::Render(double BlendFactor) {
 			Text += " (" + SubText + ")";
 	}
 
-	glm::vec2 DrawPosition = glm::vec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 42 * ae::_Element::GetUIScale());
+	ae::Assets.Fonts["hud_tiny"]->DrawText("Hold Alt for more info", DrawPosition + glm::vec2(-384, 28) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE, ae::Assets.Colors["gray"]);
 	ae::Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE);
 
 	// Show skill points unused
