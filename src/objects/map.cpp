@@ -877,15 +877,18 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 			case 'O': {
 				glm::ivec2 Coordinate;
 				File >> Coordinate.x >> Coordinate.y;
-				Object = new _Object();
-				Object->Position = Coordinate;
-				StaticObjects.push_back(Object);
+				if(!Server) {
+					Object = new _Object();
+					Object->Position = Coordinate;
+					StaticObjects.push_back(Object);
+				}
+				else
+					Object = nullptr;
 			} break;
 			// Object light
 			case 'l': {
-				if(Object) {
+				if(Object)
 					File >> Object->Light;
-				}
 			} break;
 			default:
 				File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
