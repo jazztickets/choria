@@ -860,8 +860,16 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 			} break;
 			// Event
 			case 'e': {
-				if(Tile)
+				if(Tile) {
 					File >> Tile->Event.Type >> Tile->Event.Data;
+
+					// Create static objects for boss events
+					if(!Server && Stats && Tile->Event.Type == EVENT_SCRIPT) {
+						const _Script &Script = Stats->Scripts.at(Tile->Event.Data);
+						if(Script.Name == "Script_Boss") {
+						}
+					}
+				}
 			} break;
 			// Wall
 			case 'w': {
