@@ -189,13 +189,16 @@ void _Character::Update(double FrameTime) {
 	}
 
 	// Update battle cooldowns
+	bool SendBossCooldownUpdate = false;
 	if(IdleTime <= PLAYER_IDLE_TIME) {
 		for(auto Iterator = BossCooldowns.begin(); Iterator != BossCooldowns.end(); ) {
 			Iterator->second -= FrameTime;
 
 			// Remove cooldown
-			if(Iterator->second <= 0.0)
+			if(Iterator->second <= 0.0) {
+				SendBossCooldownUpdate = true;
 				Iterator = BossCooldowns.erase(Iterator);
+			}
 			else
 				++Iterator;
 		}
@@ -210,6 +213,14 @@ void _Character::Update(double FrameTime) {
 			Iterator = Cooldowns.erase(Iterator);
 		else
 			++Iterator;
+	}
+
+	// Notify client of boss being off cooldown
+	if(Object->Server && SendBossCooldownUpdate) {
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::PLAYER_BOSSCOOLDOWNS);
+		Object->SerializeBossCooldowns(Packet);
+		Object->SendPacket(Packet);
 	}
 }
 

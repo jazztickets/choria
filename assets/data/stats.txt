@@ -329,31 +329,31 @@ CREATE TABLE IF NOT EXISTS "script" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
 	"level" INTEGER DEFAULT(0)
-);
-INSERT INTO script VALUES(0,'None',0);
-INSERT INTO script VALUES(1,'Script_Rejuv',20);
-INSERT INTO script VALUES(2,'Script_Lava',10);
-INSERT INTO script VALUES(3,'Script_Boss',7);
-INSERT INTO script VALUES(4,'Script_Boss',12);
-INSERT INTO script VALUES(5,'Script_Boss',17);
-INSERT INTO script VALUES(6,'Script_Boss',20);
-INSERT INTO script VALUES(7,'Script_Boss',23);
-INSERT INTO script VALUES(8,'Script_Boss',33);
-INSERT INTO script VALUES(9,'Script_Boss',38);
-INSERT INTO script VALUES(10,'Script_Boss',39);
-INSERT INTO script VALUES(11,'Script_Fall',16);
-INSERT INTO script VALUES(12,'Script_Boss',41);
-INSERT INTO script VALUES(13,'Script_Slow',10);
-INSERT INTO script VALUES(14,'Script_Slow',30);
-INSERT INTO script VALUES(15,'Script_Fall',20);
-INSERT INTO script VALUES(16,'Script_Lava',100);
-INSERT INTO script VALUES(17,'Script_Boss',45);
-INSERT INTO script VALUES(18,'Script_Boss',46);
-INSERT INTO script VALUES(19,'Script_Boss',51);
-INSERT INTO script VALUES(20,'Script_Boss',52);
-INSERT INTO script VALUES(21,'Script_Boss',53);
-INSERT INTO script VALUES(22,'Script_Boss',54);
-INSERT INTO script VALUES(23,'Script_Boss',48);
+, "data" TEXT);
+INSERT INTO script VALUES(0,'None',0,'');
+INSERT INTO script VALUES(1,'Script_Rejuv',20,'');
+INSERT INTO script VALUES(2,'Script_Lava',10,'');
+INSERT INTO script VALUES(3,'Script_Boss',7,'textures/objects/bat_lord.png');
+INSERT INTO script VALUES(4,'Script_Boss',12,'textures/objects/king_krab.png');
+INSERT INTO script VALUES(5,'Script_Boss',17,'textures/objects/boss.png');
+INSERT INTO script VALUES(6,'Script_Boss',20,'textures/objects/water_crab.png');
+INSERT INTO script VALUES(7,'Script_Boss',23,'textures/objects/slime_prince.png');
+INSERT INTO script VALUES(8,'Script_Boss',33,'textures/objects/boss.png');
+INSERT INTO script VALUES(9,'Script_Boss',38,'textures/objects/boss.png');
+INSERT INTO script VALUES(10,'Script_Boss',39,'textures/objects/boss.png');
+INSERT INTO script VALUES(11,'Script_Fall',16,'');
+INSERT INTO script VALUES(12,'Script_Boss',41,'textures/objects/boss.png');
+INSERT INTO script VALUES(13,'Script_Slow',10,'');
+INSERT INTO script VALUES(14,'Script_Slow',30,'');
+INSERT INTO script VALUES(15,'Script_Fall',20,'');
+INSERT INTO script VALUES(16,'Script_Lava',100,'');
+INSERT INTO script VALUES(17,'Script_Boss',45,'textures/objects/jem.png');
+INSERT INTO script VALUES(18,'Script_Boss',46,'textures/objects/boss.png');
+INSERT INTO script VALUES(19,'Script_Boss',51,'textures/objects/sentinel.png');
+INSERT INTO script VALUES(20,'Script_Boss',52,'textures/objects/sentinel.png');
+INSERT INTO script VALUES(21,'Script_Boss',53,'textures/objects/sentinel.png');
+INSERT INTO script VALUES(22,'Script_Boss',54,'textures/objects/sentinel.png');
+INSERT INTO script VALUES(23,'Script_Boss',48,'textures/objects/arach.png');
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),

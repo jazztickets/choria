@@ -472,6 +472,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/minigames/", false, false, false);
 	ae::Assets.LoadTextureDirectory("textures/models/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/monsters/", false, false, true);
+	ae::Assets.LoadTextureDirectory("textures/objects/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/portraits/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/skills/", false, false, true);
 	ae::Assets.LoadTextureDirectory("textures/status/", false, false, true);

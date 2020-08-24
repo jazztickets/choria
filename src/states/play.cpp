@@ -945,6 +945,9 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 		case PacketType::PLAYER_STATUSEFFECTS:
 			HandleStatusEffects(Data);
 		break;
+		case PacketType::PLAYER_BOSSCOOLDOWNS:
+			HandleBossCooldowns(Data);
+		break;
 		default:
 			Menu.HandlePacket(Data, Type);
 		break;
@@ -1498,6 +1501,9 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	StatChange.Object = Player;
 
 	// Get ending stats
+	double BossCooldown = Data.Read<float>();
+	if(BossCooldown && Battle->Zone)
+		Player->Character->BossCooldowns[Battle->Zone] = BossCooldown;
 	Player->Character->Attributes["PlayerKills"].Int = Data.Read<int>();
 	Player->Character->Attributes["MonsterKills"].Int = Data.Read<int>();
 	Player->Character->Attributes["GoldLost"].Int = Data.Read<int>();
@@ -1529,6 +1535,14 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	HUD->AddStatChange(StatChange);
 
 	DeleteBattle();
+}
+
+// Sync boss cooldowns
+void _PlayState::HandleBossCooldowns(ae::_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->UnserializeBossCooldowns(Data);
 }
 
 // Clear action used and targets
@@ -1574,6 +1588,7 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 
 	// Update source object
 	if(SourceObject) {
+		SourceObject->Character->IdleTime = 0.0;
 		SourceObject->Fighter->TurnTimer = 0.0;
 		SourceObject->Character->Action.Unset();
 		SourceObject->Character->Targets.clear();

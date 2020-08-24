@@ -73,6 +73,7 @@ _Object::_Object() :
 
 	ModelTexture(nullptr),
 	ModelID(0),
+	BossZoneID(0),
 	Light(0),
 
 	UpdateID(0),
@@ -345,16 +346,13 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 
 // Renders the player while walking around the world
 void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
-	if(!Map)
-		return;
-
 	if(!ModelTexture)
 		return;
 
 	if(ClientPlayer && ClientPlayer->Character->Offline && ClientPlayer != this)
 		return;
 
-	if(Character->Offline && ClientPlayer != this)
+	if(Character && Character->Offline && ClientPlayer != this)
 		return;
 
 	// Setup shader
@@ -364,7 +362,7 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 
 	// Draw debug server position
 	glm::vec3 DrawPosition;
-	if(Character->HUD && Character->HUD->ShowDebug) {
+	if(Character && Character->HUD && Character->HUD->ShowDebug) {
 		DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 		ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 		ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
@@ -372,16 +370,26 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 
 	// Set invisible alpha
 	float Alpha = 1.0f;
-	if(Character->Invisible)
+	if(Character && Character->Invisible)
 		Alpha = PLAYER_INVIS_ALPHA;
 
-	// Draw model
+	// Get position and color
 	DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 	ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
-	ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
-	if(Character->StatusTexture) {
+
+	// Get model texture
+	const ae::_Texture *DrawTexture = ModelTexture;
+	if(BossZoneID && ClientPlayer && ClientPlayer->Character->IsZoneOnCooldown(BossZoneID))
+		DrawTexture = ae::Assets.Textures["textures/objects/dead_boss.png"];
+
+	// Draw model
+	ae::Graphics.DrawSprite(DrawPosition, DrawTexture);
+	if(!Character)
+		return;
+
+	// Draw status
+	if(Character->StatusTexture)
 		ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
-	}
 
 	// Get name text
 	bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
@@ -1038,17 +1046,10 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	}
 
 	// Write boss cooldowns
-	Data.Write<uint32_t>((uint32_t)Character->BossCooldowns.size());
-	for(const auto &BossCooldown : Character->BossCooldowns) {
-		Data.Write<uint32_t>(BossCooldown.first);
-		Data.Write<float>(BossCooldown.second);
-	}
+	SerializeBossCooldowns(Data);
 
 	// Write status effects
-	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
-	for(const auto &StatusEffect : Character->StatusEffects) {
-		StatusEffect->Serialize(Data);
-	}
+	SerializeStatusEffects(Data);
 }
 
 // Unserialize object stats
@@ -1138,22 +1139,13 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	}
 
 	// Read boss cooldowns
-	Character->BossCooldowns.clear();
-	uint32_t BossCooldownCount = Data.Read<uint32_t>();
-	for(uint32_t i = 0; i < BossCooldownCount; i++) {
-		uint32_t BossCooldownID = Data.Read<uint32_t>();
-		Character->BossCooldowns[BossCooldownID] = Data.Read<float>();
-	}
+	UnserializeBossCooldowns(Data);
 
 	// Read status effects
-	Character->DeleteStatusEffects();
-	size_t StatusEffectsSize = Data.Read<uint8_t>();
-	for(size_t i = 0; i < StatusEffectsSize; i++) {
-		_StatusEffect *StatusEffect = new _StatusEffect();
-		StatusEffect->Unserialize(Data, Stats);
-		if(Character->HUD)
+	UnserializeStatusEffects(Data);
+	if(Character->HUD) {
+		for(auto &StatusEffect : Character->StatusEffects)
 			StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
-		Character->StatusEffects.push_back(StatusEffect);
 	}
 
 	Character->RefreshActionBarCount();
@@ -1202,6 +1194,25 @@ void _Object::SerializeStatusEffects(ae::_Buffer &Data) {
 	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
 	for(auto &StatusEffect : Character->StatusEffects)
 		StatusEffect->Serialize(Data);
+}
+
+// Serialize boss cooldowns
+void _Object::SerializeBossCooldowns(ae::_Buffer &Data) {
+	Data.Write<uint32_t>((uint32_t)Character->BossCooldowns.size());
+	for(const auto &BossCooldown : Character->BossCooldowns) {
+		Data.Write<uint32_t>(BossCooldown.first);
+		Data.Write<float>(BossCooldown.second);
+	}
+}
+
+// Unserialize boss cooldowns
+void _Object::UnserializeBossCooldowns(ae::_Buffer &Data) {
+	Character->BossCooldowns.clear();
+	uint32_t BossCooldownCount = Data.Read<uint32_t>();
+	for(uint32_t i = 0; i < BossCooldownCount; i++) {
+		uint32_t BossCooldownID = Data.Read<uint32_t>();
+		Character->BossCooldowns[BossCooldownID] = Data.Read<float>();
+	}
 }
 
 // Unserialize status effects
@@ -1793,8 +1804,8 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 }
 
 // Send packet to player or broadcast during battle
-void _Object::SendPacket(ae::_Buffer &Packet) {
-	if(Character->Battle)
+void _Object::SendPacket(ae::_Buffer &Packet, bool Broadcast) {
+	if(Broadcast && Character->Battle)
 		Character->Battle->BroadcastPacket(Packet);
 	else if(Peer)
 		Server->Network->SendPacket(Packet, Peer);

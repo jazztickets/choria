@@ -329,7 +329,7 @@ void _Server::Update(double FrameTime) {
 	// Spawn bot
 	if(IsTesting && BotTime > 1.1) {
 		BotTime = -1;
-		//CreateBot();
+		CreateBot();
 	}
 }
 
@@ -1881,6 +1881,11 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Command == "battle") {
 		Player->Character->BossCooldowns.clear();
 
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::OBJECT_STATS);
+		Player->SerializeStats(Packet);
+		Network->SendPacket(Packet, Peer);
+
 		uint32_t ZoneID = Data.Read<uint32_t>();
 		QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
 	}
@@ -1893,6 +1898,11 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "clearkills") {
 		Player->Character->BossCooldowns.clear();
 		Player->Character->BossKills.clear();
+
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::OBJECT_STATS);
+		Player->SerializeStats(Packet);
+		Network->SendPacket(Packet, Peer);
 	}
 	else if(Command == "clearunlocks") {
 		Player->Character->ClearUnlocks();

@@ -73,6 +73,7 @@ class _Object : public ae::_BaseObject {
 		_Object();
 		~_Object() override;
 
+		// Components
 		void CreateComponents();
 
 		// Updates
@@ -91,11 +92,13 @@ class _Object : public ae::_BaseObject {
 		void SerializeStats(ae::_Buffer &Data);
 		void SerializeBattle(ae::_Buffer &Data);
 		void SerializeStatusEffects(ae::_Buffer &Data);
+		void SerializeBossCooldowns(ae::_Buffer &Data);
 		void UnserializeCreate(ae::_Buffer &Data);
 		void UnserializeStats(ae::_Buffer &Data);
 		void UnserializeBattle(ae::_Buffer &Data, bool IsClient);
 		void UnserializeStatusEffects(ae::_Buffer &Data);
-		void SendPacket(ae::_Buffer &Packet);
+		void UnserializeBossCooldowns(ae::_Buffer &Data);
+		void SendPacket(ae::_Buffer &Packet, bool Broadcast=true);
 		void SendActionClear();
 
 		// Stats
@@ -160,6 +163,7 @@ class _Object : public ae::_BaseObject {
 		// Render
 		const ae::_Texture *ModelTexture;
 		uint32_t ModelID;
+		uint32_t BossZoneID;
 		int Light;
 
 		// Compression

@@ -19,6 +19,7 @@ mkdir -p "$dest/menu"
 mkdir -p "$dest/minigames"
 mkdir -p "$dest/models"
 mkdir -p "$dest/monsters"
+mkdir -p "$dest/objects"
 mkdir -p "$dest/portraits"
 mkdir -p "$dest/skills"
 mkdir -p "$dest/status"
@@ -28,7 +29,7 @@ mkdir -p "$dest/status"
 mv export/*.png "$dest/menu/"
 
 # make textures
-for f in buffs builds buttonbar minigames models monsters portraits skills status; do
+for f in buffs builds buttonbar minigames models monsters objects portraits skills status; do
 	./make_pngs.sh vector/$f.svgz 2
 	mv export/*.png "$dest/$f/"
 done

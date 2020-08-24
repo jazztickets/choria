@@ -63,6 +63,7 @@ struct _Build {
 struct _Script {
 	uint32_t ID;
 	std::string Name;
+	std::string Data;
 	int Level;
 };
 

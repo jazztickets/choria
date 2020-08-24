@@ -527,6 +527,7 @@ void _Battle::Serialize(ae::_Buffer &Data) {
 
 	// Write object count
 	Data.Write<uint8_t>((uint8_t)Objects.size());
+	Data.Write<uint32_t>(Zone);
 
 	// Write object information
 	for(auto &Object : Objects)
@@ -538,6 +539,7 @@ void _Battle::Unserialize(ae::_Buffer &Data, _HUD *HUD) {
 
 	// Get object count
 	int ObjectCount = Data.Read<uint8_t>();
+	Zone = Data.Read<uint32_t>();
 
 	// Get object information
 	for(int i = 0; i < ObjectCount; i++) {
@@ -842,9 +844,15 @@ void _Battle::ServerEndBattle() {
 			SurvivedSummons[Key].Count++;
 		}
 
+		// Get boss cooldown
+		double BossCooldown = 0.0;
+		if(Boss)
+			BossCooldown = Object->Character->BossCooldowns[Zone];
+
 		// Write results
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
+		Packet.Write<float>(BossCooldown);
 		Packet.Write<int>(Object->Character->Attributes["PlayerKills"].Int);
 		Packet.Write<int>(Object->Character->Attributes["MonsterKills"].Int);
 		Packet.Write<int>(Object->Character->Attributes["GoldLost"].Int);

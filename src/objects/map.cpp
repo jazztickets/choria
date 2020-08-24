@@ -606,6 +606,14 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	RenderLayer("map", Bounds, glm::vec3(0.0f), 0);
 	RenderLayer("map", Bounds, glm::vec3(0.0f), 1);
 
+	// Render static objects
+	for(const auto &Object : StaticObjects) {
+		if(Object->Light || Object->Character)
+			continue;
+
+		Object->Render(Bounds, ClientPlayer);
+	}
+
 	// Render objects
 	for(const auto &Object : Objects) {
 		Object->Render(Bounds, ClientPlayer);
@@ -814,6 +822,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	// Load tiles
 	_Tile *Tile = nullptr;
 	_Object *Object = nullptr;
+	glm::ivec2 TileCoordinate;
 	int TileIndex = 0;
 	while(!File.eof() && File.peek() != EOF) {
 
@@ -837,10 +846,9 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 			} break;
 			// Tile
 			case 'T': {
-				glm::ivec2 Coordinate;
-				Coordinate.x = TileIndex % Size.x;
-				Coordinate.y = TileIndex / Size.x;
-				Tile = &Tiles[Coordinate.x][Coordinate.y];
+				TileCoordinate.x = TileIndex % Size.x;
+				TileCoordinate.y = TileIndex / Size.x;
+				Tile = &Tiles[TileCoordinate.x][TileCoordinate.y];
 				TileIndex++;
 			} break;
 			// Texture index
@@ -867,6 +875,12 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 					if(!Server && Stats && Tile->Event.Type == EVENT_SCRIPT) {
 						const _Script &Script = Stats->Scripts.at(Tile->Event.Data);
 						if(Script.Name == "Script_Boss") {
+							_Object *BossObject = new _Object();
+							BossObject->Position = TileCoordinate;
+							BossObject->BossZoneID = Script.Level;
+							if(!Script.Data.empty())
+								BossObject->ModelTexture = ae::Assets.Textures.at(Script.Data);
+							StaticObjects.push_back(BossObject);
 						}
 					}
 				}

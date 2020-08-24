@@ -425,6 +425,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			StatChange.Object = Player;
 
 			// Get ending stats
+			Data.Read<float>();
 			Player->Character->Attributes["PlayerKills"].Int = Data.Read<int>();
 			Player->Character->Attributes["MonsterKills"].Int = Data.Read<int>();
 			Player->Character->Attributes["GoldLost"].Int = Data.Read<int>();
