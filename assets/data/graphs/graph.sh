@@ -27,11 +27,13 @@ rm gold/*
 rm exp/*
 rm kills/*
 
-# get list of players
-players=$(grep " \[SAVE\]" "$log" | grep -P "(?<=Saving player ).*(?= \()" -o | sort | uniq)
+# get list of players with character id
+players=$(grep "\[SAVE\] Saving player .* character_id=[0-9]\+ " "$log" -o | sed "s/.*Saving player //" | sed "s/\ ( character_id=/_/" | sort | uniq)
 
 # iterate through each player and extract save data
 echo "$players" | while read player; do
+
+	name=$(echo "${player}" | sed "s/_[0-9]\+$//")
 
 	# create player file
 	gold_file="gold/$player"
@@ -39,13 +41,13 @@ echo "$players" | while read player; do
 	kills_file="kills/$player"
 
 	# get gold
-	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $4}' | tr -d '[A-Za-z=]' > "$gold_file"
+	grep "\[SAVE\] Saving player $name (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $4}' | tr -d '[A-Za-z=]' > "$gold_file"
 
 	# get exp
-	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $3}' | tr -d '[A-Za-z=]' > "$exp_file"
+	grep "\[SAVE\] Saving player $name (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $3}' | tr -d '[A-Za-z=]' > "$exp_file"
 
 	# get kills
-	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $6}' | tr -d '[A-Za-z=]' > "$kills_file"
+	grep "\[SAVE\] Saving player $name (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $6}' | tr -d '[A-Za-z=]' > "$kills_file"
 
 done
 
