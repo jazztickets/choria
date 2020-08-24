@@ -268,6 +268,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 
 	// Copy object stats from build
 	_Object Object;
+	Object.CreateComponents();
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
 	Object.Character->Init();

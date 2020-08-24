@@ -550,6 +550,7 @@ void _Battle::Unserialize(ae::_Buffer &Data, _HUD *HUD) {
 		_Object *Object = nullptr;
 		if(DatabaseID) {
 			Object = Manager->CreateWithID(NetworkID);
+			Object->CreateComponents();
 			Stats->GetMonsterStats(DatabaseID, Object);
 		}
 		else

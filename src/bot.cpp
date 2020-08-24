@@ -581,6 +581,7 @@ _Object *_Bot::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID) {
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);
+	Object->CreateComponents();
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;

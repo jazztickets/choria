@@ -163,6 +163,7 @@ _Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
 
 	// Create monster
 	_Object *Object = ObjectManager->Create();
+	Object->CreateComponents();
 	Object->Server = this;
 	Object->Scripting = Scripting;
 	Object->Monster->DatabaseID = Summon.ID;
@@ -328,7 +329,7 @@ void _Server::Update(double FrameTime) {
 	// Spawn bot
 	if(IsTesting && BotTime > 1.1) {
 		BotTime = -1;
-		CreateBot();
+		//CreateBot();
 	}
 }
 
@@ -760,6 +761,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 	Save->Database->BindInt(1, Peer->AccountID);
 	while(Save->Database->FetchRow()) {
 		_Object Player;
+		Player.CreateComponents();
 		Player.Stats = Stats;
 		Player.UnserializeSaveData(Save->Database->GetString("data"));
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
@@ -906,6 +908,7 @@ _Object *_Server::CreatePlayer(ae::_Peer *Peer) {
 
 	// Create object
 	_Object *Player = ObjectManager->Create();
+	Player->CreateComponents();
 	Player->Scripting = Scripting;
 	Player->Server = this;
 	Player->Character->CharacterID = Peer->CharacterID;
@@ -940,6 +943,7 @@ _Object *_Server::CreateBot() {
 
 	// Create object
 	_Object *Bot = ObjectManager->Create();
+	Bot->CreateComponents();
 	Bot->Character->Bot = true;
 	Bot->Scripting = Scripting;
 	Bot->Server = this;
@@ -2405,6 +2409,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		// Add monsters
 		for(auto &Monster : Monsters) {
 			_Object *Object = ObjectManager->Create();
+			Object->CreateComponents();
 			Object->Server = this;
 			Object->Scripting = Scripting;
 			Object->Monster->DatabaseID = Monster.MonsterID;

@@ -73,6 +73,8 @@ class _Object : public ae::_BaseObject {
 		_Object();
 		~_Object() override;
 
+		void CreateComponents();
+
 		// Updates
 		void Update(double FrameTime) override;
 		void UpdateBot(double FrameTime);

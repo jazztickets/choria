@@ -83,35 +83,33 @@ _Object::_Object() :
 	OldBounty(0),
 	OldLight(0) {
 
-	Inventory = new _Inventory();
-	Character = new _Character(this);
-	Fighter = new _Fighter(this);
-	Controller = new _Controller(this);
-	Monster = new _Monster(this);
 }
 
 // Destructor
 _Object::~_Object() {
-	Fighter->RemoveBattleElement();
+	if(Fighter)
+		Fighter->RemoveBattleElement();
 
 	if(Map) {
 		Map->RemoveObject(this);
 		Map = nullptr;
 	}
 
-	if(Character->Battle) {
-		Character->Battle->RemoveObject(this);
-		Character->Battle = nullptr;
-	}
+	if(Character) {
+		if(Character->Battle) {
+			Character->Battle->RemoveObject(this);
+			Character->Battle = nullptr;
+		}
 
-	if(Character->HUD) {
-		Character->HUD->RemoveStatChanges(this);
-		Character->HUD = nullptr;
-	}
+		if(Character->HUD) {
+			Character->HUD->RemoveStatChanges(this);
+			Character->HUD = nullptr;
+		}
 
-	if(Character->Bot) {
-		delete Peer;
-		Peer = nullptr;
+		if(Character->Bot) {
+			delete Peer;
+			Peer = nullptr;
+		}
 	}
 
 	delete Monster;
@@ -119,6 +117,15 @@ _Object::~_Object() {
 	delete Fighter;
 	delete Character;
 	delete Inventory;
+}
+
+// Create object components
+void _Object::CreateComponents() {
+	Inventory = new _Inventory();
+	Character = new _Character(this);
+	Fighter = new _Fighter(this);
+	Controller = new _Controller(this);
+	Monster = new _Monster(this);
 }
 
 // Updates the player

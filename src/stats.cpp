@@ -467,6 +467,7 @@ void _Stats::LoadBuilds() {
 
 		// Create object
 		_Object *Object = new _Object();
+		Object->CreateComponents();
 		Object->Name = std::string("build_") + Database->GetString("name");
 		Object->ModelID = Database->GetInt<uint32_t>("model_id");
 

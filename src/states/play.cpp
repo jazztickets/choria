@@ -1791,6 +1791,7 @@ _Object *_PlayState::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);
+	Object->CreateComponents();
 	Object->Character->HUD = HUD;
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
