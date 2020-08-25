@@ -415,7 +415,7 @@
 			</element>
 		</element>
 	</element>
-	<element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
+	<element id="element_keys" style="style_equipment_bg" offset_x="-334" size_x="558" size_y="384" index="14"/>
 	<element id="element_stash" style="style_equipment_bg" offset_x="222" size_x="320" size_y="432" offset_y="-24">
 		<element id="label_stash" font="hud_small" text="Personal Stash" offset_x="0" offset_y="16" alignment_x="1" alignment_y="0"/>
 		<element id="element_stash_items" size_x="320" size_y="384" alignment_y="2" index="15">

@@ -27,7 +27,7 @@ type parallel >/dev/null 2>&1 || {
 # function to optimize and rename png
 worker_img() {
 	mv "$1" "$2"
-	pngcrush -brute "$2" "$3"
+	pngcrush -s -brute "$2" "$3"
 }
 
 export -f worker_img
@@ -46,13 +46,17 @@ fi
 if [ -z "$scale" ]; then
 	scale=1
 fi
+echo "$file"
+echo "calculating..."
 
 # calculate density
 density=$((96 * $scale))
 
 # get size of each image
-size=`identify -density 96 -format "%[fx:w/10]" "$file"`
-size=$(($size * $scale))
+width=`identify -density 96 -format "%[fx:w/10]" "$file"`
+height=`identify -density 96 -format "%[fx:h/10]" "$file"`
+width=$(($width * $scale))
+height=$(($height * $scale))
 
 # get list of objects
 names=`xmllint --xpath "//*[local-name()='svg']/*[local-name()='metadata']//*[local-name()='description']/text()" "$file"`
@@ -62,9 +66,11 @@ mkdir -p export
 rm -f export/*.png
 
 # export pngs
-convert -density ${density} -background none ${file} -crop ${size}x${size} -depth 8 +repage PNG32:export/_out.png
+echo "exporting..."
+convert -density ${density} -background none ${file} -crop ${width}x${height} -depth 8 +repage PNG32:export/_out.png
 
 # name files and optimize in parallel
+echo "compressing..."
 i=0
 for name in $names; do
 	oldname="export/_out-${i}.png"
@@ -77,3 +83,4 @@ done | parallel
 
 # clean up
 rm -f export/_*
+rm -f export/none.png
