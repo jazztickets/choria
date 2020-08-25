@@ -541,7 +541,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		HelpTextList.push_back("Shift+click to move");
 
 	// Split hint
-	if(Tooltip.InventorySlot.Count > 1)
+	if(Tooltip.InventorySlot.Count > 1 && Tooltip.Window != _HUD::WINDOW_VENDOR)
 		HelpTextList.push_back("Ctrl+click to split");
 
 	// Set hint

@@ -1204,6 +1204,9 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		// Get item info
 		const _Item *Item = Vendor->Items[Slot.Index];
+		if(!Item->IsStackable())
+			Amount = 1;
+
 		int Price = Item->GetPrice(Scripting, Player, Vendor, Amount, Buy);
 
 		// Not enough gold

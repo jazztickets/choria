@@ -88,15 +88,15 @@ void _VendorScreen::Render(double BlendFactor) {
 }
 
 // Buys an item
-void _VendorScreen::BuyItem(_Cursor *Item, _Slot TargetSlot) {
+void _VendorScreen::BuyItem(_Cursor *Cursor, _Slot TargetSlot) {
 	_Slot VendorSlot;
-	VendorSlot.Index = Item->Slot.Index;
+	VendorSlot.Index = Cursor->Slot.Index;
 
 	// Notify server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(1);
-	Packet.Write<uint8_t>((uint8_t)Item->InventorySlot.Count);
+	Packet.Write<uint8_t>((uint8_t)Cursor->InventorySlot.Count);
 	VendorSlot.Serialize(Packet);
 	TargetSlot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
