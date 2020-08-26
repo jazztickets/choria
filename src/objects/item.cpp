@@ -220,6 +220,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	int DrawLevel = Level;
 	int PlayerMaxSkillLevel = 0;
 	int EnchanterMaxLevel = 0;
+	int SkillLevel = 0;
 	bool IsLocked = false;
 	bool ShowLevel = false;
 	bool ShowingNextUpgradeLevel = false;
@@ -240,7 +241,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 			auto SkillIterator = Player->Character->Skills.find(ID);
 			if(SkillIterator != Player->Character->Skills.end()) {
 				PlayerMaxSkillLevel = Player->Character->MaxSkillLevels[ID];
-				DrawLevel = SkillIterator->second;
+				SkillLevel = DrawLevel = SkillIterator->second;
 				if(!(Tooltip.Window == _HUD::WINDOW_SKILLS && ae::Input.ModKeyDown(KMOD_ALT)) && SkillIterator->second > 0) {
 					DrawLevel += Player->Character->Attributes["AllSkills"].Int;
 					DrawLevel = std::min(DrawLevel, PlayerMaxSkillLevel);
@@ -495,6 +496,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
 				if(Scope == ScopeType::NONE)
 					HelpTextList.push_back("Passive skills must be equipped");
+				if(SkillLevel > 0 && Player->Character->CanEquipSkill(this))
+					HelpTextList.push_back("Right-click to equip");
 			}
 			else if(Tooltip.Window == _HUD::WINDOW_ENCHANTER) {
 			}

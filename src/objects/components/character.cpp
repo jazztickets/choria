@@ -801,6 +801,24 @@ void _Character::GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffec
 	}
 }
 
+// Determine if a skill can be equipped from the skill screen
+bool _Character::CanEquipSkill(const _Item *Skill) {
+
+	// Find existing action
+	for(int i = 0; i < SkillBarSize; i++) {
+		if(ActionBar[i].Item == Skill)
+			return false;
+	}
+
+	// Find an empty slot
+	for(int i = 0; i < SkillBarSize; i++) {
+		if(!ActionBar[i].IsSet())
+			return true;
+	}
+
+	return false;
+}
+
 // Return true if the object has the skill unlocked
 bool _Character::HasLearned(const _Item *Skill) const {
 	if(!Skill)

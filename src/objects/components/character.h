@@ -125,6 +125,7 @@ class _Character {
 		void RefreshActionBarCount();
 		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
 		void GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffect *> > &Summons);
+		bool CanEquipSkill(const _Item *Skill);
 
 		// Skills
 		bool HasLearned(const _Item *Skill) const;
