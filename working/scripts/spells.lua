@@ -784,7 +784,7 @@ function Skill_RaiseDead.GetInfo(self, Source, Item)
 	Count = self:GetCount(Source, Item.Level, Item.MoreInfo)
 
 	Plural = ""
-	if self.Count ~= 1 then
+	if Count ~= 1 then
 		Plural = "s"
 	end
 
