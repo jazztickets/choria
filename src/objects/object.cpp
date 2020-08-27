@@ -349,11 +349,13 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	if(!ModelTexture)
 		return;
 
-	if(ClientPlayer && ClientPlayer->Character->Offline && ClientPlayer != this)
-		return;
+	if(!BossZoneID) {
+		if(ClientPlayer && ClientPlayer->Character->Offline && ClientPlayer != this)
+			return;
 
-	if(Character && Character->Offline && ClientPlayer != this)
-		return;
+		if(Character && Character->Offline && ClientPlayer != this)
+			return;
+	}
 
 	// Setup shader
 	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
