@@ -38,6 +38,7 @@
 #include <ae/font.h>
 #include <ae/util.h>
 #include <ae/program.h>
+#include <config.h>
 #include <packet.h>
 #include <server.h>
 #include <stats.h>
@@ -436,18 +437,83 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 	if(!Character->IsAlive())
 		GlobalColor.a = 0.2f;
 
-	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	ae::Graphics.SetColor(GlobalColor);
-
-	// Draw slot
+	// Get slot alpha
 	Fighter->BattleElement->Fade = GlobalColor.a;
+
+	// Get background for items used
+	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
 
 	// Get slot center
 	glm::vec2 SlotPosition = Fighter->BattleElement->Bounds.Start;
 
+	// Get health/mana bar positions
+	glm::vec2 BarSize = glm::vec2(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT) * ae::_Element::GetUIScale();
+	glm::vec2 BarOffset(Fighter->BattleElement->Size.x + 10 * ae::_Element::GetUIScale(), 0);
+	float BarPaddingY = 6 * ae::_Element::GetUIScale();
+
+	// Get bar element bounds
+	ae::_Bounds BarBounds;
+	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
+	glm::vec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
+	float BarEndX = BarBounds.End.x;
+
 	// Save positions
 	Fighter->ResultPosition = Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f;
 	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2((Character->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2), 0) * ae::_Element::GetUIScale();
+
+	// Get highlight bounds
+	ae::_Bounds HighlightBounds;
+	HighlightBounds.Start = Fighter->BattleElement->Bounds.Start;
+	HighlightBounds.End = glm::vec2(BarBounds.End.x, Fighter->BattleElement->Bounds.End.y);
+
+	// Draw potential action to use
+	if(ClientPlayer->Fighter->PotentialAction.IsSet()) {
+		for(auto &BattleTarget : ClientPlayer->Character->Targets) {
+			if(BattleTarget != this)
+				continue;
+
+			if(Config.HighlightTarget) {
+				ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+				ae::Graphics.SetColor(glm::vec4(0.5, 0.5, 0.5, 0.25));
+				ae::Graphics.DrawRectangle(HighlightBounds, true);
+			}
+
+			// Get texture
+			const ae::_Texture *Texture = nullptr;
+			if(ClientPlayer->Fighter->PotentialAction.Item) {
+
+				// Skip untargetable
+				if(!ClientPlayer->Fighter->PotentialAction.Item->CanTarget(Scripting, ClientPlayer, BattleTarget))
+					break;
+
+				// Get texture
+				Texture = ClientPlayer->Fighter->PotentialAction.Item->Texture;
+			}
+
+			// Make icon flash
+			glm::vec4 Color(glm::vec4(1.0f));
+			double FastTime = Time * 2;
+			if(FastTime - (int)FastTime < 0.5)
+				Color.a = 0.75f;
+
+			// Draw background icon
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 12 * ae::_Element::GetUIScale(), SlotPosition.y + Fighter->BattleElement->Size.y/2);
+			if(ClientPlayer->Fighter->PotentialAction.Item && !ClientPlayer->Fighter->PotentialAction.Item->IsSkill()) {
+				DrawPosition.x += UI_SLOT_SIZE.x/2 * ae::_Element::GetUIScale();
+				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, UI_SLOT_SIZE, Color);
+			}
+			else
+				DrawPosition.x += UI_SLOT_SIZE.x/2 * ae::_Element::GetUIScale();
+
+			// Draw item
+			ae::Graphics.DrawScaledImage(DrawPosition, Texture,  UI_SLOT_SIZE, Color);
+		}
+	}
+
+	// Set color
+	ae::Graphics.SetColor(GlobalColor);
 
 	// Name
 	if(!Character->Invisible) {
@@ -463,18 +529,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.DrawScaledImage(SlotPosition + UI_PORTRAIT_SIZE * 0.5f * ae::_Element::GetUIScale(), Character->Portrait, UI_PORTRAIT_SIZE, GlobalColor);
 	}
-
-	// Get health/mana bar positions
-	glm::vec2 BarSize = glm::vec2(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT) * ae::_Element::GetUIScale();
-	glm::vec2 BarOffset(Fighter->BattleElement->Size.x + 10 * ae::_Element::GetUIScale(), 0);
-	float BarPaddingY = 6 * ae::_Element::GetUIScale();
-
-	// Get bar element bounds
-	ae::_Bounds BarBounds;
-	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
-	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
-	glm::vec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
-	float BarEndX = BarBounds.End.x;
 
 	// Get text size
 	ae::_Font *SmallFont = ae::Assets.Fonts["hud_small"];
@@ -545,9 +599,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Fighter->TurnTimer, BarSize.y) + BarOffset;
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Textures["textures/hud_repeat/stamina_full.png"]);
 
-	// Get background for items used
-	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
-
 	// Draw the action used
 	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide && Character->Action.Item) {
 		glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2((-UI_SLOT_SIZE.x/2 - 16) * ae::_Element::GetUIScale(), Fighter->BattleElement->Size.y/2);
@@ -555,43 +606,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		if(!Character->Action.Item->IsSkill())
 			ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, UI_SLOT_SIZE, GlobalColor);
 		ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, UI_SLOT_SIZE, GlobalColor);
-	}
-
-	// Draw potential action to use
-	for(auto &BattleTarget : ClientPlayer->Character->Targets) {
-		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.IsSet()) {
-
-			// Get texture
-			const ae::_Texture *Texture = nullptr;
-			if(ClientPlayer->Fighter->PotentialAction.Item) {
-
-				// Skip dead targets
-				if(!ClientPlayer->Fighter->PotentialAction.Item->CanTarget(Scripting, ClientPlayer, BattleTarget))
-					break;
-
-				// Get texture
-				Texture = ClientPlayer->Fighter->PotentialAction.Item->Texture;
-			}
-
-			// Make icon flash
-			glm::vec4 Color(glm::vec4(1.0f));
-			double FastTime = Time * 2;
-			if(FastTime - (int)FastTime < 0.5)
-				Color.a = 0.75f;
-
-			// Draw background icon
-			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 12 * ae::_Element::GetUIScale(), SlotPosition.y + Fighter->BattleElement->Size.y/2);
-			if(ClientPlayer->Fighter->PotentialAction.Item && !ClientPlayer->Fighter->PotentialAction.Item->IsSkill()) {
-				DrawPosition.x += UI_SLOT_SIZE.x/2 * ae::_Element::GetUIScale();
-				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, UI_SLOT_SIZE, Color);
-			}
-			else
-				DrawPosition.x += UI_SLOT_SIZE.x/2 * ae::_Element::GetUIScale();
-
-			// Draw item
-			ae::Graphics.DrawScaledImage(DrawPosition, Texture,  UI_SLOT_SIZE, Color);
-		}
 	}
 
 	// Draw status effects

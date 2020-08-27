@@ -113,8 +113,9 @@ void _Config::SetDefaults() {
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
 	Offline = false;
-	ShowTutorial = 1;
-	RightClickSell = 0;
+	ShowTutorial = true;
+	RightClickSell = false;
+	HighlightTarget = false;
 	DesignToolURL = "http://localhost:8000";
 	LastUsername = "";
 	LastHost = "127.0.0.1";
@@ -254,6 +255,7 @@ void _Config::Load() {
 	GetValue("last_host", LastHost);
 	GetValue("last_port", LastPort);
 	GetValue("autosave_period", AutoSavePeriod);
+	GetValue("highlight_target", HighlightTarget);
 	GetValue("rightclick_sell", RightClickSell);
 	GetValue("offline", Offline);
 
@@ -317,6 +319,7 @@ void _Config::Save() {
 	File << "last_host=" << LastHost << std::endl;
 	File << "last_port=" << LastPort << std::endl;
 	File << "autosave_period=" << AutoSavePeriod << std::endl;
+	File << "highlight_target=" << HighlightTarget << std::endl;
 	File << "rightclick_sell=" << RightClickSell << std::endl;
 	File << "offline=" << Offline << std::endl;
 

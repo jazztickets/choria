@@ -46,15 +46,16 @@ class _Config {
 		double TimeScale;
 		double AutoSavePeriod;
 		bool RightClickSell;
+		bool HighlightTarget;
 
 		// Graphics
 		glm::ivec2 WindowSize;
 		double MaxFPS;
-		int Vsync;
-		int Fullscreen;
+		bool Vsync;
+		bool Fullscreen;
 
 		// Audio
-		int AudioEnabled;
+		bool AudioEnabled;
 		float SoundVolume;
 		float MusicVolume;
 
@@ -70,7 +71,7 @@ class _Config {
 		std::string DesignToolURL;
 
 		// Misc
-		int ShowTutorial;
+		bool ShowTutorial;
 		std::string LastUsername;
 		std::string LastHost;
 		std::string LastPort;
