@@ -19,6 +19,7 @@
 
 // Libraries
 #include <ae/baseobject.h>
+#include <ae/log.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <unordered_map>
@@ -140,6 +141,8 @@ class _Object : public ae::_BaseObject {
 
 		// Base
 		std::string Name;
+		ae::_LogFile Log;
+		bool Logging;
 
 		// Components
 		_Character *Character;

@@ -41,21 +41,24 @@ void RunCommandThread(_Server *Server) {
 		std::string Input;
 		std::getline(std::cin, Input);
 		Server->Log << "[SERVER_COMMAND] " << Input << std::endl;
-		if(Input == "help") {
-			DedicatedState.ShowCommands();
+		if(Input == "b" || Input == "battles") {
+			DedicatedState.ShowBattles();
 		}
-		else if(Input.substr(0, 4) == "stop" || std::cin.eof() == 1) {
-			int Seconds = 0;
-			if(Input.size() > 5)
-				Seconds = std::stoi(Input.substr(5, std::string::npos));
-			Server->StopServer(Seconds);
-			Done = true;
+		else if(Input.substr(0, 3) == "log" && Input.size() > 4) {
+			ae::NetworkIDType PlayerID = std::stoi(Input.substr(4, std::string::npos));
+			try {
+				bool Mode = Server->StartLog(PlayerID);
+				std::cout << "Logging has been " << (Mode ? "enabled" : "disabled") << std::endl;
+			}
+			catch (std::exception &Error) {
+				std::cout << Error.what() << std::endl;
+			}
+		}
+		else if(Input == "help") {
+			DedicatedState.ShowCommands();
 		}
 		else if(Input == "p" || Input == "players") {
 			DedicatedState.ShowPlayers();
-		}
-		else if(Input == "b" || Input == "battles") {
-			DedicatedState.ShowBattles();
 		}
 		else if(Input.substr(0, 3) == "say" && Input.size() > 4) {
 			Server->BroadcastMessage(nullptr, Input.substr(4, std::string::npos), "purple");
@@ -63,6 +66,13 @@ void RunCommandThread(_Server *Server) {
 		else if(Input.substr(0, 4) == "slap" && Input.size() > 5) {
 			ae::NetworkIDType PlayerID = std::stoi(Input.substr(5, std::string::npos));
 			Server->Slap(PlayerID, 25);
+		}
+		else if(Input.substr(0, 4) == "stop" || std::cin.eof() == 1) {
+			int Seconds = 0;
+			if(Input.size() > 5)
+				Seconds = std::stoi(Input.substr(5, std::string::npos));
+			Server->StopServer(Seconds);
+			Done = true;
 		}
 		else {
 			std::cout << "Command not recognized" << std::endl;
@@ -128,11 +138,12 @@ void _DedicatedState::Update(double FrameTime) {
 // List available commands
 void _DedicatedState::ShowCommands() {
 	std::cout << std::endl;
-	std::cout << "battles" << std::endl;
-	std::cout << "players" << std::endl;
-	std::cout << "stop [seconds]" << std::endl;
-	std::cout << "slap [network_id]" << std::endl;
-	std::cout << "say [message]" << std::endl;
+	std::cout << "battles           - show current battles" << std::endl;
+	std::cout << "log [network_id]  - toggle logging player data" << std::endl;
+	std::cout << "players           - show players" << std::endl;
+	std::cout << "stop [seconds]    - stop server" << std::endl;
+	std::cout << "slap [network_id] - slap player" << std::endl;
+	std::cout << "say [message]     - broadcast message" << std::endl;
 }
 
 // Show all players

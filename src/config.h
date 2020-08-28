@@ -40,6 +40,7 @@ class _Config {
 		// State
 		std::string ConfigPath;
 		std::string LogPath;
+		std::string LogDataPath;
 		int Version;
 
 		// Gameplay

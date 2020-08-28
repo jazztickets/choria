@@ -81,7 +81,9 @@ void _Config::Init(const std::string &ConfigFile) {
 
 	ConfigFilePath = ConfigPath + ConfigFile;
 	LogPath = ConfigPath + "log/";
+	LogDataPath = ConfigPath + "log/data/";
 	ae::MakeDirectory(LogPath);
+	ae::MakeDirectory(ConfigPath + "log/data/");
 
 	// Load defaults
 	SetDefaults();

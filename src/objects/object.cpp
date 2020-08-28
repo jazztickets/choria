@@ -56,6 +56,7 @@
 // Constructor
 _Object::_Object() :
 	Name(""),
+	Logging(false),
 	Character(nullptr),
 	Inventory(nullptr),
 	Fighter(nullptr),

@@ -43,6 +43,7 @@
 #include <SDL_timer.h>
 #include <enet/enet.h>
 #include <algorithm>
+#include <iomanip>
 #include <regex>
 
 // Function to run the server thread
@@ -658,6 +659,11 @@ void _Server::HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	Player->Character->IdleTime = 0.0;
 	Player->Controller->InputStates.push_back(Data.Read<char>());
+
+	if(Player->Logging) {
+		ae::NetworkIDType MapID = Player->Map ? Player->Map->NetworkID : 0;
+		Player->Log << "[MOVE] time=" << std::fixed << std::setprecision(2) << Time << " mapid=" << MapID << " input=" << Player->Controller->InputStates.back() << std::endl;
+	}
 }
 
 // Handles use command from a client
@@ -2137,6 +2143,24 @@ void _Server::Slap(ae::NetworkIDType PlayerID, int GoldAmount) {
 
 	// Shame them
 	BroadcastMessage(nullptr, Player->Name + " has been slapped for misbehaving!", "yellow");
+}
+
+// Log character data
+bool _Server::StartLog(ae::NetworkIDType PlayerID) {
+	_Object *Player = ObjectManager->GetObject(PlayerID);
+	if(!Player)
+		throw std::runtime_error("Player ID not found!");
+
+	Player->Logging = !Player->Logging;
+	if(Player->Logging) {
+		Player->Log.Open((Config.LogDataPath + "char_" + std::to_string(Player->Peer->CharacterID) + ".log").c_str());
+		Player->Log.ToStdOut = false;
+	}
+	else {
+		Player->Log.Close();
+	}
+
+	return Player->Logging;
 }
 
 // Send message to player about battle cooldown
