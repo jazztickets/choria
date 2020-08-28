@@ -35,7 +35,7 @@ int ConfigClass::Init() {
 		SavePath = "save/";
 		CreateDirectory(SavePath.c_str(), NULL);
 	#else
-		SavePath = stringc(getenv("HOME")) + stringc("/.choria/");
+		SavePath = stringc(getenv("HOME")) + stringc("/.choria_classic/");
 		mkdir(SavePath.c_str(), S_IRWXU | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
 	#endif
 
