@@ -924,6 +924,7 @@ _Object *_Server::CreatePlayer(ae::_Peer *Peer) {
 	Peer->Object = Player;
 
 	Save->LoadPlayer(Stats, Player);
+	Player->SetLogging(Player->Logging);
 
 	return Player;
 }
@@ -2151,14 +2152,7 @@ bool _Server::StartLog(ae::NetworkIDType PlayerID) {
 	if(!Player)
 		throw std::runtime_error("Player ID not found!");
 
-	Player->Logging = !Player->Logging;
-	if(Player->Logging) {
-		Player->Log.Open((Config.LogDataPath + "char_" + std::to_string(Player->Peer->CharacterID) + ".log").c_str());
-		Player->Log.ToStdOut = false;
-	}
-	else {
-		Player->Log.Close();
-	}
+	Player->SetLogging(!Player->Logging);
 
 	return Player->Logging;
 }

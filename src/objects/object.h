@@ -102,6 +102,9 @@ class _Object : public ae::_BaseObject {
 		void SendPacket(ae::_Buffer &Packet, bool Broadcast=true);
 		void SendActionClear();
 
+		// Logging
+		void SetLogging(bool Value);
+
 		// Stats
 		bool IsMonster() const;
 		_StatusEffect *UpdateStats(_StatChange &StatChange, _Object *Source=nullptr);

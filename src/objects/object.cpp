@@ -626,6 +626,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write stats
 	Json::Value StatsNode;
+	StatsNode["Log"] = Logging;
 	StatsNode["Hardcore"] = Character->Hardcore;
 	StatsNode["MapX"] = Position.x;
 	StatsNode["MapY"] = Position.y;
@@ -801,6 +802,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Position.y = StatsNode["MapY"].asInt();
 	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["SpawnMapID"].asUInt();
 	Character->SpawnPoint = StatsNode["SpawnPoint"].asUInt();
+	Logging = StatsNode["Log"].asBool();
 	Character->Hardcore = StatsNode["Hardcore"].asBool();
 	Character->BuildID = StatsNode["BuildID"].asUInt();
 	Character->PortraitID = StatsNode["PortraitID"].asUInt();
@@ -1837,6 +1839,17 @@ void _Object::SendActionClear() {
 	Packet.Write<PacketType>(PacketType::ACTION_CLEAR);
 	Packet.Write<ae::NetworkIDType>(NetworkID);
 	SendPacket(Packet);
+}
+
+// Set logging
+void _Object::SetLogging(bool Value) {
+	Logging = Value;
+	if(Logging) {
+		Log.Open((Config.LogDataPath + "char_" + std::to_string(Peer->CharacterID) + ".log").c_str());
+		Log.ToStdOut = false;
+	}
+	else
+		Log.Close();
 }
 
 // Check if object is a monster
