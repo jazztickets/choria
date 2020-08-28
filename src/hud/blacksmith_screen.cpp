@@ -40,7 +40,7 @@ void _BlacksmithScreen::Init() {
 
 	Element->SetActive(true);
 	HUD->CharacterScreen->Element->SetActive(true);
-	ae::Assets.Elements["label_blacksmith_cost"]->SetActive(false);
+	ae::Assets.Elements["label_blacksmith_cost"]->SetActive(true);
 	ae::Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
 }
 
@@ -102,6 +102,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 			// Update cost label
 			std::stringstream Buffer;
 			Buffer << Cost << " gold";
+			BlacksmithCost->Font = ae::Assets.Fonts["hud_medium"];
 			BlacksmithCost->Color = ae::Assets.Colors["gold"];
 			BlacksmithCost->Text = Buffer.str();
 
@@ -132,7 +133,9 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 			UpgradeButton->SetEnabled(false);
 	}
 	else {
-		BlacksmithCost->SetActive(false);
+		BlacksmithCost->Font = ae::Assets.Fonts["hud_small"];
+		BlacksmithCost->Color = ae::Assets.Colors["gray"];
+		BlacksmithCost->Text = "Drag an item to the slot";
 		UpgradeButton->SetEnabled(false);
 	}
 }

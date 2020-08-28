@@ -368,7 +368,7 @@
 		</element>
 		<element id="label_blacksmith_title" font="hud_medium" offset_y="48" alignment_y="3"/>
 		<element id="label_blacksmith_level" font="hud_small" offset_y="80" alignment_y="3"/>
-		<element id="label_blacksmith_cost" font="hud_medium" offset_y="126" alignment_y="3"/>
+		<element id="label_blacksmith_cost" font="hud_small" offset_y="132" alignment_y="3"/>
 	</element>
 	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="444" size_y="420" clickable="true">
 		<element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="9">
