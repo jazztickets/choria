@@ -42,7 +42,7 @@ int _Config::Init() {
 		mkdir(SavePath.c_str(), 0755);
 		SavePath += "share/";
 		mkdir(SavePath.c_str(), 0755);
-		SavePath += "choria/";
+		SavePath += "choria_classic/";
 		mkdir(SavePath.c_str(), 0755);
 
 		SaveMapPath = SavePath + core::stringc("maps/");
