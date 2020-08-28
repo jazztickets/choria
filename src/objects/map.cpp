@@ -90,6 +90,7 @@ _Map::_Map() :
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	OutsideFlag(1),
 	Clock(0),
+	Headless(false),
 	BackgroundOffset(0.0f),
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
@@ -115,7 +116,7 @@ _Map::~_Map() {
 	delete BackgroundMap;
 
 	// Delete atlas
-	if(!Server)
+	if(!Headless)
 		CloseAtlas();
 
 	// Delete map data
@@ -799,6 +800,8 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 		throw std::runtime_error("Cannot load map: " + MapStat->File);
 
 	// Save map stats
+	if(Server)
+		Headless = true;
 	AmbientLight = LightFilter = MapStat->AmbientLight;
 	Music = MapStat->Music;
 
@@ -806,7 +809,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	OutsideFlag = MapStat->Outside;
 
 	// Load background map
-	if(!Server && MapStat->BackgroundMapID) {
+	if(!Headless && MapStat->BackgroundMapID) {
 		BackgroundOffset = MapStat->BackgroundOffset;
 
 		BackgroundMap = new _Map();
@@ -872,7 +875,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 					File >> Tile->Event.Type >> Tile->Event.Data;
 
 					// Create static objects for boss events
-					if(!Server && Stats && Tile->Event.Type == EVENT_SCRIPT) {
+					if(!Headless && Stats && Tile->Event.Type == EVENT_SCRIPT) {
 						const _Script &Script = Stats->Scripts.at(Tile->Event.Data);
 						if(Script.Name == "Script_Boss") {
 							_Object *BossObject = new _Object();
@@ -899,7 +902,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 			case 'O': {
 				glm::ivec2 Coordinate;
 				File >> Coordinate.x >> Coordinate.y;
-				if(!Server) {
+				if(!Headless) {
 					Object = new _Object();
 					Object->Position = Coordinate;
 					StaticObjects.push_back(Object);
@@ -924,7 +927,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	IndexEvents();
 
 	// Initialize 2d tile rendering
-	if(!Server)
+	if(!Headless)
 		InitAtlas(MapStat->Atlas, Static);
 
 	// Initialize path finding

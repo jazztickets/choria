@@ -261,6 +261,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				Map->Stats = Stats;
 				Map->Clock = Clock;
 				Map->NetworkID = MapID;
+				Map->Headless = true;
 				Map->Load(&Stats->Maps.at(MapID));
 				AssignPlayer(nullptr);
 			}

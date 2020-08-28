@@ -169,6 +169,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		glm::vec4 LightFilter;
 		int OutsideFlag;
 		double Clock;
+		bool Headless;
 
 		// Background
 		std::string BackgroundMapFile;
