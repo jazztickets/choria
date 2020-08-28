@@ -187,7 +187,7 @@ Base_SummonSpell = {
 	end,
 
 	GetSkillLevel = function(self, Source, Level)
-		return math.max(math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower * 0.01 * self.SkillLevelPower), 1)
+		return math.min(math.max(math.floor((self.SkillLevel + (Level - 1) * self.SkillLevelPerLevel) * Source.PetPower * 0.01 * self.SkillLevelPower), 1), MAX_SKILL_LEVEL)
 	end,
 
 	GetDuration = function(self, Source, Level)
