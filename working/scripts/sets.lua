@@ -348,7 +348,7 @@ SetBonus_LightStaff.Attributes = {
 
 SetBonus_MysticStaff = Base_Set:New()
 SetBonus_MysticStaff.Attributes = {
-	HealPower = { "25%", "50%" },
+	AttackPower = { "25%", "50%" },
 	Evasion = { "5%", "10%" },
 }
 
