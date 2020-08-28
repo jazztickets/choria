@@ -561,7 +561,8 @@ void _EditorState::Render(double BlendFactor) {
 		}
 		else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
 			for(const auto &Object : Map->StaticObjects) {
-				ae::Graphics.DrawCircle(glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0), Stats->Lights.at(Object->Light).Radius);
+				if(Object->Light)
+					ae::Graphics.DrawCircle(glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0), Stats->Lights.at(Object->Light).Radius);
 			}
 		}
 	}
