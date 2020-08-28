@@ -1219,7 +1219,7 @@ end
 function RebirthText(Item, UpgradeText, Source)
 	AddedDifficulty = 0
 	if Item == Item_EternalPain then
-		AddedDifficulty = Item_EternalPain.Value
+		AddedDifficulty = GetRebirthBonus(Source, Item_EternalPain.Type)
 	end
 
 	Gold = math.min(math.floor(Source.RebirthWealth * 0.01 * Source.Experience * Item_RiteWealth.Multiplier), MAX_GOLD)
@@ -1386,15 +1386,15 @@ function Item_EternalKnowledge.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalPain = { Value = 10 }
+Item_EternalPain = { Type = 1 }
 
 function Item_EternalPain.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. self.Value .. "%[c white] difficulty increase", Source)
+	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] difficulty increase", Source)
 end
 
 function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Difficulty = self.Value
+	Result.Target.Difficulty = GetRebirthBonus(Source, self.Type)
 
 	return Result
 end
