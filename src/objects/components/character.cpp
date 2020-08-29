@@ -331,7 +331,7 @@ void _Character::CalculateStats() {
 	Attributes["LightningPower"].Int += Attributes["EternalStrength"].Int;
 	Attributes["BleedPower"].Int += Attributes["EternalStrength"].Int;
 	Attributes["PoisonPower"].Int += Attributes["EternalStrength"].Int;
-	Attributes["PetPower"].Int += Attributes["EternalStrength"].Int;
+	Attributes["SummonPower"].Int += Attributes["EternalStrength"].Int;
 
 	// Eternal Guard
 	if(Attributes["EternalGuard"].Int) {
@@ -402,7 +402,7 @@ void _Character::CalculateStats() {
 		Attributes["Cooldowns"].Int += std::floor(Item->GetCooldownReduction(Upgrades));
 		Attributes["ExperienceBonus"].Int += std::floor(Item->GetAttribute("ExperienceBonus", Upgrades));
 		Attributes["GoldBonus"].Int += std::floor(Item->GetAttribute("GoldBonus", Upgrades));
-		Attributes["PetPower"].Int += std::floor(Item->GetAttribute("PetPower", Upgrades));
+		Attributes["SummonPower"].Int += std::floor(Item->GetAttribute("SummonPower", Upgrades));
 
 		// Handle all resist
 		if(Item->ResistanceTypeID == 1)

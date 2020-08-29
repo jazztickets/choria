@@ -20,16 +20,16 @@ Item_Data = {
 
 	-- Dark Staff
 	[212] = {
-		PetPower = 15,
+		SummonPower = 15,
 	},
 
 	-- Demon Stick
 	[213] = {
-		PetPower = 25,
+		SummonPower = 25,
 	},
 
 	-- Diabolic Staff
 	[317] = {
-		PetPower = 35,
+		SummonPower = 35,
 	},
 }

@@ -989,11 +989,11 @@ function Item_DarkRing.GetPower(self, Item)
 end
 
 function Item_DarkRing.GetInfo(self, Source, Item)
-	return "Increases pet power by [c green]" .. self:GetPower(Item) .. "%"
+	return "Increases summon power by [c green]" .. self:GetPower(Item) .. "%"
 end
 
 function Item_DarkRing.Stats(self, Item, Object, Change)
-	Change.PetPower = self:GetPower(Item)
+	Change.SummonPower = self:GetPower(Item)
 
 	return Change
 end
@@ -1169,21 +1169,21 @@ function Item_ManaPower.Stats(self, Item, Object, Change)
 	return Change
 end
 
--- Pet Power --
+-- Summon Power --
 
-Item_PetPower = { }
-Item_PetPower.PowerPerUpgrade = 5
+Item_SummonPower = { }
+Item_SummonPower.PowerPerUpgrade = 5
 
-function Item_PetPower.GetPower(self, Item)
+function Item_SummonPower.GetPower(self, Item)
 	return Item.Level + Item.Upgrades * self.PowerPerUpgrade
 end
 
-function Item_PetPower.GetInfo(self, Source, Item)
-	return "Increases pet power by [c green]" .. self:GetPower(Item) .. "%"
+function Item_SummonPower.GetInfo(self, Source, Item)
+	return "Increases summon power by [c green]" .. self:GetPower(Item) .. "%"
 end
 
-function Item_PetPower.Stats(self, Item, Object, Change)
-	Change.PetPower = self:GetPower(Item)
+function Item_SummonPower.Stats(self, Item, Object, Change)
+	Change.SummonPower = self:GetPower(Item)
 
 	return Change
 end

@@ -1096,19 +1096,19 @@ function Skill_HealMastery.Stats(self, Level, Object, Change)
 	return Change
 end
 
--- Pet Mastery --
+-- Summon Mastery --
 
-Skill_PetMastery = {}
-Skill_PetMastery.Power = 25
-Skill_PetMastery.PowerPerLevel = 5
-Skill_PetMastery.SummonLimit = 1.1
-Skill_PetMastery.SummonLimitPerLevel = 0.1
+Skill_SummonMastery = {}
+Skill_SummonMastery.Power = 25
+Skill_SummonMastery.PowerPerLevel = 5
+Skill_SummonMastery.SummonLimit = 1.1
+Skill_SummonMastery.SummonLimitPerLevel = 0.1
 
-function Skill_PetMastery.GetPower(self, Level)
+function Skill_SummonMastery.GetPower(self, Level)
 	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
 end
 
-function Skill_PetMastery.GetSummonLimit(self, Level, Fraction)
+function Skill_SummonMastery.GetSummonLimit(self, Level, Fraction)
 	Value = self.SummonLimit + self.SummonLimitPerLevel * (Level - 1)
 	if Fraction == true then
 		return Value
@@ -1117,12 +1117,12 @@ function Skill_PetMastery.GetSummonLimit(self, Level, Fraction)
 	end
 end
 
-function Skill_PetMastery.GetInfo(self, Source, Item)
-	return "Increase pet power by [c green]" .. self:GetPower(Item.Level) .. "%\nIncrease summon limit by [c green]" .. self:GetSummonLimit(Item.Level, Item.MoreInfo)
+function Skill_SummonMastery.GetInfo(self, Source, Item)
+	return "Increase summon power by [c green]" .. self:GetPower(Item.Level) .. "%\nIncrease summon limit by [c green]" .. self:GetSummonLimit(Item.Level, Item.MoreInfo)
 end
 
-function Skill_PetMastery.Stats(self, Level, Object, Change)
-	Change.PetPower = self:GetPower(Level)
+function Skill_SummonMastery.Stats(self, Level, Object, Change)
+	Change.SummonPower = self:GetPower(Level)
 	Change.SummonLimit = self:GetSummonLimit(Level, false)
 
 	return Change
