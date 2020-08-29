@@ -9,7 +9,14 @@ Item_Data = {
 		AllSkills = 1,
 	},
 
--- Staves
+-- One-Handed Weapons
+
+	-- Shining Star
+	[290] = {
+		ExperienceBonus = 5,
+	},
+
+-- Two-Handed Weapons
 
 	-- Dark Staff
 	[212] = {
