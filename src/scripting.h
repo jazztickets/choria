@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/statchange.h>
 #include <lua.hpp>
 #include <list>
 #include <string>
@@ -50,6 +51,7 @@ class _Scripting {
 		void InjectMonsters(const _Stats *Stats);
 		void InjectBuffs(const _Stats *Stats);
 		void InjectTime(double Time);
+		void LoadItemAttributes(_Stats *Stats);
 
 		void CreateBattle(_Battle *Battle);
 		void DeleteBattle(_Battle *Battle);
@@ -73,6 +75,7 @@ class _Scripting {
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 		void GetStatChange(int Index, const _Stats *Stats, _StatChange &StatChange);
 		void GetSummons(int Index, std::vector<_Summon> &Summons);
+		void GetValue(StatValueType Type, _Value &Value);
 
 		bool StartMethodCall(const std::string &TableName, const std::string &Function);
 		void MethodCall(int ParameterCount, int ReturnCount);

@@ -24,6 +24,7 @@
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/monster.h>
+#include <scripting.h>
 #include <constants.h>
 #include <algorithm>
 #include <iostream>
@@ -299,6 +300,11 @@ void _Stats::LoadItems() {
 	Database->CloseQuery();
 
 	Items[0] = nullptr;
+
+	// Load extra attributes
+	_Scripting Scripting;
+	Scripting.LoadScript(SCRIPTS_DATA);
+	Scripting.LoadItemAttributes(this);
 }
 
 // Loads vendor data

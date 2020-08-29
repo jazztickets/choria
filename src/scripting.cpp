@@ -337,6 +337,45 @@ void _Scripting::InjectTime(double Time) {
 	lua_setglobal(LuaState, "ServerTime");
 }
 
+// Load additional item attributes from a script
+void _Scripting::LoadItemAttributes(_Stats *Stats) {
+
+	// Get table
+	lua_getglobal(LuaState, "Item_Data");
+	if(!lua_istable(LuaState, -1))
+		throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Item_Data is not a table!");
+
+	// Iterate over item data table
+	lua_pushnil(LuaState);
+	while(lua_next(LuaState, -2) != 0) 	{
+
+		// Get key
+		uint32_t ItemID = lua_tointeger(LuaState, -2);
+		if(Stats->Items.find(ItemID) == Stats->Items.end())
+			throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " Item ID " + std::to_string(ItemID) + " not found!");
+
+		// Get item
+		_Item *Item = (_Item *)Stats->Items.at(ItemID);
+
+		// Iterate over attributes
+		lua_pushnil(LuaState);
+		while(lua_next(LuaState, -2) != 0) 	{
+
+			// Get key
+			std::string AttributeName = lua_tostring(LuaState, -2);
+			const _Attribute &Attribute = Stats->Attributes.at(AttributeName);
+
+			// Get value
+			_Value &Value = Item->Attributes[AttributeName];
+			GetValue(Attribute.Type, Value);
+
+			lua_pop(LuaState, 1);
+		}
+
+		lua_pop(LuaState, 1);
+	}
+}
+
 // Create battle table
 void _Scripting::CreateBattle(_Battle *Battle) {
 
@@ -830,31 +869,9 @@ void _Scripting::GetStatChange(int Index, const _Stats *Stats, _StatChange &Stat
 		// Get key name
 		std::string Key = lua_tostring(LuaState, -2);
 
-		// Find attribute
+		// Find attribute and get value
 		const _Attribute &Attribute = Stats->Attributes.at(Key);
-
-		// Get value from lua
-		switch(Attribute.Type) {
-			case StatValueType::INTEGER:
-			case StatValueType::PERCENT:
-				StatChange.Values[Key].Int = (int)lua_tonumber(LuaState, -1);
-			break;
-			case StatValueType::INTEGER64:
-				StatChange.Values[Key].Int64 = (int64_t)lua_tonumber(LuaState, -1);
-			break;
-			case StatValueType::FLOAT:
-				StatChange.Values[Key].Float = (float)lua_tonumber(LuaState, -1);
-			break;
-			case StatValueType::BOOLEAN:
-				StatChange.Values[Key].Int = lua_toboolean(LuaState, -1);
-			break;
-			case StatValueType::POINTER:
-				StatChange.Values[Key].Pointer = lua_touserdata(LuaState, -1);
-			break;
-			case StatValueType::TIME:
-				StatChange.Values[Key].Double = lua_tonumber(LuaState, -1);
-			break;
-		}
+		GetValue(Attribute.Type, StatChange.Values[Key]);
 
 		lua_pop(LuaState, 1);
 	}
@@ -938,6 +955,31 @@ void _Scripting::GetSummons(int Index, std::vector<_Summon> &Summons) {
 		Summons.push_back(Summon);
 
 		lua_pop(LuaState, 1);
+	}
+}
+
+// Get attribute value from lua
+void _Scripting::GetValue(StatValueType Type, _Value &Value) {
+	switch(Type) {
+		case StatValueType::INTEGER:
+		case StatValueType::PERCENT:
+			Value.Int = (int)lua_tonumber(LuaState, -1);
+		break;
+		case StatValueType::INTEGER64:
+			Value.Int64 = (int64_t)lua_tonumber(LuaState, -1);
+		break;
+		case StatValueType::FLOAT:
+			Value.Float = (float)lua_tonumber(LuaState, -1);
+		break;
+		case StatValueType::BOOLEAN:
+			Value.Int = lua_toboolean(LuaState, -1);
+		break;
+		case StatValueType::POINTER:
+			Value.Pointer = lua_touserdata(LuaState, -1);
+		break;
+		case StatValueType::TIME:
+			Value.Double = lua_tonumber(LuaState, -1);
+		break;
 	}
 }
 

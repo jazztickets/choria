@@ -162,3 +162,4 @@ const  double       MENU_DOUBLECLICK_TIME              =  0.250;
 const  float        MENU_MAP_SCROLL_SPEED              =  0.005f;
 //     Scripting
 const  std::string  SCRIPTS_GAME                       =  "scripts/game.lua";
+const  std::string  SCRIPTS_DATA                       =  "scripts/data.lua";
