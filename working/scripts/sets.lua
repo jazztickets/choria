@@ -354,17 +354,17 @@ SetBonus_MysticStaff.Attributes = {
 
 SetBonus_DarkStaff = Base_Set:New()
 SetBonus_DarkStaff.Attributes = {
-	ManaPower = { "10%", "25%" },
+	SummonBattleSpeed = { "5%", "15%" },
 }
 
 SetBonus_DemonStick = Base_Set:New()
 SetBonus_DemonStick.Attributes = {
-	ManaPower = { "15%", "50%" },
+	SummonBattleSpeed = { "10%", "30%" },
 }
 
 SetBonus_DiabolicStaff = Base_Set:New()
 SetBonus_DiabolicStaff.Attributes = {
-	ManaPower = { "25%", "100%" },
+	SummonBattleSpeed = { "15%", "50%" },
 }
 
 SetBonus_Axe = Base_Set:New()

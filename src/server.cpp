@@ -188,6 +188,7 @@ _Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
 	Object->Character->BaseMinDamage = Summon.MinDamage;
 	Object->Character->BaseMaxDamage = Summon.MaxDamage;
 	Object->Character->BaseArmor = Summon.Armor;
+	Object->Character->BaseBattleSpeed = Summon.BattleSpeed;
 
 	for(auto &Skill : Object->Character->Skills)
 		Skill.second = Summon.SkillLevel;

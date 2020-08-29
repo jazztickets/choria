@@ -42,10 +42,11 @@
 #include <SDL_keycode.h>
 
 // Category names
-static const std::string SkillCategories[4] = {
+static const std::string SkillCategories[5] = {
 	"Passive Skill",
 	"Attack Skill",
 	"Spell",
+	"Summon Spell",
 	"Skill",
 };
 
@@ -74,7 +75,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	TooltipName->Text = Name;
 	TooltipType->Text = "";
 	TooltipType->Color = glm::vec4(1.0f);
-	if(Category && Category <= 4)
+	if(Category && Category <= 5)
 		TooltipType->Text = SkillCategories[Category-1];
 	else if(Type != ItemType::NONE) {
 		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);

@@ -705,6 +705,7 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	Result.Summons[1].Armor = self:GetArmor(Source, Level)
 	Result.Summons[1].SummonBuff = Buff_SummonDemon.Pointer
 	Result.Summons[1].Duration = self:GetDuration(Source, Level)
+	Result.Summons[1].BattleSpeed = Source.SummonBattleSpeed
 
 	-- Limit monster summons to 1
 	if Source.MonsterID == 0 then
@@ -810,6 +811,7 @@ function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 		Result.Summons[i].SkillLevel = self:GetSkillLevel(Source, Level)
 		Result.Summons[i].Duration = self:GetDuration(Source, Level)
 		Result.Summons[i].SummonBuff = Buff_SummonSkeleton.Pointer
+		Result.Summons[i].BattleSpeed = Source.SummonBattleSpeed
 
 		Roll = Random.GetInt(1, 100)
 		if Result.SummonBuff ~= nil then
