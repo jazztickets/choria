@@ -662,7 +662,7 @@ void _Server::HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	if(Player->Logging) {
 		ae::NetworkIDType MapID = Player->Map ? Player->Map->NetworkID : 0;
-		Player->Log << "[MOVE] time=" << std::fixed << std::setprecision(2) << Time << " mapid=" << MapID << " input=" << Player->Controller->InputStates.back() << std::endl;
+		Player->Log << "[MOVE] time=" << std::fixed << std::setprecision(2) << Time << " mapid=" << MapID << " x=" << Player->Position.x << " y=" << Player->Position.y << " input=" << Player->Controller->InputStates.back() << std::endl;
 	}
 }
 
