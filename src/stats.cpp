@@ -283,7 +283,7 @@ void _Stats::LoadItems() {
 		Item->BulkBuy = true;
 
 		// Disable bulk buy on rites
-		if(Item->Category == 5 || Item->Type == ItemType::UNLOCKABLE || !Item->IsStackable())
+		if(Item->Category == 100 || Item->Type == ItemType::UNLOCKABLE || !Item->IsStackable())
 			Item->BulkBuy = false;
 
 		if(!Headless && Item->Texture == nullptr && TexturePath != "")

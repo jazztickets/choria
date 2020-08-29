@@ -784,7 +784,7 @@ int _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendo
 		Percent = Vendor->BuyPercent;
 	else {
 		Percent = Vendor->SellPercent;
-		if(Category == 5)
+		if(Category == 100)
 			Percent = 0.0;
 	}
 
