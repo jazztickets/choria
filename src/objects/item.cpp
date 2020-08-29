@@ -1035,7 +1035,11 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 
 // Get upgraded attribute
 float _Item::GetAttribute(const std::string &Name, int Upgrades) const {
-	return GetUpgradedValue<float>(Name, Upgrades, Attributes.at(Name).Int);
+	auto AttributeIterator = Attributes.find(Name);
+	if(AttributeIterator == Attributes.end())
+		return 0.0f;
+
+	return GetUpgradedValue<float>(Name, Upgrades, AttributeIterator->second.Int);
 }
 
 // Get average damage
