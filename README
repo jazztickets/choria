@@ -1,12 +1,23 @@
 choria - Finally, an MMORPG that's all about grinding and doing chores.
 by Alan Witkowski
 
-Latest version can be found at:
+Home Page:
 https://github.com/jazztickets/choria
+
+Game Guide:
+https://jazztickets.github.io/docs/choria_legacy/
+
+----- VERSIONS -----
+
+You are on the legacy version
+
+choria classic - 2008-2015
+choria legacy - 2015-2020
+choria new - 2019-?
 
 ----- CLONING THE REPOSITORY -----
 
-git clone --branch 2015 https://github.com/jazztickets/choria.git --recurse-submodule choria2015
+git clone --branch legacy https://github.com/jazztickets/choria.git --recurse-submodule choria_legacy
 
 ----- BUILDING ON LINUX -----
 
@@ -34,7 +45,7 @@ sudo apt install git cmake build-essential libsdl2-dev libsdl2-image-dev libopen
 sudo pacman -S base-devel git cmake sdl2 sdl2_image openal libvorbis libogg freetype2 lua glm sqlite tinyxml2 jsoncpp
 
 -- Building and running after a clone --
-cd choria2015
+cd choria_legacy
 mkdir -p build/release
 cd build/release
 cmake ../../
@@ -42,7 +53,7 @@ make -j`nproc`
 cd ../../working && ./choria
 
 -- Building a Debug build --
-cd choria2015
+cd choria_legacy
 mkdir -p build/debug
 cd build/debug
 cmake -DCMAKE_BUILD_TYPE=Debug ../../
@@ -78,20 +89,23 @@ ls out/
 
 ----- COMMAND-LINE ARGUMENTS -----
 
+Parameters with <> denotes required values
+Parameters with [] denotes optional values
+
 run a dedicated server
 -server
 
 change listen port for dedicated server
--port port
+-port <port>
 
 set username on login screen
--username username
+-username <username>
 
 set password on login screen
--password password
+-password <password>
 
 connect to a server
--connect host port
+-connect <host> <port>
 
 enable hardcore only
 -hardcore
@@ -103,7 +117,7 @@ open the mapeditor
 -editor [map]
 
 start bot manager
--bot host port
+-bot <host> <port>
 
 disable audio
 -noaudio
