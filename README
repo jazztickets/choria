@@ -121,7 +121,7 @@ Hit P to set a private party name.
 Hit Enter to chat with other players.
 Hold alt to view item levels in inventory, base skill levels on skill screen, or player levels during battle.
 
-Save data is in ~/.local/share/choria2015 for Linux and %APPDATA%/choria2015 for Windows
+Save data is in ~/.local/share/choria_legacy for Linux and %APPDATA%/choria_legacy for Windows
 
 ----- MULTIPLAYER -----
 

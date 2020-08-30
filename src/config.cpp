@@ -70,7 +70,7 @@ void _Config::Init(const std::string &ConfigFile) {
 	ae::Actions.State[Action::MISC_DEBUG].Name = "misc_debug";
 
 	// Create config path
-	char *PrefPath = SDL_GetPrefPath("", "choria2015");
+	char *PrefPath = SDL_GetPrefPath("", "choria_legacy");
 	if(PrefPath) {
 		ConfigPath = PrefPath;
 		SDL_free(PrefPath);
