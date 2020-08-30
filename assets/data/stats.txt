@@ -3111,8 +3111,9 @@ INSERT INTO item VALUES(341,11,0,0,0,0,0,0,'Black Runestone Fragment','textures/
 INSERT INTO item VALUES(342,13,0,0,0,0,0,0,'Building Key','textures/items/key0.png','','','',0,1000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(343,10,0,1,1,0,0,0,'Lava Potion','textures/items/lava_potion.png','','Item_LavaPotion','',0,1000,1,0,0,0,60.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(344,7,0,0,0,0,9,10,'Hand of Zog','textures/items/hand_zog.png','','SetBonus_HandOfZog','',0,25000,1,0,50,0,0.0,0.0,1,0,0,0,15,0,5,0,150,0,2,0,0,0,0,20,1);
-INSERT INTO item VALUES(345,15,0,0,0,0,0,0,'Old One''s Map','textures/items/map.png','textures/map_nearest/timeless.png','','',0,5000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(345,15,0,0,0,0,0,0,'Old One''s Map','textures/items/map.png','textures/map_nearest/timeless.png','','',0,10000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(346,9,0,0,0,0,0,0,'Fisherman''s Necklace','textures/items/amulet_teal.png','','Item_DropRate','',0,1500,1,20,20,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(347,15,0,0,0,0,0,0,'Building Map','textures/items/map.png','textures/map_nearest/pit.png','','',0,2500,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
