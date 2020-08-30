@@ -415,7 +415,7 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 // Transfer a stack of items between bags. Return amount moved.
 int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::list<_Slot> &SlotsUpdated) {
 
-	// Get source
+	// Get source slot
 	_InventorySlot &SourceItem = GetSlot(SourceSlot);
 	if(!SourceItem.Item)
 		return 0;
@@ -424,14 +424,42 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 	if(!SourceItem.Item->Tradable && TargetBagType == BagType::TRADE)
 		return 0;
 
-	// Search bag for suitable slots
 	_Bag TargetBag = GetBag(TargetBagType);
 	_Slot CheckSlot(TargetBagType, 0);
 	int AmountMoved = 0;
 	int AmountLeft = SourceItem.Count;
+
+	// Find existing stacks
 	for(size_t i = 0; i < TargetBag.Slots.size(); i++) {
 
-		// Check each slot for space
+		// Exit when no more left to move
+		if(AmountLeft <= 0)
+			break;
+
+		// Get slot to check
+		CheckSlot.Index = i;
+		_InventorySlot &InventorySlot = GetSlot(CheckSlot);
+
+		// Merge with existing stack
+		int SpaceAvailable = InventorySlot.MaxCount - InventorySlot.Count;
+		if(InventorySlot.Item == SourceItem.Item && InventorySlot.Item->IsStackable() && SpaceAvailable > 0) {
+			int AmountCanMove = std::min(SpaceAvailable, AmountLeft);
+			InventorySlot.Count += AmountCanMove;
+			AmountMoved += AmountCanMove;
+			AmountLeft -= AmountCanMove;
+			SlotsUpdated.push_back(CheckSlot);
+		}
+
+	}
+
+	// Find empty slots
+	for(size_t i = 0; i < TargetBag.Slots.size(); i++) {
+
+		// Exit when no more left to move
+		if(AmountLeft <= 0)
+			break;
+
+		// Get slot to check
 		CheckSlot.Index = i;
 		_InventorySlot &InventorySlot = GetSlot(CheckSlot);
 
@@ -445,20 +473,6 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 			SlotsUpdated.push_back(CheckSlot);
 			break;
 		}
-
-		// Merge with existing stack
-		int SpaceAvailable = InventorySlot.MaxCount - InventorySlot.Count;
-		if(InventorySlot.Item->IsStackable() && InventorySlot.Item == SourceItem.Item && SpaceAvailable > 0) {
-			int AmountCanMove = std::min(SpaceAvailable, AmountLeft);
-			InventorySlot.Count += AmountCanMove;
-			AmountMoved += AmountCanMove;
-			AmountLeft -= AmountCanMove;
-			SlotsUpdated.push_back(CheckSlot);
-		}
-
-		// Exit when no more left to move
-		if(AmountLeft <= 0)
-			break;
 	}
 
 	// Nothing moved
