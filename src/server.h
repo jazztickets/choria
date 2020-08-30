@@ -98,6 +98,7 @@ class _Server {
 		void Slap(ae::NetworkIDType PlayerID, int GoldAmount);
 		bool StartLog(ae::NetworkIDType PlayerID);
 		void SendBattleCooldownMessage(ae::_Peer *Peer, double Duration);
+		void SendInventoryFullMessage(ae::_Peer *Peer);
 
 		// Packet handling
 		void HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer);

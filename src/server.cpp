@@ -487,7 +487,9 @@ void _Server::SendItem(ae::_Peer *Peer, const _Item *Item, int Count) {
 		return;
 
 	// Add item
-	Player->Inventory->AddItem(Item, 0, Count);
+	bool Added = Player->Inventory->AddItem(Item, 0, Count);
+	if(!Added)
+		SendInventoryFullMessage(Peer);
 
 	// Send item
 	ae::_Buffer Packet;
@@ -1226,8 +1228,10 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 			TargetSlot = Player->Inventory->FindSlotForItem(Item, 0, Amount);
 
 		// No room
-		if(!Player->Inventory->IsValidSlot(TargetSlot))
+		if(!Player->Inventory->IsValidSlot(TargetSlot)) {
+			SendInventoryFullMessage(Player->Peer);
 			return;
+		}
 
 		// Attempt to add item
 		if(!Player->Inventory->AddItem(Item, 0, Amount, TargetSlot))
@@ -2179,6 +2183,11 @@ void _Server::SendBattleCooldownMessage(ae::_Peer *Peer, double Duration) {
 		SendMessage(Peer, "The soul has vanished... for now", "yellow");
 	else
 		SendMessage(Peer, "The soul has been banished", "yellow");
+}
+
+// Notify player of full inventory
+void _Server::SendInventoryFullMessage(ae::_Peer *Peer) {
+	SendMessage(Peer, "Inventory is full", "yellow");
 }
 
 // Send a message to the player
