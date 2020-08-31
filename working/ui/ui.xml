@@ -650,5 +650,5 @@
 	<element id="element_message" style="style_hud_bg" size_x="400" size_y="200" alignment_x="0" alignment_y="0">
 		<element id="label_message" font="hud_small" alignment_x="1" alignment_y="1" format="true" index="60"/>
 	</element>
-	<element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>
+	<element id="label_menu_title_version" color="gray" font="hud_tiny" offset_x="15" offset_y="-15" alignment_x="0" alignment_y="2"/>
 </element>

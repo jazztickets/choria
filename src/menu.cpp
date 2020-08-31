@@ -136,11 +136,11 @@ void _Menu::InitTitle(bool Disconnect) {
 	if(Disconnect)
 		PlayState.Network->Disconnect(true);
 
-	std::string BuildNumber = "";
-	if(BUILD_NUMBER)
-		BuildNumber = "r" + std::to_string(BUILD_NUMBER);
+	std::string BuildVersion;
+	if(std::string(BUILD_VERSION) != "")
+		BuildVersion = std::string("-") + BUILD_VERSION;
 
-	ae::Assets.Elements["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildNumber;
+	ae::Assets.Elements["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildVersion;
 	ae::Assets.Elements["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
