@@ -18,7 +18,7 @@ mkdir -p "$outputdir"
 
 # get versions
 version=`grep 'GAME_VERSION=".*"' -o "$projectdir"/CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
-gitver=`git log --oneline | wc -l`
+gitver=`git rev-parse --short HEAD`
 
 build() {
 
@@ -51,7 +51,7 @@ build() {
 	popd
 
 	# create new working dir
-	archive_base=${project}-${version}r${gitver}-win${bits}
+	archive_base=${project}-${version}-${gitver}-win${bits}
 	archive=${archive_base}.zip
 	if [ "${build_4k}" -eq 1 ]; then
 		archive=${archive_base}_4k.zip

@@ -149,11 +149,11 @@ void _Menu::InitTitle(bool Disconnect) {
 	if(Disconnect)
 		PlayState.Network->Disconnect(true, 1);
 
-	std::string BuildNumber = "";
-	if(BUILD_NUMBER)
-		BuildNumber = "r" + std::to_string(BUILD_NUMBER);
+	std::string BuildVersion;
+	if(std::string(BUILD_VERSION) != "")
+		BuildVersion = std::string("-") + BUILD_VERSION;
 
-	ae::Assets.Elements["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildNumber;
+	ae::Assets.Elements["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildVersion;
 	ae::Assets.Elements["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
@@ -1570,9 +1570,9 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 	switch(Type) {
 		case PacketType::VERSION: {
 			std::string Version(Buffer.ReadString());
-			int BuildNumber = Buffer.Read<int>();
+			std::string BuildVersion = Buffer.ReadString();
 			BadGameVersion = false;
-			if(Version != GAME_VERSION || (BuildNumber > 0 && BuildNumber != BUILD_NUMBER)) {
+			if(Version != GAME_VERSION || (!BuildVersion.empty() && BuildVersion != BUILD_VERSION)) {
 				BadGameVersion = true;
 				PlayState.Network->Disconnect(false, 1);
 			}

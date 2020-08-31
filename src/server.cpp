@@ -346,7 +346,7 @@ void _Server::HandleConnect(ae::_NetworkEvent &Event) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VERSION);
 	Packet.WriteString(GAME_VERSION);
-	Packet.Write<int>(BUILD_NUMBER);
+	Packet.WriteString(BUILD_VERSION);
 	Network->SendPacket(Packet, Event.Peer);
 }
 
