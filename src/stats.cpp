@@ -271,6 +271,7 @@ void _Stats::LoadItems() {
 		Item->Attributes["SpellProc"].Int = Database->GetInt<int>("spellproc");
 		Item->Attributes["SpellDamage"].Int = Database->GetInt<int>("spell_damage");
 		Item->Attributes["Resist"].Int = Database->GetInt<int>("res");
+		Item->Attributes["Cursed"].Int = 0;
 		Item->Chance = Database->GetInt<int>("chance");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
 		Item->Tradable = Database->GetInt<int>("tradable");
@@ -279,7 +280,6 @@ void _Stats::LoadItems() {
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
 		Item->Tradable = Database->GetInt<int>("tradable");
-		Item->Cursed = Database->GetInt<int>("cursed");
 		Item->BulkBuy = true;
 
 		// Disable bulk buy on rites

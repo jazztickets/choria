@@ -109,7 +109,7 @@ void _VendorScreen::SellItem(_Cursor *Cursor, int Amount) {
 		return;
 
 	// Can't sell cursed equipped items
-	if(Item->Cursed && Cursor->Slot.Type == BagType::EQUIPMENT)
+	if(Item->IsCursed() && Cursor->Slot.Type == BagType::EQUIPMENT)
 		return;
 
 	// Notify server

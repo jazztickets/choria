@@ -82,7 +82,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		if(Type == ItemType::CONSUMABLE && Scope == ScopeType::BATTLE) {
 			TooltipType->Text = "Battle " + TooltipType->Text;
 		}
-		else if(Cursed) {
+		else if(IsCursed()) {
 			TooltipType->Text = "Cursed " + TooltipType->Text;
 			TooltipType->Color = ae::Assets.Colors["red"];
 		}
@@ -109,7 +109,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	Size.y = INVENTORY_TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
 	if(Player->Character->Vendor)
 		Size.y += LargeSpacingY;
-	if(Cursed)
+	if(IsCursed())
 		Size.y += SpacingY;
 	if(Player->Character->IsTrading())
 		Size.y += SpacingY;
@@ -474,7 +474,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		case ItemType::RING:
 		case ItemType::AMULET:
 		case ItemType::OFFHAND:
-			if(Cursed) {
+			if(IsCursed()) {
 				InfoText = "Cursed items cannot be unequipped";
 				InfoColor = ae::Assets.Colors["red"];
 			}
@@ -541,7 +541,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	}
 
 	// Move hint
-	if(Player->Character->IsTrading() && Tradable && !(Cursed && Tooltip.Window == _HUD::WINDOW_EQUIPMENT))
+	if(Player->Character->IsTrading() && Tradable && !(IsCursed() && Tooltip.Window == _HUD::WINDOW_EQUIPMENT))
 		HelpTextList.push_back("Shift+click to move");
 
 	// Split hint

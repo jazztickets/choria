@@ -70,6 +70,7 @@ class _Item {
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type == ItemType::OFFHAND || (Type >= ItemType::HELMET && Type <= ItemType::AMULET); }
 		bool IsStackable() const { return !IsEquippable(); }
+		bool IsCursed() const { return Attributes.at("Cursed").Int; }
 		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
 		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
 		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
@@ -116,7 +117,6 @@ class _Item {
 		uint32_t ResistanceTypeID;
 		bool Tradable;
 		bool TargetAlive;
-		bool Cursed;
 		TargetType TargetID;
 		ScopeType Scope;
 		uint32_t UnlockID;

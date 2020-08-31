@@ -240,7 +240,7 @@ bool _Inventory::CanSwap(const _Slot &OldSlot, const _Slot &NewSlot) {
 		return false;
 
 	// Cursed items
-	if(OldItem && OldItem->Cursed && OldSlot.Type == BagType::EQUIPMENT)
+	if(OldItem && OldItem->IsCursed() && OldSlot.Type == BagType::EQUIPMENT)
 		return false;
 
 	return true;
@@ -295,7 +295,7 @@ _Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int U
 	_Slot EmptySlot;
 
 	// Don't put cursed items in equipment slot from trader
-	if(Item && Item->Cursed && BagType == BagType::EQUIPMENT)
+	if(Item && Item->IsCursed() && BagType == BagType::EQUIPMENT)
 		return EmptySlot;
 
 	_Bag &Bag = Bags[(size_t)BagType];

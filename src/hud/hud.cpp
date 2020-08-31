@@ -262,7 +262,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 								Amount += (INVENTORY_SPLIT_MODIFIER - 1);
 							VendorScreen->SellItem(&Tooltip, Amount);
 						}
-						else if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->Cursed) {
+						else if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->IsCursed()) {
 							ae::_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 							Packet.WriteBit(ae::Input.ModKeyDown(KMOD_CTRL));
@@ -449,7 +449,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							if(!ae::Graphics.Element->HitElement) {
 
 								// Can't deleted cursed equipped items
-								if(Cursor.InventorySlot.Item && Cursor.InventorySlot.Item->Cursed && Cursor.Slot.Type == BagType::EQUIPMENT)
+								if(Cursor.InventorySlot.Item && Cursor.InventorySlot.Item->IsCursed() && Cursor.Slot.Type == BagType::EQUIPMENT)
 									break;
 
 								InitConfirm("Delete this item?");
@@ -1510,7 +1510,7 @@ void _HUD::Transfer(const _Slot &SourceSlot) {
 	switch(SourceSlot.Type) {
 		case BagType::INVENTORY:
 		case BagType::EQUIPMENT:
-			if(SourceSlot.Type == BagType::EQUIPMENT && Player->Inventory->GetSlot(SourceSlot).Item && Player->Inventory->GetSlot(SourceSlot).Item->Cursed)
+			if(SourceSlot.Type == BagType::EQUIPMENT && Player->Inventory->GetSlot(SourceSlot).Item && Player->Inventory->GetSlot(SourceSlot).Item->IsCursed())
 				return;
 
 			if(TradeScreen->Element->Active)

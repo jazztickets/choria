@@ -9,6 +9,13 @@ Item_Data = {
 		AllSkills = 1,
 	},
 
+-- Rings
+
+	-- Hungering Ring
+	[286] = {
+		Cursed = true,
+	},
+
 -- One-Handed Weapons
 
 	-- Shining Star
@@ -32,4 +39,12 @@ Item_Data = {
 	[317] = {
 		SummonPower = 35,
 	},
+
+-- Shields
+
+	-- Hand of Zog
+	[344] = {
+		Cursed = true,
+	},
+
 }
