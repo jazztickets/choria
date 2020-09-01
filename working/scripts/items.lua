@@ -835,12 +835,19 @@ function Item_Torch.PlaySound(self, Level)
 	Audio.Play("flame0.ogg")
 end
 
--- Dimensional Slippers --
+-- Flamuss
 
-SetBonus_DimensionalSlippers = Base_Set:New()
-SetBonus_DimensionalSlippers.Attributes = {
-	Evasion = { "1%", "5%" },
-}
+function SetBonus_Flamuss.GetInfo(self, Source, Item)
+	return "[c yellow]Grants freeze immunity\n\n" .. self:GetAddedInfo(Source, Item)
+end
+
+function SetBonus_Flamuss.Stats(self, Item, Object, Change)
+	Change.FreezeProtection = true
+
+	return Change
+end
+
+-- Dimensional Slippers --
 
 function SetBonus_DimensionalSlippers.GetInfo(self, Source, Item)
 	return "[c yellow]Allows for diagonal movement\n\n" .. self:GetAddedInfo(Source, Item)
@@ -853,11 +860,6 @@ function SetBonus_DimensionalSlippers.Stats(self, Item, Object, Change)
 end
 
 -- Lava Boots --
-
-SetBonus_LavaBoots = Base_Set:New()
-SetBonus_LavaBoots.Attributes = {
-	MoveSpeed = { "5%", "15%" },
-}
 
 function SetBonus_LavaBoots.GetInfo(self, Source, Item)
 	return "[c yellow]Grants immunity to lava\n\n" .. self:GetAddedInfo(Source, Item)

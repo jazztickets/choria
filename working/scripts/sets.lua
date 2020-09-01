@@ -493,3 +493,15 @@ SetBonus_Cap = Base_Set:New()
 SetBonus_Cap.Attributes = {
 	HealPower = { "5%", "25%" },
 }
+
+-- Boots --
+
+SetBonus_DimensionalSlippers = Base_Set:New()
+SetBonus_DimensionalSlippers.Attributes = {
+	Evasion = { "1%", "5%" },
+}
+
+SetBonus_LavaBoots = Base_Set:New()
+SetBonus_LavaBoots.Attributes = {
+	MoveSpeed = { "5%", "15%" },
+}
