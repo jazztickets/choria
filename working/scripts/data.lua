@@ -45,6 +45,7 @@ Item_Data = {
 	-- Hand of Zog
 	[344] = {
 		Cursed = true,
+		AttackPower = -100,
 	},
 
 }

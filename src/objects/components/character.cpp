@@ -402,6 +402,7 @@ void _Character::CalculateStats() {
 		Attributes["Cooldowns"].Int += std::floor(Item->GetCooldownReduction(Upgrades));
 		Attributes["ExperienceBonus"].Int += std::floor(Item->GetAttribute("ExperienceBonus", Upgrades));
 		Attributes["GoldBonus"].Int += std::floor(Item->GetAttribute("GoldBonus", Upgrades));
+		Attributes["AttackPower"].Int += std::floor(Item->GetAttribute("AttackPower", Upgrades));
 		Attributes["SummonPower"].Int += std::floor(Item->GetAttribute("SummonPower", Upgrades));
 
 		// Handle all resist

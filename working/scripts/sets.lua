@@ -170,6 +170,7 @@ Set_Warriors = Base_Set:New()
 Set_Warriors.Attributes = {
 	Armor = { "13", "45" },
 	ColdResist = { "25%", "75%" },
+	FireResist = { "15%", "35%" },
 	HealPower = { "15%", "75%" },
 	MaxHealth = { "250", "1250" },
 	PhysicalPower = { "50%", "250%" },
@@ -198,6 +199,7 @@ Set_Steel.Attributes = {
 	Armor = { "20", "75" },
 	AllResist = { "20%", "50%" },
 	DamageBlock = { "25", "125" },
+	HitChance = { "10%", "35%" },
 	MaxHealth = { "500", "2000" },
 	ShieldDamage = { "50%", "250%" },
 }
@@ -343,13 +345,14 @@ SetBonus_HolyStaff.Attributes = {
 
 SetBonus_LightStaff = Base_Set:New()
 SetBonus_LightStaff.Attributes = {
-	HealPower = { "50%", "100%" },
+	HealPower = { "50%", "200%" },
+	HealthBonus = { "5%", "35%" },
 }
 
 SetBonus_MysticStaff = Base_Set:New()
 SetBonus_MysticStaff.Attributes = {
 	AttackPower = { "25%", "50%" },
-	Evasion = { "5%", "10%" },
+	Initiative = { "5%", "25%" },
 }
 
 SetBonus_DarkStaff = Base_Set:New()
@@ -389,7 +392,7 @@ SetBonus_Greatsword.Attributes = {
 
 SetBonus_Icebrand = Base_Set:New()
 SetBonus_Icebrand.Attributes = {
-	ColdPower = { "10%", "50%" },
+	AttackPower = { "35%", "100%" },
 }
 
 -- Off-Hand Weapons --
@@ -416,7 +419,8 @@ SetBonus_SwiftKnife.Attributes = {
 
 SetBonus_MoonBlade = Base_Set:New()
 SetBonus_MoonBlade.Attributes = {
-	BleedPower = { "50%", "100%" },
+	BleedPower = { "50%", "150%" },
+	AttackPower = { "15%", "35%" },
 }
 
 SetBonus_Bloodletter = Base_Set:New()
@@ -480,7 +484,6 @@ SetBonus_SteelShield.Attributes = {
 
 SetBonus_HandOfZog = Base_Set:New()
 SetBonus_HandOfZog.Attributes = {
-	AttackPower = { "-100%", "-100%" },
 	ManaShield = { "5%", "25%" },
 }
 
