@@ -570,3 +570,21 @@ function Buff_LavaImmune.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Warm --
+
+Buff_Warm = Base_Buff:New()
+
+function Buff_Warm.GetInfo(self, Level)
+	return "Immune to freezing"
+end
+
+function Buff_Warm.Stats(self, Level, Source, Change)
+	Change.FreezeProtection = true
+
+	if Source.Light == 0 then
+		Change.Light = 31
+	end
+
+	return Change
+end

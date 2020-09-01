@@ -763,6 +763,23 @@ function Item_LavaPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+-- Warming Torch --
+
+Item_WarmingTorch = Base_Potion:New()
+
+function Item_WarmingTorch.GetInfo(self, Source, Item)
+	return "Grants freeze immunity for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Item_WarmingTorch.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Warm.Pointer
+	Result.Target.BuffLevel = 0
+	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Freezing.Pointer
+
+	return Result
+end
+
 -- Ultimate Battle Potion --
 
 Item_UltimateBattlePotion = Base_Potion:New()
