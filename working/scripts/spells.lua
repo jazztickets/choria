@@ -692,7 +692,7 @@ Skill_DemonicConjuring.Monster = Monsters[23]
 Skill_DemonicConjuring.SpecialMonster = Monsters[39]
 
 function Skill_DemonicConjuring.GetInfo(self, Source, Item)
-	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and does [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon an ice imp that deals ice damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health demon at limit"
+	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and does [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon an ice imp that deals cold damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health demon at limit"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
