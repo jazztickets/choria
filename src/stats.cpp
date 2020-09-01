@@ -714,7 +714,7 @@ void _Stats::GetZone(uint32_t ZoneID, _Zone &Zone) const {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const {
+void _Stats::GenerateMonsterListFromZone(int AdditionalCount, float MonsterCountModifier, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const {
 	if(ZoneID == 0)
 		return;
 
@@ -736,28 +736,36 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 	// If boss zone then use odds parameter as monster count
 	if(Boss) {
 
-		// Run query
-		Database->PrepareQuery("SELECT monster_id, odds, difficulty FROM zonedata WHERE zone_id = @zone_id");
-		Database->BindInt(1, ZoneID);
-		while(Database->FetchRow()) {
-			_Zone ZoneData;
-			ZoneData.MonsterID = Database->GetInt<uint32_t>("monster_id");
-			ZoneData.Difficulty = Database->GetInt<int>("difficulty");
-			uint32_t Count = Database->GetInt<uint32_t>("odds");
+		for(int i = 0; i < (int)MonsterCountModifier; i++) {
 
-			// Populate monster list
-			for(uint32_t i = 0; i < Count; i++)
-				Monsters.push_back(ZoneData);
+			// Run query
+			Database->PrepareQuery("SELECT monster_id, odds, difficulty FROM zonedata WHERE zone_id = @zone_id");
+			Database->BindInt(1, ZoneID);
+			while(Database->FetchRow()) {
+				_Zone ZoneData;
+				ZoneData.MonsterID = Database->GetInt<uint32_t>("monster_id");
+				ZoneData.Difficulty = Database->GetInt<int>("difficulty");
+				uint32_t Count = Database->GetInt<uint32_t>("odds");
+
+				// Populate monster list
+				for(uint32_t i = 0; i < Count; i++) {
+					if(Monsters.size() < BATTLE_MAX_OBJECTS_PER_SIDE)
+						Monsters.push_back(ZoneData);
+					else
+						break;
+				}
+			}
+			Database->CloseQuery();
 		}
-		Database->CloseQuery();
 	}
 	else {
 
 		// Get monster count
 		int MonsterCount = ae::GetRandomInt(MinSpawn, MaxSpawn);
+		MonsterCount *= MonsterCountModifier;
 
 		// No monsters
-		if(MonsterCount == 0)
+		if(MonsterCount <= 0)
 			return;
 
 		MonsterCount += AdditionalCount;

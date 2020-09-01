@@ -2383,7 +2383,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		std::list<_Zone> Monsters;
 		bool Boss = false;
 		double Cooldown = 0.0;
-		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, Monsters, Boss, Cooldown);
+		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Object->Character->Attributes["Monsters"].Mult(), BattleEvent.Zone, Monsters, Boss, Cooldown);
 
 		// Fight if there are monsters
 		if(!Monsters.size())

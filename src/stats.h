@@ -206,7 +206,7 @@ class _Stats {
 
 		// Monsters
 		void GetZone(uint32_t ZoneID, _Zone &Zone) const;
-		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const;
+		void GenerateMonsterListFromZone(int AdditionalCount, float MonsterCountModifier, uint32_t ZoneID, std::list<_Zone> &Monsters, bool &Boss, double &Cooldown) const;
 		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::vector<uint32_t> &ItemDrops, float DropRate) const;
 
 		// Maps

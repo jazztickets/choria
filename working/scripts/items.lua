@@ -971,6 +971,25 @@ function Item_DropRate.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Constricting Amulet --
+
+Item_ConstrictingAmulet = { }
+Item_ConstrictingAmulet.LevelPerUpgrade = 3.75
+
+function Item_ConstrictingAmulet.GetInfo(self, Source, Item)
+	return "Increase monster count in battle by [c green]" .. self:GetAmount(Item) .. "%[c white]"
+end
+
+function Item_ConstrictingAmulet.GetAmount(self, Item)
+	return math.floor(Item.Level + Item.Upgrades * self.LevelPerUpgrade)
+end
+
+function Item_ConstrictingAmulet.Stats(self, Item, Object, Change)
+	Change.Monsters = self:GetAmount(Item)
+
+	return Change
+end
+
 -- Dark Note --
 
 Item_DarkNote = { }
