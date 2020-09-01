@@ -791,6 +791,9 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, float MonsterCount
 			ZoneData.Max = Database->GetInt<int>("max");
 			ZoneData.Difficulty = Database->GetInt<int>("difficulty");
 
+			// Increase max
+			ZoneData.Max *= MonsterCountModifier;
+
 			// Increase max for each player if set
 			if(ZoneData.Max > 0) {
 				MaxTotal += ZoneData.Max + AdditionalCount;
