@@ -78,3 +78,25 @@ end
 function Script_Slow.PlaySound(self, Level)
 	Audio.Play("swamp0.ogg", 0.5)
 end
+
+Script_Freezing = { BaseDamage = 5 }
+
+function Script_Freezing.Activate(self, Level, Object, Change)
+	if Object.FreezeProtection == true then
+		Change.ClearBuff = Buff_Invis.Pointer
+		return Change
+	end
+
+	Damage = self.BaseDamage * Level * Object.GetDamageReduction(DamageType["Cold"])
+	Change.Health = -Damage
+	Change.Buff = Buff_Freezing.Pointer
+	Change.BuffLevel = Level
+	Change.BuffDuration = 10
+	if Object.HasBuff(Buff_Healing.Pointer) then
+		Change.ClearBuff = Buff_Healing.Pointer
+	else
+		Change.ClearBuff = Buff_Invis.Pointer
+	end
+
+	return Change
+end

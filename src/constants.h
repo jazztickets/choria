@@ -110,7 +110,7 @@ const  int          BATTLE_DIFFICULTY_PER_PLAYER_BOSS  =  50;
 //     Player
 const  double       PLAYER_TELEPORT_TIME               =  3.0;
 const  double       PLAYER_MOVETIME                    =  0.15;
-const  int          PLAYER_MIN_MOVESPEED               =  10;
+const  int          PLAYER_MIN_MOVESPEED               =  5;
 const  double       PLAYER_ATTACKTIME                  =  1.0;
 const  int          PLAYER_NAME_SIZE                   =  15;
 const  float        PLAYER_INVIS_ALPHA                 =  0.27f;

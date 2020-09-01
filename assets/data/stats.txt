@@ -357,6 +357,7 @@ INSERT INTO script VALUES(20,'Script_Boss',52,'textures/objects/sentinel.png');
 INSERT INTO script VALUES(21,'Script_Boss',53,'textures/objects/sentinel.png');
 INSERT INTO script VALUES(22,'Script_Boss',54,'textures/objects/sentinel.png');
 INSERT INTO script VALUES(23,'Script_Boss',48,'textures/objects/arach.png');
+INSERT INTO script VALUES(24,'Script_Freezing',50,'');
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -1765,6 +1766,7 @@ INSERT INTO buff VALUES(30,'Ice Imps','Buff_SummonIceImp','textures/buffs/summon
 INSERT INTO buff VALUES(31,'Difficult','Buff_Difficult','textures/buffs/difficult.png',1,0,0,0);
 INSERT INTO buff VALUES(32,'Attractant','Buff_Attractant','textures/buffs/attractant.png',1,0,0,0);
 INSERT INTO buff VALUES(33,'Lava Immune','Buff_LavaImmune','textures/buffs/lava_immunity.png',1,0,1,10);
+INSERT INTO buff VALUES(34,'Freezing','Buff_Freezing','textures/buffs/freezing.png',0,1,0,0);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2113,7 +2115,7 @@ INSERT INTO map VALUES(56,'','textures/map/atlas0.png','',0.29999999999999998889
 INSERT INTO map VALUES(57,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(58,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(59,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
-INSERT INTO map VALUES(60,'maps/ice_cave1.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,0,0,0.0,0.0,0.0);
+INSERT INTO map VALUES(60,'maps/ice_cave1.map.gz','textures/map/atlas0.png','',0.14999999999999999444,0.2000000000000000111,0.5,0,0,0.0,0.0,0.0);
 CREATE TABLE IF NOT EXISTS "trader" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,

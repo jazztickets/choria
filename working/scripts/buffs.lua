@@ -267,6 +267,31 @@ function Buff_Burning.Update(self, Level, Source, Change)
 	return Change
 end
 
+-- Freezing --
+
+Buff_Freezing = {}
+Buff_Freezing.SlowLevel = 200
+Buff_Freezing.DamageType = DamageType["Cold"]
+
+function Buff_Freezing.GetInfo(self, Level)
+	return "Freezing for [c red]" .. Level .. " [c white]damage\nSpeed reduced by [c green]" .. self.SlowLevel .. "%"
+end
+
+function Buff_Freezing.Update(self, Level, Source, Change)
+	Damage = Level * Source.GetDamageReduction(self.DamageType)
+	Damage = math.max(math.floor(Damage), 0)
+	Change.Health = -Damage
+
+	return Change
+end
+
+function Buff_Freezing.Stats(self, Level, Source, Change)
+	Change.BattleSpeed = -self.SlowLevel
+	Change.MoveSpeed = -self.SlowLevel
+
+	return Change
+end
+
 -- Bleed Resist --
 
 Buff_BleedResist = Base_Buff:New()
