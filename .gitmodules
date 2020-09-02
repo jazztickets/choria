@@ -1,7 +1,8 @@
 [submodule "cmake"]
 	path = cmake
 	url = git@github.com:jazztickets/cmake
+	branch = master
 [submodule "ext/ae"]
 	path = ext/ae
 	url = git@github.com:jazztickets/ae
-	branch = 2015
+	branch = legacy
