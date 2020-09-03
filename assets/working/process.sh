@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p ../../working/textures
+
 for f in textures/*; do
 	./pack.py ./ "$f"
 

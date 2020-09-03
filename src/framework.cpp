@@ -459,23 +459,23 @@ void _Framework::HandleCommand(ae::_Console *Console) {
 void _Framework::LoadAssets() {
 
 	// Load textures
-	ae::Assets.LoadTextureDirectory("textures/buffs/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/buttonbar/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/builds/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/hud/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", false, true);
-	ae::Assets.LoadTextureDirectory("textures/items/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/lights/");
-	ae::Assets.LoadTextureDirectory("textures/map/");
+	ae::Assets.LoadTexturePack("textures/buffs", false, false, true);
+	ae::Assets.LoadTexturePack("textures/buttonbar", false, false, true);
+	ae::Assets.LoadTexturePack("textures/builds", false, false, true);
+	ae::Assets.LoadTexturePack("textures/hud", false, false, true);
+	ae::Assets.LoadTexturePack("textures/hud_repeat", false, true);
+	ae::Assets.LoadTexturePack("textures/items", false, false, true);
+	ae::Assets.LoadTexturePack("textures/lights");
+	ae::Assets.LoadTexturePack("textures/map");
 	ae::Assets.LoadTexturePack("textures/map_nearest", false, false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/menu/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/minigames/", false, false, false);
-	ae::Assets.LoadTextureDirectory("textures/models/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/monsters/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/objects/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/portraits/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/skills/", false, false, true);
-	ae::Assets.LoadTextureDirectory("textures/status/", false, false, true);
+	ae::Assets.LoadTexturePack("textures/menu", false, false, true);
+	ae::Assets.LoadTexturePack("textures/minigames", false, false, false);
+	ae::Assets.LoadTexturePack("textures/models", false, false, true);
+	ae::Assets.LoadTexturePack("textures/monsters", false, false, true);
+	ae::Assets.LoadTexturePack("textures/objects", false, false, true);
+	ae::Assets.LoadTexturePack("textures/portraits", false, false, true);
+	ae::Assets.LoadTexturePack("textures/skills", false, false, true);
+	ae::Assets.LoadTexturePack("textures/status", false, false, true);
 
 	// Load tables
 	ae::Assets.LoadLayers("tables/layers.tsv");
