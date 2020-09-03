@@ -857,8 +857,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set items
 	for(Json::ValueIterator BagNode = Data["items"].begin(); BagNode != Data["items"].end(); BagNode++) {
 		for(const Json::Value &ItemNode : *BagNode) {
+			uint32_t ItemID = ItemNode["id"].asUInt();
+			if(Stats->Items.find(ItemID) == Stats->Items.end())
+				continue;
+
 			_InventorySlot InventorySlot;
-			InventorySlot.Item = Stats->Items.at(ItemNode["id"].asUInt());
+			InventorySlot.Item = Stats->Items.at(ItemID);
 			InventorySlot.Upgrades = std::clamp(ItemNode["upgrades"].asInt(), 0, InventorySlot.Item->MaxLevel);
 			InventorySlot.Count = ItemNode["count"].asInt();
 			BagType Bag = (BagType)std::stoul(BagNode.name());
