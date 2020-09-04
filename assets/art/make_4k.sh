@@ -6,7 +6,7 @@ type zip >/dev/null 2>&1 || {
 	exit 1;
 }
 
-dest="4k/textures/"
+dest="4k/out/"
 rm -rf "$dest"
 
 mkdir -p "$dest"
@@ -46,10 +46,24 @@ for f in armors boots helms shields weapons items rebirth; do
 	mv export/*.png "$dest/items/"
 done
 
+# copy hud texture
+cp ../working/textures/hud/body.png 4k/textures/hud/
+
 # remove old items
 rm "$dest/items/metal_"*
 
 # make zip
 pushd 4k
+
+mkdir -p textures
+rm -f textures/*
+for f in out/*; do
+	../../working/pack.py ./ "$f"
+
+	pack=$(basename "$f")
+	mv -v "$pack" textures/
+done
+
 zip -r "choria_4k_textures.zip" "textures/"
+
 popd
