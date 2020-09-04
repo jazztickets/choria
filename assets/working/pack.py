@@ -34,7 +34,7 @@ print(len(file_list))
 data_file = open("body", "wb")
 for final_path in file_list:
 
-	# load file into memory 
+	# load file into memory
 	file = open(os.path.join(base_path, final_path), "rb")
 	data = file.read()
 	file.close()
@@ -65,4 +65,4 @@ with open('final', 'wb') as write_file:
 
 		os.remove(file)
 
-os.rename("final", basedirname)
+os.rename("final", basedirname + ".bin")

@@ -6,5 +6,5 @@ for f in textures/*; do
 	./pack.py ./ "$f"
 
 	pack=$(basename "$f")
-	mv -v "$pack" ../../working/textures
+	mv -v "${pack}.bin" "../../working/textures/${pack}"
 done
