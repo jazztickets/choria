@@ -44,21 +44,21 @@ sudo apt install git cmake build-essential libsdl2-dev libsdl2-image-dev libopen
 -- Installing dependencies on Arch Linux --
 sudo pacman -S base-devel git cmake sdl2 sdl2_image openal libvorbis libogg freetype2 lua glm sqlite tinyxml2 jsoncpp
 
--- Building and running after a clone --
+-- Build executable after a clone --
 cd choria_legacy
 mkdir -p build/release
-cd build/release
+pushd build/release
 cmake ../../
 make -j`nproc`
-cd ../../working && ./choria
+popd
 
--- Building a Debug build --
-cd choria_legacy
-mkdir -p build/debug
-cd build/debug
-cmake -DCMAKE_BUILD_TYPE=Debug ../../
-make -j`nproc`
-cd ../../working && ./choria_debug
+-- Build texture packs --
+pushd assets/working
+./process.sh
+popd
+
+-- Running the game
+cd working && ./choria
 
 -- Installing --
 run "sudo make install" from the build directory
