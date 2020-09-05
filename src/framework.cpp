@@ -482,7 +482,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadPrograms("tables/programs.tsv");
 	ae::Assets.LoadColors("tables/colors.tsv");
 	ae::Assets.LoadStyles("tables/styles.tsv");
-	ae::Assets.LoadSounds("sounds/");
+	ae::Assets.LoadSoundPack("data/sounds");
 	ae::Assets.LoadMusic("music/");
 
 	// Load font names only
