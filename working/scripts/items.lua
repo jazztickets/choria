@@ -765,7 +765,7 @@ end
 
 -- Warming Torch --
 
-Item_WarmingTorch = Base_Potion:New()
+Item_WarmingTorch = { }
 
 function Item_WarmingTorch.GetInfo(self, Source, Item)
 	return "Grants freeze immunity for [c green]" .. Item.Duration .. "[c white] seconds"
@@ -778,6 +778,10 @@ function Item_WarmingTorch.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.ClearBuff = Buff_Freezing.Pointer
 
 	return Result
+end
+
+function Item_WarmingTorch.PlaySound(self, Level)
+	Audio.Play("flame0.ogg")
 end
 
 -- Ultimate Battle Potion --
