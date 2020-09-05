@@ -2,8 +2,8 @@
 
 project=choria
 version=`grep 'GAME_VERSION=".*"' -o ../CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
-gitver=`git log --oneline | wc -l`
-base=${project}-${version}r${gitver}
+gitver=`git rev-parse --short HEAD`
+base=${project}-${version}-${gitver}
 pkg=${base}-src.tar.gz
 
 mkdir -p out
