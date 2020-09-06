@@ -57,7 +57,7 @@ const  double       MAP_DAY_LENGTH                     =  24.0*60.0;
 const  double       MAP_CLOCK_SPEED                    =  1.0;
 const  double       MAP_EDITOR_CLOCK_SPEED             =  200.0;
 const  glm::vec4    MAP_AMBIENT_LIGHT                  =  glm::vec4(0.3,0.3,0.3,1);
-const  std::string  MAP_DEFAULT_TILESET                =  "atlas0.png";
+const  std::string  MAP_DEFAULT_TILESET                =  "textures/atlas/main.png";
 //     UI
 const  glm::vec2    UI_PORTRAIT_SIZE                   =  glm::vec2(100,100);
 const  glm::vec2    UI_SLOT_SIZE                       =  glm::vec2(64,64);

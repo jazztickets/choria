@@ -459,6 +459,7 @@ void _Framework::HandleCommand(ae::_Console *Console) {
 void _Framework::LoadAssets() {
 
 	// Load textures
+	ae::Assets.LoadTexturePack("textures/atlas");
 	ae::Assets.LoadTexturePack("textures/buffs", false, false, true);
 	ae::Assets.LoadTexturePack("textures/buttonbar", false, false, true);
 	ae::Assets.LoadTexturePack("textures/builds", false, false, true);
@@ -466,7 +467,6 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTexturePack("textures/hud_repeat", false, true);
 	ae::Assets.LoadTexturePack("textures/items", false, false, true);
 	ae::Assets.LoadTexturePack("textures/lights");
-	ae::Assets.LoadTexturePack("textures/map");
 	ae::Assets.LoadTexturePack("textures/map_nearest", false, false, false, true);
 	ae::Assets.LoadTexturePack("textures/menu", false, false, true);
 	ae::Assets.LoadTexturePack("textures/minigames", false, false, false);

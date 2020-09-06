@@ -97,7 +97,7 @@ void _BenchmarkState::Init() {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
 	}
 
-	Atlas = new ae::_Atlas(ae::Assets.Textures["textures/map/atlas0.png"], glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
+	Atlas = new ae::_Atlas(ae::Assets.Textures[MAP_DEFAULT_TILESET], glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
 }
 
 // Close
