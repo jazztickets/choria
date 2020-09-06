@@ -53,7 +53,7 @@ make -j`nproc`
 popd
 
 -- Build texture packs --
-pushd assets/working
+pushd assets/source
 ./process.sh
 popd
 

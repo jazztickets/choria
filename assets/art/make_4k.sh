@@ -6,9 +6,9 @@ type zip >/dev/null 2>&1 || {
 	exit 1;
 }
 
-dest="4k/textures/"
-rm -rf "$dest"
+rm -rf "4k"
 
+dest="4k/textures/"
 mkdir -p "$dest"
 mkdir -p "$dest/buffs"
 mkdir -p "$dest/builds"
@@ -47,7 +47,7 @@ for f in armors boots helms shields weapons items rebirth; do
 done
 
 # copy hud texture
-cp ../working/textures/hud/body.png 4k/textures/hud/
+cp ../source/textures/hud/body.png 4k/textures/hud/
 
 # remove old items
 rm "$dest/items/metal_"*
@@ -59,7 +59,7 @@ pushd 4k
 mkdir -p out
 rm -f out/*
 for f in textures/*; do
-	../../working/pack.py ./ "$f"
+	../../source/pack.py ./ "$f"
 
 	pack=$(basename "$f")
 	mv -v "${pack}.bin" "out/$pack"
