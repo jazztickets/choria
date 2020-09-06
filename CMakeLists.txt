@@ -109,13 +109,30 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # add command to build data
-if(EXISTS ${PROJECT_SOURCE_DIR}/assets/source/process.sh)
+if(EXISTS "${PROJECT_SOURCE_DIR}/assets/source/process.sh")
+
+	# pack data
 	add_custom_command(
-		OUTPUT ${PROJECT_SOURCE_DIR}/working/data/sounds
-		COMMAND ${PROJECT_SOURCE_DIR}/assets/source/process.sh
-		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/assets/source/
+		OUTPUT "${PROJECT_SOURCE_DIR}/working/data/sounds"
+		COMMAND "${PROJECT_SOURCE_DIR}/assets/source/process.sh"
+		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/assets/source/"
 	)
-	add_custom_target(data ALL DEPENDS ${PROJECT_SOURCE_DIR}/working/data/sounds)
+	add_custom_target(data ALL DEPENDS "${PROJECT_SOURCE_DIR}/working/data/sounds")
+
+	# compile scripts
+	file(GLOB SOURCE_SCRIPTS "${PROJECT_SOURCE_DIR}/assets/source/scripts/*.lua")
+	file(MAKE_DIRECTORY "${PROJECT_SOURCE_DIR}/working/scripts/")
+	foreach(SCRIPT_PATH ${SOURCE_SCRIPTS})
+		get_filename_component(FILENAME "${SCRIPT_PATH}" NAME)
+		set(SCRIPT_OUTPUT "${PROJECT_SOURCE_DIR}/working/scripts/${FILENAME}")
+		list(APPEND DATA_SCRIPTS "${SCRIPT_OUTPUT}")
+		add_custom_command(
+			OUTPUT "${SCRIPT_OUTPUT}"
+			COMMAND luac -o "${SCRIPT_OUTPUT}" "${SCRIPT_PATH}"
+			DEPENDS "${SCRIPT_PATH}"
+		)
+	endforeach()
+	add_custom_target(data_scripts ALL DEPENDS "${DATA_SCRIPTS}")
 endif()
 
 # add custom target to generate version.h
