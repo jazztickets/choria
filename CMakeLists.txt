@@ -17,7 +17,7 @@ if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 
 	# disable console window
-	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")
 endif()
 
 # enable editor
@@ -106,6 +106,16 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/working/)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${CMAKE_PROJECT_NAME}_debug)
+endif()
+
+# add command to build data
+if(EXISTS ${PROJECT_SOURCE_DIR}/assets/source/process.sh)
+	add_custom_command(
+		OUTPUT ${PROJECT_SOURCE_DIR}/working/data/sounds
+		COMMAND ${PROJECT_SOURCE_DIR}/assets/source/process.sh
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/assets/source/
+	)
+	add_custom_target(data ALL DEPENDS ${PROJECT_SOURCE_DIR}/working/data/sounds)
 endif()
 
 # add custom target to generate version.h

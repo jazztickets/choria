@@ -52,11 +52,6 @@ cmake ../../
 make -j`nproc`
 popd
 
--- Build texture packs --
-pushd assets/source
-./process.sh
-popd
-
 -- Running the game
 cd working && ./choria
 
