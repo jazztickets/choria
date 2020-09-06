@@ -105,10 +105,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
 # set output path
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/working/)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_definitions("-DDEBUG_BUILD=1")
 	set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${CMAKE_PROJECT_NAME}_debug)
-else()
-	add_definitions("-DDEBUG_BUILD=0")
 endif()
 
 # add custom target to generate version.h
