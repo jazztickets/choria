@@ -4,14 +4,22 @@ import os
 import sys
 import struct
 import shutil
+import argparse
 
-# get arguments
-if len(sys.argv) != 3:
-	print("Usage: ./pack.py base_dir sub_path")
-	sys.exit(1)
+def check_dir(string):
+	if os.path.isdir(string):
+		return string
+	else:
+		raise argparse.ArgumentTypeError(f"{string} is not a valid path")
 
-base_path = sys.argv[1]
-sub_path = sys.argv[2]
+parser = argparse.ArgumentParser()
+parser.add_argument("base_path", help="base input directory", type=check_dir)
+parser.add_argument("sub_path", help="sub path", type=check_dir)
+parser.add_argument("-d", "--debug", action='store_true', help="show header")
+arguments = parser.parse_args()
+
+base_path = arguments.base_path
+sub_path = arguments.sub_path
 full_path = os.path.join(base_path, sub_path)
 basedirname = os.path.basename(sub_path.strip(os.sep))
 
@@ -28,7 +36,8 @@ for filename in files:
 # generate header file
 header_file = open("header", "wb")
 header_file.write(struct.pack('i', len(file_list)))
-print(len(file_list))
+if arguments.debug:
+	print(len(file_list))
 
 # generate data
 data_file = open("body", "wb")
@@ -47,7 +56,8 @@ for final_path in file_list:
 	filename_size = len(final_path)
 
 	# print header
-	print(str(filename_size) + "," + final_path + "," + str(size))
+	if arguments.debug:
+		print(str(filename_size) + "," + final_path + "," + str(size))
 
 	# write header
 	header_file.write(struct.pack('b', filename_size))
