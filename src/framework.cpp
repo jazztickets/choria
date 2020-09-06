@@ -467,7 +467,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTexturePack("textures/hud_repeat", false, true);
 	ae::Assets.LoadTexturePack("textures/items", false, false, true);
 	ae::Assets.LoadTexturePack("textures/lights");
-	ae::Assets.LoadTexturePack("textures/map_nearest", false, false, false, true);
+	ae::Assets.LoadTexturePack("textures/maps", false, false, false, true);
 	ae::Assets.LoadTexturePack("textures/menu", false, false, true);
 	ae::Assets.LoadTexturePack("textures/minigames", false, false, false);
 	ae::Assets.LoadTexturePack("textures/models", false, false, true);
