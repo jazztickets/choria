@@ -1841,8 +1841,11 @@ INSERT INTO zone VALUES(51,'sentinel_red',1,1440.0,0,0);
 INSERT INTO zone VALUES(52,'sentinel_green',1,1440.0,0,0);
 INSERT INTO zone VALUES(53,'sentinel_blue',1,1440.0,0,0);
 INSERT INTO zone VALUES(54,'sentinel_black',1,1440.0,0,0);
-INSERT INTO zone VALUES(55,'frostwing_coldslime_chilledcrab',0,0.0,2,4);
-INSERT INTO zone VALUES(56,'ice',0,0.0,1,1);
+INSERT INTO zone VALUES(55,'frostwing_coldslime_snowman',0,0.0,2,4);
+INSERT INTO zone VALUES(56,'frozenant_frostwing_coldslime',0,0.0,1,1);
+INSERT INTO zone VALUES(57,'chilledcrab',0,0.0,1,1);
+INSERT INTO zone VALUES(58,'icystatue',1,1440.0,0,0);
+INSERT INTO zone VALUES(59,'darkjem',1,7199.9999999999999998,0,0);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
@@ -1994,8 +1997,13 @@ INSERT INTO zonedata VALUES(141,48,33,3,0,200);
 INSERT INTO zonedata VALUES(142,48,42,4,0,0);
 INSERT INTO zonedata VALUES(143,55,43,2,0,0);
 INSERT INTO zonedata VALUES(144,55,44,3,0,0);
-INSERT INTO zonedata VALUES(145,56,47,1,2,0);
-INSERT INTO zonedata VALUES(146,55,46,1,2,0);
+INSERT INTO zonedata VALUES(145,56,45,1,2,0);
+INSERT INTO zonedata VALUES(146,55,47,1,2,0);
+INSERT INTO zonedata VALUES(147,57,46,1,2,0);
+INSERT INTO zonedata VALUES(148,56,43,2,0,0);
+INSERT INTO zonedata VALUES(149,56,44,2,0,0);
+INSERT INTO zonedata VALUES(150,58,48,2,0,0);
+INSERT INTO zonedata VALUES(151,59,49,1,0,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2065,6 +2073,8 @@ INSERT INTO monster VALUES(44,'Cold Slime',1,35,'textures/monsters/cold_slime.pn
 INSERT INTO monster VALUES(45,'Frozen Ant',2,29,'textures/monsters/frozen_ant.png',350,400,20000,0,275,450,25,50,2.25,-25,60,-25,25,0,0);
 INSERT INTO monster VALUES(46,'Chilled Crab',1,44,'textures/monsters/chilled_crab.png',450,500,30000,0,500,700,35,100,4.0,-45,75,25,0,0,0);
 INSERT INTO monster VALUES(47,'Snow Man',16,50,'textures/monsters/snow_man.png',500,600,25000,500,400,500,20,25,3.0,-75,65,0,0,0,0);
+INSERT INTO monster VALUES(48,'Icy Statue',1,20,'textures/monsters/icy_statue.png',5000,5000,100000,0,10000,10000,100,1000,10.0,50,75,75,75,75,25);
+INSERT INTO monster VALUES(49,'Dark Jem',11,45,'textures/monsters/dark_jem.png',50000,75000,500000,0,2000,3500,35,250,1.5,25,25,25,25,25,50);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
