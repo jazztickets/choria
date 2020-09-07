@@ -2,12 +2,12 @@ choria 0.5.1 -
 - Added several new areas to explore
 - Added item belt that only stores items
 - Added 3 new starting builds
-- Added 4 new bosses
-- Added 10+ new monsters
+- Added 8 new bosses
+- Added 15+ new monsters
 - Added 20+ new skills
-- Added 60+ new items
+- Added 100+ new items
 - Added 10+ different procs to weapons
-- Added 4 new songs
+- Added 5 new songs
 - Added passive mastery skills
 - Added skill point unlocks
 - Added off-hand weapons and dual wielding
@@ -20,14 +20,14 @@ choria 0.5.1 -
 - Summons are now stored in buffs outside of battle
 - Direction of party members now show on current map
 - Added tab to inventory to show unlocks
-- Hold alt to view more info on certain skills, item levels in inventory, base skill levels on skill screen, or player levels during battle
+- Hold alt to view more info on various screens, items, and skills
 - Added shift-click to transfer items between bags
 - Skills are now sorted by category
 - Added password hashing to server
 - Resurrect spell can now be cast in the world
 - Various items can now purge debuffs
 - Torches now pause during battle
-- Bosses grow stronger after each kill
+- Bosses grow stronger after each kill and show a corpse when on cooldown
 - Trader items now only search through inventory bag
 - Fixed inventory bugs
 - Fixed crash with fleeing enemies
