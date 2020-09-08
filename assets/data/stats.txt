@@ -360,6 +360,8 @@ INSERT INTO script VALUES(21,'Script_Boss',53,'textures/objects/sentinel.png');
 INSERT INTO script VALUES(22,'Script_Boss',54,'textures/objects/sentinel.png');
 INSERT INTO script VALUES(23,'Script_Boss',48,'textures/objects/arach.png');
 INSERT INTO script VALUES(24,'Script_Freezing',50,'');
+INSERT INTO script VALUES(25,'Script_Fall',61,'');
+INSERT INTO script VALUES(26,'Script_Fall',62,'');
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -2148,7 +2150,9 @@ INSERT INTO map VALUES(56,'','textures/atlas/main.png','',0.29999999999999998889
 INSERT INTO map VALUES(57,'','textures/atlas/main.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(58,'','textures/atlas/main.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(59,'','textures/atlas/main.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,0,0.0,0.0,0.0);
-INSERT INTO map VALUES(60,'maps/choria_mountain_cave1.map.gz','textures/atlas/main.png','ice.ogg',0.10000000000000000555,0.14999999999999999444,0.4000000000000000222,0,0,0.0,0.0,0.0);
+INSERT INTO map VALUES(60,'maps/choria_mountain_cave1.map.gz','textures/atlas/main.png','ice.ogg',0.10000000000000000555,0.14999999999999999444,0.4000000000000000222,0,62,0.0,0.0,-2.0);
+INSERT INTO map VALUES(61,'maps/choria_mountain_cave2.map.gz','textures/atlas/main.png','ice.ogg',0.050000000000000002775,0.080000000000000001665,0.2000000000000000111,0,0,0.0,0.0,0.0);
+INSERT INTO map VALUES(62,'maps/choria_mountain_cave2b.map.gz','textures/atlas/main.png','ice.ogg',0.050000000000000002775,0.080000000000000001665,0.2000000000000000111,0,0,0.0,0.0,0.0);
 CREATE TABLE IF NOT EXISTS "trader" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -3112,7 +3116,7 @@ INSERT INTO item VALUES(284,15,0,0,0,0,0,0,'City Map','textures/items/map.png','
 INSERT INTO item VALUES(285,8,0,0,0,0,0,0,'Ring of Pain','textures/items/pain_ring.png','','Item_PainRing','',0,5000,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(286,8,0,0,0,0,0,0,'Hungering Ring','textures/items/hunger_ring.png','','Item_AttackPower','',0,4000,1,100,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,-50,0,0,0,0,0,0);
 INSERT INTO item VALUES(287,9,0,0,0,0,0,0,'Silver Amulet','textures/items/amulet.png','','','',0,5000,1,0,20,0,0.0,-10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(288,6,4,0,0,0,4,11,'Icebrand','textures/items/icebrand.png','','SetBonus_Icebrand','Proc_Slow',0,35000,1,50,50,15,3.0,0.0,1,2000,3500,-20,0,0,25,0,0,0,0,-25,-15,0,0,0);
+INSERT INTO item VALUES(288,6,4,0,0,0,4,11,'Icebrand','textures/items/icebrand.png','','SetBonus_Icebrand','Proc_Slow',0,35000,1,50,50,15,3.0,0.0,1,2000,3500,-20,0,0,25,0,0,0,0,-20,-15,0,0,0);
 INSERT INTO item VALUES(289,6,2,0,0,0,1,11,'Mystic Staff','textures/items/mystic_staff.png','','SetBonus_MysticStaff','Proc_Sanctuary',0,20000,1,1,50,15,5.0,0.0,1,1100,1500,0,30,0,5,0,0,0,0,15,5,0,10,0);
 INSERT INTO item VALUES(290,5,2,0,0,0,5,12,'Shining Star','textures/items/shining_star.png','','SetBonus_ShiningStar','Proc_Stun',0,18000,1,1,50,15,3.0,0.0,1,500,1000,0,0,0,15,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(291,15,0,0,0,0,0,0,'Spooky Map','textures/items/map.png','textures/maps/yard.png','','',0,25,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
