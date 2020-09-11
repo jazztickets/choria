@@ -1021,6 +1021,14 @@ function Item_DarkNote.GetInfo(self, Source, Item)
 	return "[c gray]Great power lies within the tower..."
 end
 
+-- Credits --
+
+Item_Credits = { }
+
+function Item_Credits.GetInfo(self, Source, Item)
+	return "Thank you for playing!\n\n[c gray]Programming\nAlan Witkowski\n\n[c gray]Game Design\nAlan Witkowski\n\n[c gray]Scripting\nAlan Witkowski\n\n[c gray]Artwork\nAlan Witkowski\n\n[c gray]Sound Design\nAlan Witkowski\n\n[c gray]Music\nAlan Witkowski"
+end
+
 -- Dark Ring --
 
 Item_DarkRing = Base_Set:New()

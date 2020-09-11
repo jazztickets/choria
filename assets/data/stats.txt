@@ -362,6 +362,9 @@ INSERT INTO script VALUES(23,'Script_Boss',48,'textures/objects/arach.png');
 INSERT INTO script VALUES(24,'Script_Freezing',50,'');
 INSERT INTO script VALUES(25,'Script_Fall',61,'');
 INSERT INTO script VALUES(26,'Script_Fall',62,'');
+INSERT INTO script VALUES(27,'Script_Boss',58,'textures/objects/sentinel.png');
+INSERT INTO script VALUES(28,'Script_Boss',59,'textures/objects/jem.png');
+INSERT INTO script VALUES(29,'Script_Boss',60,'textures/objects/boss.png');
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -1848,6 +1851,7 @@ INSERT INTO zone VALUES(56,'frozenant_frostwing_coldslime',0,0.0,1,1);
 INSERT INTO zone VALUES(57,'chilledcrab',0,0.0,1,1);
 INSERT INTO zone VALUES(58,'icystatue',1,1440.0,0,0);
 INSERT INTO zone VALUES(59,'darkjem',1,7199.9999999999999998,0,0);
+INSERT INTO zone VALUES(60,'darkjem_zog',1,9999998.9999999999998,0,0);
 CREATE TABLE IF NOT EXISTS "zonedata" (
 	"id" INTEGER PRIMARY KEY,
 	"zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
@@ -2004,8 +2008,10 @@ INSERT INTO zonedata VALUES(146,55,47,1,2,0);
 INSERT INTO zonedata VALUES(147,57,46,1,2,0);
 INSERT INTO zonedata VALUES(148,56,43,2,0,0);
 INSERT INTO zonedata VALUES(149,56,44,2,0,0);
-INSERT INTO zonedata VALUES(150,58,48,2,0,0);
+INSERT INTO zonedata VALUES(150,58,48,4,0,0);
 INSERT INTO zonedata VALUES(151,59,49,1,0,0);
+INSERT INTO zonedata VALUES(152,60,49,4,0,0);
+INSERT INTO zonedata VALUES(153,60,38,4,0,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2075,8 +2081,8 @@ INSERT INTO monster VALUES(44,'Cold Slime',1,35,'textures/monsters/cold_slime.pn
 INSERT INTO monster VALUES(45,'Frozen Ant',2,29,'textures/monsters/frozen_ant.png',350,400,20000,0,275,450,25,50,2.25,-25,60,-25,25,0,0);
 INSERT INTO monster VALUES(46,'Chilled Crab',1,44,'textures/monsters/chilled_crab.png',450,500,30000,0,500,700,35,100,4.0,-45,75,25,0,0,0);
 INSERT INTO monster VALUES(47,'Snow Man',16,50,'textures/monsters/snow_man.png',500,600,25000,500,400,500,20,25,3.0,-75,65,0,0,0,0);
-INSERT INTO monster VALUES(48,'Icy Statue',1,20,'textures/monsters/icy_statue.png',5000,5000,100000,0,10000,10000,100,1000,10.0,50,75,75,75,75,25);
-INSERT INTO monster VALUES(49,'Dark Jem',11,45,'textures/monsters/dark_jem.png',50000,75000,500000,0,2000,3500,35,250,1.5,25,25,25,25,25,50);
+INSERT INTO monster VALUES(48,'Icy Statue',1,20,'textures/monsters/icy_statue.png',10000,10000,100000,0,10000,10000,100,1000,10.0,50,75,75,75,75,25);
+INSERT INTO monster VALUES(49,'Dark Jem',11,45,'textures/monsters/dark_jem.png',100000,150000,500000,0,2000,3500,35,250,1.5,25,25,25,25,25,50);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,
@@ -3178,6 +3184,9 @@ INSERT INTO item VALUES(346,9,0,0,0,0,0,0,'Fisherman''s Necklace','textures/item
 INSERT INTO item VALUES(347,15,0,0,0,0,0,0,'Building Map','textures/items/map.png','textures/maps/pit.png','','',0,2500,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(348,9,0,0,0,0,0,0,'Constricting Amulet','textures/items/amulet_onyx.png','','Item_ConstrictingAmulet','',0,3500,1,25,20,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(349,10,0,1,1,0,0,0,'Warming Torch','textures/items/warm_torch.png','','Item_WarmingTorch','',0,1000,1,0,0,0,60.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(350,13,0,0,0,0,0,0,'Frozen Key','textures/items/key2.png','','','',0,50000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(351,13,0,0,0,0,0,0,'Dark Chamber Key','textures/items/key1.png','','','',0,200000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(352,11,0,0,0,0,0,0,'Credits','textures/items/note.png','','Item_Credits','',0,10000000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
@@ -3221,6 +3230,9 @@ INSERT INTO zonedrop VALUES(36,20,134,2);
 INSERT INTO zonedrop VALUES(37,48,115,30);
 INSERT INTO zonedrop VALUES(38,48,114,35);
 INSERT INTO zonedrop VALUES(39,48,319,1);
+INSERT INTO zonedrop VALUES(40,58,350,1);
+INSERT INTO zonedrop VALUES(41,59,351,1);
+INSERT INTO zonedrop VALUES(42,60,352,1);
 CREATE TABLE IF NOT EXISTS "build" (
 "id" INTEGER PRIMARY KEY,
 "name" TEXT,
