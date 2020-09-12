@@ -401,6 +401,10 @@ function Item_FireDust.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+function Item_FireDust.PlaySound(self, Level)
+	Audio.Play("dust" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Cold Dust --
 
 Item_ColdDust = { }
@@ -416,6 +420,10 @@ function Item_ColdDust.Use(self, Level, Duration, Source, Target, Result)
 	Result.Source.ClearBuff = Buff_Burning.Pointer
 
 	return Result
+end
+
+function Item_ColdDust.PlaySound(self, Level)
+	Audio.Play("dust" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Spider Leg --

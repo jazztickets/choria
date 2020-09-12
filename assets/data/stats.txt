@@ -1714,7 +1714,7 @@ INSERT INTO monsterdrop VALUES(76,35,146,10);
 INSERT INTO monsterdrop VALUES(77,35,248,10);
 INSERT INTO monsterdrop VALUES(78,33,0,80);
 INSERT INTO monsterdrop VALUES(79,33,115,25);
-INSERT INTO monsterdrop VALUES(80,34,0,158);
+INSERT INTO monsterdrop VALUES(80,34,0,159);
 INSERT INTO monsterdrop VALUES(81,34,233,20);
 INSERT INTO monsterdrop VALUES(82,34,240,20);
 INSERT INTO monsterdrop VALUES(83,16,128,1);
@@ -1730,15 +1730,19 @@ INSERT INTO monsterdrop VALUES(92,30,318,5);
 INSERT INTO monsterdrop VALUES(93,26,319,1);
 INSERT INTO monsterdrop VALUES(94,34,319,1);
 INSERT INTO monsterdrop VALUES(95,30,345,1);
-INSERT INTO monsterdrop VALUES(96,43,0,80);
-INSERT INTO monsterdrop VALUES(97,43,124,19);
+INSERT INTO monsterdrop VALUES(96,43,0,160);
+INSERT INTO monsterdrop VALUES(97,43,124,39);
 INSERT INTO monsterdrop VALUES(98,44,0,80);
 INSERT INTO monsterdrop VALUES(99,44,125,19);
-INSERT INTO monsterdrop VALUES(100,45,0,80);
-INSERT INTO monsterdrop VALUES(101,45,353,19);
+INSERT INTO monsterdrop VALUES(100,45,0,160);
+INSERT INTO monsterdrop VALUES(101,45,353,39);
 INSERT INTO monsterdrop VALUES(102,46,0,80);
 INSERT INTO monsterdrop VALUES(103,46,134,19);
-INSERT INTO monsterdrop VALUES(104,47,0,80);
+INSERT INTO monsterdrop VALUES(104,47,0,800);
+INSERT INTO monsterdrop VALUES(105,47,354,399);
+INSERT INTO monsterdrop VALUES(106,47,326,1);
+INSERT INTO monsterdrop VALUES(107,45,319,1);
+INSERT INTO monsterdrop VALUES(108,43,327,1);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -3189,6 +3193,7 @@ INSERT INTO item VALUES(350,13,0,0,0,0,0,0,'Frozen Key','textures/items/key2.png
 INSERT INTO item VALUES(351,13,0,0,0,0,0,0,'Dark Chamber Key','textures/items/key1.png','','','',0,200000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(352,11,0,0,0,0,0,0,'Credits','textures/items/note.png','','Item_Credits','',0,10000000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(353,10,0,2,2,0,0,0,'Cold Dust','textures/items/cold_dust.png','','Item_ColdDust','',0,200,1,40,0,0,10.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(354,10,0,8,2,0,0,0,'Snowball','textures/items/snowball.png','','Item_Bone','',0,125,1,75,0,0,2.5,3.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
