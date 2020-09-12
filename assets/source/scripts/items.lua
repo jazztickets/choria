@@ -401,7 +401,21 @@ function Item_FireDust.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_FireDust.PlaySound(self, Level)
+-- Cold Dust --
+
+Item_ColdDust = { }
+
+function Item_ColdDust.GetInfo(self, Source, Item)
+	return "Slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]burning"
+end
+
+function Item_ColdDust.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Slowed.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+	Result.Source.ClearBuff = Buff_Burning.Pointer
+
+	return Result
 end
 
 -- Spider Leg --
