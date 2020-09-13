@@ -925,6 +925,20 @@ function Item_LavaProtection.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Freeze Protection --
+
+Item_FreezeProtection = { }
+
+function Item_FreezeProtection.GetInfo(self, Source, Item)
+	return "[c yellow]Grants freeze immunity"
+end
+
+function Item_FreezeProtection.Stats(self, Item, Object, Change)
+	Change.FreezeProtection = true
+
+	return Change
+end
+
 -- Pain Ring --
 
 Item_PainRing = { }
