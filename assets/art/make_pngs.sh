@@ -6,6 +6,12 @@ type convert >/dev/null 2>&1 || {
 	exit 1;
 }
 
+# check for inkscape
+type inkscape >/dev/null 2>&1 || {
+	echo >&2 "inkscape is not installed ";
+	exit 1;
+}
+
 # check for pngcrush
 type pngcrush >/dev/null 2>&1 || {
 	echo >&2 "pngcrush is not installed ";
@@ -67,7 +73,10 @@ rm -f export/*.png
 
 # export pngs
 echo "exporting..."
-convert -density ${density} -background none ${file} -crop ${width}x${height} -depth 8 +repage PNG32:export/_out.png
+temp_export="export/export.png"
+inkscape "${file}" -d "${density}" -y 0 -o "${temp_export}" 2>/dev/null
+convert "${temp_export}" -crop ${width}x${height} -depth 8 +repage PNG32:export/_out.png
+rm "${temp_export}"
 
 # name files and optimize in parallel
 echo "compressing..."
