@@ -58,6 +58,7 @@ struct _BattleEvent {
 
 struct _RebirthEvent {
 	_Object *Object;
+	int Mode;
 	int Type;
 	int Value;
 };
@@ -85,7 +86,7 @@ class _Server {
 		_Object *CreateSummon(_Object *Source, const _Summon &Summon);
 		void Resurrect(_Object *Source, int Health);
 		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType);
-		void QueueRebirth(_Object *Object, int Type, int Value);
+		void QueueRebirth(_Object *Object, int Mode, int Type, int Value);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);
 		void StartTeleport(_Object *Object, double Time);
 		void SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName);

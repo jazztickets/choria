@@ -71,7 +71,7 @@ void _Grid::Render() {
 			ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
 			ae::Graphics.DrawRectangle3D(glm::vec2(i - Offset.x, j - Offset.y), glm::vec2(i - Offset.x + 1, j - Offset.y + 1), false);
 
-			ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tiles[i][j].Objects.size()), glm::vec2(i - Offset.x + 0.5, j - Offset.y + 0.5), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / (UI_TILE_SIZE.x * ae::_Element::GetUIScale()));
+			ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tiles[i][j].Objects.size()), glm::vec2(i - Offset.x + 0.5, j - Offset.y + 0.5), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / (UI_GRID_SIZE.x * ae::_Element::GetUIScale()));
 		}
 	}
 }

@@ -575,6 +575,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
 
+	lua_pushinteger(LuaState, Object->Light);
+	lua_setfield(LuaState, -2, "Light");
+
 	lua_pushinteger(LuaState, Object->Position.x);
 	lua_setfield(LuaState, -2, "X");
 

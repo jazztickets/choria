@@ -646,8 +646,8 @@ void _EditorState::DrawBrushInfo() {
 
 		// Draw texture
 		ae::_Bounds TextureBounds;
-		TextureBounds.Start = DrawPosition - glm::vec2(Map->TileAtlas->Size) / 2.0f;
-		TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
+		TextureBounds.Start = DrawPosition - UI_TILE_SIZE / 2.0f;
+		TextureBounds.End = DrawPosition + UI_TILE_SIZE / 2.0f;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
@@ -857,7 +857,7 @@ void _EditorState::InitTextures() {
 		Button->Name = "button_skills_skill";
 		Button->Parent = TexturesElement;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = Map->TileAtlas->Size;
+		Button->BaseSize = UI_TILE_SIZE;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Atlas = Map->TileAtlas;
 		Button->TextureIndex = i;
@@ -865,9 +865,9 @@ void _EditorState::InitTextures() {
 		TexturesElement->Children.push_back(Button);
 
 		// Update position
-		Offset.x += Map->TileAtlas->Size.x + Spacing.x;
-		if(Offset.x > TexturesElement->BaseSize.x - Map->TileAtlas->Size.x) {
-			Offset.y += Map->TileAtlas->Size.y + Spacing.y;
+		Offset.x += UI_TILE_SIZE.x + Spacing.x;
+		if(Offset.x > TexturesElement->BaseSize.x - UI_TILE_SIZE.x) {
+			Offset.y += UI_TILE_SIZE.y + Spacing.y;
 			Offset.x = Start.x;
 		}
 	}
@@ -953,7 +953,7 @@ void _EditorState::CreateMap() {
 	Map = new _Map();
 	Map->Stats = Stats;
 	Map->Size = Size;
-	Map->InitAtlas("textures/map/" + MAP_DEFAULT_TILESET);
+	Map->InitAtlas(MAP_DEFAULT_TILESET);
 	Map->AllocateMap();
 	FilePath = NewMapFilenameTextBox->Text;
 

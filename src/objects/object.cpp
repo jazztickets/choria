@@ -203,7 +203,7 @@ void _Object::Update(double FrameTime) {
 		// Update playtime
 		Character->IdleTime += FrameTime;
 		Character->Attributes["PlayTime"].Double += FrameTime;
-		if(Character->Attributes["Rebirths"].Int)
+		if(Character->Attributes["Rebirths"].Int || Character->Attributes["Evolves"].Int)
 			Character->Attributes["RebirthTime"].Double += FrameTime;
 		if(Character->Battle)
 			Character->Attributes["BattleTime"].Double += FrameTime;
@@ -403,8 +403,10 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 		NameText += " ([c cyan]" + std::to_string(Character->Attributes["Bounty"].Int) + "[c white])";
 
 	std::string Prefix;
+	if(Character->Attributes["Evolves"].Int)
+		Prefix += "[c silver]" + std::to_string(Character->Attributes["Evolves"].Int) + "[c white] ";
 	if(Character->Attributes["Rebirths"].Int)
-		Prefix = "[c gold]" + std::to_string(Character->Attributes["Rebirths"].Int) + "[c white] ";
+		Prefix += "[c gold]" + std::to_string(Character->Attributes["Rebirths"].Int) + "[c white] ";
 
 	// Cap name to screen
 	glm::vec2 NamePosition = DrawPosition;
@@ -948,11 +950,12 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.WriteString(Character->PartyName.c_str());
 	if(Character)
-		Data.Write<uint32_t>(Character->PortraitID);
+		Data.Write<uint8_t>(Character->PortraitID);
 	else
-		Data.Write<uint32_t>(0);
-	Data.Write<uint32_t>(ModelID);
-	Data.Write<int>(Character->Attributes["Rebirths"].Int);
+		Data.Write<uint8_t>(0);
+	Data.Write<uint8_t>(ModelID);
+	Data.Write<int16_t>(Character->Attributes["Rebirths"].Int);
+	Data.Write<int16_t>(Character->Attributes["Evolves"].Int);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 	Data.WriteBit(Character->Offline);
@@ -963,11 +966,12 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
 	Character->PartyName = Data.ReadString();
-	uint32_t PortraitID = Data.Read<uint32_t>();
+	uint32_t PortraitID = Data.Read<uint8_t>();
 	if(PortraitID && Character)
 		Character->PortraitID = PortraitID;
-	ModelID = Data.Read<uint32_t>();
-	Character->Attributes["Rebirths"].Int = Data.Read<int>();
+	ModelID = Data.Read<uint8_t>();
+	Character->Attributes["Rebirths"].Int = Data.Read<int16_t>();
+	Character->Attributes["Evolves"].Int = Data.Read<int16_t>();
 	Light = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();
 	Character->Offline = Data.ReadBit();
@@ -1259,23 +1263,32 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	if(Server) {
 		if(StatChange.HasStat("Rebirth")) {
 			if(StatChange.HasStat("MaxDamage"))
-				Server->QueueRebirth(this, 1, StatChange.Values["MaxDamage"].Int);
+				Server->QueueRebirth(this, 0, 1, StatChange.Values["MaxDamage"].Int);
 			else if(StatChange.HasStat("Armor"))
-				Server->QueueRebirth(this, 2, StatChange.Values["Armor"].Int);
+				Server->QueueRebirth(this, 0, 2, StatChange.Values["Armor"].Int);
 			else if(StatChange.HasStat("Health"))
-				Server->QueueRebirth(this, 3, StatChange.Values["Health"].Int);
+				Server->QueueRebirth(this, 0, 3, StatChange.Values["Health"].Int);
 			else if(StatChange.HasStat("Mana"))
-				Server->QueueRebirth(this, 4, StatChange.Values["Mana"].Int);
+				Server->QueueRebirth(this, 0, 4, StatChange.Values["Mana"].Int);
 			else if(StatChange.HasStat("Experience"))
-				Server->QueueRebirth(this, 5, StatChange.Values["Experience"].Int);
+				Server->QueueRebirth(this, 0, 5, StatChange.Values["Experience"].Int);
 			else if(StatChange.HasStat("Gold"))
-				Server->QueueRebirth(this, 6, StatChange.Values["Gold"].Int);
-			else if(StatChange.HasStat("BattleSpeed"))
-				Server->QueueRebirth(this, 7, StatChange.Values["BattleSpeed"].Int);
+				Server->QueueRebirth(this, 0, 6, StatChange.Values["Gold"].Int);
 			else if(StatChange.HasStat("SkillPoint"))
-				Server->QueueRebirth(this, 8, StatChange.Values["SkillPoint"].Int);
+				Server->QueueRebirth(this, 0, 7, StatChange.Values["SkillPoint"].Int);
 			else if(StatChange.HasStat("Difficulty"))
-				Server->QueueRebirth(this, 9, StatChange.Values["Difficulty"].Int);
+				Server->QueueRebirth(this, 0, 8, StatChange.Values["Difficulty"].Int);
+
+			return nullptr;
+		}
+
+		if(StatChange.HasStat("Evolve")) {
+			if(StatChange.HasStat("BattleSpeed"))
+				Server->QueueRebirth(this, 1, 1, StatChange.Values["BattleSpeed"].Int);
+			else if(StatChange.HasStat("SummonBattleSpeed"))
+				Server->QueueRebirth(this, 1, 2, StatChange.Values["SummonBattleSpeed"].Int);
+			else if(StatChange.HasStat("Cooldowns"))
+				Server->QueueRebirth(this, 1, 3, StatChange.Values["Cooldowns"].Int);
 
 			return nullptr;
 		}
@@ -1762,6 +1775,12 @@ bool _Object::CanInteractWith(const _Object *Object, int LevelRange, bool &HitLe
 
 	// Check rebirths
 	if(Object->Character->Attributes["Rebirths"].Int != Character->Attributes["Rebirths"].Int) {
+		HitLevelRestriction = true;
+		return false;
+	}
+
+	// Check evolves
+	if(Object->Character->Attributes["Evolves"].Int != Character->Attributes["Evolves"].Int) {
 		HitLevelRestriction = true;
 		return false;
 	}

@@ -776,10 +776,11 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
 		Packet.Write<uint8_t>(Player.Character->Hardcore);
 		Packet.WriteString(Save->Database->GetString("name"));
-		Packet.Write<uint32_t>(Player.Character->PortraitID);
+		Packet.Write<uint8_t>(Player.Character->PortraitID);
 		Packet.Write<int>(Player.Character->Attributes["Health"].Int);
 		Packet.Write<int64_t>(Player.Character->Attributes["Experience"].Int64);
-		Packet.Write<int>(Player.Character->Attributes["Rebirths"].Int);
+		Packet.Write<int16_t>(Player.Character->Attributes["Rebirths"].Int);
+		Packet.Write<int16_t>(Player.Character->Attributes["Evolves"].Int);
 	}
 	Save->Database->CloseQuery();
 
@@ -870,8 +871,9 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 }
 
 // Queue a player for rebirth
-void _Server::QueueRebirth(_Object *Object, int Type, int Value) {
+void _Server::QueueRebirth(_Object *Object, int Mode, int Type, int Value) {
 	_RebirthEvent RebirthEvent;
+	RebirthEvent.Mode = Mode;
 	RebirthEvent.Object = Object;
 	RebirthEvent.Type = Type;
 	RebirthEvent.Value = Value;
@@ -2521,34 +2523,55 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->DeleteStatusEffects();
 
 	// Give bonus
-	switch(RebirthEvent.Type) {
-		case 1:
-			Character->Attributes["EternalStrength"].Int += RebirthEvent.Value;
-		break;
-		case 2:
-			Character->Attributes["EternalGuard"].Int += RebirthEvent.Value;
-		break;
-		case 3:
-			Character->Attributes["EternalFortitude"].Int += RebirthEvent.Value;
-		break;
-		case 4:
-			Character->Attributes["EternalSpirit"].Int += RebirthEvent.Value;
-		break;
-		case 5:
-			Character->Attributes["EternalWisdom"].Int += RebirthEvent.Value;
-		break;
-		case 6:
-			Character->Attributes["EternalWealth"].Int += RebirthEvent.Value;
-		break;
-		case 7:
-			Character->Attributes["EternalAlacrity"].Int += RebirthEvent.Value;
-		break;
-		case 8:
-			Character->Attributes["EternalKnowledge"].Int += RebirthEvent.Value;
-		break;
-		case 9:
-			Character->Attributes["EternalPain"].Int += RebirthEvent.Value;
-		break;
+	if(RebirthEvent.Mode == 0) {
+		switch(RebirthEvent.Type) {
+			case 1:
+				Character->Attributes["EternalStrength"].Int += RebirthEvent.Value;
+			break;
+			case 2:
+				Character->Attributes["EternalGuard"].Int += RebirthEvent.Value;
+			break;
+			case 3:
+				Character->Attributes["EternalFortitude"].Int += RebirthEvent.Value;
+			break;
+			case 4:
+				Character->Attributes["EternalSpirit"].Int += RebirthEvent.Value;
+			break;
+			case 5:
+				Character->Attributes["EternalWisdom"].Int += RebirthEvent.Value;
+			break;
+			case 6:
+				Character->Attributes["EternalWealth"].Int += RebirthEvent.Value;
+			break;
+			case 7:
+				Character->Attributes["EternalKnowledge"].Int += RebirthEvent.Value;
+			break;
+			case 8:
+				Character->Attributes["EternalPain"].Int += RebirthEvent.Value;
+			break;
+		}
+	}
+	else if(RebirthEvent.Mode == 1) {
+		Character->Attributes["EternalStrength"].Int = 0;
+		Character->Attributes["EternalGuard"].Int = 0;
+		Character->Attributes["EternalFortitude"].Int = 0;
+		Character->Attributes["EternalSpirit"].Int = 0;
+		Character->Attributes["EternalWisdom"].Int = 0;
+		Character->Attributes["EternalWealth"].Int = 0;
+		Character->Attributes["EternalKnowledge"].Int = 0;
+		Character->Attributes["EternalPain"].Int = 0;
+
+		switch(RebirthEvent.Type) {
+			case 1:
+				Character->Attributes["EternalAlacrity"].Int += RebirthEvent.Value;
+			break;
+			case 2:
+				Character->Attributes["EternalCommand"].Int += RebirthEvent.Value;
+			break;
+			case 3:
+				Character->Attributes["EternalImpatience"].Int += RebirthEvent.Value;
+			break;
+		}
 	}
 
 	// Keep belt unlocks
@@ -2621,7 +2644,13 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->LoadMapID = 0;
 	Character->SpawnMapID = 1;
 	Character->SpawnPoint = 0;
-	Character->Attributes["Rebirths"].Int++;
+	if(RebirthEvent.Mode == 0) {
+		Character->Attributes["Rebirths"].Int++;
+	}
+	else if(RebirthEvent.Mode == 1) {
+		Character->Attributes["Rebirths"].Int = 0;
+		Character->Attributes["Evolves"].Int++;
+	}
 	SpawnPlayer(Player, Character->LoadMapID, _Map::EVENT_NONE);
 	SendPlayerInfo(Player->Peer);
 }

@@ -17,7 +17,7 @@ if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 
 	# disable console window
-	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-subsystem,windows")
 endif()
 
 # enable editor
@@ -105,10 +105,34 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
 # set output path
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/working/)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_definitions("-DDEBUG_BUILD=1")
 	set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${CMAKE_PROJECT_NAME}_debug)
-else()
-	add_definitions("-DDEBUG_BUILD=0")
+endif()
+
+# add command to build data
+if(EXISTS "${PROJECT_SOURCE_DIR}/assets/source/process.sh")
+
+	# pack data
+	add_custom_command(
+		OUTPUT "${PROJECT_SOURCE_DIR}/working/data/sounds"
+		COMMAND "${PROJECT_SOURCE_DIR}/assets/source/process.sh"
+		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/assets/source/"
+	)
+	add_custom_target(data ALL DEPENDS "${PROJECT_SOURCE_DIR}/working/data/sounds")
+
+	# compile scripts
+	file(GLOB SOURCE_SCRIPTS "${PROJECT_SOURCE_DIR}/assets/source/scripts/*.lua")
+	file(MAKE_DIRECTORY "${PROJECT_SOURCE_DIR}/working/scripts/")
+	foreach(SCRIPT_PATH ${SOURCE_SCRIPTS})
+		get_filename_component(FILENAME "${SCRIPT_PATH}" NAME)
+		set(SCRIPT_OUTPUT "${PROJECT_SOURCE_DIR}/working/scripts/${FILENAME}")
+		list(APPEND DATA_SCRIPTS "${SCRIPT_OUTPUT}")
+		add_custom_command(
+			OUTPUT "${SCRIPT_OUTPUT}"
+			COMMAND luac -o "${SCRIPT_OUTPUT}" "${SCRIPT_PATH}"
+			DEPENDS "${SCRIPT_PATH}"
+		)
+	endforeach()
+	add_custom_target(data_scripts ALL DEPENDS "${DATA_SCRIPTS}")
 endif()
 
 # add custom target to generate version.h

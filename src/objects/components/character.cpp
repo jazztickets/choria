@@ -318,6 +318,7 @@ void _Character::CalculateStats() {
 	Invisible = 0;
 	Attributes["Difficulty"].Int += Attributes["EternalPain"].Int + Attributes["Rebirths"].Int;
 	Attributes["RebirthTier"].Int += Attributes["RebirthPower"].Int;
+	Attributes["EvolveTier"].Int = Attributes["Rebirths"].Int / 10;
 	Sets.clear();
 
 	// Base resistances
@@ -354,11 +355,17 @@ void _Character::CalculateStats() {
 	// Eternal Wealth
 	Attributes["GoldBonus"].Int += Attributes["EternalWealth"].Int;
 
+	// Eternal Knowledge
+	SkillPoints += Attributes["EternalKnowledge"].Int;
+
 	// Eternal Alacrity
 	Attributes["BattleSpeed"].Int = BaseBattleSpeed + Attributes["EternalAlacrity"].Int;
 
-	// Eternal Knowledge
-	SkillPoints += Attributes["EternalKnowledge"].Int;
+	// Eternal Command
+	Attributes["SummonBattleSpeed"].Int += Attributes["EternalCommand"].Int;
+
+	// Eternal Impatience
+	Attributes["Cooldowns"].Int -= Attributes["EternalImpatience"].Int;
 
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
