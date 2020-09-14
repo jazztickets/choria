@@ -1325,7 +1325,7 @@ function GetEvolveBonus(Source, Type)
 	end
 end
 
-function RebirthStartText(Source, Mode)
+function RebirthStartText(Source, Item, Mode)
 	AddedDifficulty = 0
 	if Item == Item_EternalPain then
 		AddedDifficulty = GetRebirthBonus(Source, Item_EternalPain.Type)
@@ -1363,13 +1363,13 @@ function RebirthStartText(Source, Mode)
 end
 
 function RebirthText(Item, UpgradeText, Source)
-	KeepText = RebirthStartText(Source, 0)
+	KeepText = RebirthStartText(Source, Item, 0)
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
 end
 
 function EvolveText(Item, UpgradeText, Source)
-	KeepText = RebirthStartText(Source, 1)
+	KeepText = RebirthStartText(Source, Item, 1)
 
 	return "[c gray]Evolve into a higher form\n\nLose all rebirths, items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of evolves and rebirths"
 end
