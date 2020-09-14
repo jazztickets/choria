@@ -1743,6 +1743,8 @@ INSERT INTO monsterdrop VALUES(105,47,354,399);
 INSERT INTO monsterdrop VALUES(106,47,326,1);
 INSERT INTO monsterdrop VALUES(107,45,319,1);
 INSERT INTO monsterdrop VALUES(108,43,327,1);
+INSERT INTO monsterdrop VALUES(109,46,247,1);
+INSERT INTO monsterdrop VALUES(110,44,247,1);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1851,8 +1853,8 @@ INSERT INTO zone VALUES(52,'sentinel_green',1,1440.0,0,0);
 INSERT INTO zone VALUES(53,'sentinel_blue',1,1440.0,0,0);
 INSERT INTO zone VALUES(54,'sentinel_black',1,1440.0,0,0);
 INSERT INTO zone VALUES(55,'frostwing_coldslime_snowman',0,0.0,2,4);
-INSERT INTO zone VALUES(56,'frozenant_frostwing_coldslime',0,0.0,1,1);
-INSERT INTO zone VALUES(57,'chilledcrab',0,0.0,1,1);
+INSERT INTO zone VALUES(56,'frozenant_frostwing_coldslime',0,0.0,2,5);
+INSERT INTO zone VALUES(57,'chilledcrab_coldslime_frostwing',0,0.0,2,3);
 INSERT INTO zone VALUES(58,'icystatue',1,1440.0,0,0);
 INSERT INTO zone VALUES(59,'darkjem',1,7199.9999999999999998,0,0);
 INSERT INTO zone VALUES(60,'darkjem_zog',1,9999998.9999999999998,0,0);
@@ -2009,13 +2011,15 @@ INSERT INTO zonedata VALUES(143,55,43,2,0,0);
 INSERT INTO zonedata VALUES(144,55,44,3,0,0);
 INSERT INTO zonedata VALUES(145,56,45,1,2,0);
 INSERT INTO zonedata VALUES(146,55,47,1,2,0);
-INSERT INTO zonedata VALUES(147,57,46,1,2,0);
+INSERT INTO zonedata VALUES(147,57,46,1,0,0);
 INSERT INTO zonedata VALUES(148,56,43,2,0,0);
 INSERT INTO zonedata VALUES(149,56,44,2,0,0);
 INSERT INTO zonedata VALUES(150,58,48,4,0,0);
 INSERT INTO zonedata VALUES(151,59,49,1,0,0);
 INSERT INTO zonedata VALUES(152,60,49,4,0,0);
 INSERT INTO zonedata VALUES(153,60,38,4,0,0);
+INSERT INTO zonedata VALUES(154,57,43,1,0,0);
+INSERT INTO zonedata VALUES(155,57,44,1,0,0);
 CREATE TABLE IF NOT EXISTS "monster" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
