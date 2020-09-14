@@ -1616,7 +1616,6 @@ INSERT INTO vendoritem VALUES(198,24,310);
 INSERT INTO vendoritem VALUES(199,24,311);
 INSERT INTO vendoritem VALUES(200,5,313);
 INSERT INTO vendoritem VALUES(202,16,315);
-INSERT INTO vendoritem VALUES(203,18,316);
 INSERT INTO vendoritem VALUES(204,16,317);
 INSERT INTO vendoritem VALUES(205,2,320);
 INSERT INTO vendoritem VALUES(206,24,300);
@@ -1718,8 +1717,8 @@ INSERT INTO monsterdrop VALUES(80,34,0,159);
 INSERT INTO monsterdrop VALUES(81,34,233,20);
 INSERT INTO monsterdrop VALUES(82,34,240,20);
 INSERT INTO monsterdrop VALUES(83,16,128,1);
-INSERT INTO monsterdrop VALUES(84,23,0,80);
-INSERT INTO monsterdrop VALUES(85,23,215,20);
+INSERT INTO monsterdrop VALUES(84,23,0,20);
+INSERT INTO monsterdrop VALUES(85,23,215,80);
 INSERT INTO monsterdrop VALUES(86,27,327,1);
 INSERT INTO monsterdrop VALUES(87,30,248,50);
 INSERT INTO monsterdrop VALUES(88,33,223,5);
@@ -1745,6 +1744,8 @@ INSERT INTO monsterdrop VALUES(107,45,319,1);
 INSERT INTO monsterdrop VALUES(108,43,327,1);
 INSERT INTO monsterdrop VALUES(109,46,247,1);
 INSERT INTO monsterdrop VALUES(110,44,247,1);
+INSERT INTO monsterdrop VALUES(111,39,0,20);
+INSERT INTO monsterdrop VALUES(112,39,353,80);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2260,6 +2261,7 @@ INSERT INTO trader VALUES(84,'fishermans_amulet',346,1);
 INSERT INTO trader VALUES(85,'constricting_amulet',348,1);
 INSERT INTO trader VALUES(86,'warming_torch',349,1);
 INSERT INTO trader VALUES(87,'chilly_amulet',355,1);
+INSERT INTO trader VALUES(88,'lava_amulet',316,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -2489,8 +2491,11 @@ INSERT INTO traderitem VALUES(252,86,223,1);
 INSERT INTO traderitem VALUES(253,86,233,10);
 INSERT INTO traderitem VALUES(254,57,353,10);
 INSERT INTO traderitem VALUES(255,87,316,1);
-INSERT INTO traderitem VALUES(256,87,353,50);
-INSERT INTO traderitem VALUES(257,87,354,50);
+INSERT INTO traderitem VALUES(256,87,354,50);
+INSERT INTO traderitem VALUES(257,87,353,25);
+INSERT INTO traderitem VALUES(258,88,321,1);
+INSERT INTO traderitem VALUES(259,88,233,50);
+INSERT INTO traderitem VALUES(260,88,215,25);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -3163,8 +3168,8 @@ INSERT INTO item VALUES(312,8,0,0,0,0,0,13,'Dark Ring','textures/items/dark_ring
 INSERT INTO item VALUES(313,15,0,0,0,0,0,0,'Nocturnal Map','textures/items/map.png','textures/maps/bat.png','','',0,375,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(314,7,0,0,0,0,0,10,'Arcane Book','textures/items/arcane_book.png','','SetBonus_ArcaneBook','',0,13000,1,0,50,0,0.0,0.0,1,0,0,0,8,0,0,0,50,0,4,0,0,0,0,30);
 INSERT INTO item VALUES(315,6,2,0,0,0,0,10,'Light Staff','textures/items/light_staff.png','','SetBonus_LightStaff','Proc_Harden',0,15000,1,20,50,15,5.0,-2.0,1,750,1000,0,20,0,0,0,250,2,8,15,0,2,0,0);
-INSERT INTO item VALUES(316,9,0,0,0,0,0,0,'Lava Amulet','textures/items/amulet_orange.png','','Item_LavaProtection','',0,75000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(317,6,2,0,0,0,0,10,'Diabolic Staff','textures/items/diabolic_staff.png','','SetBonus_DiabolicStaff','Proc_Mana',0,13000,1,175,50,15,0.0,0.0,1,600,800,0,10,0,0,0,350,0,10,0,0,0,0,0);
+INSERT INTO item VALUES(316,9,0,0,0,0,3,0,'Lava Amulet','textures/items/amulet_orange.png','','Item_LavaProtection','',0,75000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,35,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(317,6,3,0,0,0,0,10,'Diabolic Staff','textures/items/diabolic_staff.png','','SetBonus_DiabolicStaff','Proc_Mana',0,13000,1,175,50,15,0.0,0.0,1,600,800,0,10,0,0,0,350,0,10,0,0,0,0,0);
 INSERT INTO item VALUES(318,11,0,0,0,0,0,0,'Dark Note','textures/items/note.png','','Item_DarkNote','',0,5000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(319,10,0,1,1,0,0,0,'Greater Battle Potion','textures/items/greater_battle_potion.png','','Item_GreaterBattlePotion','',0,1000,1,100,0,0,300.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(320,9,0,0,0,0,0,21,'Mundane Amulet','textures/items/amulet_green.png','','Item_ConsumeChance','',0,150,1,25,20,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -3202,7 +3207,7 @@ INSERT INTO item VALUES(351,13,0,0,0,0,0,0,'Dark Chamber Key','textures/items/ke
 INSERT INTO item VALUES(352,11,0,0,0,0,0,0,'Credits','textures/items/note.png','','Item_Credits','',0,10000000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(353,10,0,2,2,0,0,0,'Cold Dust','textures/items/cold_dust.png','','Item_ColdDust','',0,200,1,40,0,0,10.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(354,10,0,8,2,0,0,0,'Snowball','textures/items/snowball.png','','Item_Bone','',0,125,1,75,0,0,2.5,3.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(355,9,0,0,0,0,0,0,'Chilly Amulet','textures/items/amulet_ice.png','','Item_FreezeProtection','',0,100000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(355,9,0,0,0,0,4,0,'Chilly Amulet','textures/items/amulet_ice.png','','Item_FreezeProtection','',0,100000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,35,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
