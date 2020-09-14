@@ -1283,7 +1283,18 @@ function Item_RebirthToken.GetInfo(self, Source, Item)
 	Tiers = 1
 	Difficulty = 1
 
-	return "You are in rebirth tier [c green]" .. Source.RebirthTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] character levels gives [c green]" .. Tiers .. "[c white] tier\nEach tier increases your rebirth stat bonus\n\nEvery rebirth adds [c green]" .. Difficulty .. "%[c white] difficulty"
+	return "You are in rebirth tier [c green]" .. Source.RebirthTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] character levels gives [c green]" .. Tiers .. "[c white] tier, which increases your rebirth stat bonus\n\nEvery rebirth adds [c green]" .. Difficulty .. "%[c white] difficulty"
+end
+
+-- Evolve Token--
+
+Item_EvolveToken = { }
+
+function Item_EvolveToken.GetInfo(self, Source, Item)
+	Levels = 10
+	Tiers = 1
+
+	return "You are in evolve tier [c green]" .. Source.EvolveTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] rebirths gives [c green]" .. Tiers .. "[c white] tier, which increases your evolve stat bonus\n\n[c yellow]Evolving resets your rebirths and bonuses\n[c yellow]You will keep all unlocked rites"
 end
 
 -- Rebirth --
@@ -1302,7 +1313,19 @@ function GetRebirthBonus(Source, Type)
 	end
 end
 
-function RebirthText(Item, UpgradeText, Source)
+function GetEvolveBonus(Source, Type)
+	if Source.EvolveTier == 0 then
+		return 0
+	end
+
+	if Type == 1 then
+		return math.floor(Source.EvolveTier * 10)
+	elseif Type == 2 then
+		return math.floor(Source.EvolveTier)
+	end
+end
+
+function RebirthStartText(Source, Mode)
 	AddedDifficulty = 0
 	if Item == Item_EternalPain then
 		AddedDifficulty = GetRebirthBonus(Source, Item_EternalPain.Type)
@@ -1319,7 +1342,10 @@ function RebirthText(Item, UpgradeText, Source)
 	KeepText = KeepText .. "\n[c yellow]You will start with\n"
 	KeepText = KeepText .. "[c green]" .. Source.RebirthEnchantment .. "[c white] extra max skill levels\n"
 
-	KeepText = KeepText .. "[c green]" .. Source.Rebirths + Source.EternalPain + AddedDifficulty + 1 .. "%[c white] difficulty\n"
+	if Mode == 0 then
+		KeepText = KeepText .. "[c green]" .. Source.Rebirths + Source.EternalPain + AddedDifficulty + 1 .. "%[c white] difficulty\n"
+	end
+
 	Plural = ""
 	if Source.RebirthWisdom + 1 ~= 1 then
 		Plural = "s"
@@ -1333,7 +1359,19 @@ function RebirthText(Item, UpgradeText, Source)
 	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] key" .. Plural .. "\n"
 	KeepText = KeepText .. "[c green]" .. Gold .. "[c white] gold\n"
 
+	return KeepText
+end
+
+function RebirthText(Item, UpgradeText, Source)
+	KeepText = RebirthStartText(Source, 0)
+
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
+end
+
+function EvolveText(Item, UpgradeText, Source)
+	KeepText = RebirthStartText(Source, 1)
+
+	return "[c gray]Evolve into a higher form\n\nLose all rebirths, items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of evolves and rebirths"
 end
 
 Item_EternalStrength = { Type = 1 }
@@ -1438,23 +1476,6 @@ function Item_EternalWealth.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalAlacrity = { Type = 2 }
-
-function Item_EternalAlacrity.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] battle speed bonus", Source)
-end
-
-function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Rebirth = 1
-	Result.Target.BattleSpeed = GetRebirthBonus(Source, self.Type)
-
-	return Result
-end
-
-function Item_EternalAlacrity.PlaySound(self, Level)
-	Audio.Play("rebirth.ogg")
-end
-
 Item_EternalKnowledge = { Type = 3 }
 
 function Item_EternalKnowledge.GetInfo(self, Source, Item)
@@ -1487,6 +1508,57 @@ end
 
 function Item_EternalPain.PlaySound(self, Level)
 	Audio.Play("rebirth.ogg")
+end
+
+Item_EternalAlacrity = { Type = 1 }
+
+function Item_EternalAlacrity.GetInfo(self, Source, Item)
+	return EvolveText(self, "[c green]" .. GetEvolveBonus(Source, self.Type) .. "%[c white] battle speed bonus", Source)
+end
+
+function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Evolve = 1
+	Result.Target.BattleSpeed = GetEvolveBonus(Source, self.Type)
+
+	return Result
+end
+
+function Item_EternalAlacrity.PlaySound(self, Level)
+	Audio.Play("sparkle0.ogg")
+end
+
+Item_EternalCommand = { Type = 1 }
+
+function Item_EternalCommand.GetInfo(self, Source, Item)
+	return EvolveText(self, "[c green]" .. GetEvolveBonus(Source, self.Type) .. "%[c white] summon battle speed bonus", Source)
+end
+
+function Item_EternalCommand.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Evolve = 1
+	Result.Target.SummonBattleSpeed = GetEvolveBonus(Source, self.Type)
+
+	return Result
+end
+
+function Item_EternalCommand.PlaySound(self, Level)
+	Audio.Play("sparkle0.ogg")
+end
+
+Item_EternalImpatience = { Type = 2 }
+
+function Item_EternalImpatience.GetInfo(self, Source, Item)
+	return EvolveText(self, "[c green]" .. GetEvolveBonus(Source, self.Type) .. "%[c white] cooldown reduction bonus", Source)
+end
+
+function Item_EternalImpatience.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Evolve = 1
+	Result.Target.Cooldowns = GetEvolveBonus(Source, self.Type)
+
+	return Result
+end
+
+function Item_EternalImpatience.PlaySound(self, Level)
+	Audio.Play("sparkle0.ogg")
 end
 
 -- Rites --

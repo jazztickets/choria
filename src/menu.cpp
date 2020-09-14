@@ -1597,15 +1597,18 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 				size_t Slot = Buffer.Read<uint8_t>();
 				bool Hardcore = Buffer.Read<uint8_t>();
 				std::string Name = Buffer.ReadString();
-				uint32_t PortraitID = Buffer.Read<uint32_t>();
+				uint32_t PortraitID = Buffer.Read<uint8_t>();
 				int Health = Buffer.Read<int>();
 				int64_t Experience = Buffer.Read<int64_t>();
-				int Rebirths = Buffer.Read<int>();
+				int Rebirths = Buffer.Read<int16_t>();
+				int Evolves = Buffer.Read<int16_t>();
 
 				// Set name
 				std::string Prefix;
+				if(Evolves)
+					Prefix += "[c silver]" + std::to_string(Evolves) + "[c white] ";
 				if(Rebirths)
-					Prefix = "[c gold]" + std::to_string(Rebirths) + "[c white] ";
+					Prefix += "[c gold]" + std::to_string(Rebirths) + "[c white] ";
 
 				CharacterSlots[Slot].Name->Text = Prefix + Name;
 

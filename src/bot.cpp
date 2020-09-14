@@ -210,10 +210,11 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				size_t Slot = Data.Read<uint8_t>();
 				Data.Read<uint8_t>();
 				Data.ReadString();
-				Data.Read<uint32_t>();
+				Data.Read<uint8_t>();
 				Data.Read<int>();
 				Data.Read<int64_t>();
-				Data.Read<int>();
+				Data.Read<int16_t>();
+				Data.Read<int16_t>();
 
 				if(FirstSlot == -1)
 					FirstSlot = (int)Slot;
