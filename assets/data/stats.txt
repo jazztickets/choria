@@ -2263,6 +2263,10 @@ INSERT INTO trader VALUES(85,'constricting_amulet',348,1);
 INSERT INTO trader VALUES(86,'warming_torch',349,1);
 INSERT INTO trader VALUES(87,'chilly_amulet',355,1);
 INSERT INTO trader VALUES(88,'lava_amulet',316,1);
+INSERT INTO trader VALUES(89,'red_runestone',356,1);
+INSERT INTO trader VALUES(90,'green_runestone',357,1);
+INSERT INTO trader VALUES(91,'blue_runestone',358,1);
+INSERT INTO trader VALUES(92,'black_runestone',359,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -2497,6 +2501,10 @@ INSERT INTO traderitem VALUES(257,87,353,25);
 INSERT INTO traderitem VALUES(258,88,321,1);
 INSERT INTO traderitem VALUES(259,88,233,50);
 INSERT INTO traderitem VALUES(260,88,215,25);
+INSERT INTO traderitem VALUES(261,89,338,4);
+INSERT INTO traderitem VALUES(262,90,340,4);
+INSERT INTO traderitem VALUES(263,91,339,4);
+INSERT INTO traderitem VALUES(264,92,341,4);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -3209,6 +3217,10 @@ INSERT INTO item VALUES(352,11,0,0,0,0,0,0,'Credits','textures/items/note.png','
 INSERT INTO item VALUES(353,10,0,2,2,0,0,0,'Cold Dust','textures/items/cold_dust.png','','Item_ColdDust','',0,200,1,40,0,0,10.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(354,10,0,8,2,0,0,0,'Snowball','textures/items/snowball.png','','Item_Bone','',0,125,1,75,0,0,2.5,3.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(355,9,0,0,0,0,4,0,'Chilly Amulet','textures/items/amulet_ice.png','','Item_FreezeProtection','',0,100000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,35,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(356,13,0,0,0,0,0,0,'Red Runestone','textures/items/red_runestone.png','','','',0,10000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(357,13,0,0,0,0,0,0,'Green Runestone','textures/items/green_runestone.png','','','',0,10000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(358,13,0,0,0,0,0,0,'Blue Runestone','textures/items/blue_runestone.png','','','',0,10000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(359,13,0,0,0,0,0,0,'Black Runestone','textures/items/black_runestone.png','','','',0,10000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
