@@ -3040,7 +3040,7 @@ INSERT INTO item VALUES(144,3,0,0,0,0,0,6,'Wizard Robes','textures/items/wizard_
 INSERT INTO item VALUES(145,8,0,0,0,0,0,14,'Ring of Health','textures/items/ring.png','','','',0,200,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,25,0,1,0,0,0,0,0,0);
 INSERT INTO item VALUES(146,10,0,1,2,0,0,0,'Spectral Dust','textures/items/spectral_dust.png','','Item_SpectralDust','',0,25,1,25,0,0,15.0,20.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(147,5,2,0,0,0,0,4,'Morning Star','textures/items/morning_star.png','','SetBonus_MorningStar','Proc_Stun',0,250,1,1,20,15,2.0,0.0,1,50,110,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(148,2,0,0,0,0,0,2,'Cap','textures/items/cap.png','','SetBonus_Cap','',0,15,1,0,10,0,0.0,0.0,1,0,0,1,0,0,0,0,10,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(148,2,0,0,0,0,0,2,'Cap','textures/items/cap.png','','SetBonus_Cap','',0,45,1,0,10,0,0.0,0.0,1,0,0,1,0,0,0,0,10,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(149,6,2,0,0,0,0,6,'Holy Staff','textures/items/holy_staff.png','','SetBonus_HolyStaff','Proc_Harden',0,1000,1,15,20,15,5.0,0.0,1,120,300,0,15,0,0,0,75,0,1,15,0,2,5,0);
 INSERT INTO item VALUES(150,14,2,0,0,0,0,5,'Swift Knife','textures/items/small_knife.png','','SetBonus_SwiftKnife','Proc_Bleed',0,1500,1,40,20,20,5.0,0.0,1,120,120,0,5,30,0,0,0,0,0,15,0,0,0,0);
 INSERT INTO item VALUES(151,10,0,1,1,0,0,0,'Battle Potion','textures/items/battle_potion.png','','Item_BattlePotion','',0,25,1,0,0,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
