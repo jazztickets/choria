@@ -47,7 +47,7 @@
 			<element id="label_menu_new_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
 		</element>
 		<element id="element_menu_new_name" style="style_menu_textbox" offset_y="-90" size_x="350" size_y="42" alignment_y="2" clickable="true">
-			<element id="textbox_menu_new_name" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="15"/>
+			<element id="textbox_menu_new_name" font="hud_medium" allowed="[a-zA-Z0-9_-]" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="15"/>
 			<element id="label_menu_new_name" font="hud_medium" text="Name" offset_y="-34" alignment_y="0"/>
 		</element>
 		<element id="label_menu_new_portraits" font="hud_medium" text="Select a portrait" offset_y="40" alignment_y="3"/>
@@ -450,7 +450,7 @@
 	</element>
 	<element id="element_party" style="style_hud_item_tooltip_bg" size_x="420" size_y="168">
 		<element id="element_textbox_party" style="style_menu_textbox" offset_y="28" size_x="350" size_y="42" clickable="true">
-			<element id="textbox_party" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
+			<element id="textbox_party" font="hud_medium" allowed="[a-zA-Z0-9_-]" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
 		</element>
 		<element id="label_party_title" font="menu_buttons" text="Enter Party Name" offset_y="56" alignment_y="3"/>
 	</element>
