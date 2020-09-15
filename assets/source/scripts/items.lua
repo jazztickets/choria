@@ -1365,13 +1365,13 @@ end
 function RebirthText(Item, UpgradeText, Source)
 	KeepText = RebirthStartText(Source, Item, 0)
 
-	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
+	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and learned skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
 end
 
 function EvolveText(Item, UpgradeText, Source)
 	KeepText = RebirthStartText(Source, Item, 1)
 
-	return "[c gray]Evolve into a higher form\n\nLose all rebirths, items, unlocks, keys, gold, experience and skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of evolves and rebirths"
+	return "[c gray]Evolve into a higher form\n\nLose all rebirths, items, unlocks, keys, gold, experience and learned skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of evolves and rebirths"
 end
 
 Item_EternalStrength = { Type = 1 }
@@ -1631,7 +1631,7 @@ Item_RiteKnowledge = Base_Rite:New()
 Item_RiteKnowledge.Exponent = 2
 
 function Item_RiteKnowledge.GetInfo(self, Source, Item)
-	return self:GetRiteText("the number of learned skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]\n\nSkills will have a max level of [c green]" .. Source.RebirthEnchantment + DEFAULT_MAX_SKILL_LEVEL)
+	return self:GetRiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]\n\nSkills will have a max level of [c green]" .. Source.RebirthEnchantment + DEFAULT_MAX_SKILL_LEVEL)
 end
 
 function Item_RiteKnowledge.GetCost(self, Source)

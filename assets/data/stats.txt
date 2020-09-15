@@ -3138,7 +3138,7 @@ INSERT INTO item VALUES(249,10,0,1,1,0,0,0,'Potion of Unlearning','textures/item
 INSERT INTO item VALUES(250,13,0,0,0,0,0,0,'Storage Key','textures/items/key0.png','','','',0,250,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(251,13,0,0,0,0,0,0,'Graveyard Key','textures/items/key1.png','','','',0,50,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(252,13,0,0,0,0,0,0,'Secret Key','textures/items/key0.png','','','',0,2500,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(253,11,0,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','','Item_RebirthToken','',0,5000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(253,11,0,0,0,0,0,0,'Rebirth Token','textures/items/rebirth_token.png','','Item_RebirthToken','',0,100000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(254,10,0,1,1,0,0,0,'Eternal Strength','textures/items/eternal_strength.png','','Item_EternalStrength','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(255,10,0,1,1,0,0,0,'Eternal Guard','textures/items/eternal_guard.png','','Item_EternalGuard','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(256,10,0,1,1,0,0,0,'Eternal Fortitude','textures/items/eternal_fortitude.png','','Item_EternalFortitude','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -3194,9 +3194,9 @@ INSERT INTO item VALUES(305,10,0,4,2,0,0,0,'Unstable Potion','textures/items/bli
 INSERT INTO item VALUES(306,10,0,4,2,0,0,0,'Shrapnel Bomb','textures/items/shrapnel_bomb.png','','Item_ShrapnelBomb','',0,250,1,35,0,0,10.0,10.0,1,0,0,0,0,200,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(307,5,2,0,0,0,0,8,'Flanged Mace','textures/items/flanged_mace.png','','SetBonus_FlangedMace','Proc_Stun',0,1750,1,1,20,15,2.5,0.0,1,140,220,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(308,15,0,0,0,0,0,0,'Secret Garden Map','textures/items/map.png','textures/maps/secret_garden.png','','',0,15000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(309,10,0,0,1,0,0,0,'Rite of Girth','textures/items/rite_girth.png','','Item_RiteGirth','',100,125000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(309,10,0,0,1,0,0,0,'Rite of Girth','textures/items/rite_girth.png','','Item_RiteGirth','',100,135000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(310,10,0,0,1,0,0,0,'Rite of Proficiency','textures/items/rite_proficiency.png','','Item_RiteProficiency','',100,750000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(311,10,0,0,1,0,0,0,'Rite of Insight','textures/items/rite_insight.png','','Item_RiteInsight','',100,100000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(311,10,0,0,1,0,0,0,'Rite of Insight','textures/items/rite_insight.png','','Item_RiteInsight','',100,125000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(312,8,0,0,0,0,0,13,'Dark Ring','textures/items/dark_ring.png','','Item_DarkRing','',0,500,1,20,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(313,15,0,0,0,0,0,0,'Nocturnal Map','textures/items/map.png','textures/maps/bat.png','','',0,375,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(314,7,0,0,0,0,0,10,'Arcane Book','textures/items/arcane_book.png','','SetBonus_ArcaneBook','',0,13000,1,0,50,0,0.0,0.0,1,0,0,0,8,0,0,0,50,0,4,0,0,0,0,30);
