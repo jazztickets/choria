@@ -23,7 +23,7 @@
 
 //     Config
 const  int          DEFAULT_CONFIG_VERSION             =  8;
-const  int          DEFAULT_SAVE_VERSION               =  8;
+const  int          DEFAULT_SAVE_VERSION               =  9;
 const  glm::ivec2   DEFAULT_WINDOW_SIZE                =  glm::ivec2(1024,768);
 const  bool         DEFAULT_FULLSCREEN                 =  false;
 const  bool         DEFAULT_AUDIOENABLED               =  true;
