@@ -209,7 +209,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	TextColor.a = AlphaPercent;
 	std::string DamageText = Buffer.str();
 	std::string Font = DamageText.length() >= 4 ? "hud_small" : "hud_medium";
-	ae::Assets.Fonts[Font]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
+	ae::Assets.Fonts[Font]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE, TextColor);
 
 	// Draw mana damage
 	if(ActionResult.Target.HasStat("Mana") && ActionResult.Target.Values["Mana"].Int < 0) {
@@ -217,7 +217,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 		Buffer << std::abs(ActionResult.Target.Values["Mana"].Int);
 		TextColor = ae::Assets.Colors["light_blue"];
 		TextColor.a = AlphaPercent;
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(24, 24), ae::RIGHT_BASELINE, TextColor);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(24, 24) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, TextColor);
 	}
 }
 
