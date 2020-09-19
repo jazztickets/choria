@@ -88,6 +88,7 @@ _Map::_Map() :
 	Size(0, 0),
 	TileAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
+	AmbientBackground(1.0f),
 	OutsideFlag(1),
 	Clock(0),
 	Headless(false),
@@ -564,7 +565,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	if(!(RenderFlags & MAP_RENDER_NOBACKGROUND) && BackgroundMap) {
 		BackgroundMap->Clock = Clock;
 		BackgroundMap->SetAmbientLightByClock();
-		ae::Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight;
+		ae::Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight * BackgroundMap->AmbientBackground;
 		if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT)
 			ae::Assets.Programs["pos_uv_static"]->AmbientLight = glm::vec4(1.0f);
 
@@ -803,6 +804,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	if(Server)
 		Headless = true;
 	AmbientLight = LightFilter = MapStat->AmbientLight;
+	AmbientBackground = MapStat->AmbientBackground;
 	Music = MapStat->Music;
 
 	// 0: static ambient light 1: use daytime cycle 2: multiply ambient with daytime cycle

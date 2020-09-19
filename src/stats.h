@@ -38,6 +38,7 @@ struct _MapStat {
 	std::string Atlas;
 	std::string Music;
 	glm::vec4 AmbientLight;
+	float AmbientBackground;
 	glm::vec3 BackgroundOffset;
 	uint32_t BackgroundMapID;
 	int Outside;

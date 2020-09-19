@@ -101,6 +101,7 @@ void _Stats::LoadMaps() {
 		Map.AmbientLight.g = (float)Database->GetReal("ambient_green");
 		Map.AmbientLight.b = (float)Database->GetReal("ambient_blue");
 		Map.AmbientLight.a = 1.0f;
+		Map.AmbientBackground = (float)Database->GetReal("ambient_bg");
 		Map.BackgroundMapID = Database->GetInt<uint32_t>("background_id");
 		Map.BackgroundOffset.x = (float)Database->GetReal("background_x");
 		Map.BackgroundOffset.y = (float)Database->GetReal("background_y");
