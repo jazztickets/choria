@@ -32,7 +32,11 @@ function Script_Lava.Activate(self, Level, Object, Change)
 	return Change
 end
 
-function Script_Lava.PlaySound(self)
+function Script_Lava.PlaySound(self, Object)
+	if Object.LavaProtection == true then
+		return
+	end
+
 	Audio.Play("flame0.ogg")
 end
 
@@ -56,7 +60,7 @@ function Script_Fall.Activate(self, Level, Object, Change)
 	return Change
 end
 
-function Script_Fall.PlaySound(self)
+function Script_Fall.PlaySound(self, Object)
 	Audio.Play("crunch1.ogg")
 end
 
@@ -75,7 +79,7 @@ function Script_Slow.Activate(self, Level, Object, Change)
 	return Change
 end
 
-function Script_Slow.PlaySound(self)
+function Script_Slow.PlaySound(self, Object)
 	Audio.Play("swamp0.ogg", 0.5)
 end
 
@@ -99,4 +103,12 @@ function Script_Freezing.Activate(self, Level, Object, Change)
 	end
 
 	return Change
+end
+
+function Script_Freezing.PlaySound(self, Object)
+	if Object.FreezeProtection == true then
+		return
+	end
+
+	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg")
 end

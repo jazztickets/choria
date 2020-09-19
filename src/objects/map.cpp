@@ -342,7 +342,8 @@ void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 				if(Iterator != Stats->Scripts.end()) {
 					const _Script &Script = Iterator->second;
 					if(Scripting->StartMethodCall(Script.Name, "PlaySound")) {
-						Scripting->MethodCall(0, 0);
+						Scripting->PushObject(Object);
+						Scripting->MethodCall(1, 0);
 						Scripting->FinishMethodCall();
 					}
 				}
