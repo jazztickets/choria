@@ -873,6 +873,17 @@ function SetBonus_Flamuss.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Icebrand
+function SetBonus_Icebrand.GetInfo(self, Source, Item)
+	return "[c yellow]Grants immunity to lava\n\n" .. self:GetAddedInfo(Source, Item)
+end
+
+function SetBonus_Icebrand.Stats(self, Item, Object, Change)
+	Change.LavaProtection = true
+
+	return Change
+end
+
 -- Dimensional Slippers --
 
 function SetBonus_DimensionalSlippers.GetInfo(self, Source, Item)
