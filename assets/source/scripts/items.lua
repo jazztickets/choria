@@ -9,7 +9,7 @@ Base_Potion = {
 		return Object
 	end,
 
-	PlaySound = function(self, Level)
+	PlaySound = function(self)
 		Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
 	end
 }
@@ -1586,7 +1586,7 @@ Base_Rite = {
 		return "Permanently increase " .. UpgradeText
 	end,
 
-	PlaySound = function(self, Level)
+	PlaySound = function(self)
 		Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 	end,
 
