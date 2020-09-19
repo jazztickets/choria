@@ -67,7 +67,7 @@ Base_Attack = {
 
 Skill_MonsterAttack = Base_Attack:New()
 
-function Skill_MonsterAttack.PlaySound(self, Level)
+function Skill_MonsterAttack.PlaySound(self)
 	Audio.Play("bash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -86,7 +86,7 @@ function Skill_CrowAttack.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	return false
 end
 
-function Skill_CrowAttack.PlaySound(self, Level)
+function Skill_CrowAttack.PlaySound(self)
 	Audio.Play("swoop" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -94,7 +94,7 @@ end
 
 Skill_SlimeAttack = Base_Attack:New()
 
-function Skill_SlimeAttack.PlaySound(self, Level)
+function Skill_SlimeAttack.PlaySound(self)
 	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -113,7 +113,7 @@ function Skill_AntAttack.Proc(self, Roll, Level, Duration, Source, Target, Resul
 	return false
 end
 
-function Skill_AntAttack.PlaySound(self, Level)
+function Skill_AntAttack.PlaySound(self)
 	Audio.Play("crunch" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -132,7 +132,7 @@ function Skill_CrabAttack.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	return false
 end
 
-function Skill_CrabAttack.PlaySound(self, Level)
+function Skill_CrabAttack.PlaySound(self)
 	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -151,7 +151,7 @@ function Skill_SpiderBite.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	return false
 end
 
-function Skill_SpiderBite.PlaySound(self, Level)
+function Skill_SpiderBite.PlaySound(self)
 	Audio.Play("spider0.ogg")
 end
 
@@ -167,7 +167,7 @@ function Skill_ArachBite.Proc(self, Roll, Level, Duration, Source, Target, Resul
 	return false
 end
 
-function Skill_ArachBite.PlaySound(self, Level)
+function Skill_ArachBite.PlaySound(self)
 	Audio.Play("spider0.ogg")
 end
 
@@ -186,7 +186,7 @@ function Skill_FangBite.Proc(self, Roll, Level, Duration, Source, Target, Result
 	return false
 end
 
-function Skill_FangBite.PlaySound(self, Level)
+function Skill_FangBite.PlaySound(self)
 	Audio.Play("bat0.ogg")
 end
 
@@ -205,7 +205,7 @@ function Skill_VenomBite.Proc(self, Roll, Level, Duration, Source, Target, Resul
 	return false
 end
 
-function Skill_VenomBite.PlaySound(self, Level)
+function Skill_VenomBite.PlaySound(self)
 	Audio.Play("bat0.ogg")
 end
 
@@ -229,7 +229,7 @@ function Skill_Sting.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return false
 end
 
-function Skill_Sting.PlaySound(self, Level)
+function Skill_Sting.PlaySound(self)
 	Audio.Play("sting" .. Random.GetInt(0, 2) .. ".ogg", 0.65)
 end
 
@@ -247,7 +247,7 @@ function Skill_GhostAttack.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_GhostAttack.PlaySound(self, Level)
+function Skill_GhostAttack.PlaySound(self)
 	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -266,7 +266,7 @@ function Skill_Swoop.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return false
 end
 
-function Skill_Swoop.PlaySound(self, Level)
+function Skill_Swoop.PlaySound(self)
 	Audio.Play("multiswoop0.ogg")
 end
 
@@ -285,7 +285,7 @@ function Skill_PincerAttack.Proc(self, Roll, Level, Duration, Source, Target, Re
 	return false
 end
 
-function Skill_PincerAttack.PlaySound(self, Level)
+function Skill_PincerAttack.PlaySound(self)
 	Audio.Play("multislash0.ogg")
 end
 
@@ -302,7 +302,7 @@ function Skill_ChewAttack.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	return false
 end
 
-function Skill_ChewAttack.PlaySound(self, Level)
+function Skill_ChewAttack.PlaySound(self)
 	Audio.Play("grunt" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
@@ -321,7 +321,7 @@ function Skill_SwampAttack.Proc(self, Roll, Level, Duration, Source, Target, Res
 	return false
 end
 
-function Skill_SwampAttack.PlaySound(self, Level)
+function Skill_SwampAttack.PlaySound(self)
 	Audio.Play("sludge0.ogg")
 end
 
@@ -329,7 +329,7 @@ end
 
 Skill_SkeletonAttack = Base_Attack:New()
 
-function Skill_SkeletonAttack.PlaySound(self, Level)
+function Skill_SkeletonAttack.PlaySound(self)
 	Audio.Play("bones" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -337,7 +337,7 @@ end
 
 Skill_DemonAttack = Base_Attack:New()
 
-function Skill_DemonAttack.PlaySound(self, Level)
+function Skill_DemonAttack.PlaySound(self)
 	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -345,7 +345,7 @@ end
 
 Skill_IceImpAttack = Base_Attack:New()
 
-function Skill_IceImpAttack.PlaySound(self, Level)
+function Skill_IceImpAttack.PlaySound(self)
 	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -384,7 +384,7 @@ function Skill_Attack.GetInfo(self, Source, Item)
 	return "Attack for [c green]" .. DamageValue .. "[c white] weapon damage\n[c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to deal [c green]" .. CritValue .. "[c white] damage"
 end
 
-function Skill_Attack.PlaySound(self, Level)
+function Skill_Attack.PlaySound(self)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -420,7 +420,7 @@ function Skill_Fury.GetInfo(self, Source, Item)
 	return "Strike down your enemy, gaining [c green]" .. math.floor(self:GetStaminaGain(Item.Level) * 100) .. "% [c yellow]stamina[c white] and a [c green]" .. self:GetDuration(Item.Level) .. "[c white] second battle speed boost for a killing blow"
 end
 
-function Skill_Fury.PlaySound(self, Level)
+function Skill_Fury.PlaySound(self)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -516,7 +516,7 @@ function Skill_Gash.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return false
 end
 
-function Skill_Gash.PlaySound(self, Level)
+function Skill_Gash.PlaySound(self)
 	Audio.Play("gash0.ogg")
 end
 
@@ -598,7 +598,7 @@ function Skill_ShieldBash.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	return false
 end
 
-function Skill_ShieldBash.PlaySound(self, Level)
+function Skill_ShieldBash.PlaySound(self)
 	Audio.Play("bash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -661,7 +661,7 @@ function Skill_Backstab.Proc(self, Roll, Level, Duration, Source, Target, Result
 	return false
 end
 
-function Skill_Backstab.PlaySound(self, Level)
+function Skill_Backstab.PlaySound(self)
 	Audio.Play("gash0.ogg")
 end
 
@@ -709,7 +709,7 @@ function Skill_Cleave.GetInfo(self, Source, Item)
 	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with [c green]" .. DamageValue .. "[c white] weapon damage\n[c " .. TextColor .. "]Cannot use with off-hand weapons"
 end
 
-function Skill_Cleave.PlaySound(self, Level)
+function Skill_Cleave.PlaySound(self)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -792,7 +792,7 @@ function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	return false
 end
 
-function Skill_BladeDance.PlaySound(self, Level)
+function Skill_BladeDance.PlaySound(self)
 	Audio.Play("gash0.ogg")
 end
 
@@ -847,7 +847,7 @@ function Skill_Whirlwind.GetInfo(self, Source, Item)
 	return "Spin around and slash all enemies with [c green]" .. DamageValue .. "[c white] weapon damage\nCauses [c yellow]fatigue[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
 end
 
-function Skill_Whirlwind.PlaySound(self, Level)
+function Skill_Whirlwind.PlaySound(self)
 	Audio.Play("multislash0.ogg")
 end
 
@@ -1210,7 +1210,7 @@ function Skill_Flee.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Flee.PlaySound(self, Level)
+function Skill_Flee.PlaySound(self)
 	Audio.Play("run0.ogg")
 end
 
@@ -1352,7 +1352,7 @@ function Skill_Taunt.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Taunt.PlaySound(self, Level)
+function Skill_Taunt.PlaySound(self)
 	Audio.Play("taunt" .. Random.GetInt(0, 2) .. ".ogg")
 end
 

@@ -238,7 +238,7 @@ function Skill_Rejuvenation.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Rejuvenation.PlaySound(self, Level)
+function Skill_Rejuvenation.PlaySound(self)
 	Audio.Play("rejuv0.ogg")
 end
 
@@ -265,7 +265,7 @@ function Skill_Heal.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Heal.PlaySound(self, Level)
+function Skill_Heal.PlaySound(self)
 	Audio.Play("heal0.ogg")
 end
 
@@ -301,7 +301,7 @@ function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Resurrect.PlaySound(self, Level)
+function Skill_Resurrect.PlaySound(self)
 	Audio.Play("choir0.ogg")
 end
 
@@ -348,7 +348,7 @@ function Skill_Spark.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return false
 end
 
-function Skill_Spark.PlaySound(self, Level)
+function Skill_Spark.PlaySound(self)
 	Audio.Play("shock0.ogg", 0.35)
 end
 
@@ -388,7 +388,7 @@ function Skill_Icicle.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return true
 end
 
-function Skill_Icicle.PlaySound(self, Level)
+function Skill_Icicle.PlaySound(self)
 	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg", 0.4)
 end
 
@@ -429,7 +429,7 @@ function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_PoisonTouch.PlaySound(self, Level)
+function Skill_PoisonTouch.PlaySound(self)
 	Audio.Play("touch0.ogg")
 end
 
@@ -464,7 +464,7 @@ function Skill_FireBlast.GetInfo(self, Source, Item)
 	return "Blast [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foes for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage, then igniting them for [c green]" .. self:GetBurnDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_FireBlast.PlaySound(self, Level)
+function Skill_FireBlast.PlaySound(self)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -512,7 +512,7 @@ function Skill_IceNova.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return true
 end
 
-function Skill_IceNova.PlaySound(self, Level)
+function Skill_IceNova.PlaySound(self)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -559,7 +559,7 @@ function Skill_ChainLightning.Proc(self, Roll, Level, Duration, Source, Target, 
 	return false
 end
 
-function Skill_ChainLightning.PlaySound(self, Level)
+function Skill_ChainLightning.PlaySound(self)
 	Audio.Play("shock0.ogg", 0.35)
 end
 
@@ -627,7 +627,7 @@ function Skill_Rupture.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return true
 end
 
-function Skill_Rupture.PlaySound(self, Level)
+function Skill_Rupture.PlaySound(self)
 	Audio.Play("rupture0.ogg")
 end
 
@@ -667,7 +667,7 @@ function Skill_Ignite.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Ignite.PlaySound(self, Level)
+function Skill_Ignite.PlaySound(self)
 	Audio.Play("flame0.ogg")
 end
 
@@ -734,7 +734,7 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	return Result
 end
 
-function Skill_DemonicConjuring.PlaySound(self, Level)
+function Skill_DemonicConjuring.PlaySound(self)
 	Audio.Play("summon0.ogg")
 end
 
@@ -838,7 +838,7 @@ function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_RaiseDead.PlaySound(self, Level)
+function Skill_RaiseDead.PlaySound(self)
 	Audio.Play("summon0.ogg")
 end
 
@@ -878,7 +878,7 @@ function Skill_Enfeeble.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Enfeeble.PlaySound(self, Level)
+function Skill_Enfeeble.PlaySound(self)
 	Audio.Play("enfeeble0.ogg")
 end
 
@@ -918,7 +918,7 @@ function Skill_Flay.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Flay.PlaySound(self, Level)
+function Skill_Flay.PlaySound(self)
 	Audio.Play("swamp0.ogg")
 end
 
@@ -957,7 +957,7 @@ function Skill_Fracture.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Fracture.PlaySound(self, Level)
+function Skill_Fracture.PlaySound(self)
 	Audio.Play("enfeeble0.ogg")
 end
 
@@ -1031,7 +1031,7 @@ function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_MagicBarrier.PlaySound(self, Level)
+function Skill_MagicBarrier.PlaySound(self)
 	Audio.Play("barrier0.ogg")
 end
 
@@ -1076,6 +1076,6 @@ function Skill_Sanctuary.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Skill_Sanctuary.PlaySound(self, Level)
+function Skill_Sanctuary.PlaySound(self)
 	Audio.Play("sanctuary0.ogg")
 end

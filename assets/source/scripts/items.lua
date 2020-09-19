@@ -189,7 +189,7 @@ function Item_SkillSlot.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_SkillSlot.PlaySound(self, Level)
+function Item_SkillSlot.PlaySound(self)
 	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 end
 
@@ -207,7 +207,7 @@ function Item_BeltSlot.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_BeltSlot.PlaySound(self, Level)
+function Item_BeltSlot.PlaySound(self)
 	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 end
 
@@ -231,7 +231,7 @@ function Item_SkillPoint.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_SkillPoint.PlaySound(self, Level)
+function Item_SkillPoint.PlaySound(self)
 	Audio.Play("unlock" .. Random.GetInt(0, 1) .. ".ogg", 0.85)
 end
 
@@ -270,7 +270,7 @@ function Item_ThrowingKnives.Proc(self, Roll, Level, Duration, Source, Target, R
 	return true
 end
 
-function Item_ThrowingKnives.PlaySound(self, Level)
+function Item_ThrowingKnives.PlaySound(self)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -309,7 +309,7 @@ function Item_PoisonKnives.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_PoisonKnives.PlaySound(self, Level)
+function Item_PoisonKnives.PlaySound(self)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -340,7 +340,7 @@ function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_SlimyGlob.PlaySound(self, Level)
+function Item_SlimyGlob.PlaySound(self)
 	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -360,7 +360,7 @@ function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_CrabLegs.PlaySound(self, Level)
+function Item_CrabLegs.PlaySound(self)
 	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -381,7 +381,7 @@ function Item_CrowFeather.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_CrowFeather.PlaySound(self, Level)
+function Item_CrowFeather.PlaySound(self)
 	Audio.Play("swoop" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -401,7 +401,7 @@ function Item_FireDust.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_FireDust.PlaySound(self, Level)
+function Item_FireDust.PlaySound(self)
 	Audio.Play("dust" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -422,7 +422,7 @@ function Item_ColdDust.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_ColdDust.PlaySound(self, Level)
+function Item_ColdDust.PlaySound(self)
 	Audio.Play("dust" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -453,7 +453,7 @@ function Item_SpiderLeg.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_SpiderLeg.PlaySound(self, Level)
+function Item_SpiderLeg.PlaySound(self)
 	Audio.Play("spider0.ogg")
 end
 
@@ -484,7 +484,7 @@ function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_Fang.PlaySound(self, Level)
+function Item_Fang.PlaySound(self)
 	Audio.Play("bat0.ogg")
 end
 
@@ -504,7 +504,7 @@ function Item_SpectralDust.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_SpectralDust.PlaySound(self, Level)
+function Item_SpectralDust.PlaySound(self)
 	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -541,7 +541,7 @@ function Item_Ankh.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_Ankh.PlaySound(self, Level)
+function Item_Ankh.PlaySound(self)
 	Audio.Play("choir0.ogg")
 end
 
@@ -562,7 +562,7 @@ function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_SwampGlob.PlaySound(self, Level)
+function Item_SwampGlob.PlaySound(self)
 	Audio.Play("sludge0.ogg")
 end
 
@@ -594,7 +594,7 @@ function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_LavaSludge.PlaySound(self, Level)
+function Item_LavaSludge.PlaySound(self)
 	Audio.Play("flame0.ogg")
 end
 
@@ -628,7 +628,7 @@ function Item_Firebomb.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_Firebomb.PlaySound(self, Level)
+function Item_Firebomb.PlaySound(self)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -652,7 +652,7 @@ function Item_UnstablePotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_UnstablePotion.PlaySound(self, Level)
+function Item_UnstablePotion.PlaySound(self)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -686,7 +686,7 @@ function Item_ShrapnelBomb.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_ShrapnelBomb.PlaySound(self, Level)
+function Item_ShrapnelBomb.PlaySound(self)
 	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -709,7 +709,7 @@ function Item_Bone.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_Bone.PlaySound(self, Level)
+function Item_Bone.PlaySound(self)
 	Audio.Play("bash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -749,7 +749,7 @@ function Item_ElusivePotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_ElusivePotion.PlaySound(self, Level)
+function Item_ElusivePotion.PlaySound(self)
 	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
@@ -802,7 +802,7 @@ function Item_WarmingTorch.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_WarmingTorch.PlaySound(self, Level)
+function Item_WarmingTorch.PlaySound(self)
 	Audio.Play("flame0.ogg")
 end
 
@@ -857,7 +857,7 @@ function Item_Torch.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_Torch.PlaySound(self, Level)
+function Item_Torch.PlaySound(self)
 	Audio.Play("flame0.ogg")
 end
 
@@ -1398,7 +1398,7 @@ function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalStrength.PlaySound(self, Level)
+function Item_EternalStrength.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1415,7 +1415,7 @@ function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalGuard.PlaySound(self, Level)
+function Item_EternalGuard.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1432,7 +1432,7 @@ function Item_EternalFortitude.Use(self, Level, Duration, Source, Target, Result
 	return Result
 end
 
-function Item_EternalFortitude.PlaySound(self, Level)
+function Item_EternalFortitude.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1449,7 +1449,7 @@ function Item_EternalSpirit.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalSpirit.PlaySound(self, Level)
+function Item_EternalSpirit.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1466,7 +1466,7 @@ function Item_EternalWisdom.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalWisdom.PlaySound(self, Level)
+function Item_EternalWisdom.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1483,7 +1483,7 @@ function Item_EternalWealth.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalWealth.PlaySound(self, Level)
+function Item_EternalWealth.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1500,7 +1500,7 @@ function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result
 	return Result
 end
 
-function Item_EternalKnowledge.PlaySound(self, Level)
+function Item_EternalKnowledge.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1517,7 +1517,7 @@ function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalPain.PlaySound(self, Level)
+function Item_EternalPain.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
@@ -1534,7 +1534,7 @@ function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalAlacrity.PlaySound(self, Level)
+function Item_EternalAlacrity.PlaySound(self)
 	Audio.Play("sparkle0.ogg")
 end
 
@@ -1551,7 +1551,7 @@ function Item_EternalCommand.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
-function Item_EternalCommand.PlaySound(self, Level)
+function Item_EternalCommand.PlaySound(self)
 	Audio.Play("sparkle0.ogg")
 end
 
@@ -1568,7 +1568,7 @@ function Item_EternalImpatience.Use(self, Level, Duration, Source, Target, Resul
 	return Result
 end
 
-function Item_EternalImpatience.PlaySound(self, Level)
+function Item_EternalImpatience.PlaySound(self)
 	Audio.Play("sparkle0.ogg")
 end
 

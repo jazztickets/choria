@@ -222,7 +222,7 @@ function Buff_Parry.OnHit(self, Object, Effect, Change, Result)
 	Result.Source.BuffDuration = self.StunDuration
 end
 
-function Buff_Parry.PlaySound(self, Level)
+function Buff_Parry.PlaySound(self)
 	Audio.Play("parry0.ogg")
 end
 
@@ -419,7 +419,7 @@ function Buff_Shielded.OnHit(self, Object, Effect, Change, Result)
 	end
 end
 
-function Buff_Shielded.PlaySound(self, Level)
+function Buff_Shielded.PlaySound(self)
 	Audio.Play("absorb" .. Random.GetInt(0, 1) .. ".ogg", 0.5)
 end
 

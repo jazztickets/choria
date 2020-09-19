@@ -32,7 +32,7 @@ function Script_Lava.Activate(self, Level, Object, Change)
 	return Change
 end
 
-function Script_Lava.PlaySound(self, Level)
+function Script_Lava.PlaySound(self)
 	Audio.Play("flame0.ogg")
 end
 
@@ -56,7 +56,7 @@ function Script_Fall.Activate(self, Level, Object, Change)
 	return Change
 end
 
-function Script_Fall.PlaySound(self, Level)
+function Script_Fall.PlaySound(self)
 	Audio.Play("crunch1.ogg")
 end
 
@@ -75,7 +75,7 @@ function Script_Slow.Activate(self, Level, Object, Change)
 	return Change
 end
 
-function Script_Slow.PlaySound(self, Level)
+function Script_Slow.PlaySound(self)
 	Audio.Play("swamp0.ogg", 0.5)
 end
 
