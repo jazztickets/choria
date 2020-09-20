@@ -209,14 +209,32 @@ Set_Dark.Attributes = {
 	SummonLimit = { "1", "2" },
 }
 
-Set_Healers = Base_Set:New()
-Set_Healers.Attributes = {
+Set_Health = Base_Set:New()
+Set_Health.Attributes = {
 	HealPower = { "10%", "50%" },
 }
 
-Set_Spirit = Base_Set:New()
-Set_Spirit.Attributes = {
+Set_Magic = Base_Set:New()
+Set_Magic.Attributes = {
 	ManaPower = { "10%", "50%" },
+}
+
+Set_Warm = Base_Set:New()
+Set_Warm.Attributes = {
+	HealPower = { "25%", "100%" },
+	HealthBonus = { "0%", "15%" },
+}
+
+Set_Glowing = Base_Set:New()
+Set_Glowing.Attributes = {
+	ManaPower = { "25%", "100%" },
+	ManaBonus = { "0%", "15%" },
+}
+
+Set_Trolls = Base_Set:New()
+Set_Trolls.Attributes = {
+	HealPower = { "50%", "100%" },
+	HealthBonus = { "5%", "25%" },
 }
 
 Set_Fire = Base_Set:New()
