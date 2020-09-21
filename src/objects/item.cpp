@@ -52,6 +52,7 @@ static const std::string SkillCategories[5] = {
 
 // Stats to hide on the item tooltip
 static const std::unordered_map<std::string, int> HiddenStats = {
+	{ "Cursed", 1 },
 	{ "MinDamage", 1 },
 	{ "MaxDamage", 1 },
 	{ "Resist", 1 },
