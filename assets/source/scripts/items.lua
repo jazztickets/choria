@@ -1490,7 +1490,13 @@ end
 Item_EternalKnowledge = { Type = 3 }
 
 function Item_EternalKnowledge.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "[c white] extra skill point", Source)
+	Bonus = GetRebirthBonus(Source, self.Type)
+	Plural = ""
+	if Bonus ~= 1 then
+		Plural = "s"
+	end
+
+	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "[c white] extra skill point" .. Plural, Source)
 end
 
 function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result)
