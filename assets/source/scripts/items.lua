@@ -1343,31 +1343,31 @@ function RebirthStartText(Source, Item, Mode)
 	end
 
 	Gold = math.min(math.floor(Source.RebirthWealth * 0.01 * Source.Experience * Item_RiteWealth.Multiplier), MAX_GOLD)
-	KeepText = "\n\n[c yellow]You will keep\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
-	Plural = ""
-	if Source.RebirthPower ~= 1 then
-		Plural = "s"
+	PrivilegePlural = ""
+	WisdomPlural = ""
+	PassagePlural = ""
+	if Source.RebirthPrivilege ~= 1 then
+		PrivilegePlural = "s"
+	end
+	if Source.RebirthWisdom + 1 ~= 1 then
+		WisdomPlural = "s"
+	end
+	if Source.RebirthPassage ~= 1 then
+		PassagePlural = "s"
 	end
 
+	KeepText = "\n\n[c yellow]You will keep\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
+	if Source.RebirthPrivilege > 0 then
+		KeepText = KeepText .. "[c green]" .. Source.RebirthPrivilege .. "[c white] item" .. PrivilegePlural .." in your trade bag\n"
+	end
 	KeepText = KeepText .. "\n[c yellow]You will start with\n"
 	KeepText = KeepText .. "[c green]" .. Source.RebirthEnchantment .. "[c white] extra max skill levels\n"
-
 	if Mode == 0 then
 		KeepText = KeepText .. "[c green]" .. Source.Rebirths + Source.EternalPain + AddedDifficulty + 1 .. "%[c white] difficulty\n"
 	end
-
-	Plural = ""
-	if Source.RebirthWisdom + 1 ~= 1 then
-		Plural = "s"
-	end
-	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom + 1 .. "[c white] character level" .. Plural .. "\n"
-
-	Plural = ""
-	if Source.RebirthPassage ~= 1 then
-		Plural = "s"
-	end
-	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] key" .. Plural .. "\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom + 1 .. "[c white] character level" .. WisdomPlural .. "\n"
+	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] key" .. PassagePlural .. "\n"
 	KeepText = KeepText .. "[c green]" .. Gold .. "[c white] gold\n"
 
 	return KeepText
@@ -1805,6 +1805,23 @@ function Item_RiteEnchantment.Use(self, Level, Duration, Source, Target, Result)
 	if Target.RebirthEnchantment < MAX_SKILL_LEVEL - DEFAULT_MAX_SKILL_LEVEL then
 		Result.Target.RebirthEnchantment = Level
 	end
+
+	return Result
+end
+
+Item_RitePrivilege = Base_Rite:New()
+Item_RitePrivilege.Exponent = 2
+
+function Item_RitePrivilege.GetInfo(self, Source, Item)
+	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+end
+
+function Item_RitePrivilege.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source, Source.RebirthPrivilege)
+end
+
+function Item_RitePrivilege.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.RebirthPrivilege = Level
 
 	return Result
 end

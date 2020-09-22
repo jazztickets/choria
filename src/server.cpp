@@ -2586,7 +2586,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->SkillPointsUnlocked = Character->UnlockBySearch("Skill Point %", Character->Attributes["RebirthInsight"].Int);
 
 	// Keep items from trade bag
-	int ItemCount = 0;
+	int ItemCount = Character->Attributes["RebirthPrivilege"].Int;
 	for(const auto &Slot : OldTradeBag.Slots) {
 		if(ItemCount && Slot.Item) {
 			Player->Inventory->AddItem(Slot.Item, Slot.Upgrades, Slot.Count);
