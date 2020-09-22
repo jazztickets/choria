@@ -371,6 +371,7 @@ INSERT INTO script VALUES(26,'Script_Fall',62,'');
 INSERT INTO script VALUES(27,'Script_Boss',58,'textures/objects/sentinel.png');
 INSERT INTO script VALUES(28,'Script_Boss',59,'textures/objects/jem.png');
 INSERT INTO script VALUES(29,'Script_Boss',60,'textures/objects/boss.png');
+INSERT INTO script VALUES(30,'Script_Slow',5,'');
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
