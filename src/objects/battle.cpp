@@ -619,11 +619,11 @@ void _Battle::ServerEndBattle() {
 
 			// Calculate gold based on monster or player
 			SideStats[Side].TotalGoldStolen += Object->Fighter->GoldStolen;
-			SideStats[Side].TotalBounty += Object->Character->Attributes["Bounty"].Int;
+			SideStats[Side].TotalBounty += Object->Character->Attributes["Bounty"].Int64;
 			if(Object->IsMonster())
 				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven;
 			else
-				SideStats[Side].TotalGoldGiven += Object->Character->Attributes["Bounty"].Int + (int)(Object->Character->Attributes["Gold"].Int * BountyEarned + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Character->Attributes["Bounty"].Int64 + (int64_t)(Object->Character->Attributes["Gold"].Int64 * BountyEarned + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = std::ceil(SideStats[Side].TotalExperienceGiven);
@@ -739,8 +739,8 @@ void _Battle::ServerEndBattle() {
 		Object->Character->Action.Unset();
 
 		// Get rewards
-		int ExperienceEarned = 0;
-		int GoldEarned = 0;
+		int64_t ExperienceEarned = 0;
+		int64_t GoldEarned = 0;
 		if(Object->Character->IsAlive()) {
 
 			// Get rewards if boss isn't on cooldown
@@ -780,9 +780,9 @@ void _Battle::ServerEndBattle() {
 			Object->Character->Attributes["MonsterKills"].Int += SideStats[!WinningSide].MonsterCount;
 			if(PVP && Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
 				if(BountyEarned) {
-					Object->Character->Attributes["Bounty"].Int += GoldEarned;
-					if(Object->Character->Attributes["Bounty"].Int) {
-						std::string BountyMessage = "Player " + Object->Name + " now has a bounty of " + std::to_string(Object->Character->Attributes["Bounty"].Int) + " gold!";
+					Object->Character->Attributes["Bounty"].Int64 += GoldEarned;
+					if(Object->Character->Attributes["Bounty"].Int64) {
+						std::string BountyMessage = "Player " + Object->Name + " now has a bounty of " + std::to_string(Object->Character->Attributes["Bounty"].Int64) + " gold!";
 						Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
 						Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
 					}
@@ -811,11 +811,11 @@ void _Battle::ServerEndBattle() {
 					}
 					// Attacker loses contract
 					else {
-						Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Int);
+						Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Int64);
 					}
 				}
 				else {
-					Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Int);
+					Object->ApplyDeathPenalty(true, AttackPenalty, Object->Character->Attributes["Bounty"].Int64);
 				}
 			}
 			else
@@ -855,10 +855,10 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<float>(BossCooldown);
 		Packet.Write<int>(Object->Character->Attributes["PlayerKills"].Int);
 		Packet.Write<int>(Object->Character->Attributes["MonsterKills"].Int);
-		Packet.Write<int>(Object->Character->Attributes["GoldLost"].Int);
-		Packet.Write<int>(Object->Character->Attributes["Bounty"].Int);
-		Packet.Write<int>(ExperienceEarned);
-		Packet.Write<int>(GoldEarned);
+		Packet.Write<int64_t>(Object->Character->Attributes["GoldLost"].Int64);
+		Packet.Write<int64_t>(Object->Character->Attributes["Bounty"].Int64);
+		Packet.Write<int64_t>(ExperienceEarned);
+		Packet.Write<int64_t>(GoldEarned);
 
 		// Sort item drops
 		std::unordered_map<uint32_t, int> SortedItems;

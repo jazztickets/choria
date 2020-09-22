@@ -430,10 +430,10 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			Data.Read<float>();
 			Player->Character->Attributes["PlayerKills"].Int = Data.Read<int>();
 			Player->Character->Attributes["MonsterKills"].Int = Data.Read<int>();
-			Player->Character->Attributes["GoldLost"].Int = Data.Read<int>();
-			Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
-			StatChange.Values["Experience"].Int = Data.Read<int>();
-			StatChange.Values["Gold"].Int = Data.Read<int>();
+			Player->Character->Attributes["GoldLost"].Int64 = Data.Read<int64_t>();
+			Player->Character->Attributes["Bounty"].Int64 = Data.Read<int64_t>();
+			StatChange.Values["Experience"].Int64 = Data.Read<int64_t>();
+			StatChange.Values["Gold"].Int64 = Data.Read<int64_t>();
 			uint8_t ItemCount = Data.Read<uint8_t>();
 			for(uint8_t i = 0; i < ItemCount; i++) {
 
@@ -539,8 +539,8 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			Player->Character->Attributes["MaxHealth"].Int = Data.Read<int>();
 			Player->Character->Attributes["MaxMana"].Int = Data.Read<int>();
 			Player->Character->Attributes["Experience"].Int64 = Data.Read<int64_t>();
-			Player->Character->Attributes["Gold"].Int = Data.Read<int>();
-			Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
+			Player->Character->Attributes["Gold"].Int64 = Data.Read<int64_t>();
+			Player->Character->Attributes["Bounty"].Int64 = Data.Read<int64_t>();
 			double Clock = Data.Read<double>();
 
 			Player->Character->CalculateStats();

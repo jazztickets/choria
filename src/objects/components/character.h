@@ -89,7 +89,7 @@ class _Character {
 		void Update(double FrameTime);
 		void UpdateHealth(int &Value);
 		void UpdateMana(int Value);
-		void UpdateGold(int Value);
+		void UpdateGold(int64_t Value);
 		void UpdateExperience(int64_t Value);
 		void UpdateStatus();
 		void UpdateAllResist(int Value);
@@ -225,7 +225,7 @@ class _Character {
 
 		// Trading
 		_Object *TradePlayer;
-		int TradeGold;
+		int64_t TradeGold;
 		bool WaitingForTrade;
 		bool TradeAccepted;
 

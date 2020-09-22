@@ -239,14 +239,14 @@ void _Object::Update(double FrameTime) {
 			Changed = true;
 		if(Light != OldLight)
 			Changed = true;
-		if(Character->Attributes["Bounty"].Int != OldBounty)
+		if(Character->Attributes["Bounty"].Int64 != OldBounty)
 			Changed = true;
 	}
 
 	OldPosition = Position;
 	OldStatus = Character->Status;
 	OldInvisible = Character->Invisible;
-	OldBounty = Character->Attributes["Bounty"].Int;
+	OldBounty = Character->Attributes["Bounty"].Int64;
 	OldLight = Light;
 }
 
@@ -399,8 +399,8 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	bool SameParty = ClientPlayer->Character->PartyName != "" && ClientPlayer->Character->PartyName == Character->PartyName;
 	std::string Color = SameParty ? "green" : "white";
 	std::string NameText = "[c " + Color + "]" + Name + "[c white]";
-	if(Character->Attributes["Bounty"].Int > 0)
-		NameText += " ([c cyan]" + std::to_string(Character->Attributes["Bounty"].Int) + "[c white])";
+	if(Character->Attributes["Bounty"].Int64 > 0)
+		NameText += " ([c cyan]" + std::to_string(Character->Attributes["Bounty"].Int64) + "[c white])";
 
 	std::string Prefix;
 	if(Character->Attributes["Evolves"].Int)
@@ -411,7 +411,7 @@ void _Object::Render(glm::vec4 &ViewBounds, const _Object *ClientPlayer) {
 	// Cap name to screen
 	glm::vec2 NamePosition = DrawPosition;
 	float OffsetY = -0.5f;
-	if(SameParty || Character->Attributes["Bounty"].Int > 0) {
+	if(SameParty || Character->Attributes["Bounty"].Int64 > 0) {
 		ae::_TextBounds TextBounds;
 		ae::Assets.Fonts["hud_medium"]->GetStringDimensions(NameText, TextBounds, true);
 		float HalfWidth = TextBounds.Width * 0.5f / ModelTexture->Size.x;
@@ -988,9 +988,9 @@ void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<uint8_t>(Character->Status);
 	Data.WriteBit(Light);
 	Data.WriteBit(Character->Invisible);
-	Data.WriteBit(Character->Attributes["Bounty"].Int);
-	if(Character->Attributes["Bounty"].Int)
-		Data.Write<int>(Character->Attributes["Bounty"].Int);
+	Data.WriteBit(Character->Attributes["Bounty"].Int64);
+	if(Character->Attributes["Bounty"].Int64)
+		Data.Write<int64_t>(Character->Attributes["Bounty"].Int64);
 	if(Light)
 		Data.Write<uint8_t>(Light);
 }
@@ -1271,9 +1271,9 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 			else if(StatChange.HasStat("Mana"))
 				Server->QueueRebirth(this, 0, 4, StatChange.Values["Mana"].Int);
 			else if(StatChange.HasStat("Experience"))
-				Server->QueueRebirth(this, 0, 5, StatChange.Values["Experience"].Int);
+				Server->QueueRebirth(this, 0, 5, StatChange.Values["Experience"].Int64);
 			else if(StatChange.HasStat("Gold"))
-				Server->QueueRebirth(this, 0, 6, StatChange.Values["Gold"].Int);
+				Server->QueueRebirth(this, 0, 6, StatChange.Values["Gold"].Int64);
 			else if(StatChange.HasStat("SkillPoint"))
 				Server->QueueRebirth(this, 0, 7, StatChange.Values["SkillPoint"].Int);
 			else if(StatChange.HasStat("Difficulty"))
@@ -1335,7 +1335,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Update gold
 	if(StatChange.HasStat("Gold")) {
-		int GoldUpdate = StatChange.Values["Gold"].Int;
+		int64_t GoldUpdate = StatChange.Values["Gold"].Int64;
 		if(Character->Battle && GoldUpdate < 0 && Fighter->GoldStolen) {
 			Fighter->GoldStolen += GoldUpdate;
 			if(Fighter->GoldStolen < 0)
@@ -1347,7 +1347,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Update gold stolen
 	if(StatChange.HasStat("GoldStolen")) {
-		int Amount = StatChange.Values["GoldStolen"].Int;
+		int64_t Amount = StatChange.Values["GoldStolen"].Int64;
 		Fighter->GoldStolen += Amount;
 		if(Fighter->GoldStolen > PLAYER_MAX_GOLD)
 			Fighter->GoldStolen = PLAYER_MAX_GOLD;
@@ -1357,7 +1357,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 	// Update experience
 	if(StatChange.HasStat("Experience")) {
-		Character->UpdateExperience(StatChange.Values["Experience"].Int);
+		Character->UpdateExperience(StatChange.Values["Experience"].Int64);
 	}
 
 	// Update health
@@ -1627,21 +1627,21 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 }
 
 // Update death count and gold loss
-void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
-	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Attributes["Gold"].Int) * Penalty + 0.5f);
-	int OldBounty = Character->Attributes["Bounty"].Int;
+void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int64_t BountyLoss) {
+	int64_t GoldPenalty = BountyLoss + (int64_t)(std::abs(Character->Attributes["Gold"].Int64) * Penalty + 0.5f);
+	int64_t OldBounty = Character->Attributes["Bounty"].Int64;
 
 	// Update stats
 	Character->UpdateGold(-GoldPenalty);
 	Character->Attributes["Deaths"].Int++;
-	Character->Attributes["GoldLost"].Int += GoldPenalty;
-	Character->Attributes["Bounty"].Int -= BountyLoss;
-	if(Character->Attributes["Bounty"].Int < 0)
-		Character->Attributes["Bounty"].Int = 0;
+	Character->Attributes["GoldLost"].Int64 += GoldPenalty;
+	Character->Attributes["Bounty"].Int64 -= BountyLoss;
+	if(Character->Attributes["Bounty"].Int64 < 0)
+		Character->Attributes["Bounty"].Int64 = 0;
 
 	// Send message
 	if(Server) {
-		if(BountyLoss > 0 && Character->Attributes["Bounty"].Int == 0) {
+		if(BountyLoss > 0 && Character->Attributes["Bounty"].Int64 == 0) {
 			std::string BountyMessage = "Player " + Name + "'s bounty of " + std::to_string(OldBounty) + " gold has been claimed!";
 			Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
 			Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
@@ -1654,7 +1654,7 @@ void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss) {
 
 			Server->SendPlayerPosition(Peer);
 			Server->SendMessage(Peer, std::string(Text + "and lost " + std::to_string(GoldPenalty) + " gold"), "red");
-			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Attributes["Gold"].Int << " deaths=" << Character->Attributes["Deaths"].Int << " hardcore=" << Character->Hardcore << " )" << std::endl;
+			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Attributes["Gold"].Int64 << " deaths=" << Character->Attributes["Deaths"].Int << " hardcore=" << Character->Hardcore << " )" << std::endl;
 		}
 	}
 }

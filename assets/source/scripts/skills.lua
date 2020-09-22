@@ -938,9 +938,9 @@ end
 -- Mana Shield --
 
 Skill_ManaShield = {}
-Skill_ManaShield.Constant = 28
-Skill_ManaShield.BasePercent = 6
-Skill_ManaShield.Multiplier = 100
+Skill_ManaShield.Constant = 10
+Skill_ManaShield.BasePercent = 4
+Skill_ManaShield.Multiplier = 200
 
 function Skill_ManaShield.GetReduction(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)

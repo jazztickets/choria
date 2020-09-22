@@ -1219,10 +1219,10 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(!Item->BulkBuy)
 			Amount = 1;
 
-		int Price = Item->GetPrice(Scripting, Player, Vendor, Amount, Buy);
+		int64_t Price = Item->GetPrice(Scripting, Player, Vendor, Amount, Buy);
 
 		// Not enough gold
-		if(Price > Player->Character->Attributes["Gold"].Int)
+		if(Price > Player->Character->Attributes["Gold"].Int64)
 			return;
 
 		// Find open slot for new item
@@ -1244,7 +1244,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(Peer) {
 			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-			Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
+			Packet.Write<int64_t>(Player->Character->Attributes["Gold"].Int64);
 			Network->SendPacket(Packet, Peer);
 		}
 
@@ -1260,7 +1260,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Character->CalculateStats();
 
 		// Log
-		Log << "[PURCHASE] Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int << " )" << std::endl;
+		Log << "[PURCHASE] Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int64 << " )" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1273,19 +1273,19 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 			// Get price of stack
 			Amount = std::min((int)Amount, InventorySlot.Count);
-			int Price = InventorySlot.Item->GetPrice(Scripting, Player, Vendor, Amount, Buy, InventorySlot.Upgrades);
+			int64_t Price = InventorySlot.Item->GetPrice(Scripting, Player, Vendor, Amount, Buy, InventorySlot.Upgrades);
 
 			// Update gold
 			Player->Character->UpdateGold(Price);
 			if(Peer) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-				Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
+				Packet.Write<int64_t>(Player->Character->Attributes["Gold"].Int64);
 				Network->SendPacket(Packet, Peer);
 			}
 
 			// Log
-			Log << "[SELL] Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int << " )" << std::endl;
+			Log << "[SELL] Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int64 << " )" << std::endl;
 
 			// Update items
 			Player->Inventory->UpdateItemCount(Slot, -Amount);
@@ -1396,17 +1396,17 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Get upgrade price
 	int MaxSkillLevel = Player->Character->MaxSkillLevels.at(SkillID);
-	int Price = _Item::GetEnchantCost(MaxSkillLevel);
+	int64_t Price = _Item::GetEnchantCost(MaxSkillLevel);
 
 	// Check gold
-	if(Price > Player->Character->Attributes["Gold"].Int)
+	if(Price > Player->Character->Attributes["Gold"].Int64)
 		return;
 
 	// Update gold
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values["Gold"].Int = -Price;
+		StatChange.Values["Gold"].Int64 = -Price;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -1494,11 +1494,11 @@ void _Server::HandleTradeGold(ae::_Buffer &Data, ae::_Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Set gold amount
-	int Gold = Data.Read<int>();
+	int64_t Gold = Data.Read<int64_t>();
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > Player->Character->Attributes["Gold"].Int)
-		Gold = std::max(0, Player->Character->Attributes["Gold"].Int);
+	else if(Gold > Player->Character->Attributes["Gold"].Int64)
+		Gold = std::max((int64_t)0, Player->Character->Attributes["Gold"].Int64);
 	Player->Character->TradeGold = Gold;
 	Player->Character->TradeAccepted = false;
 
@@ -1509,7 +1509,7 @@ void _Server::HandleTradeGold(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_GOLD);
-		Packet.Write<int>(Gold);
+		Packet.Write<int64_t>(Gold);
 		Network->SendPacket(Packet, TradePlayer->Peer);
 	}
 }
@@ -1561,14 +1561,14 @@ void _Server::HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 			{
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
+				Packet.Write<int64_t>(Player->Character->Attributes["Gold"].Int64);
 				Player->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, Player->Peer);
 			}
 			{
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int>(TradePlayer->Character->Attributes["Gold"].Int);
+				Packet.Write<int64_t>(TradePlayer->Character->Attributes["Gold"].Int64);
 				TradePlayer->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, TradePlayer->Peer);
 			}
@@ -1690,10 +1690,10 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	// Get upgrade price
-	int Price = InventorySlot.Item->GetUpgradeCost(InventorySlot.Upgrades+1);
+	int64_t Price = InventorySlot.Item->GetUpgradeCost(InventorySlot.Upgrades+1);
 
 	// Check gold
-	if(Price > Player->Character->Attributes["Gold"].Int)
+	if(Price > Player->Character->Attributes["Gold"].Int64)
 		return;
 
 	// Upgrade item
@@ -1703,7 +1703,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values["Gold"].Int = -Price;
+		StatChange.Values["Gold"].Int64 = -Price;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -1723,7 +1723,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Log
-	Log << "[UPGRADE] Player " << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int << " )" << std::endl;
+	Log << "[UPGRADE] Player " << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Attributes["Gold"].Int64 << " )" << std::endl;
 
 	Player->Character->CalculateStats();
 }
@@ -1848,7 +1848,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool Penalize) {
 
 			// Remove stolen gold
 			if(Player->Fighter->GoldStolen)
-				Player->Character->Attributes["Gold"].Int -= Player->Fighter->GoldStolen;
+				Player->Character->Attributes["Gold"].Int64 -= Player->Fighter->GoldStolen;
 
 			// Apply penalty
 			if(Penalize) {
@@ -1909,7 +1909,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "bounty") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Player->Character->Attributes["Bounty"].Int = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Bounty"].Int + Change : Change);
+		Player->Character->Attributes["Bounty"].Int64 = std::max((int64_t)0, Adjust ? Player->Character->Attributes["Bounty"].Int64 + Change : Change);
 		SendHUD(Peer);
 	}
 	else if(Command == "clearkills") {
@@ -1959,9 +1959,9 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "gold") {
 		bool Adjust = Data.ReadBit();
 		int64_t Change = Data.Read<int64_t>();
-		Change = std::clamp(Change, -(int64_t)PLAYER_MAX_GOLD, (int64_t)PLAYER_MAX_GOLD);
-		Player->Character->Attributes["Gold"].Int = Adjust ? Player->Character->Attributes["Gold"].Int + Change : Change;
-		Player->Character->Attributes["GoldLost"].Int = 0;
+		Change = std::clamp(Change, -PLAYER_MAX_GOLD, PLAYER_MAX_GOLD);
+		Player->Character->Attributes["Gold"].Int64 = Adjust ? Player->Character->Attributes["Gold"].Int64 + Change : Change;
+		Player->Character->Attributes["GoldLost"].Int64 = 0;
 		Player->Character->UpdateGold(0);
 		SendHUD(Peer);
 	}
@@ -2049,8 +2049,8 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<int>(Player->Character->Attributes["MaxHealth"].Int);
 	Packet.Write<int>(Player->Character->Attributes["MaxMana"].Int);
 	Packet.Write<int64_t>(Player->Character->Attributes["Experience"].Int64);
-	Packet.Write<int>(Player->Character->Attributes["Gold"].Int);
-	Packet.Write<int>(Player->Character->Attributes["Bounty"].Int);
+	Packet.Write<int64_t>(Player->Character->Attributes["Gold"].Int64);
+	Packet.Write<int64_t>(Player->Character->Attributes["Bounty"].Int64);
 	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);
@@ -2139,7 +2139,7 @@ void _Server::Slap(ae::NetworkIDType PlayerID, int GoldAmount) {
 	// Penalty
 	_StatChange StatChange;
 	StatChange.Object = Player;
-	StatChange.Values["Gold"].Int = -GoldAmount;
+	StatChange.Values["Gold"].Int64 = -GoldAmount;
 	StatChange.Values["Health"].Int = -Player->Character->Attributes["Health"].Int / 2;
 	Player->UpdateStats(StatChange);
 
@@ -2497,7 +2497,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	Character->MaxSkillLevels.clear();
 	Character->Unlocks.clear();
 	Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Character->Attributes["Gold"].Int = std::min((int64_t)(Character->Attributes["Experience"].Int64 * Character->Attributes["RebirthWealth"].Mult() * GAME_REBIRTH_WEALTH_MULTIPLIER), (int64_t)PLAYER_MAX_GOLD);
+	Character->Attributes["Gold"].Int64 = std::min((int64_t)(Character->Attributes["Experience"].Int64 * Character->Attributes["RebirthWealth"].Mult() * GAME_REBIRTH_WEALTH_MULTIPLIER), PLAYER_MAX_GOLD);
 	Character->Attributes["Experience"].Int64 = Stats->GetLevel(Character->Attributes["RebirthWisdom"].Int + 1)->Experience;
 	Character->UpdateTimer = 0;
 	Character->SkillPointsUnlocked = 0;

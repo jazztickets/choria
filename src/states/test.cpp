@@ -67,7 +67,7 @@ void _TestState::Init() {
 		float X = 0;
 		if(1) {
 			int HighestPrizeIndex = 0;
-			int HighestPrizeValue = 0;
+			int64_t HighestPrizeValue = 0;
 			int Index = 0;
 			for(const auto &Prize : Minigame->Prizes) {
 				if(Prize && Prize->Item->Cost > HighestPrizeValue) {

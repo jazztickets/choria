@@ -238,8 +238,8 @@ void _Character::UpdateMana(int Value) {
 }
 
 // Update gold amount
-void _Character::UpdateGold(int Value) {
-	Attributes["Gold"].Int = std::clamp(Attributes["Gold"].Int + Value, -PLAYER_MAX_GOLD, PLAYER_MAX_GOLD);
+void _Character::UpdateGold(int64_t Value) {
+	Attributes["Gold"].Int64 = std::clamp(Attributes["Gold"].Int64 + Value, -PLAYER_MAX_GOLD, PLAYER_MAX_GOLD);
 }
 
 // Update experience

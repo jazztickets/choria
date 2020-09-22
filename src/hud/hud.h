@@ -69,7 +69,7 @@ struct _Cursor {
 	_InventorySlot InventorySlot;
 	const _StatusEffect *StatusEffect;
 	_Slot Slot;
-	int Cost;
+	int64_t Cost;
 	int Window;
 };
 
@@ -131,7 +131,7 @@ class _HUD {
 
 		// Static functions
 		static void FormatTime(std::stringstream &Buffer, int64_t Time);
-		static void FormatLargeNumber(std::stringstream &Buffer, int Number);
+		static void FormatLargeNumber(std::stringstream &Buffer, int64_t Number);
 
 		// Updates
 		void HandleEnter();

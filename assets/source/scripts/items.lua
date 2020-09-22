@@ -1597,16 +1597,18 @@ Base_Rite = {
 	end,
 
 	GetUpgradedPrice = function(self, Source, Upgrades)
-		Count = Source.GetInventoryItemCount(self.Item.Pointer)
+		Index = Source.GetInventoryItemCount(self.Item.Pointer) + Upgrades
 
-		return math.floor(self.Item.Cost + self.Item.Cost * (Count + Upgrades) ^ self.Exponent)
+		return math.floor(self.Item.Cost + self.Item.Cost * (self.CostA * Index ^ self.Exponent + self.CostB * Index))
 	end,
 
-	Exponent = 1.0
+	Exponent = 2.0,
+	CostA = 0.0,
+	CostB = 1.0
 }
 
 Item_RiteWealth = Base_Rite:New()
-Item_RiteWealth.Exponent = 1.25
+Item_RiteWealth.CostA = 0.1
 Item_RiteWealth.Multiplier = REBIRTH_WEALTH_MULTIPLIER
 
 function Item_RiteWealth.GetInfo(self, Source, Item)
@@ -1628,7 +1630,7 @@ function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RiteWisdom = Base_Rite:New()
-Item_RiteWisdom.Exponent = 1.25
+Item_RiteWisdom.CostA = 0.1
 
 function Item_RiteWisdom.GetInfo(self, Source, Item)
 	return self:GetRiteText("the starting level after rebirth by [c green]" .. Item.Level .. "[c white]")
@@ -1645,7 +1647,8 @@ function Item_RiteWisdom.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RiteKnowledge = Base_Rite:New()
-Item_RiteKnowledge.Exponent = 2
+Item_RiteKnowledge.CostA = 0.75
+Item_RiteKnowledge.CostB = 0.75
 
 function Item_RiteKnowledge.GetInfo(self, Source, Item)
 	return self:GetRiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]\n\nSkills will have a max level of [c green]" .. Source.RebirthEnchantment + DEFAULT_MAX_SKILL_LEVEL)
@@ -1662,7 +1665,7 @@ function Item_RiteKnowledge.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RitePower = Base_Rite:New()
-Item_RitePower.Exponent = 2.0
+Item_RitePower.CostA = 1.0
 
 function Item_RitePower.GetInfo(self, Source, Item)
 	return self:GetRiteText("your rebirth tier bonus by [c green]" .. Item.Level .. "[c white]")
@@ -1679,7 +1682,7 @@ function Item_RitePower.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RiteGirth = Base_Rite:New()
-Item_RiteGirth.Exponent = 2
+Item_RiteGirth.CostA = 5
 
 function Item_RiteGirth.GetInfo(self, Source, Item)
 	AddedText = ""
@@ -1703,7 +1706,7 @@ function Item_RiteGirth.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RiteProficiency = Base_Rite:New()
-Item_RiteProficiency.Exponent = 1.25
+Item_RiteProficiency.CostA = 1
 
 function Item_RiteProficiency.GetInfo(self, Source, Item)
 	AddedText = ""
@@ -1727,7 +1730,7 @@ function Item_RiteProficiency.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RiteInsight = Base_Rite:New()
-Item_RiteInsight.Exponent = 1.25
+Item_RiteInsight.CostA = 0.25
 
 function Item_RiteInsight.GetInfo(self, Source, Item)
 	AddedText = ""
@@ -1786,7 +1789,7 @@ function Item_RitePassage.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RiteEnchantment = Base_Rite:New()
-Item_RiteEnchantment.Exponent = 1.25
+Item_RiteEnchantment.CostA = 0.25
 
 function Item_RiteEnchantment.GetInfo(self, Source, Item)
 	AddedText = ""
@@ -1810,10 +1813,16 @@ function Item_RiteEnchantment.Use(self, Level, Duration, Source, Target, Result)
 end
 
 Item_RitePrivilege = Base_Rite:New()
-Item_RitePrivilege.Exponent = 2
+Item_RitePrivilege.CostA = 2
+Item_RitePrivilege.Max = 8
 
 function Item_RitePrivilege.GetInfo(self, Source, Item)
-	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]")
+	AddedText = ""
+	if Source.RebirthPrivilege >= self.Max then
+		AddedText = "\n\n[c red]Max privilege attained"
+	end
+
+	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
 end
 
 function Item_RitePrivilege.GetCost(self, Source)
@@ -1821,7 +1830,9 @@ function Item_RitePrivilege.GetCost(self, Source)
 end
 
 function Item_RitePrivilege.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.RebirthPrivilege = Level
+	if Source.RebirthPrivilege < self.Max then
+		Result.Target.RebirthPrivilege = Level
+	end
 
 	return Result
 end

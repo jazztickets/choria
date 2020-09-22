@@ -439,7 +439,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		std::stringstream Buffer;
 		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades - ShowingNextUpgradeLevel) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
 			glm::vec4 Color = ae::Assets.Colors["gold"];
-			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Int)
+			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Int64)
 				Color = ae::Assets.Colors["red"];
 
 			Buffer << "Upgrade for " << Tooltip.Cost << " gold";
@@ -776,7 +776,7 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
+int64_t _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
 	if(!Vendor)
 		return 0;
 
@@ -791,16 +791,16 @@ int _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendo
 	}
 
 	// Check for GetCost function in script
-	int ItemCost = Cost;
+	int64_t ItemCost = Cost;
 	if(Scripting->StartMethodCall(Script, "GetCost")) {
 		Scripting->PushObject(Source);
 		Scripting->MethodCall(1, 1);
-		ItemCost = Scripting->GetInt(1);
+		ItemCost = Scripting->GetInt64(1);
 		Scripting->FinishMethodCall();
 	}
 
 	// Get vendor's price
-	int Price = (int)(ItemCost * Percent) * QueryCount;
+	int64_t Price = (int64_t)(ItemCost * Percent) * QueryCount;
 
 	// Add some value for upgrades
 	if(Level) {
@@ -818,16 +818,16 @@ int _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendo
 }
 
 // Get upgrade cost
-int _Item::GetUpgradeCost(int Level) const {
+int64_t _Item::GetUpgradeCost(int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
-	return (int)(std::floor(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_UPGRADE_BASE_COST));
+	return (int64_t)(std::floor(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_UPGRADE_BASE_COST));
 }
 
 // Get enchant cost
-int _Item::GetEnchantCost(int Level) {
-	int Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL;
+int64_t _Item::GetEnchantCost(int Level) {
+	int64_t Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL;
 	return std::floor(std::pow(Index, GAME_ENCHANT_COST_POWER) + Index * GAME_ENCHANT_COST_RATE + GAME_ENCHANT_COST_BASE);
 }
 

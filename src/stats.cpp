@@ -254,7 +254,7 @@ void _Stats::LoadItems() {
 		Item->MaxLevel = Database->GetInt<int>("maxlevel");
 		Item->Duration = Database->GetReal("duration");
 		Item->Cooldown = Database->GetReal("cooldown");
-		Item->Cost = Database->GetInt<int>("cost");
+		Item->Cost = Database->GetInt64("cost");
 		Item->DamageTypeID = Database->GetInt<uint32_t>("damagetype_id");
 		Item->SetID = Database->GetInt<uint32_t>("set_id");
 		Item->Attributes["MinDamage"].Int = Database->GetInt<int>("mindamage");
@@ -639,7 +639,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, int Difficulty
 		Object->Character->Skills = Build->Character->Skills;
 		Object->Character->Attributes["Health"].Int = Object->Character->Attributes["MaxHealth"].Int = Object->Character->BaseMaxHealth;
 		Object->Character->Attributes["Mana"].Int = Object->Character->Attributes["MaxMana"].Int = Object->Character->BaseMaxMana;
-		Object->Character->Attributes["Gold"].Int = Object->Monster->GoldGiven;
+		Object->Character->Attributes["Gold"].Int64 = Object->Monster->GoldGiven;
 		Object->Character->CalcLevelStats = false;
 		Object->Character->BaseResistances["FireResist"] = Database->GetInt<int>("fire_res");
 		Object->Character->BaseResistances["ColdResist"] = Database->GetInt<int>("cold_res");

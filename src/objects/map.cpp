@@ -1133,7 +1133,7 @@ void _Map::GetPVPPlayers(const _Object *Attacker, std::vector<_Object *> &Player
 			continue;
 
 		// Can only bounty hunt players with a bounty
-		if(!UsePVPZone && !Object->Character->Attributes["Bounty"].Int)
+		if(!UsePVPZone && !Object->Character->Attributes["Bounty"].Int64)
 			continue;
 
 		// Can't attack same party member

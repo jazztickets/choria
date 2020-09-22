@@ -664,7 +664,7 @@ void _Scripting::PushItem(lua_State *LuaState, const _Stats *Stats, const _Item 
 	lua_pushinteger(LuaState, (int)Item->Type);
 	lua_setfield(LuaState, -2, "Type");
 
-	lua_pushinteger(LuaState, (int)Item->Cost);
+	lua_pushinteger(LuaState, Item->Cost);
 	lua_setfield(LuaState, -2, "Cost");
 
 	lua_pushlightuserdata(LuaState, (void *)Item);
@@ -805,6 +805,12 @@ void _Scripting::PushReal(double Value) {
 int _Scripting::GetInt(int Index) {
 
 	return (int)lua_tointeger(LuaState, Index + CurrentTableIndex);
+}
+
+// Get return value as int64_t
+int64_t _Scripting::GetInt64(int Index) {
+
+	return lua_tointeger(LuaState, Index + CurrentTableIndex);
 }
 
 // Get return value as bool

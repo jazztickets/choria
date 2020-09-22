@@ -97,7 +97,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 			UpgradeButton->SetEnabled(true);
 
 			// Get cost
-			int Cost = Item->GetUpgradeCost(InventorySlot.Upgrades+1);
+			int64_t Cost = Item->GetUpgradeCost(InventorySlot.Upgrades+1);
 
 			// Update cost label
 			std::stringstream Buffer;
@@ -108,7 +108,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 
 			// Check upgrade conditions
 			bool Disabled = false;
-			if(HUD->Player->Character->Attributes["Gold"].Int < Cost)
+			if(HUD->Player->Character->Attributes["Gold"].Int64 < Cost)
 				Disabled = true;
 
 			// Check blacksmith level

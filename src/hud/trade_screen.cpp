@@ -236,11 +236,11 @@ void _TradeScreen::ValidateTradeGold() {
 	ae::_Element *GoldTextBox = ae::Assets.Elements["textbox_trade_gold_yours"];
 
 	// Get gold amount
-	int Gold = ae::ToNumber<int>(GoldTextBox->Text);
+	int64_t Gold = ae::ToNumber<int64_t>(GoldTextBox->Text);
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > HUD->Player->Character->Attributes["Gold"].Int)
-		Gold = std::max(0, HUD->Player->Character->Attributes["Gold"].Int);
+	else if(Gold > HUD->Player->Character->Attributes["Gold"].Int64)
+		Gold = std::max((int64_t)0, HUD->Player->Character->Attributes["Gold"].Int64);
 
 	// Set text
 	GoldTextBox->SetText(std::to_string(Gold));
@@ -248,7 +248,7 @@ void _TradeScreen::ValidateTradeGold() {
 	// Send amount
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_GOLD);
-	Packet.Write<int>(Gold);
+	Packet.Write<int64_t>(Gold);
 	PlayState.Network->SendPacket(Packet);
 
 	// Reset agreement

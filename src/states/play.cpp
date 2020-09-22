@@ -1098,9 +1098,9 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 		uint8_t Status = Data.Read<uint8_t>();
 		int Light = Data.ReadBit();
 		int Invisible = Data.ReadBit();
-		int Bounty = Data.ReadBit();
+		int64_t Bounty = Data.ReadBit();
 		if(Bounty)
-			Bounty = Data.Read<int>();
+			Bounty = Data.Read<int64_t>();
 		if(Light)
 			Light = Data.Read<uint8_t>();
 
@@ -1114,7 +1114,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			else {
 				Object->Position = Position;
 				Object->Character->Invisible = Invisible;
-				Object->Character->Attributes["Bounty"].Int = Bounty;
+				Object->Character->Attributes["Bounty"].Int64 = Bounty;
 			}
 			Object->Light = Light;
 			Object->ServerPosition = Position;
@@ -1325,7 +1325,7 @@ void _PlayState::HandleInventoryGold(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->Character->Attributes["Gold"].Int = Data.Read<int>();
+	Player->Character->Attributes["Gold"].Int64 = Data.Read<int64_t>();
 	Player->Character->CalculateStats();
 
 	PlayCoinSound();
@@ -1386,7 +1386,7 @@ void _PlayState::HandleTradeGold(ae::_Buffer &Data) {
 		return;
 
 	// Set gold
-	int Gold = Data.Read<int>();
+	int64_t Gold = Data.Read<int64_t>();
 	Player->Character->TradePlayer->Character->TradeGold = Gold;
 
 	// Reset agreement
@@ -1412,7 +1412,7 @@ void _PlayState::HandleTradeExchange(ae::_Buffer &Data) {
 		return;
 
 	// Get gold offer
-	Player->Character->Attributes["Gold"].Int = Data.Read<int>();
+	Player->Character->Attributes["Gold"].Int64 = Data.Read<int64_t>();
 	Player->Inventory->Unserialize(Data, Stats);
 	Player->Character->CalculateStats();
 
@@ -1506,10 +1506,10 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 		Player->Character->BossCooldowns[Battle->Zone] = BossCooldown;
 	Player->Character->Attributes["PlayerKills"].Int = Data.Read<int>();
 	Player->Character->Attributes["MonsterKills"].Int = Data.Read<int>();
-	Player->Character->Attributes["GoldLost"].Int = Data.Read<int>();
-	Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
-	StatChange.Values["Experience"].Int = Data.Read<int>();
-	StatChange.Values["Gold"].Int = Data.Read<int>();
+	Player->Character->Attributes["GoldLost"].Int64 = Data.Read<int64_t>();
+	Player->Character->Attributes["Bounty"].Int64 = Data.Read<int64_t>();
+	StatChange.Values["Experience"].Int = Data.Read<int64_t>();
+	StatChange.Values["Gold"].Int = Data.Read<int64_t>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		_RecentItem RecentItem;
@@ -1717,8 +1717,8 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	Player->Character->Attributes["MaxHealth"].Int = Data.Read<int>();
 	Player->Character->Attributes["MaxMana"].Int = Data.Read<int>();
 	Player->Character->Attributes["Experience"].Int64 = Data.Read<int64_t>();
-	Player->Character->Attributes["Gold"].Int = Data.Read<int>();
-	Player->Character->Attributes["Bounty"].Int = Data.Read<int>();
+	Player->Character->Attributes["Gold"].Int64 = Data.Read<int64_t>();
+	Player->Character->Attributes["Bounty"].Int64 = Data.Read<int64_t>();
 	double Clock = Data.Read<double>();
 
 	Player->Character->CalculateStats();

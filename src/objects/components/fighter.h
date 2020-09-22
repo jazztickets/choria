@@ -57,7 +57,7 @@ class _Fighter {
 		// State
 		std::vector<uint32_t> ItemDropsReceived;
 		double TurnTimer;
-		int GoldStolen;
+		int64_t GoldStolen;
 		int Corpse;
 		bool JoinedBattle;
 		bool FleeBattle;

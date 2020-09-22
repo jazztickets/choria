@@ -108,7 +108,7 @@ class _Object : public ae::_BaseObject {
 		// Stats
 		bool IsMonster() const;
 		_StatusEffect *UpdateStats(_StatChange &StatChange, _Object *Source=nullptr);
-		void ApplyDeathPenalty(bool InBattle, float Penalty, int BountyLoss);
+		void ApplyDeathPenalty(bool InBattle, float Penalty, int64_t BountyLoss);
 
 		// Battles
 		void UpdateMonsterAI(double FrameTime);
@@ -178,7 +178,7 @@ class _Object : public ae::_BaseObject {
 		glm::ivec2 OldPosition;
 		int OldStatus;
 		int OldInvisible;
-		int OldBounty;
+		int64_t OldBounty;
 		int OldLight;
 
 	private:

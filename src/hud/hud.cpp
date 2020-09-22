@@ -153,11 +153,13 @@ void _HUD::FormatTime(std::stringstream &Buffer, int64_t Time) {
 }
 
 // Format large number into K, M, etc.
-void _HUD::FormatLargeNumber(std::stringstream &Buffer, int Number) {
-	if(std::abs(Number) >= 1000000)
-		Buffer << ae::Round(Number / 1000000.0f) << "M";
+void _HUD::FormatLargeNumber(std::stringstream &Buffer, int64_t Number) {
+	if(std::abs(Number) >= 1000000000)
+		Buffer << ae::Round(Number / 1000000000.0) << "B";
+	else if(std::abs(Number) >= 1000000)
+		Buffer << ae::Round(Number / 1000000.0) << "M";
 	else if(std::abs(Number) >= 10000)
-		Buffer << ae::Round(Number / 1000.0f) << "K";
+		Buffer << ae::Round(Number / 1000.0) << "K";
 	else
 		Buffer << Number;
 }
@@ -1407,11 +1409,11 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 		return;
 
 	// Real price
-	int Price = Item->GetPrice(Scripting, Player, Player->Character->Vendor, Count, Buy, Level);
+	int64_t Price = Item->GetPrice(Scripting, Player, Player->Character->Vendor, Count, Buy, Level);
 
 	// Color
 	glm::vec4 Color;
-	if(Buy && Player->Character->Attributes["Gold"].Int < Price)
+	if(Buy && Player->Character->Attributes["Gold"].Int64 < Price)
 		Color = ae::Assets.Colors["red"];
 	else
 		Color = ae::Assets.Colors["light_gold"];
@@ -1669,7 +1671,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -150 * ae::_Element::GetUIScale());
-		StatChangeUI.Change = StatChange.Values["Experience"].Int;
+		StatChangeUI.Change = StatChange.Values["Experience"].Int64;
 		StatChangeUI.Direction = -1.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = ae::Assets.Fonts["battle_large"];
@@ -1694,9 +1696,9 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 		// Get amount
 		if(StatChange.HasStat("Gold"))
-			StatChangeUI.Change = StatChange.Values["Gold"].Int;
+			StatChangeUI.Change = StatChange.Values["Gold"].Int64;
 		else
-			StatChangeUI.Change = StatChange.Values["GoldStolen"].Int;
+			StatChangeUI.Change = StatChange.Values["GoldStolen"].Int64;
 
 		StatChangeUI.Direction = -1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
@@ -1746,10 +1748,10 @@ void _HUD::UpdateLabels() {
 	ae::Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
-	Buffer << Player->Character->Attributes["Gold"].Int;
+	Buffer << Player->Character->Attributes["Gold"].Int64;
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
-	if(Player->Character->Attributes["Gold"].Int < 0)
+	if(Player->Character->Attributes["Gold"].Int64 < 0)
 		GoldElement->Color = ae::Assets.Colors["red"];
 	else
 		GoldElement->Color = ae::Assets.Colors["gold"];

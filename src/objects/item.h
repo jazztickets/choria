@@ -57,7 +57,7 @@ class _Item {
 
 	public:
 
-		static int GetEnchantCost(int Level);
+		static int64_t GetEnchantCost(int Level);
 
 		int GetAttributeCount(int Upgrades) const;
 		void DrawTooltip(const glm::vec2 &Offset, _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
@@ -78,8 +78,8 @@ class _Item {
 
 		void GetEquipmentSlot(_Slot &Slot) const;
 
-		int GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
-		int GetUpgradeCost(int Level) const;
+		int64_t GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
+		int64_t GetUpgradeCost(int Level) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		bool CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target, bool ForceTargetAlive=false) const;
@@ -109,7 +109,7 @@ class _Item {
 		int MaxLevel;
 		double Duration;
 		double Cooldown;
-		int Cost;
+		int64_t Cost;
 		uint32_t DamageTypeID;
 		uint32_t SetID;
 		std::unordered_map<std::string, _Value> Attributes;

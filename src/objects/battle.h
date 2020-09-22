@@ -61,11 +61,11 @@ struct _BattleResult {
 	int JoinedCount;
 	float TotalExperienceGiven;
 	float TotalGoldGiven;
-	int TotalBounty;
-	int TotalGoldStolen;
-	int ExperiencePerCharacter;
-	int GoldPerCharacter;
-	int GoldStolenPerCharacter;
+	int64_t TotalBounty;
+	int64_t TotalGoldStolen;
+	int64_t ExperiencePerCharacter;
+	int64_t GoldPerCharacter;
+	int64_t GoldStolenPerCharacter;
 	bool Dead;
 };
 

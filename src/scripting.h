@@ -68,6 +68,7 @@ class _Scripting {
 		void PushReal(double Value);
 
 		int GetInt(int Index);
+		int64_t GetInt64(int Index);
 		int GetBoolean(int Index);
 		double GetReal(int Index);
 		std::string GetString(int Index);
