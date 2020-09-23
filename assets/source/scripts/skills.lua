@@ -938,20 +938,22 @@ end
 -- Mana Shield --
 
 Skill_ManaShield = {}
-Skill_ManaShield.Constant = 10
+Skill_ManaShield.Constant = 100
 Skill_ManaShield.BasePercent = 4
 Skill_ManaShield.Multiplier = 200
+Skill_ManaShield.AttackPower = -100
 
 function Skill_ManaShield.GetReduction(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_ManaShield.GetInfo(self, Source, Item)
-	return "Convert [c green]" .. self:GetReduction(Item.Level) .. "%[c white] of attack damage taken to mana drain"
+	return "Convert [c green]" .. self:GetReduction(Item.Level) .. "%[c white] of attack damage taken to mana drain\nDecrease attack power by [c green]" .. -self.AttackPower .. "%[c white]"
 end
 
 function Skill_ManaShield.Stats(self, Level, Object, Change)
 	Change.ManaShield = self:GetReduction(Level)
+	Change.AttackPower = self.AttackPower
 
 	return Change
 end

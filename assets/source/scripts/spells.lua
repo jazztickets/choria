@@ -891,9 +891,9 @@ Skill_Flay.CostPerLevel = 10
 Skill_Flay.ManaCostBase = 20 - Skill_Flay.CostPerLevel
 Skill_Flay.Targets = 1
 Skill_Flay.TargetsPerLevel = 0.1
-Skill_Flay.Constant = 15
+Skill_Flay.Constant = 100
 Skill_Flay.BasePercent = 14
-Skill_Flay.Multiplier = 100
+Skill_Flay.Multiplier = 200
 
 function Skill_Flay.GetPercent(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
@@ -929,13 +929,15 @@ Skill_Fracture.Duration = 5
 Skill_Fracture.DurationPerLevel = 0.1
 Skill_Fracture.CostPerLevel = 5
 Skill_Fracture.ManaCostBase = 40 - Skill_Fracture.CostPerLevel
-Skill_Fracture.Armor = 5
-Skill_Fracture.ArmorPerLevel = 1
 Skill_Fracture.Targets = 1
 Skill_Fracture.TargetsPerLevel = 0.1
+Skill_Fracture.ArmorBase = 4
+Skill_Fracture.ArmorPerLevel = 0
+Skill_Fracture.ArmorScale = 1
+Skill_Fracture.ArmorPower = 1.2
 
 function Skill_Fracture.GetReduction(self, Level)
-	return math.floor(self.Armor + self.ArmorPerLevel * (Level - 1))
+	return math.floor(self.ArmorBase + (Level - 1) * self.ArmorPerLevel + math.pow(Level, self.ArmorPower) * self.ArmorScale)
 end
 
 function Skill_Fracture.GetInfo(self, Source, Item)
