@@ -21,6 +21,7 @@ working/ \
 deployment/{choria,choria.desktop,choria.png} \
 cmake/ \
 CMakeLists.txt \
+build.sh \
 README \
 CHANGELOG \
 LICENSE
