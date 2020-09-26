@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # get type
 build_type="Release"
