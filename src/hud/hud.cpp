@@ -770,7 +770,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		// Update clock
 		if(ae::Input.ModKeyDown(KMOD_ALT)) {
 			std::time_t CurrentTime = std::time(nullptr);
-			Buffer << std::put_time(std::localtime(&CurrentTime), "%r");
+			Buffer << std::put_time(std::localtime(&CurrentTime), "%X");
 		}
 		else
 			Map->GetClockAsString(Buffer);
