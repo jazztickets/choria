@@ -129,6 +129,6 @@ void _StatusEffect::Render(ae::_Element *Element, double Timer) {
 	}
 
 	// Draw level
-	if(Level && (Buff->ShowLevel || ae::Input.ModKeyDown(KMOD_ALT)))
+	if(Level && Buff->ShowLevel)
 		ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Level), glm::ivec2(Element->Bounds.Start.x + 2 * ae::_Element::GetUIScale(), Element->Bounds.End.y - 3 * ae::_Element::GetUIScale()), ae::LEFT_BASELINE, ae::Assets.Colors["white"]);
 }

@@ -768,7 +768,13 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		UpdateLabels();
 
 		// Update clock
-		Map->GetClockAsString(Buffer);
+		if(ae::Input.ModKeyDown(KMOD_ALT)) {
+			std::time_t CurrentTime = std::time(nullptr);
+			Buffer << std::put_time(std::localtime(&CurrentTime), "%r");
+		}
+		else
+			Map->GetClockAsString(Buffer);
+
 		ae::Assets.Elements["label_hud_clock"]->Text = Buffer.str();
 		Buffer.str("");
 
