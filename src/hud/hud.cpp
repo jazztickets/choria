@@ -1527,6 +1527,8 @@ void _HUD::Transfer(const _Slot &SourceSlot) {
 		case BagType::TRADE:
 			TargetBagType = BagType::INVENTORY;
 		break;
+		default:
+		break;
 	}
 
 	if(TargetBagType == BagType::NONE)
