@@ -51,12 +51,18 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 		Data.Write<uint8_t>(Attribute.ID);
 
 		// Write data
-		if(Attribute.Type == StatValueType::POINTER) {
-			_Buff *Buff = (_Buff *)(Iterator.second.Pointer);
-			Data.Write<uint32_t>(Buff->ID);
+		switch(Attribute.Type) {
+			case StatValueType::POINTER: {
+				_Buff *Buff = (_Buff *)(Iterator.second.Pointer);
+				Data.Write<uint32_t>(Buff->ID);
+			} break;
+			case StatValueType::INTEGER64:
+				Data.Write<int>(Iterator.second.Int64);
+			break;
+			default:
+				Data.Write<int>(Iterator.second.Int);
+			break;
 		}
-		else
-			Data.Write<int>(Iterator.second.Int);
 	}
 }
 
@@ -84,13 +90,19 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 		const _Attribute &Attribute = Object->Stats->Attributes.at(Object->Stats->AttributeRank[AttributeID]);
 
 		// Get data
-		if(Attribute.Type == StatValueType::POINTER) {
-			uint32_t BuffID = Data.Read<uint32_t>();
-			if(Object)
-				Values[Attribute.Name].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
+		switch(Attribute.Type) {
+			case StatValueType::POINTER: {
+				uint32_t BuffID = Data.Read<uint32_t>();
+				if(Object)
+					Values[Attribute.Name].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
+			} break;
+			case StatValueType::INTEGER64:
+				Values[Attribute.Name].Int64 = Data.Read<int>();
+			break;
+			default:
+				Values[Attribute.Name].Int = Data.Read<int>();
+			break;
 		}
-		else
-			Values[Attribute.Name].Int = Data.Read<int>();
 	}
 }
 
