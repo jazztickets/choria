@@ -5,6 +5,7 @@
 /.vscode
 /*.sh
 /*.user
+/*.patch
 /TODO
 
 /assets/art/export/
