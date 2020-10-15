@@ -2164,7 +2164,7 @@ INSERT INTO map VALUES(43,'maps/choria_lighthouse2_bg.map.gz','textures/atlas/ma
 INSERT INTO map VALUES(44,'maps/choria_goblincave.map.gz','textures/atlas/main.png','gob.ogg',0.0,0.0,0.0,1.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(45,'maps/choria_ancient.map.gz','textures/atlas/main.png','',0.4000000000000000222,0.4000000000000000222,0.4000000000000000222,1.0,0,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(46,'maps/choria_hideout.map.gz','textures/atlas/main.png','gob.ogg',0.2000000000000000111,0.2000000000000000111,0.2000000000000000111,1.0,0,0,0.0,0.0,0.0);
-INSERT INTO map VALUES(47,'maps/choria_mountain.map.gz','textures/atlas/main.png','',0.5,0.2000000000000000111,0.14999999999999999444,1.0,0,48,0.0,0.0,-10.0);
+INSERT INTO map VALUES(47,'maps/choria_mountain.map.gz','textures/atlas/main.png','lava.ogg',0.5,0.2000000000000000111,0.14999999999999999444,1.0,0,48,0.0,0.0,-10.0);
 INSERT INTO map VALUES(48,'maps/choria_mountain_bg.map.gz','textures/atlas/main.png','',0.5,0.2000000000000000111,0.14999999999999999444,0.9000000000000000222,0,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(49,'maps/choria_darkchamber.map.gz','textures/atlas/main.png','doom.ogg',0.020000000000000000416,0.010000000000000000208,0.010000000000000000208,1.0,0,0,0.0,0.0,0.0);
 INSERT INTO map VALUES(50,'maps/wym.map.gz','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,0,0.0,0.0,0.0);

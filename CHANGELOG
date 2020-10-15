@@ -1,21 +1,21 @@
 choria 0.5.1 -
 - Added several new areas to explore
 - Added item belt that only stores items
+- Added enchanter for increasing max skill levels
+- Added set bonuses for all armor and most weapons
+- Added new end game mechanics and challenging super bosses
+- Added off-hand weapons and dual wielding
+- Added passive mastery skills
+- Added skill point unlocks
 - Added 3 new starting builds
 - Added 8 new bosses
 - Added 15+ new monsters
 - Added 20+ new skills
 - Added 100+ new items
 - Added 10+ different procs to weapons
-- Added 5 new songs
-- Added passive mastery skills
-- Added skill point unlocks
-- Added off-hand weapons and dual wielding
+- Added 6 new songs
 - Added map items
-- Added enchanter for increasing max skill levels
-- Added rebirthing: restart your character with a permanent upgrade
 - Added ability to manually dismiss buffs
-- Added set bonuses for all armor and most weapons
 - Newly learned skills start with a max level of 5
 - Summons are now stored in buffs outside of battle
 - Direction of party members now show on current map
