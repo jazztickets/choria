@@ -417,7 +417,13 @@ function Skill_PoisonTouch.GetDamagePower(self, Source, Level)
 end
 
 function Skill_PoisonTouch.GetInfo(self, Source, Item)
-	return "Infuse venom into your enemy, dealing [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	if Item.MoreInfo == true then
+		DamageValue = self:GetPoisonLevel(Source, Item.Level) .. "[c white] poison DPS"
+	else
+		DamageValue = self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self.Duration .. "[c white] seconds"
+	end
+
+	return "Infuse venom into your enemy, dealing [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
@@ -461,7 +467,14 @@ function Skill_FireBlast.GetBurnDamage(self, Source, Level)
 end
 
 function Skill_FireBlast.GetInfo(self, Source, Item)
-	return "Blast [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foes for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage, then igniting them for [c green]" .. self:GetBurnDamage(Source, Item.Level) .. "[c white] damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	if Item.MoreInfo == true then
+		DamageValue = self:GetBurnLevel(Source, Item.Level) .. "[c white] fire DPS"
+	else
+		DamageValue = self:GetBurnDamage(Source, Item.Level) .. "[c white] fire damage over [c green]" .. self.Duration .. "[c white] seconds"
+	end
+
+
+	return "Blast [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foes for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage, then igniting them for [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self)
@@ -612,7 +625,13 @@ function Skill_Rupture.CanUse(self, Level, Source, Target)
 end
 
 function Skill_Rupture.GetInfo(self, Source, Item)
-	return "Explode a corpse, dealing [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies that deals [c green]" .. self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	if Item.MoreInfo == true then
+		DamageValue = self:GetLevel(Source, Item.Level) .. "[c white] poison DPS"
+	else
+		DamageValue = self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self.Duration .. "[c white] seconds"
+	end
+
+	return "Explode a corpse, dealing [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies that deals [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Rupture.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -655,7 +674,13 @@ function Skill_Ignite.GetDamagePower(self, Source, Level)
 end
 
 function Skill_Ignite.GetInfo(self, Source, Item)
-	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Source, Item.Level) .. "[c white] fire damage over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	if Item.MoreInfo == true then
+		DamageValue = self:GetBurnLevel(Source, Item.Level) .. "[c white] fire DPS"
+	else
+		DamageValue = self:GetDamage(Source, Item.Level) .. "[c white] fire damage over [c green]" .. self.Duration .. "[c white] seconds"
+	end
+
+	return "Ignite an enemy and deal [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Ignite.Use(self, Level, Duration, Source, Target, Result)
