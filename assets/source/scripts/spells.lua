@@ -473,7 +473,6 @@ function Skill_FireBlast.GetInfo(self, Source, Item)
 		DamageValue = self:GetBurnDamage(Source, Item.Level) .. "[c white] fire damage over [c green]" .. self.Duration .. "[c white] seconds"
 	end
 
-
 	return "Blast [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foes for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage, then igniting them for [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
