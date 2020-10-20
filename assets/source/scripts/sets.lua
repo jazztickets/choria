@@ -35,29 +35,33 @@ Base_Set = {
 			-- Show range or upgraded value
 			Text = Text .. "[c white]" .. Label .. "[c white] "
 			if MoreInfo == true then
-				Text = Text .. Value .. " - " .. MaxValue ..  "\n"
+				Text = Text .. "[c light_green]" .. self:GetDisplayValue(Key, Value, MaxValue, Upgrades, MaxUpgrades, true) .. "[c white] (" .. Value .. " - " .. MaxValue ..  ")\n"
 			else
-				UpgradedValue = self:GetUpgradedValue(Key, Value, MaxValue, Upgrades, MaxUpgrades)
-
-				Sign = "+"
-				if UpgradedValue < 0 then
-					Sign = ""
-				end
-
-				PercentPosition = string.find(Value, "%%")
-				Percent = ""
-				if PercentPosition ~= nil then
-					Percent = "%"
-				end
-
-				Text = Text .. Sign .. UpgradedValue .. Percent .. "\n"
+				Text = Text .. self:GetDisplayValue(Key, Value, MaxValue, Upgrades, MaxUpgrades, false) .. "\n"
 			end
 		end
 
 		return Text
 	end,
 
-	GetUpgradedValue = function(self, Key, Value, MaxValue, Upgrades, MaxUpgrades)
+	GetDisplayValue = function(self, Key, Value, MaxValue, Upgrades, MaxUpgrades, Fractions)
+		UpgradedValue = self:GetUpgradedValue(Key, Value, MaxValue, Upgrades, MaxUpgrades, Fractions)
+
+		Sign = "+"
+		if UpgradedValue < 0 then
+			Sign = ""
+		end
+
+		PercentPosition = string.find(Value, "%%")
+		Percent = ""
+		if PercentPosition ~= nil then
+			Percent = "%"
+		end
+
+		return Sign .. UpgradedValue .. Percent
+	end,
+
+	GetUpgradedValue = function(self, Key, Value, MaxValue, Upgrades, MaxUpgrades, Fractions)
 		Value = string.gsub(Value, "%%", "")
 		Value = tonumber(Value)
 		if MaxUpgrades == 0 then
@@ -69,7 +73,10 @@ Base_Set = {
 		Range = MaxValue - Value;
 
 		UpgradeProgression = Upgrades / MaxUpgrades
-		UpgradedValue = math.floor(Value + Range * UpgradeProgression)
+		UpgradedValue = Value + Range * UpgradeProgression
+		if not Fractions then
+			UpgradedValue = math.floor(UpgradedValue)
+		end
 
 		return UpgradedValue
 	end,
