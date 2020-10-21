@@ -1310,36 +1310,76 @@ end
 
 -- Rebirth --
 
-function GetRebirthBonus(Source, Type)
-	if Source.RebirthTier == 0 then
-		return 0
-	end
+Base_Rebirth = {
 
-	if Type == 1 then
-		return math.floor(Source.RebirthTier) + 4
-	elseif Type == 2 then
-		return math.floor(Source.RebirthTier / 2) + 2
-	elseif Type == 3 then
-		return math.ceil(Source.RebirthTier / 5)
-	end
-end
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
 
-function GetEvolveBonus(Source, Type)
-	if Source.EvolveTier == 0 then
-		return 0
-	end
+	GetBonus = function(self, Source)
+		if Source.RebirthTier == 0 then
+			return 0
+		end
 
-	if Type == 1 then
-		return math.floor(Source.EvolveTier * 10)
-	elseif Type == 2 then
-		return math.floor(Source.EvolveTier)
-	end
-end
+		if self.Type == 1 then
+			return math.floor(Source.RebirthTier) + 4
+		elseif self.Type == 2 then
+			return math.floor(Source.RebirthTier / 2) + 2
+		elseif self.Type == 3 then
+			return math.ceil(Source.RebirthTier / 5)
+		end
+	end,
 
-function RebirthStartText(Source, Item, Mode)
+	CanUse = function(self, Level, Source, Target)
+		if self:GetBonus(Source) > 0 then
+			return true
+		end
+
+		return false
+	end,
+
+	Type = 1
+}
+
+Base_Evolve = {
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetBonus = function(self, Source)
+		if Source.EvolveTier == 0 then
+			return 0
+		end
+
+		if self.Type == 1 then
+			return math.floor(Source.EvolveTier * 10)
+		elseif self.Type == 2 then
+			return math.floor(Source.EvolveTier)
+		end
+	end,
+
+	CanUse = function(self, Level, Source, Target)
+		if self:GetBonus(Source) > 0 then
+			return true
+		end
+
+		return false
+	end,
+
+	Type = 1
+}
+
+function RebirthStartText(Item, Source, Mode)
 	AddedDifficulty = 0
 	if Item == Item_EternalPain then
-		AddedDifficulty = GetRebirthBonus(Source, Item_EternalPain.Type)
+		AddedDifficulty = Item:GetBonus(Source)
 	end
 
 	Gold = math.min(math.floor(Source.RebirthWealth * 0.01 * Source.Experience * Item_RiteWealth.Multiplier), MAX_GOLD)
@@ -1374,26 +1414,26 @@ function RebirthStartText(Source, Item, Mode)
 end
 
 function RebirthText(Item, UpgradeText, Source)
-	KeepText = RebirthStartText(Source, Item, 0)
+	KeepText = RebirthStartText(Item, Source, 0)
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and learned skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
 end
 
 function EvolveText(Item, UpgradeText, Source)
-	KeepText = RebirthStartText(Source, Item, 1)
+	KeepText = RebirthStartText(Item, Source, 1)
 
 	return "[c gray]Evolve into a higher form\n\nLose all rebirths, items, unlocks, keys, gold, experience and learned skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of evolves and rebirths"
 end
 
-Item_EternalStrength = { Type = 1 }
+Item_EternalStrength = Base_Rebirth:New()
 
 function Item_EternalStrength.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] damage power bonus", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] damage power bonus", Source)
 end
 
 function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.MaxDamage = GetRebirthBonus(Source, self.Type)
+	Result.Target.MaxDamage = self:GetBonus(Source)
 
 	return Result
 end
@@ -1402,15 +1442,15 @@ function Item_EternalStrength.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalGuard = { Type = 1 }
+Item_EternalGuard = Base_Rebirth:New()
 
 function Item_EternalGuard.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "[c white] damage block, [c green]" .. math.floor(GetRebirthBonus(Source, self.Type) / 3) .. "[c white] armor, and [c green]" .. math.floor(GetRebirthBonus(Source, self.Type) / 4) .. "[c white] resistance bonus", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "[c white] damage block, [c green]" .. math.floor(self:GetBonus(Source) / 3) .. "[c white] armor, and [c green]" .. math.floor(self:GetBonus(Source) / 4) .. "[c white] resistance bonus", Source)
 end
 
 function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Armor = GetRebirthBonus(Source, self.Type)
+	Result.Target.Armor = self:GetBonus(Source)
 
 	return Result
 end
@@ -1419,15 +1459,15 @@ function Item_EternalGuard.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalFortitude = { Type = 1 }
+Item_EternalFortitude = Base_Rebirth:New()
 
 function Item_EternalFortitude.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] max health and heal power bonus", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] max health and heal power bonus", Source)
 end
 
 function Item_EternalFortitude.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Health = GetRebirthBonus(Source, self.Type)
+	Result.Target.Health = self:GetBonus(Source)
 
 	return Result
 end
@@ -1436,15 +1476,15 @@ function Item_EternalFortitude.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalSpirit = { Type = 1 }
+Item_EternalSpirit = Base_Rebirth:New()
 
 function Item_EternalSpirit.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] max mana and mana power bonus", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] max mana and mana power bonus", Source)
 end
 
 function Item_EternalSpirit.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Mana = GetRebirthBonus(Source, self.Type)
+	Result.Target.Mana = self:GetBonus(Source)
 
 	return Result
 end
@@ -1453,15 +1493,15 @@ function Item_EternalSpirit.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalWisdom = { Type = 1 }
+Item_EternalWisdom = Base_Rebirth:New()
 
 function Item_EternalWisdom.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] experience bonus", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] experience bonus", Source)
 end
 
 function Item_EternalWisdom.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Experience = GetRebirthBonus(Source, self.Type)
+	Result.Target.Experience = self:GetBonus(Source)
 
 	return Result
 end
@@ -1470,15 +1510,15 @@ function Item_EternalWisdom.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalWealth = { Type = 1 }
+Item_EternalWealth = Base_Rebirth:New()
 
 function Item_EternalWealth.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] gold bonus", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] gold bonus", Source)
 end
 
 function Item_EternalWealth.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Gold = GetRebirthBonus(Source, self.Type)
+	Result.Target.Gold = self:GetBonus(Source)
 
 	return Result
 end
@@ -1487,21 +1527,22 @@ function Item_EternalWealth.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalKnowledge = { Type = 3 }
+Item_EternalKnowledge = Base_Rebirth:New()
+Item_EternalKnowledge.Type = 3
 
 function Item_EternalKnowledge.GetInfo(self, Source, Item)
-	Bonus = GetRebirthBonus(Source, self.Type)
+	Bonus = self:GetBonus(Source)
 	Plural = ""
 	if Bonus ~= 1 then
 		Plural = "s"
 	end
 
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "[c white] extra skill point" .. Plural, Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "[c white] extra skill point" .. Plural, Source)
 end
 
 function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.SkillPoint = GetRebirthBonus(Source, self.Type)
+	Result.Target.SkillPoint = self:GetBonus(Source)
 
 	return Result
 end
@@ -1510,15 +1551,15 @@ function Item_EternalKnowledge.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalPain = { Type = 1 }
+Item_EternalPain = Base_Rebirth:New()
 
 function Item_EternalPain.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. GetRebirthBonus(Source, self.Type) .. "%[c white] difficulty increase", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] difficulty increase", Source)
 end
 
 function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Rebirth = 1
-	Result.Target.Difficulty = GetRebirthBonus(Source, self.Type)
+	Result.Target.Difficulty = self:GetBonus(Source)
 
 	return Result
 end
@@ -1527,15 +1568,15 @@ function Item_EternalPain.PlaySound(self)
 	Audio.Play("rebirth.ogg")
 end
 
-Item_EternalAlacrity = { Type = 1 }
+Item_EternalAlacrity = Base_Evolve:New()
 
 function Item_EternalAlacrity.GetInfo(self, Source, Item)
-	return EvolveText(self, "[c green]" .. GetEvolveBonus(Source, self.Type) .. "%[c white] battle speed bonus", Source)
+	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] battle speed bonus", Source)
 end
 
 function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Evolve = 1
-	Result.Target.BattleSpeed = GetEvolveBonus(Source, self.Type)
+	Result.Target.BattleSpeed = self:GetBonus(Source)
 
 	return Result
 end
@@ -1544,15 +1585,15 @@ function Item_EternalAlacrity.PlaySound(self)
 	Audio.Play("sparkle0.ogg")
 end
 
-Item_EternalCommand = { Type = 1 }
+Item_EternalCommand = Base_Evolve:New()
 
 function Item_EternalCommand.GetInfo(self, Source, Item)
-	return EvolveText(self, "[c green]" .. GetEvolveBonus(Source, self.Type) .. "%[c white] summon battle speed bonus", Source)
+	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] summon battle speed bonus", Source)
 end
 
 function Item_EternalCommand.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Evolve = 1
-	Result.Target.SummonBattleSpeed = GetEvolveBonus(Source, self.Type)
+	Result.Target.SummonBattleSpeed = self:GetBonus(Source)
 
 	return Result
 end
@@ -1561,15 +1602,16 @@ function Item_EternalCommand.PlaySound(self)
 	Audio.Play("sparkle0.ogg")
 end
 
-Item_EternalImpatience = { Type = 2 }
+Item_EternalImpatience = Base_Evolve:New()
+Item_EternalImpatience.Type = 2
 
 function Item_EternalImpatience.GetInfo(self, Source, Item)
-	return EvolveText(self, "[c green]" .. GetEvolveBonus(Source, self.Type) .. "%[c white] cooldown reduction bonus", Source)
+	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] cooldown reduction bonus", Source)
 end
 
 function Item_EternalImpatience.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Evolve = 1
-	Result.Target.Cooldowns = GetEvolveBonus(Source, self.Type)
+	Result.Target.Cooldowns = self:GetBonus(Source)
 
 	return Result
 end
