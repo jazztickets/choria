@@ -652,12 +652,13 @@ int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosit
 		int EquippedCount = Object->Character->Sets[SetID].EquippedCount;
 		int Upgrades = std::min(Object->Character->Sets[SetID].Level + Blacksmith, MaxLevel);
 		int MaxSetLevel = Object->Character->Sets[SetID].MaxLevel;
+		bool MoreInfo = ae::Input.ModKeyDown(KMOD_ALT);
 
 		// Get description from script
 		Scripting->PushObject(Object);
 		Scripting->PushInt(Upgrades);
 		Scripting->PushInt(MaxSetLevel);
-		Scripting->PushBoolean(ae::Input.ModKeyDown(KMOD_ALT));
+		Scripting->PushBoolean(MoreInfo);
 		Scripting->MethodCall(4, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -668,7 +669,13 @@ int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosit
 
 		// Draw header
 		if(Render) {
-			ae::Assets.Fonts["hud_small"]->DrawTextFormatted("[c light_green]" + Set.Name + " Set Bonus" + " (" + std::to_string(EquippedCount) + "/" + std::to_string(Set.Count) + ")", DrawPosition, ae::CENTER_BASELINE);
+			std::string LevelText;
+			if(MoreInfo)
+				LevelText = " Level " + std::to_string(Upgrades);
+			else
+				LevelText = " (" + std::to_string(EquippedCount) + "/" + std::to_string(Set.Count) + ")";
+
+			ae::Assets.Fonts["hud_small"]->DrawTextFormatted("[c light_green]" + Set.Name + " Set Bonus" + LevelText, DrawPosition, ae::CENTER_BASELINE);
 			DrawPosition.y += TextSpacingY;
 		}
 		LineCount++;
