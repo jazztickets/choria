@@ -1305,7 +1305,7 @@ function Item_EvolveToken.GetInfo(self, Source, Item)
 	Levels = 10
 	Tiers = 1
 
-	return "You are in evolve tier [c green]" .. Source.EvolveTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] rebirths gives [c green]" .. Tiers .. "[c white] tier, which increases your evolve stat bonus\n\n[c yellow]Evolving resets your rebirths and bonuses\n[c yellow]You will keep all unlocked rites"
+	return "You are in evolve tier [c green]" .. Source.EvolveTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] rebirths gives [c green]" .. Tiers .. "[c white] tier, which increases your evolve stat bonus\n\nEvolving increases your rebirth tier by [c green]1\n\n[c yellow]Evolving resets your rebirths and bonuses\n[c yellow]You will keep all unlocked rites"
 end
 
 -- Rebirth --

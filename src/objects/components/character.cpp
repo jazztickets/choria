@@ -317,7 +317,7 @@ void _Character::CalculateStats() {
 	Object->Light = 0;
 	Invisible = 0;
 	Attributes["Difficulty"].Int += Attributes["EternalPain"].Int + Attributes["Rebirths"].Int;
-	Attributes["RebirthTier"].Int += Attributes["RebirthPower"].Int;
+	Attributes["RebirthTier"].Int += Attributes["RebirthPower"].Int + Attributes["Evolves"].Int;
 	Attributes["EvolveTier"].Int = Attributes["Rebirths"].Int / 10;
 	Sets.clear();
 
