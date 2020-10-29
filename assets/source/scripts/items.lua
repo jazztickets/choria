@@ -166,7 +166,7 @@ end
 Item_RespecPotion = Base_Potion:New()
 
 function Item_RespecPotion.GetInfo(self, Source, Item)
-	return "Reset your spent skill points\n[c yellow]Action bar skills are set to level 1"
+	return "Reset your spent skill points\n[c yellow]Equipped skills are set to level 1"
 end
 
 function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
