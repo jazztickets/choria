@@ -2120,7 +2120,7 @@ CREATE TABLE IF NOT EXISTS "map" (
 );
 INSERT INTO map VALUES(1,'maps/ham.map.gz','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(2,'maps/ham_cellarhut.map.gz','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(3,'maps/ham_cellar.map.gz','textures/atlas/main.png','cellar.ogg',0.040000000000000000832,0.020000000000000000416,0.020000000000000000416,1.0,0,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(3,'maps/ham_cellar.map.gz','textures/atlas/main.png','cellar.ogg',0.020000000000000000416,0.010000000000000000208,0.010000000000000000208,1.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(4,'maps/ham_weapon.map.gz','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(5,'maps/ham_armor.map.gz','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(6,'maps/ham_supplies.map.gz','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,'',0.0,0.0,0.0);
