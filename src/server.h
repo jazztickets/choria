@@ -84,7 +84,6 @@ class _Server {
 		void StopServer(int Seconds=0);
 
 		_Object *CreateSummon(_Object *Source, const _Summon &Summon);
-		void Resurrect(_Object *Source, int Health);
 		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType);
 		void QueueRebirth(_Object *Object, int Mode, int Type, int Value);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);

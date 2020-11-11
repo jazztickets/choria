@@ -982,6 +982,7 @@ void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 	// Load map
 	ae::NetworkIDType MapID = (ae::NetworkIDType)Data.Read<uint32_t>();
 	double Clock = Data.Read<double>();
+	bool IsAlive = Data.ReadBit();
 
 	// Delete old map and create new
 	if(!Map || Map->NetworkID != MapID) {
@@ -995,7 +996,8 @@ void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 		Map->Load(&Stats->Maps.at(MapID));
 		AssignPlayer(nullptr);
 
-		ae::Audio.PlayMusic(ae::Assets.Music[Map->Music]);
+		if(IsAlive)
+			ae::Audio.PlayMusic(ae::Assets.Music[Map->Music]);
 	}
 }
 
@@ -1022,12 +1024,8 @@ void _PlayState::HandleObjectList(ae::_Buffer &Data) {
 			Object->Character->CalcLevelStats = false;
 	}
 
-	if(Player) {
+	if(Player)
 		Camera->ForcePosition(glm::vec3(Player->Position, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
-	}
-	else {
-		// Error
-	}
 }
 
 // Creates an object
@@ -1711,6 +1709,7 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 		return;
 
 	int OldLevel = Player->Character->Level;
+	bool WasAlive = Player->Character->IsAlive();
 
 	Player->Character->Attributes["Health"].Int = Data.Read<int>();
 	Player->Character->Attributes["Mana"].Int = Data.Read<int>();
@@ -1725,8 +1724,13 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	if(HUD)
 		HUD->Refresh();
 
-	if(Map)
+	if(Map) {
 		Map->Clock = Clock;
+		if(!WasAlive && Player->Character->IsAlive())
+			ae::Audio.PlayMusic(ae::Assets.Music[Map->Music]);
+		else if(!Player->Character->IsAlive())
+			ae::Audio.StopMusic();
+	}
 
 	if(Player->Character->Level > OldLevel) {
 		std::string Plural = "";

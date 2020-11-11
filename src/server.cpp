@@ -852,6 +852,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 			Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
 			Packet.Write<uint32_t>(MapID);
 			Packet.Write<double>(Save->Clock);
+			Packet.WriteBit(Player->Character->IsAlive());
 			Network->SendPacket(Packet, Player->Peer);
 
 			// Send player object list

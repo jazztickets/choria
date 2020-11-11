@@ -250,6 +250,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			// Load map
 			ae::NetworkIDType MapID = (ae::NetworkIDType)Data.Read<uint32_t>();
 			double Clock = Data.Read<double>();
+			Data.ReadBit();
 
 			// Delete old map and create new
 			if(!Map || Map->NetworkID != MapID) {
