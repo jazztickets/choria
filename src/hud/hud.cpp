@@ -920,24 +920,6 @@ void _HUD::ToggleChat() {
 	}
 }
 
-// Toggles the teleport state
-void _HUD::ToggleTeleport() {
-	return;
-
-	if(!Player->Character->CanTeleport())
-		return;
-
-	if(!Player->Controller->WaitForServer && !TeleportElement->Active) {
-		CloseWindows(true);
-		PlayState.SendStatus(_Character::STATUS_TELEPORT);
-		Player->Controller->WaitForServer = true;
-	}
-	else {
-		Player->Controller->WaitForServer = false;
-		CloseWindows(true);
-	}
-}
-
 // Open/close party screen
 void _HUD::ToggleParty(bool IgnoreNextChar) {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenParty())

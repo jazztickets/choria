@@ -96,6 +96,7 @@ void _PlayState::Init() {
 	Time = 0.0;
 	CoinSoundPlayed = false;
 	DoneOnDisconnect = false;
+	TeleportSound = nullptr;
 
 	ae::Graphics.Element->SetActive(false);
 	ae::Graphics.Element->Active = true;
@@ -1179,11 +1180,10 @@ void _PlayState::HandleTeleportStart(ae::_Buffer &Data) {
 		return;
 
 	Player->Character->TeleportTime = Data.Read<double>();
-	Player->Controller->WaitForServer = true;
 	HUD->CloseWindows(false);
 	HUD->StartTeleport();
 
-	ae::Audio.PlaySound(ae::Assets.Sounds["teleport0.ogg"]);
+	TeleportSound = ae::Audio.PlaySound(ae::Assets.Sounds["teleport0.ogg"]);
 }
 
 // Handles the start of an event
@@ -1884,6 +1884,9 @@ void _PlayState::SendStatus(uint8_t Status) {
 	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 	Packet.Write<uint8_t>(Status);
 	Network->SendPacket(Packet);
+
+	if(TeleportSound)
+		TeleportSound->Stop();
 }
 
 // Assigns the client player pointer

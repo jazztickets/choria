@@ -43,6 +43,7 @@ namespace ae {
 	class _Buffer;
 	class _Console;
 	class _Framebuffer;
+	class _AudioSource;
 }
 
 // Play state
@@ -115,6 +116,7 @@ class _PlayState : public ae::_State {
 		ae::_Camera *MenuCamera;
 
 		// Audio
+		ae::_AudioSource *TeleportSound;
 		bool CoinSoundPlayed;
 
 		// Network

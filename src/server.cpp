@@ -1632,9 +1632,6 @@ void _Server::HandlePlayerStatus(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case _Character::STATUS_SKILLS:
 			Player->Character->SkillsOpen = true;
 		break;
-		case _Character::STATUS_TELEPORT: {
-			StartTeleport(Player, PLAYER_TELEPORT_TIME);
-		} break;
 		default:
 		break;
 	}
