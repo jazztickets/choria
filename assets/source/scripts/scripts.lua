@@ -61,7 +61,7 @@ function Script_Fall.Activate(self, Level, Object, Change)
 end
 
 function Script_Fall.PlaySound(self, Object)
-	Audio.Play("crunch1.ogg")
+	Audio.Play("crunch" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 Script_Slow = { }
@@ -111,4 +111,19 @@ function Script_Freezing.PlaySound(self, Object)
 	end
 
 	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+Script_Spikes = { }
+
+function Script_Spikes.Activate(self, Level, Object, Change)
+	Change.Health = -Level * 5
+	Change.Buff = Buff_Bleeding.Pointer
+	Change.BuffLevel = Level
+	Change.BuffDuration = 5
+
+	return Change
+end
+
+function Script_Spikes.PlaySound(self, Object)
+	Audio.Play("crunch" .. Random.GetInt(0, 1) .. ".ogg")
 end
