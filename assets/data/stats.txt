@@ -3090,7 +3090,7 @@ INSERT INTO item VALUES(187,8,0,0,0,0,8,0,'Stun Ring','textures/items/ring.png',
 INSERT INTO item VALUES(188,8,0,0,0,0,8,0,'Greater Stun Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,50,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(189,8,0,0,0,0,8,0,'Ultimate Stun Ring','textures/items/ring.png','','','',0,0,1,0,10,0,0.0,0.0,1,0,0,0,0,0,75,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(190,5,2,0,0,0,0,7,'Silver Edge','textures/items/short_sword.png','','SetBonus_SilverEdge','Proc_Haste',0,2400,1,30,50,15,3.0,0.0,1,200,300,0,0,0,0,0,0,0,0,10,0,0,0,0);
-INSERT INTO item VALUES(191,10,0,1,1,0,0,0,'Teleport Scroll','textures/items/scroll.png','','Item_TeleportScroll','',0,20,1,0,0,0,3.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(191,10,0,1,1,0,0,0,'Teleport Scroll','textures/items/scroll.png','','Item_TeleportScroll','',0,20,1,0,0,0,3.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(192,10,2,2,2,0,0,0,'Poison Knives','textures/items/poison_knives.png','','Item_PoisonKnives','',0,20,1,20,0,0,10.0,0.0,1,50,150,0,0,100,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(193,10,0,8,3,0,0,0,'Swamp Glob','textures/items/swamp_glob.png','','Item_SwampGlob','',0,35,1,30,0,0,10.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(194,3,0,0,0,0,6,5,'Black Vest','textures/items/black_vest.png','','','',0,1200,1,0,20,0,0.0,0.0,1,0,0,2,0,0,10,0,0,0,0,10,5,0,4,0);

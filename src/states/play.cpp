@@ -787,7 +787,7 @@ void _PlayState::PlayCoinSound() {
 
 // Play death sound
 void _PlayState::PlayDeathSound() {
-	ae::Audio.StopMusic();
+	ae::Audio.Stop();
 
 	std::stringstream Buffer;
 	Buffer << "death" << ae::GetRandomInt(0, 2) << ".ogg";
