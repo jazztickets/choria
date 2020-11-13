@@ -1695,9 +1695,9 @@ INSERT INTO monsterdrop VALUES(42,16,0,80);
 INSERT INTO monsterdrop VALUES(43,16,125,18);
 INSERT INTO monsterdrop VALUES(44,16,127,1);
 INSERT INTO monsterdrop VALUES(46,18,193,1);
-INSERT INTO monsterdrop VALUES(48,22,0,80);
-INSERT INTO monsterdrop VALUES(49,22,215,29);
-INSERT INTO monsterdrop VALUES(50,22,141,1);
+INSERT INTO monsterdrop VALUES(48,22,0,159);
+INSERT INTO monsterdrop VALUES(49,22,215,38);
+INSERT INTO monsterdrop VALUES(50,22,141,2);
 INSERT INTO monsterdrop VALUES(51,21,0,80);
 INSERT INTO monsterdrop VALUES(52,21,237,15);
 INSERT INTO monsterdrop VALUES(53,20,0,95);
@@ -1758,6 +1758,7 @@ INSERT INTO monsterdrop VALUES(109,46,247,1);
 INSERT INTO monsterdrop VALUES(110,44,247,1);
 INSERT INTO monsterdrop VALUES(111,39,0,20);
 INSERT INTO monsterdrop VALUES(112,39,353,80);
+INSERT INTO monsterdrop VALUES(113,22,347,1);
 CREATE TABLE IF NOT EXISTS "buff" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2137,7 +2138,7 @@ INSERT INTO map VALUES(15,'maps/choria_slimecave2.map.gz','textures/atlas/main.p
 INSERT INTO map VALUES(16,'maps/choria_ruins1.map.gz','textures/atlas/main.png','ruins.ogg',0.75,0.5500000000000000444,0.14999999999999999444,0.69999999999999995559,2,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(17,'maps/choria_ruins2.map.gz','textures/atlas/main.png','ruins.ogg',0.84999999999999997779,0.61999999999999999555,0.17000000000000001221,1.0,2,16,-48.000000000000000001,-83.999999999999999996,-15.0);
 INSERT INTO map VALUES(18,'maps/choria_graveyard.map.gz','textures/atlas/main.png','howl.ogg',0.34999999999999997779,0.32200000000000000843,1.0,1.0,2,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(19,'','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(19,'maps/choria_pit.map.gz','textures/atlas/main.png','',0.2000000000000000111,0.14999999999999999444,0.0,1.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(20,'maps/fem.map.gz','textures/atlas/main.png','',0.0,0.0,0.0,1.0,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(21,'maps/fem_house_top.map.gz','textures/atlas/main.png','library.ogg',0.4000000000000000222,0.4000000000000000222,0.75,1.0,0,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(22,'maps/fem_tower1.map.gz','textures/atlas/main.png','tower.ogg',0.10000000000000000555,0.2000000000000000111,0.10000000000000000555,1.0,0,'',0.0,0.0,0.0);
@@ -2281,6 +2282,7 @@ INSERT INTO trader VALUES(91,'blue_runestone',358,1);
 INSERT INTO trader VALUES(92,'black_runestone',359,1);
 INSERT INTO trader VALUES(93,'eternal_command',361,1);
 INSERT INTO trader VALUES(94,'eternal_impatience',362,1);
+INSERT INTO trader VALUES(95,'mana_shield',27,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -2445,7 +2447,6 @@ INSERT INTO traderitem VALUES(180,64,222,2);
 INSERT INTO traderitem VALUES(182,16,233,3);
 INSERT INTO traderitem VALUES(183,8,294,1);
 INSERT INTO traderitem VALUES(184,65,253,1);
-INSERT INTO traderitem VALUES(185,46,172,1);
 INSERT INTO traderitem VALUES(186,66,237,5);
 INSERT INTO traderitem VALUES(187,66,215,2);
 INSERT INTO traderitem VALUES(188,66,222,1);
@@ -2521,6 +2522,10 @@ INSERT INTO traderitem VALUES(263,91,339,4);
 INSERT INTO traderitem VALUES(264,92,341,4);
 INSERT INTO traderitem VALUES(265,93,360,1);
 INSERT INTO traderitem VALUES(266,94,360,1);
+INSERT INTO traderitem VALUES(267,95,29,1);
+INSERT INTO traderitem VALUES(268,95,22,1);
+INSERT INTO traderitem VALUES(269,95,6,1);
+INSERT INTO traderitem VALUES(270,95,208,1);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
