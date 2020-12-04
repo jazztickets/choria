@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
 
 # define constants
 add_definitions(-DGAME_VERSION="0.5.1")
