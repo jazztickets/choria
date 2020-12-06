@@ -1567,6 +1567,10 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	bool KeyUnlocked = Data.ReadBit();
 	uint32_t ItemID = Data.Read<uint32_t>();
 	int InventorySlot = (int)Data.Read<char>();
+	if(Stats->Items.find(ItemID) == Stats->Items.end())
+		return;
+
+	// Get item used
 	ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
 
 	// Get source change
