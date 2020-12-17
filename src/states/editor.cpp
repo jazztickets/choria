@@ -147,7 +147,7 @@ void _EditorState::Close() {
 }
 
 // Handle actions
-bool _EditorState::HandleAction(int InputType, size_t Action, int Value) {
+bool _EditorState::HandleAction(int InputType, std::size_t Action, int Value) {
 	if(Value == 0)
 		return false;
 
@@ -615,13 +615,13 @@ std::string _EditorState::GetCleanMapName(const std::string &Path) {
 
 	// Remove preceding path
 	std::string Prefix = "maps/";
-	size_t PrefixStart = CleanName.find(Prefix);
+	std::size_t PrefixStart = CleanName.find(Prefix);
 	if(PrefixStart != std::string::npos)
 		CleanName = CleanName.substr(Prefix.length());
 
 	// Remove extension
 	std::string Suffix = ".map.gz";
-	size_t SuffixStart = CleanName.find(Suffix);
+	std::size_t SuffixStart = CleanName.find(Suffix);
 	if(SuffixStart != std::string::npos)
 		CleanName = CleanName.substr(0, SuffixStart);
 

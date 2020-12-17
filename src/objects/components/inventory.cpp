@@ -25,7 +25,7 @@
 // Constructor
 _Inventory::_Inventory() {
 
-	Bags.resize((size_t)BagType::COUNT);
+	Bags.resize((std::size_t)BagType::COUNT);
 	GetBag(BagType::EQUIPMENT).Slots.resize(EquipmentType::COUNT);
 	GetBag(BagType::INVENTORY).Slots.resize(INVENTORY_SIZE);
 	GetBag(BagType::TRADE).Slots.resize(INVENTORY_MAX_TRADE_ITEMS);
@@ -85,10 +85,10 @@ void _Inventory::UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats) {
 }
 
 // Search for an item in the inventory
-bool _Inventory::FindItem(const _Item *Item, size_t &Slot, size_t StartSlot) {
+bool _Inventory::FindItem(const _Item *Item, std::size_t &Slot, std::size_t StartSlot) {
 
 	_Bag &Bag = GetBag(BagType::INVENTORY);
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 		if(StartSlot >= Bag.Slots.size())
 			StartSlot = 0;
 
@@ -117,7 +117,7 @@ bool _Inventory::HasItemID(uint32_t ItemID) {
 int _Inventory::CountItem(const _Item *Item) {
 	int Count = 0;
 	_Bag &Bag = GetBag(BagType::INVENTORY);
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 		if(Bag.Slots[i].Item == Item)
 			Count += Bag.Slots[i].Count;
 	}
@@ -126,7 +126,7 @@ int _Inventory::CountItem(const _Item *Item) {
 }
 
 // Checks if an item can be equipped
-bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
+bool _Inventory::CanEquipItem(std::size_t Slot, const _Item *Item) {
 	if(!Item)
 		return true;
 
@@ -265,7 +265,7 @@ int _Inventory::UpdateItemCount(const _Slot &Slot, int Amount) {
 void _Inventory::SpendItems(const _Item *Item, int Count) {
 
 	_Bag &Bag = GetBag(BagType::INVENTORY);
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Find item
 		if(Bag.Slots[i].Item == Item)
@@ -298,8 +298,8 @@ _Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int U
 	if(Item && Item->IsCursed() && BagType == BagType::EQUIPMENT)
 		return EmptySlot;
 
-	_Bag &Bag = Bags[(size_t)BagType];
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	_Bag &Bag = Bags[(std::size_t)BagType];
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Try to find an existing stack first
 		if(Item && Item->IsStackable() && Bag.Slots[i].Item == Item && Bag.Slots[i].Upgrades == Upgrades && Bag.Slots[i].Count + Count <= Bag.Slots[i].MaxCount)
@@ -362,7 +362,7 @@ void _Inventory::MoveTradeToInventory() {
 
 	_Bag &Bag = GetBag(BagType::TRADE);
 	std::list<_Slot> SlotsUpdated;
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 		_Slot SourceSlot(BagType::TRADE, i);
 		Transfer(SourceSlot, BagType::INVENTORY, SlotsUpdated);
 	}
@@ -383,7 +383,7 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 		// Find an empty slot or existing item starting from bag
 		bool Found = false;
 		_Bag &Bag = GetBag(Slot.Type);
-		for(size_t i = 0; i < Bag.Slots.size(); i++) {
+		for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 			EmptySlot.Index++;
 			if(EmptySlot.Index >= Bag.Slots.size())
 				EmptySlot.Index = 0;
@@ -430,7 +430,7 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 	int AmountLeft = SourceItem.Count;
 
 	// Find existing stacks
-	for(size_t i = 0; i < TargetBag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < TargetBag.Slots.size(); i++) {
 
 		// Exit when no more left to move
 		if(AmountLeft <= 0)
@@ -453,7 +453,7 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 	}
 
 	// Find empty slots
-	for(size_t i = 0; i < TargetBag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < TargetBag.Slots.size(); i++) {
 
 		// Exit when no more left to move
 		if(AmountLeft <= 0)
@@ -500,7 +500,7 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 	_Slot RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
 
 	// Go through required items
-	for(size_t i = 0; i < Trader->Items.size(); i++) {
+	for(std::size_t i = 0; i < Trader->Items.size(); i++) {
 		const _Item *RequiredItem = Trader->Items[i].Item;
 		int RequiredCount = Trader->Items[i].Count;
 		RequiredItemSlots[i].Type = BagType::NONE;
@@ -510,7 +510,7 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 		for(const auto &BagType : SearchsBags) {
 			_Bag &Bag = Bags[(int)BagType];
 
-			for(size_t j = 0; j < Bag.Slots.size(); j++) {
+			for(std::size_t j = 0; j < Bag.Slots.size(); j++) {
 				_InventorySlot &InventoryItem = Bag.Slots[j];
 				if(InventoryItem.Item == RequiredItem && InventoryItem.Count >= RequiredCount) {
 					RequiredItemSlots[i].Type = Bag.Type;
@@ -575,14 +575,14 @@ void _Bag::Serialize(ae::_Buffer &Data) {
 
 	// Get item count
 	uint8_t ItemCount = 0;
-	for(size_t i = 0; i < Slots.size(); i++) {
+	for(std::size_t i = 0; i < Slots.size(); i++) {
 		if(Slots[i].Item)
 			ItemCount++;
 	}
 
 	// Write items
 	Data.Write<uint8_t>(ItemCount);
-	for(size_t i = 0; i < Slots.size(); i++) {
+	for(std::size_t i = 0; i < Slots.size(); i++) {
 		if(Slots[i].Item) {
 			Data.Write<uint8_t>((uint8_t)i);
 			Slots[i].Serialize(Data);
@@ -610,7 +610,7 @@ void _Bag::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 // Check for an item
 bool _Bag::HasItemID(uint32_t ItemID) {
-	for(size_t i = 0; i < Slots.size(); i++) {
+	for(std::size_t i = 0; i < Slots.size(); i++) {
 		if(Slots[i].Item && Slots[i].Item->ID == ItemID)
 			return true;
 	}

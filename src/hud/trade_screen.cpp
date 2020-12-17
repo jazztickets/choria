@@ -119,7 +119,7 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 	// Draw offered items
 	int BagIndex = 0;
 	_Bag &Bag = Player->Inventory->GetBag(BagType::TRADE);
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
 		_InventorySlot *Slot = &Bag.Slots[i];

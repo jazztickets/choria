@@ -44,7 +44,7 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 	State(StateType::NEEDSEED),
 	Time(0),
 	DropX(0),
-	Bucket((size_t)-1),
+	Bucket((std::size_t)-1),
 	Debug(0),
 	Bounces(0) {
 
@@ -223,7 +223,7 @@ void _Minigame::Update(double FrameTime) {
 				Manifold.Normal = glm::vec2(0.0, -1.0f);
 
 				float Width = Boundary.End.x - Boundary.Start.x;
-				Bucket = (size_t)((Sprite->RigidBody.Position.x - Boundary.Start.x) / Width * 8.0f);
+				Bucket = (std::size_t)((Sprite->RigidBody.Position.x - Boundary.Start.x) / Width * 8.0f);
 				Sprite->Deleted = true;
 				State = StateType::DONE;
 				if(Debug) {
@@ -430,8 +430,8 @@ void _Minigame::ShufflePrizes(std::vector<const _MinigameItem *> &Bag) {
 	if(!Bag.size())
 		return;
 
-	for(size_t i = Bag.size()-1; i > 0; --i) {
-		std::uniform_int_distribution<size_t> Distribution(0, i);
+	for(std::size_t i = Bag.size()-1; i > 0; --i) {
+		std::uniform_int_distribution<std::size_t> Distribution(0, i);
 		std::swap(Bag[i], Bag[Distribution(Random)]);
 	}
 }

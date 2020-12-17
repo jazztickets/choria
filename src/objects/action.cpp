@@ -77,8 +77,8 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		}
 		// Apply item cost
 		else {
-			size_t Index;
-			if(!Source->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
+			std::size_t Index;
+			if(!Source->Inventory->FindItem(ItemUsed, Index, (std::size_t)InventorySlot))
 				return false;
 
 			// Handle different item types

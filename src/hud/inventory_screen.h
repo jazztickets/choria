@@ -21,7 +21,7 @@
 #include <hud/screen.h>
 #include <cstddef>
 
-enum class BagType : size_t;
+enum class BagType : std::size_t;
 
 // Classes
 class _InventoryScreen : public _Screen {

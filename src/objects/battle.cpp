@@ -354,7 +354,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 	// Set up targets
 	int TargetCount = Item->GetTargetCount(Scripting, ClientPlayer);
-	for(size_t i = 0; i < ObjectList.size(); i++) {
+	for(std::size_t i = 0; i < ObjectList.size(); i++) {
 
 		// Check for valid target
 		_Object *Target = *Iterator;
@@ -404,7 +404,7 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), ClientPlayer->Character->Targets.front());
 
 	// Get target count
-	size_t TargetCount;
+	std::size_t TargetCount;
 	if(Item->TargetID == TargetType::ENEMY_ALL || Item->TargetID == TargetType::ALLY_ALL)
 		TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
 	else
@@ -412,7 +412,7 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 	ClientPlayer->Character->Targets.clear();
 
 	// Get max available targets
-	size_t MaxTargets = 0;
+	std::size_t MaxTargets = 0;
 	for(auto &Target : ObjectList) {
 		if(Item->CanTarget(Scripting, ClientPlayer, Target))
 			MaxTargets++;
@@ -711,7 +711,7 @@ void _Battle::ServerEndBattle() {
 				std::shuffle(ShuffledRewardObjects.begin(), ShuffledRewardObjects.end(), ae::RandomGenerator);
 
 				// Iterate through monsters
-				size_t PlayerIndex = 0;
+				std::size_t PlayerIndex = 0;
 				for(auto &Object : SideObjects[!WinningSide]) {
 					if(Object->IsMonster()) {
 						_Object *Player = ShuffledRewardObjects[PlayerIndex++];
@@ -868,7 +868,7 @@ void _Battle::ServerEndBattle() {
 		Object->Fighter->ItemDropsReceived.clear();
 
 		// Write item count
-		size_t ItemCount = SortedItems.size();
+		std::size_t ItemCount = SortedItems.size();
 		Packet.Write<uint8_t>((uint8_t)ItemCount);
 
 		// Write items
@@ -1098,7 +1098,7 @@ int _Battle::GetPeerCount() {
 }
 
 // Handle player input, return true if mouse combat should be enabled
-bool _Battle::ClientHandleInput(size_t Action, bool MouseCombat) {
+bool _Battle::ClientHandleInput(std::size_t Action, bool MouseCombat) {
 
 	switch(Action) {
 		case Action::GAME_SKILL1:

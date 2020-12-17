@@ -215,7 +215,7 @@ void _PlayState::StartLocalServer() {
 }
 
 // Action handler, return true to stop handling same input
-bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
+bool _PlayState::HandleAction(int InputType, std::size_t Action, int Value) {
 	if(Value == 0)
 		return false;
 
@@ -1363,7 +1363,7 @@ void _PlayState::HandleTradeRequest(ae::_Buffer &Data) {
 
 	// Get gold offer
 	Player->Character->TradePlayer->Character->TradeGold = Data.Read<int>();
-	for(size_t i = 0; i < INVENTORY_MAX_TRADE_ITEMS; i++)
+	for(std::size_t i = 0; i < INVENTORY_MAX_TRADE_ITEMS; i++)
 		Player->Character->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 }
 
@@ -1600,8 +1600,8 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 			if(ItemUsed) {
 
 				if(DecrementItem) {
-					size_t Index;
-					if(Player->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot)) {
+					std::size_t Index;
+					if(Player->Inventory->FindItem(ItemUsed, Index, (std::size_t)InventorySlot)) {
 						Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 						Player->Character->RefreshActionBarCount();
 					}

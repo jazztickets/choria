@@ -269,7 +269,7 @@ void _Config::Load() {
 		ae::Actions.ClearMappings(i);
 
 	// Load bindings
-	for(size_t i = 0; i < ae::Actions.State.size(); i++) {
+	for(std::size_t i = 0; i < ae::Actions.State.size(); i++) {
 		std::ostringstream Buffer;
 		Buffer << "action_" << ae::Actions.State[i].Name;
 

@@ -548,7 +548,7 @@ void _HUD::Update(double FrameTime) {
 
 	ae::_Element *HitElement = ae::Graphics.Element->HitElement;
 	if(!DarkOverlayElement->Active && HitElement) {
-		Tooltip.Slot.Index = (size_t)HitElement->Index;
+		Tooltip.Slot.Index = (std::size_t)HitElement->Index;
 
 		// Get window id, stored in parent's userdata field
 		if(HitElement->Parent && Tooltip.Slot.Index != NOSLOT) {
@@ -1235,7 +1235,7 @@ void _HUD::DrawActionBar() {
 		}
 
 		// Draw hotkey
-		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((size_t)ActionButton), DrawPosition + HotkeyOffset * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((std::size_t)ActionButton), DrawPosition + HotkeyOffset * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
 	}
 }
 
@@ -1412,7 +1412,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 }
 
 // Sets the player's action bar
-void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
+void _HUD::SetActionBar(std::size_t Slot, std::size_t OldSlot, const _Action &Action) {
 	if(Player->Character->ActionBar[Slot] == Action)
 		return;
 
@@ -1432,7 +1432,7 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 		}
 
 		// Remove duplicate skills
-		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
+		for(std::size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
 			if(Player->Character->ActionBar[i] == Action)
 				Player->Character->ActionBar[i].Unset();
 		}
@@ -1458,7 +1458,7 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	// Notify server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
-	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
+	for(std::size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
 		Player->Character->ActionBar[i].Serialize(Packet);
 	}
 

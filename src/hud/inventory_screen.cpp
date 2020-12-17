@@ -133,7 +133,7 @@ void _InventoryScreen::InitInventoryTab(int Index) {
 // Draw an inventory bag
 void _InventoryScreen::DrawBag(BagType Type) {
 	_Bag &Bag = HUD->Player->Inventory->GetBag(Type);
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
 		_InventorySlot *Slot = &Bag.Slots[i];
@@ -204,7 +204,7 @@ void _InventoryScreen::DrawKeys() {
 	}
 
 	// Draw key names
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
 		_InventorySlot *Slot = &Bag.Slots[i];

@@ -51,7 +51,7 @@ void _EnchanterScreen::Init() {
 	glm::vec2 PlusOffset(0, 64 + 6);
 	glm::vec2 LabelOffset(0, 2);
 	glm::vec2 ButtonSize(64, 30);
-	size_t i = 0;
+	std::size_t i = 0;
 
 	// Get all player skills
 	std::list<const _Item *> SortedSkills;

@@ -372,7 +372,7 @@ void _Character::CalculateStats() {
 	std::vector<int> ItemMaxDamage(Object->Stats->DamageTypes.size(), 0);
 	std::unordered_map<uint32_t, std::vector<int>> SetPieceLevels;
 	_Bag &EquipmentBag = Object->Inventory->GetBag(BagType::EQUIPMENT);
-	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
 		const _Item *Item = EquipmentBag.Slots[i].Item;
 		if(!Item)
 			continue;
@@ -468,7 +468,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get added set bonus
-	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
+	for(std::size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
 		const _Item *Item = EquipmentBag.Slots[i].Item;
 		if(!Item || !Item->SetID)
 			continue;
@@ -534,7 +534,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get damage
-	for(size_t i = 0; i < ItemMinDamage.size(); i++) {
+	for(std::size_t i = 0; i < ItemMinDamage.size(); i++) {
 		Attributes["MinDamage"].Int += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
 		Attributes["MaxDamage"].Int += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
 	}
@@ -719,7 +719,7 @@ float _Character::GetDamagePowerMultiplier(int DamageTypeID) {
 // Update counts on action bar
 void _Character::RefreshActionBarCount() {
 	SkillPointsOnActionBar = 0;
-	for(size_t i = 0; i < ActionBar.size(); i++) {
+	for(std::size_t i = 0; i < ActionBar.size(); i++) {
 		const _Item *Item = ActionBar[i].Item;
 		if(Item) {
 			if(Item->IsSkill() && HasLearned(Item))
@@ -733,7 +733,7 @@ void _Character::RefreshActionBarCount() {
 }
 
 // Return an action struct from an action bar slot
-bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
+bool _Character::GetActionFromActionBar(_Action &ReturnAction, std::size_t Slot) {
 	if(Slot < ActionBar.size()) {
 		ReturnAction.Item = ActionBar[Slot].Item;
 		if(!ReturnAction.Item)
@@ -980,7 +980,7 @@ void _Character::ClearUnlocks() {
 	SkillPointsUnlocked = 0;
 	BeltSize = ACTIONBAR_DEFAULT_BELTSIZE;
 	SkillBarSize = ACTIONBAR_DEFAULT_SKILLBARSIZE;
-	for(size_t i = 0; i < ActionBar.size(); i++)
+	for(std::size_t i = 0; i < ActionBar.size(); i++)
 		ActionBar[i].Unset();
 }
 

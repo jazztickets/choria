@@ -63,7 +63,7 @@ class _EditorState : public ae::_State {
 		void Close() override;
 
 		// Events
-		bool HandleAction(int InputType, size_t Action, int Value) override;
+		bool HandleAction(int InputType, std::size_t Action, int Value) override;
 		bool HandleKey(const ae::_KeyEvent &KeyEvent) override;
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent) override;
 		void HandleMouseWheel(int Direction) override;

@@ -123,7 +123,7 @@ class _Character {
 		// Actions
 		ScopeType GetScope() { return Battle ? ScopeType::BATTLE : ScopeType::WORLD; }
 		void RefreshActionBarCount();
-		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
+		bool GetActionFromActionBar(_Action &ReturnAction, std::size_t Slot);
 		void GetSummonsFromBuffs(std::vector<std::pair<_Summon, _StatusEffect *> > &Summons);
 		bool CanEquipSkill(const _Item *Skill);
 

@@ -52,7 +52,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	TimeStepAccumulator = 0.0;
 	RequestedState = nullptr;
 	FrameworkState = INIT;
-	State = &PlayState;
+	State = (ae::_State *)&PlayState;
 	Done = false;
 	IgnoreNextInputEvent = false;
 

@@ -151,7 +151,7 @@ void _DedicatedState::ShowPlayers() {
 	auto &Peers = Server->Network->GetPeers();
 
 	std::cout << "peer count=" << Peers.size() << std::endl;
-	size_t i = 0;
+	std::size_t i = 0;
 	for(auto &Peer : Peers) {
 		char Buffer[16];
 		ENetAddress *Address = &Peer->ENetPeer->address;
@@ -178,7 +178,7 @@ void _DedicatedState::ShowBattles() {
 	auto &Battles = Server->BattleManager->Objects;
 
 	std::cout << "battle count=" << Battles.size() << std::endl;
-	size_t i = 0;
+	std::size_t i = 0;
 	for(auto &Battle : Battles) {
 		std::cout << i << ": id=" << Battle->NetworkID << std::endl;
 		for(auto &Object : Battle->Objects) {

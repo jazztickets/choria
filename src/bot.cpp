@@ -206,8 +206,8 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 			// Get characters
 			int FirstSlot = -1;
-			for(size_t i = 0; i < CharacterCount; i++) {
-				size_t Slot = Data.Read<uint8_t>();
+			for(std::size_t i = 0; i < CharacterCount; i++) {
+				std::size_t Slot = Data.Read<uint8_t>();
 				Data.Read<uint8_t>();
 				Data.ReadString();
 				Data.Read<uint8_t>();
@@ -487,8 +487,8 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 					if(ActionResult.ActionUsed.Item) {
 
 						if(DecrementItem) {
-							size_t Index;
-							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
+							std::size_t Index;
+							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (std::size_t)InventorySlot)) {
 								Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 								Player->Character->RefreshActionBarCount();
 							}

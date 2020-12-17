@@ -77,7 +77,7 @@ class _Minigame {
 		StateType State;
 		double Time;
 		float DropX;
-		size_t Bucket;
+		std::size_t Bucket;
 		int Debug;
 		int Bounces;
 

@@ -107,7 +107,7 @@ struct _EventName {
 };
 
 struct _Vendor {
-	size_t GetSlotFromID(uint32_t ID) const;
+	std::size_t GetSlotFromID(uint32_t ID) const;
 
 	uint32_t ID;
 	std::string Name;
@@ -214,7 +214,7 @@ class _Stats {
 		uint32_t GetMapIDByPath(const std::string &Path) const;
 
 		// Levels
-		const _Level *GetLevel(int Level) const { return &Levels[(size_t)Level-1]; }
+		const _Level *GetLevel(int Level) const { return &Levels[(std::size_t)Level-1]; }
 		const _Level *FindLevel(int64_t Experience) const;
 		int GetMaxLevel() const { return (int)Levels.size(); }
 

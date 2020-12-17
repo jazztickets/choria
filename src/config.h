@@ -61,7 +61,7 @@ class _Config {
 		float MusicVolume;
 
 		// Networking
-		size_t MaxClients;
+		std::size_t MaxClients;
 		double FakeLag;
 		double NetworkRate;
 		bool Offline;

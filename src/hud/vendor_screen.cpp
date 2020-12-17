@@ -64,7 +64,7 @@ void _VendorScreen::Render(double BlendFactor) {
 	Element->Render();
 
 	// Draw vendor items
-	for(size_t i = 0; i < HUD->Player->Character->Vendor->Items.size(); i++) {
+	for(std::size_t i = 0; i < HUD->Player->Character->Vendor->Items.size(); i++) {
 		const _Item *Item = HUD->Player->Character->Vendor->Items[i];
 		if(Item && !HUD->Cursor.IsEqual(i, _HUD::WINDOW_VENDOR)) {
 

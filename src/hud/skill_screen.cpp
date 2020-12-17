@@ -54,7 +54,7 @@ void _SkillScreen::Init() {
 	glm::vec2 MinusOffset(36, 64 + 9);
 	glm::vec2 LabelOffset(0, 2);
 	glm::vec2 ButtonSize(23, 23);
-	size_t i = 0;
+	std::size_t i = 0;
 
 	// Get all player skills
 	std::list<const _Item *> SortedSkills;

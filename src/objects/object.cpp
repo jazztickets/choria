@@ -284,7 +284,7 @@ void _Object::UpdateBot(double FrameTime) {
 		if(Fighter->TurnTimer >= 1.0 && !Character->Action.IsSet()) {
 
 			// Set skill used
-			size_t ActionBarIndex = 0;
+			std::size_t ActionBarIndex = 0;
 			if(!Character->GetActionFromActionBar(Character->Action, ActionBarIndex)) {
 				return;
 			}
@@ -642,7 +642,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["SkillPointsUnlocked"] = Character->SkillPointsUnlocked;
 	StatsNode["NextBattle"] = Character->NextBattle;
 	StatsNode["Seed"] = Character->Seed;
-	StatsNode["PartyName"] = Character->PartyName;
+	StatsNode["PartyName"] = Character->PartyName.c_str();
 
 	// Save attributes
 	for(const auto &Attribute : Stats->Attributes) {
@@ -680,7 +680,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 		// Write bag contents
 		Json::Value BagNode;
-		for(size_t i = 0; i < Bag.Slots.size(); i++) {
+		for(std::size_t i = 0; i < Bag.Slots.size(); i++) {
 			const _InventorySlot &InventorySlot = Bag.Slots[i];
 			if(InventorySlot.Item) {
 				Json::Value ItemNode;
@@ -717,7 +717,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write action bar
 	Json::Value ActionBarNode;
-	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+	for(std::size_t i = 0; i < Character->ActionBar.size(); i++) {
 		if(Character->ActionBar[i].IsSet()) {
 			Json::Value ActionNode;
 			ActionNode["slot"] = (Json::Value::UInt64)i;
@@ -794,7 +794,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Json::Value Data;
 	std::istringstream Stream(JsonString);
 	std::string Errors;
-	if(!Json::parseFromStream(Reader, Stream, &Data, &Errors))
+	if(!Json::parseFromStream((Json::CharReader::Factory const &)Reader, Stream, &Data, &Errors))
 		throw std::runtime_error("_Object::UnserializeSaveData: " + Errors);
 
 	// Get stats
@@ -1054,7 +1054,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	}
 
 	// Write action bar
-	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
+	for(std::size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
 		Character->ActionBar[i].Serialize(Data);
 
 	// Write unlocks
@@ -1144,7 +1144,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	}
 
 	// Read action bar
-	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
+	for(std::size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
 		Character->ActionBar[i].Unserialize(Data, Stats);
 
 	// Read unlocks
@@ -1718,7 +1718,7 @@ bool _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 			   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 			// Set up alive targets
-			for(size_t i = 0; i < ObjectList.size(); i++) {
+			for(std::size_t i = 0; i < ObjectList.size(); i++) {
 				_Object *CheckObject = *Iterator;
 				if(Item->CanTarget(Scripting, this, CheckObject, true)) {
 					this->Character->Targets.push_back(CheckObject);

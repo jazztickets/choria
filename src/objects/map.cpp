@@ -431,8 +431,8 @@ void _Map::SetAmbientLightByClock() {
 		return;
 
 	// Find index by time
-	size_t NextCycle = DayCyclesTime.size();
-	for(size_t i = 0; i < DayCyclesTime.size(); i++) {
+	std::size_t NextCycle = DayCyclesTime.size();
+	for(std::size_t i = 0; i < DayCyclesTime.size(); i++) {
 		if(Clock < DayCyclesTime[i]) {
 			NextCycle = i;
 			break;
@@ -440,7 +440,7 @@ void _Map::SetAmbientLightByClock() {
 	}
 
 	// Get indices for current and next cycle
-	size_t CurrentCycle = NextCycle - 1;
+	std::size_t CurrentCycle = NextCycle - 1;
 	if(CurrentCycle >= DayCyclesTime.size())
 		CurrentCycle = 0;
 	if(NextCycle >= DayCyclesTime.size())
@@ -1046,7 +1046,7 @@ void _Map::AddObject(_Object *Object) {
 }
 
 // Returns a list of players close to a player that can battle
-void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::vector<_Object *> &Players) {
+void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, std::size_t Max, std::vector<_Object *> &Players) {
 	if(Player && Player->Character->Offline)
 		return;
 

@@ -64,7 +64,7 @@ struct _Cursor {
 		Window = -1;
 	}
 
-	bool IsEqual(size_t Slot, int Window) { return this->Slot.Index == Slot && this->Window == Window; }
+	bool IsEqual(std::size_t Slot, int Window) { return this->Slot.Index == Slot && this->Window == Window; }
 
 	_InventorySlot InventorySlot;
 	const _StatusEffect *StatusEffect;
@@ -227,7 +227,7 @@ class _HUD {
 		void DrawCursorItem();
 		void DrawCooldown(const ae::_Element *Button, const _Item *Item);
 
-		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
+		void SetActionBar(std::size_t Slot, std::size_t OldSlot, const _Action &Action);
 
 		void SplitStack(const _Slot &Slot, uint8_t Count);
 		void Transfer(const _Slot &Slot);

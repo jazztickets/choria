@@ -1117,7 +1117,7 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 	// Get item
 	_Slot Slot;
 	Slot.Type = (BagType)lua_tointeger(LuaState, 1);
-	Slot.Index = (size_t)lua_tointeger(LuaState, 2);
+	Slot.Index = (std::size_t)lua_tointeger(LuaState, 2);
 	if(Object->Inventory->IsValidSlot(Slot)) {
 		Item = Object->Inventory->GetSlot(Slot).Item;
 		Upgrades = Object->Inventory->GetSlot(Slot).Upgrades;
@@ -1185,7 +1185,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 
 	// Set skill used
-	size_t ActionBarIndex = (size_t)lua_tointeger(LuaState, 1);
+	std::size_t ActionBarIndex = (std::size_t)lua_tointeger(LuaState, 1);
 	if(!Object->Character->GetActionFromActionBar(Object->Character->Action, ActionBarIndex)) {
 		lua_pushboolean(LuaState, false);
 		return 1;
@@ -1380,7 +1380,7 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 		// Get parameters
 		_Slot Slot;
 		Slot.Type = (BagType)lua_tointeger(LuaState, 2);
-		Slot.Index = (size_t)lua_tointeger(LuaState, 3);
+		Slot.Index = (std::size_t)lua_tointeger(LuaState, 3);
 		uint8_t Amount = (uint8_t)lua_tointeger(LuaState, 4);
 
 		// Build packet

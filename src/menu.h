@@ -96,7 +96,7 @@ class _Menu {
 		void ExitGame();
 		void Close();
 
-		bool HandleAction(int InputType, size_t Action, int Value);
+		bool HandleAction(int InputType, std::size_t Action, int Value);
 		bool HandleKey(const ae::_KeyEvent &KeyEvent);
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent);
 
@@ -116,7 +116,7 @@ class _Menu {
 
 		// State
 		StateType State;
-		size_t PreSelectedSlot;
+		std::size_t PreSelectedSlot;
 		bool ShowExitWarning;
 		bool ShowRespawn;
 
@@ -128,12 +128,12 @@ class _Menu {
 		void ChangeLayout(const std::string &ElementName);
 
 		uint32_t GetSelectedIconID(ae::_Element *ParentElement);
-		size_t GetSelectedCharacter();
+		std::size_t GetSelectedCharacter();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();
 		void CreateCharacter(bool Hardcore=false);
 		void ConnectToHost();
-		void PlayCharacter(size_t Slot);
+		void PlayCharacter(std::size_t Slot);
 		void SendAccountInfo(bool CreateAccount=false);
 		void RequestCharacterList();
 

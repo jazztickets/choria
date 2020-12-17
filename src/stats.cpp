@@ -148,7 +148,7 @@ void _Stats::LoadLevels() {
 	Database->CloseQuery();
 
 	// Calculate next level
-	for(size_t i = 1; i < Levels.size(); i++) {
+	for(std::size_t i = 1; i < Levels.size(); i++) {
 		Levels[i-1].NextLevel = Levels[i].Experience - Levels[i-1].Experience;
 	}
 
@@ -500,7 +500,7 @@ void _Stats::LoadBuilds() {
 		while(Database->FetchRow(1)) {
 			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item) {
-				size_t Slot = (size_t)Database->GetInt<uint32_t>("slot", 1);
+				std::size_t Slot = (std::size_t)Database->GetInt<uint32_t>("slot", 1);
 				if(Slot < Object->Character->ActionBar.size())
 					Object->Character->ActionBar[Slot].Item = Item;
 			}
@@ -911,7 +911,7 @@ uint32_t _Stats::GetMapIDByPath(const std::string &Path) const {
 const _Level *_Stats::FindLevel(int64_t Experience) const {
 
 	// Search through levels
-	for(size_t i = 1; i < Levels.size(); i++) {
+	for(std::size_t i = 1; i < Levels.size(); i++) {
 		if(Levels[i].Experience > Experience)
 			return &Levels[i-1];
 	}
@@ -971,9 +971,9 @@ void _Stats::LoadAttributes() {
 }
 
 // Convert vendor slot from item id
-size_t _Vendor::GetSlotFromID(uint32_t ID) const {
+std::size_t _Vendor::GetSlotFromID(uint32_t ID) const {
 
-	size_t Index = 0;
+	std::size_t Index = 0;
 	for(const auto &Item : Items) {
 		if(Item->ID == ID)
 			return Index;

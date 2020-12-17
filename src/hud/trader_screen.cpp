@@ -73,7 +73,7 @@ void _TraderScreen::Render(double BlendFactor) {
 	glm::vec2 CountOffset = glm::vec2(28, 26) * ae::_Element::GetUIScale();
 
 	// Draw trader items
-	for(size_t i = 0; i < HUD->Player->Character->Trader->Items.size(); i++) {
+	for(std::size_t i = 0; i < HUD->Player->Character->Trader->Items.size(); i++) {
 
 		// Get button position
 		std::stringstream Buffer;

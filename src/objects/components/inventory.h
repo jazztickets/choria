@@ -24,7 +24,7 @@
 #include <string>
 #include <cstdint>
 
-const size_t NOSLOT = (size_t)-1;
+const std::size_t NOSLOT = (std::size_t)-1;
 
 // Forward Declarations
 struct _Trader;
@@ -37,7 +37,7 @@ namespace ae {
 	class _Buffer;
 }
 
-enum EquipmentType : size_t {
+enum EquipmentType : std::size_t {
 	HEAD,
 	BODY,
 	LEGS,
@@ -49,7 +49,7 @@ enum EquipmentType : size_t {
 	COUNT,
 };
 
-enum class BagType : size_t {
+enum class BagType : std::size_t {
 	NONE,
 	EQUIPMENT,
 	INVENTORY,
@@ -92,7 +92,7 @@ struct _Bag {
 // Slots point to a bag and index in the bag
 struct _Slot {
 	_Slot() : Type(BagType::NONE), Index(NOSLOT) { }
-	_Slot(BagType BagType, size_t Index) : Type(BagType), Index(Index) { }
+	_Slot(BagType BagType, std::size_t Index) : Type(BagType), Index(Index) { }
 
 	bool operator==(const _Slot &Slot) const { return this->Index == Slot.Index && this->Type == Slot.Type; }
 	bool operator!=(const _Slot &Slot) const { return !(*this == Slot); }
@@ -102,7 +102,7 @@ struct _Slot {
 	void Reset() { Type = BagType::NONE; Index = NOSLOT; }
 
 	BagType Type;
-	size_t Index;
+	std::size_t Index;
 };
 
 // Classes
@@ -122,7 +122,7 @@ class _Inventory {
 		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 		void UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats);
 
-		bool FindItem(const _Item *Item, size_t &Slot, size_t StartSlot);
+		bool FindItem(const _Item *Item, std::size_t &Slot, std::size_t StartSlot);
 		bool HasItemID(uint32_t ItemID);
 		int CountItem(const _Item *Item);
 		bool IsValidSlot(const _Slot &Slot) { return Slot.Type > BagType::NONE && Slot.Type < BagType::COUNT && Slot.Index < GetBag(Slot.Type).Slots.size(); }
@@ -142,12 +142,12 @@ class _Inventory {
 		_Slot GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots);
 
 		// Bags
-		_Bag &GetBag(BagType Bag) { return Bags[(size_t)Bag]; }
+		_Bag &GetBag(BagType Bag) { return Bags[(std::size_t)Bag]; }
 		std::vector<_Bag> &GetBags() { return Bags; }
 
 	private:
 
-		bool CanEquipItem(size_t Slot, const _Item *Item);
+		bool CanEquipItem(std::size_t Slot, const _Item *Item);
 		void SwapItem(const _Slot &Slot, const _Slot &OldSlot);
 		bool CanSwap(const _Slot &OldSlot, const _Slot &NewSlot);
 

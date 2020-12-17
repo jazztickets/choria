@@ -351,8 +351,8 @@ uint32_t _Menu::GetSelectedIconID(ae::_Element *ParentElement) {
 }
 
 // Get the selected character slot
-size_t _Menu::GetSelectedCharacter() {
-	size_t Index = 0;
+std::size_t _Menu::GetSelectedCharacter() {
+	std::size_t Index = 0;
 
 	// Check for selected character
 	ae::_Element *CharactersElement = ae::Assets.Elements["element_menu_character_slots"];
@@ -388,7 +388,7 @@ void _Menu::CreateCharacter(bool Hardcore) {
 		return;
 
 	// Get slot
-	size_t SelectedSlot = GetSelectedCharacter();
+	std::size_t SelectedSlot = GetSelectedCharacter();
 	if(SelectedSlot >= CharacterSlots.size())
 		return;
 
@@ -434,7 +434,7 @@ void _Menu::ConnectToHost() {
 }
 
 // Send character to play
-void _Menu::PlayCharacter(size_t Slot) {
+void _Menu::PlayCharacter(std::size_t Slot) {
 	if(!CharacterSlots[Slot].CanPlay)
 		return;
 
@@ -518,7 +518,7 @@ void _Menu::LoadCharacterSlots() {
 
 	// Iterate over slots
 	ae::_Element *CharacterSlotsElement = ae::Assets.Elements["element_menu_character_slots"];
-	for(size_t i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
+	for(std::size_t i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
@@ -610,7 +610,7 @@ void _Menu::LoadPortraitButtons() {
 	ClearPortraits();
 
 	glm::vec2 Offset(14, 70);
-	size_t i = 0;
+	std::size_t i = 0;
 
 	// Load portraits
 	std::list<_Portrait> Portraits;
@@ -665,7 +665,7 @@ void _Menu::LoadBuildButtons() {
 	ClearBuilds();
 
 	glm::vec2 Offset(14, 70);
-	size_t i = 0;
+	std::size_t i = 0;
 
 	// Load builds
 	std::list<_Build> Builds;
@@ -724,7 +724,7 @@ void _Menu::LoadKeybindings() {
 	glm::vec2 Size(140, 50);
 
 	// Iterate over actions
-	size_t i = 0;
+	std::size_t i = 0;
 	glm::vec2 Offset(StartingPosition);
 	for(const auto &Action : KeyBindings) {
 
@@ -982,7 +982,7 @@ void _Menu::UpdateCharacterButtons() {
 	DeleteButton->SetEnabled(false);
 	PlayButton->SetEnabled(false);
 
-	size_t SelectedSlot = GetSelectedCharacter();
+	std::size_t SelectedSlot = GetSelectedCharacter();
 	if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 		DeleteButton->SetEnabled(true);
 		if(CharacterSlots[SelectedSlot].CanPlay)
@@ -999,7 +999,7 @@ void _Menu::Close() {
 }
 
 // Handle action, return true to stop handling same input
-bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
+bool _Menu::HandleAction(int InputType, std::size_t Action, int Value) {
 	if(State == STATE_NONE)
 		return true;
 
@@ -1018,7 +1018,7 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 			if(CharactersState == CHARACTERS_NONE) {
 				switch(Action) {
 					case Action::MENU_GO: {
-						size_t SelectedSlot = GetSelectedCharacter();
+						std::size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot >= CharacterSlots.size())
 							SelectedSlot = 0;
 
@@ -1238,7 +1238,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						PlayClickSound();
 					}
 					else if(Clicked->Name == "button_menu_characters_play") {
-						size_t SelectedSlot = GetSelectedCharacter();
+						std::size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 							PlayCharacter(SelectedSlot);
 						}
@@ -1261,7 +1261,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						}
 
 						// Set selection
-						size_t SelectedSlot = (size_t)Clicked->Index;
+						std::size_t SelectedSlot = (std::size_t)Clicked->Index;
 						CharacterSlots[SelectedSlot].Button->Checked = true;
 
 						// Open new character screen
@@ -1277,13 +1277,13 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
 					if(Clicked->Name == NewCharacterPortraitPrefix || Clicked->Name == NewCharacterBuildPrefix) {
-						size_t SelectedID = (size_t)Clicked->Index;
+						std::size_t SelectedID = (std::size_t)Clicked->Index;
 
 						// Unselect all portraits and select the clicked element
 						for(auto &Element : Clicked->Parent->Children) {
 							ae::_Element *Button = Element;
 							Button->Checked = false;
-							if((size_t)Button->Index == SelectedID) {
+							if((std::size_t)Button->Index == SelectedID) {
 								ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 								ae::FocusedElement = Name;
 								Name->ResetCursor();
@@ -1311,7 +1311,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					if(Clicked->Name == "button_confirm_ok") {
 						PlayClickSound();
 
-						size_t SelectedSlot = GetSelectedCharacter();
+						std::size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 							ae::_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::CHARACTERS_DELETE);
@@ -1347,7 +1347,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					PlayClickSound();
 				}
 				else if(Clicked->Parent && Clicked->Parent->Name == "element_menu_browse_servers") {
-					if(PlayState.Network->IsDisconnected() && (size_t)Clicked->Index < ConnectServers.size()) {
+					if(PlayState.Network->IsDisconnected() && (std::size_t)Clicked->Index < ConnectServers.size()) {
 
 						// Set ip and port
 						ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
@@ -1593,8 +1593,8 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 			LoadCharacterSlots();
 
 			// Get characters
-			for(size_t i = 0; i < CharacterCount; i++) {
-				size_t Slot = Buffer.Read<uint8_t>();
+			for(std::size_t i = 0; i < CharacterCount; i++) {
+				std::size_t Slot = Buffer.Read<uint8_t>();
 				bool Hardcore = Buffer.Read<uint8_t>();
 				std::string Name = Buffer.ReadString();
 				uint32_t PortraitID = Buffer.Read<uint8_t>();
@@ -1734,7 +1734,7 @@ void _Menu::RenderBrowser() {
 	//Font->DrawText("Ping", DrawPosition + glm::vec2(0, -SpacingY) + Offset[3], ae::LEFT_BASELINE);
 
 	// Draw servers
-	size_t Count = 0;
+	std::size_t Count = 0;
 	for(const auto &ConnectServer : ConnectServers) {
 		std::string HardcoreText = ConnectServer.Hardcore ? "Yes" : "No";
 		Font->DrawText(ConnectServer.IP + ":" + std::to_string(ConnectServer.Port), DrawPosition + Offset[0], ae::LEFT_BASELINE);
@@ -1797,7 +1797,7 @@ void _Menu::ValidateConnect() {
 
 // Split host string into ip and port. Return default game port if none
 void _Menu::SplitHost(const std::string &Host, std::string &IP, std::string &Port) {
-	size_t ColonIndex = Host.find_first_of(':');
+	std::size_t ColonIndex = Host.find_first_of(':');
 	if(ColonIndex != std::string::npos) {
 		IP = Host.substr(0, ColonIndex);
 		Port = Host.substr(ColonIndex + 1);
