@@ -229,13 +229,14 @@ void _Menu::InitInGame() {
 }
 
 // Return to play
-void _Menu::InitPlay() {
+void _Menu::InitPlay(bool SendStatus) {
 	if(CurrentLayout)
 		CurrentLayout->SetActive(false);
 	CurrentLayout = nullptr;
 
 	PlayState.HUD->SetBarState(true);
-	PlayState.SendStatus(_Character::STATUS_NONE, false);
+	if(SendStatus)
+		PlayState.SendStatus(_Character::STATUS_NONE);
 	State = STATE_NONE;
 }
 
@@ -1418,7 +1419,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					ae::_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
 					PlayState.Network->SendPacket(Packet);
-					InitPlay();
+					InitPlay(false);
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "button_menu_ingame_resume") {

@@ -89,7 +89,7 @@ class _Menu {
 		void InitBrowseServers(bool UseConfig, bool ConnectNow=false);
 		void InitAccount();
 		void InitInGame();
-		void InitPlay();
+		void InitPlay(bool SendStatus=true);
 		void InitOptions();
 		void InitKeybindings();
 		void ConfirmAction();

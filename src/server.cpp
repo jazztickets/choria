@@ -287,7 +287,7 @@ void _Server::Update(double FrameTime) {
 		if(std::abs(std::fmod(ShutdownTime, 5.0)) >= 4.99)
 			BroadcastMessage(nullptr, "The server will be shutting down in " + std::to_string((int)(ShutdownTime + 0.5)) + " seconds", "red");
 
-		if(ShutdownTime <= 0) {
+		if(ShutdownTime <= 0 || !Network->GetPeers().size()) {
 			StartDisconnect = true;
 			StartShutdownTimer = false;
 		}
@@ -822,6 +822,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 	_Map *OldMap = Player->Map;
 
 	// Place player in new map
+	Player->Character->ResetUIState();
 	if(Map != OldMap) {
 		if(OldMap)
 			OldMap->RemoveObject(Player);

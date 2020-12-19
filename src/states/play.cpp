@@ -978,7 +978,7 @@ void _PlayState::HandleClock(ae::_Buffer &Data) {
 // Called when the player changes maps
 void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 	HUD->Reset();
-	Menu.InitPlay();
+	Menu.InitPlay(false);
 
 	// Load map
 	ae::NetworkIDType MapID = (ae::NetworkIDType)Data.Read<uint32_t>();
@@ -1883,13 +1883,13 @@ void _PlayState::SendUseCommand() {
 }
 
 // Send status to server
-void _PlayState::SendStatus(uint8_t Status, bool StopTeleportSound) {
+void _PlayState::SendStatus(uint8_t Status) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 	Packet.Write<uint8_t>(Status);
 	Network->SendPacket(Packet);
 
-	if(StopTeleportSound && TeleportSound)
+	if(TeleportSound)
 		TeleportSound->Stop();
 }
 

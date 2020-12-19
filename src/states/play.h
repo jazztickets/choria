@@ -60,7 +60,7 @@ class _PlayState : public ae::_State {
 		// Network
 		void Connect(bool IsLocal);
 		void StopLocalServer();
-		void SendStatus(uint8_t Status, bool StopTeleportSound=true);
+		void SendStatus(uint8_t Status);
 		void SendActionUse(uint8_t Slot);
 		void SendJoinRequest();
 		void SendUseCommand();
