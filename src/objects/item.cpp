@@ -268,14 +268,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 
 		// Draw upgrade level for items
 		if(IsEquippable()) {
-			std::stringstream Buffer;
-			if((MaxLevel == 0 || Upgrades == MaxLevel))
-				Buffer << "Max Level";
-			else
-				Buffer << "Level " << Upgrades << "/" << MaxLevel;
-			DrawPosition.y += RewindSpacingY;
-			ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += LargeSpacingY;
 
 			// Show next upgrade stats if holding ctrl and item is not in the blacksmith slot
 			if(Player->Character->Blacksmith && ae::Input.ModKeyDown(KMOD_CTRL) && CompareSlot.Index != NOSLOT && Tooltip.Window != _HUD::WINDOW_BLACKSMITH) {
@@ -284,6 +276,16 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 
 				Upgrades = std::min(Upgrades + 1, MaxLevel);
 			}
+
+			// Get level text
+			std::stringstream Buffer;
+			if((MaxLevel == 0 || Upgrades == MaxLevel))
+				Buffer << "Max Level";
+			else
+				Buffer << "Level " << Upgrades << "/" << MaxLevel;
+			DrawPosition.y += RewindSpacingY;
+			ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+			DrawPosition.y += LargeSpacingY;
 		}
 	}
 
