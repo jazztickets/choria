@@ -1883,13 +1883,13 @@ void _PlayState::SendUseCommand() {
 }
 
 // Send status to server
-void _PlayState::SendStatus(uint8_t Status) {
+void _PlayState::SendStatus(uint8_t Status, bool StopTeleportSound) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 	Packet.Write<uint8_t>(Status);
 	Network->SendPacket(Packet);
 
-	if(TeleportSound)
+	if(StopTeleportSound && TeleportSound)
 		TeleportSound->Stop();
 }
 

@@ -235,7 +235,7 @@ void _Menu::InitPlay() {
 	CurrentLayout = nullptr;
 
 	PlayState.HUD->SetBarState(true);
-	PlayState.SendStatus(_Character::STATUS_NONE);
+	PlayState.SendStatus(_Character::STATUS_NONE, false);
 	State = STATE_NONE;
 }
 
