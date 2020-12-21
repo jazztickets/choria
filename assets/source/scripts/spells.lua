@@ -132,7 +132,7 @@ Base_SummonSpell = {
 	GetCount = function(self, Source, Level, MoreInfo)
 		Value = self.Count + (Level - 1) * self.CountPerLevel
 		if MoreInfo then
-			return Value
+			return Round(Value)
 		else
 			return math.floor(Value)
 		end
@@ -173,7 +173,7 @@ Base_SummonSpell = {
 		if Fraction == nil or Fraction == false then
 			return math.floor(Value)
 		else
-			return Value
+			return Round(Value)
 		end
 	end,
 
@@ -182,7 +182,7 @@ Base_SummonSpell = {
 		if Fraction == nil or Fraction == false then
 			return math.floor(Value)
 		else
-			return Value
+			return Round(Value)
 		end
 	end,
 

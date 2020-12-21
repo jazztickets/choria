@@ -734,7 +734,7 @@ end
 Item_ElusivePotion = Base_Potion:New()
 
 function Item_ElusivePotion.GetInfo(self, Source, Item)
-	return "Throw down smoke cover for [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies and increase evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. math.floor(Item.Duration) .. " [c white]seconds"
+	return "Throw down smoke cover for [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] allies, increasing evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. math.floor(Item.Duration) .. " [c white]seconds"
 end
 
 function Item_ElusivePotion.GetTargetCount(self, Level)
