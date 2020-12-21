@@ -2380,11 +2380,16 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		if(!BattleEvent.Scripted)
 			AdditionalCount = (int)Players.size();
 
+		// Get monster count modifier
+		int MonsterCountModifier = BattleEvent.Object->Character->Attributes["Monsters"].Int;
+		for(const auto &Player : Players)
+			MonsterCountModifier += Player->Character->Attributes["Monsters"].Int - 100;
+
 		// Get monsters
 		std::list<_Zone> Monsters;
 		bool Boss = false;
 		double Cooldown = 0.0;
-		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Object->Character->Attributes["Monsters"].Mult(), BattleEvent.Zone, Monsters, Boss, Cooldown);
+		Stats->GenerateMonsterListFromZone(AdditionalCount, MonsterCountModifier * 0.01f, BattleEvent.Zone, Monsters, Boss, Cooldown);
 
 		// Fight if there are monsters
 		if(!Monsters.size())
@@ -2396,6 +2401,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			return;
 		}
 
+		// Get number of times boss has been killed by host
 		int BossKillCount = 0;
 		if(Boss)
 			BossKillCount = BattleEvent.Object->Character->BossKills[BattleEvent.Zone];
