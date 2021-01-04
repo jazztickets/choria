@@ -1,4 +1,4 @@
-choria 0.6.0 -
+choria 0.9.0 -
 - Reworked battle system to use stamina, cooldowns, and attack animations
 - Added tile transitions to map
 - Changed data backend to xml
