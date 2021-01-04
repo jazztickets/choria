@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
 # define constants
-add_definitions(-DGAME_VERSION="0.5.1")
+add_definitions(-DGAME_VERSION="0.6.0")
 add_definitions("-DGLM_FORCE_RADIANS")
 add_definitions("-DGLM_ENABLE_EXPERIMENTAL")
 add_definitions("-DHAS_SOCKLEN_T")
