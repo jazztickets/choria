@@ -41,7 +41,7 @@ for f in hud hud24 hud48; do
 done
 
 # make items
-for f in armors boots helms shields weapons items rebirth; do
+for f in armors boots helms shields weapons items jewelry rebirth; do
 	./make_pngs.sh vector/$f.svgz 2
 	mv export/*.png "$dest/items/"
 done
