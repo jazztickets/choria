@@ -10,6 +10,10 @@ function Script_Rejuv.Activate(self, Level, Object, Change)
 	return Change
 end
 
+function Script_Rejuv.PlaySound(self, Object)
+	Audio.Play("swamp0.ogg", 0.5)
+end
+
 Script_Lava = { BaseDamage = 10 }
 
 function Script_Lava.Activate(self, Level, Object, Change)
