@@ -937,6 +937,12 @@ void _HUD::ToggleParty(bool IgnoreNextChar) {
 
 // Open/close menu
 void _HUD::ToggleInGameMenu(bool Force) {
+
+	// Cancel teleport
+	if(CloseTeleport())
+		return;
+
+	// Waiting for update from server
 	if(Player->Controller->WaitForServer)
 		return;
 
@@ -1044,6 +1050,10 @@ bool _HUD::CloseParty() {
 bool _HUD::CloseTeleport() {
 	bool WasOpen = TeleportElement->Active;
 	TeleportElement->SetActive(false);
+	if(WasOpen) {
+		PlayState.SendStatus(_Character::STATUS_NONE);
+		Player->Controller->WaitForServer = false;
+	}
 
 	return WasOpen;
 }
@@ -1094,7 +1104,6 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= CloseConfirm();
 	WasOpen |= CloseParty();
 	WasOpen |= CloseMinigame();
-	WasOpen |= CloseTeleport();
 
 	if(WasOpen && SendStatus)
 		PlayState.SendStatus(_Character::STATUS_NONE);

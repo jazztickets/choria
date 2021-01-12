@@ -1180,6 +1180,7 @@ void _PlayState::HandleTeleportStart(ae::_Buffer &Data) {
 		return;
 
 	Player->Character->TeleportTime = Data.Read<double>();
+	Player->Controller->WaitForServer = true;
 	HUD->CloseWindows(false);
 	HUD->StartTeleport();
 
