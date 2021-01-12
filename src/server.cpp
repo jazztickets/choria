@@ -1531,7 +1531,7 @@ void _Server::HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 		bool Accepted = !!Data.Read<char>();
 		Player->Character->TradeAccepted = Accepted;
 
-		// Check if both player's agree
+		// Check if both players agree
 		if(Accepted && TradePlayer->Character->TradeAccepted) {
 
 			// Exchange items
@@ -1558,6 +1558,10 @@ void _Server::HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 			TradePlayer->Character->TradePlayer = nullptr;
 			TradePlayer->Character->TradeGold = 0;
 			TradePlayer->Inventory->MoveTradeToInventory();
+
+			// Update stats
+			Player->Character->Attributes["Trades"].Int++;
+			TradePlayer->Character->Attributes["Trades"].Int++;
 
 			// Send packet to players
 			{
