@@ -1379,8 +1379,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		}
 	}
 
-	// Just revived
-	if(Server && !WasAlive && Character->IsAlive()) {
+	// Send HUD to character revived outside of battle
+	if(Server && !WasAlive && Character->IsAlive() && !Character->Battle) {
 		Server->SendHUD(Peer);
 	}
 

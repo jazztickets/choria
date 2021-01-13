@@ -1076,21 +1076,25 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 
 	for(const auto &Object : Objects) {
 
+		// Compare distance
+		glm::vec2 Delta = Object->Position - Player->Position;
+		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
+			continue;
+
 		// Check interaction
 		if(!Player->CanInteractWith(Object, BATTLE_LEVEL_RANGE, HitLevelRestriction))
 			continue;
 
+		// Check for alive
 		if(!Object->Character->IsAlive())
 			continue;
 
+		// Check for battle
 		if(!Object->Character->Battle)
 			continue;
 
+		// Can't join PVP battle
 		if(Object->Character->Battle->PVP)
-			continue;
-
-		glm::vec2 Delta = Object->Position - Player->Position;
-		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
 			continue;
 
 		if(Object->Character->Battle->SideCount[0] >= BATTLE_MAX_OBJECTS_PER_SIDE) {
