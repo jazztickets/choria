@@ -1806,7 +1806,8 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 	bool HitPrivateParty = false;
 	bool HitFullBattle = false;
 	bool HitLevelRestriction = false;
-	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty, HitFullBattle, HitLevelRestriction);
+	bool HitRestricted = false;
+	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty, HitFullBattle, HitLevelRestriction, HitRestricted);
 	if(!Battle) {
 		if(HitPrivateParty)
 			SendMessage(Peer, "Can't join private party", "red");
@@ -1814,6 +1815,8 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 			SendMessage(Peer, "Can't join full battle", "red");
 		else if(HitLevelRestriction)
 			SendMessage(Peer, "Can't join level restricted battle", "red");
+		else if(HitRestricted)
+			SendMessage(Peer, "Can't join restricted battle", "red");
 
 		return;
 	}
@@ -2379,7 +2382,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		// Get a list of players
 		std::vector<_Object *> Players;
 		Players.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
-		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, BATTLE_COOP_DISTANCE, BATTLE_MAX_OBJECTS_PER_SIDE-1, Players);
+		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Zone, BattleEvent.Object, BATTLE_COOP_DISTANCE, BATTLE_MAX_OBJECTS_PER_SIDE-1, Players);
 		int AdditionalCount = 0;
 		if(!BattleEvent.Scripted)
 			AdditionalCount = (int)Players.size();

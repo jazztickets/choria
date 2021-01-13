@@ -1045,7 +1045,7 @@ void _Map::AddObject(_Object *Object) {
 }
 
 // Returns a list of players close to a player that can battle
-void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, std::size_t Max, std::vector<_Object *> &Players) {
+void _Map::GetPotentialBattlePlayers(uint32_t ZoneID, const _Object *Player, float DistanceSquared, std::size_t Max, std::vector<_Object *> &Players) {
 	if(Player && Player->Character->Offline)
 		return;
 
@@ -1060,6 +1060,10 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 		if(Player->Character->PartyName != Object->Character->PartyName)
 			continue;
 
+		// Check for zone cooldown
+		if(Object->Character->IsZoneOnCooldown(ZoneID))
+			continue;
+
 		glm::vec2 Delta = Object->Position - Player->Position;
 		if(glm::dot(Delta, Delta) <= DistanceSquared && Object->Character->CanBattle()) {
 			Players.push_back(Object);
@@ -1070,11 +1074,14 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 }
 
 // Returns a battle instance close to a player
-_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction) {
+_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction, bool &HitRestricted) {
 	if(Player && Player->Character->Offline)
 		return nullptr;
 
 	for(const auto &Object : Objects) {
+		glm::vec2 Delta = Object->Position - Player->Position;
+		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
+			continue;
 
 		// Check interaction
 		if(!Player->CanInteractWith(Object, BATTLE_LEVEL_RANGE, HitLevelRestriction))
@@ -1089,12 +1096,13 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 		if(Object->Character->Battle->PVP)
 			continue;
 
-		glm::vec2 Delta = Object->Position - Player->Position;
-		if(glm::dot(Delta, Delta) > BATTLE_JOIN_DISTANCE)
-			continue;
-
 		if(Object->Character->Battle->SideCount[0] >= BATTLE_MAX_OBJECTS_PER_SIDE) {
 			HitFullBattle = true;
+			continue;
+		}
+
+		if(Player->Character->IsZoneOnCooldown(Object->Character->Battle->Zone)) {
+			HitRestricted = true;
 			continue;
 		}
 
