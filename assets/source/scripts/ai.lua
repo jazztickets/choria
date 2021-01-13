@@ -1,29 +1,21 @@
 
--- Wrapper function for Object.AddTarget that handles taunted state
-function AI_AddTarget(Source, Target, AffectedByTaunt)
-	if Target == nil then
-		return
-	end
+-- Check for taunted debuff and attack target only
+function AI_HandleTaunt(Source, ActionBarSlot)
 
-	-- Check if affected by taunt
-	if AffectedByTaunt == false then
-		Source.AddTarget(Target.Pointer)
-		return
-	end
-
-	-- Check for taunt
+	-- Check for taunt and use first action
 	for i = 1, #Source.StatusEffects do
 		Effect = Source.StatusEffects[i]
 		if Effect.Buff == Buff_Taunted and Effect.Source ~= nil then
 			Source.AddTarget(Effect.Source)
-			return
+			Source.SetAction(ActionBarSlot)
+			return true
 		end
 	end
 
-	-- Continue with normal target
-	Source.AddTarget(Target.Pointer)
+	return false
 end
 
+-- Return the first enemy index that has an attractant debuff
 function AI_FindAttractant(Buff, Enemies)
 
 	-- Find enemy with attractant
@@ -39,23 +31,37 @@ function AI_FindAttractant(Buff, Enemies)
 	return 0
 end
 
+-- Attack random target
+
 AI_Dumb = {}
 
 function AI_Dumb.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Get random target
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	Object.SetAction(0)
 end
 
+-- Attack first enemy found with attractant debuff, otherwise attack random target
+
 AI_Attract = {}
 
 function AI_Attract.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Find enemy with debuff
 	AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
@@ -72,15 +78,22 @@ function AI_Attract.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	Object.SetAction(0)
 end
 
+-- Attack enemy with lowest health
+
 AI_Smart = {}
 
 function AI_Smart.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Get lowest health target
 	LowestHealth = math.huge
@@ -93,11 +106,13 @@ function AI_Smart.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[TargetIndex], true)
+	Object.AddTarget(Enemies[TargetIndex].Pointer)
 
 	-- Set skill
 	Object.SetAction(0)
 end
+
+-- Generic boss AI that randomly uses special attack against all enemies
 
 AI_Boss = {}
 
@@ -107,6 +122,11 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 		Storage[Object.ID] = { Turns = 0 }
 	end
 
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
+
 	-- Chance to do special attack
 	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 5) == 1 then
 
@@ -124,13 +144,15 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	if Object.SetAction(0) then
 		Storage[Object.ID].Turns = Storage[Object.ID].Turns + 1
 	end
 end
+
+-- Dead Queen
 
 AI_DeadQueen = {}
 
@@ -140,6 +162,11 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 		Storage[Object.ID] = { Turns = 0 }
 	end
 
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
+
 	-- Chance to do special attack
 	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 5) == 1 then
 
@@ -157,7 +184,7 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	if Random.GetInt(1, 10) <= 7 then
@@ -171,9 +198,16 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 	end
 end
 
+-- Slime Prince
+
 AI_SlimePrince = {}
 
 function AI_SlimePrince.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Use potion when mana is low
 	CanUse = Object.SetAction(10)
@@ -213,16 +247,23 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	Object.SetAction(0)
 end
 
+-- Skeleton Priest
+
 AI_SkeletonPriest = {}
 AI_SkeletonPriest.HealThreshold = 0.65
 
 function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Get heal target
 	PlayerHealIndex = 0
@@ -276,11 +317,13 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	Object.SetAction(0)
 end
+
+-- Goblin Thief
 
 AI_GoblinThief = {}
 
@@ -293,13 +336,18 @@ function AI_GoblinThief.Update(self, Object, Enemies, Allies)
 		Storage[Object.ID].Steals = 0
 	end
 
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
+
 	-- Flee
 	if Storage[Object.ID].Steals >= 2 then
 		Object.AddTarget(Object.Pointer)
 		Object.SetAction(2)
 	else
 		Target = Random.GetInt(1, #Enemies)
-		AI_AddTarget(Object, Enemies[Target], true)
+		Object.AddTarget(Enemies[Target].Pointer)
 
 		if Random.GetInt(1, 10) <= 7 and Object.SetAction(1) then
 			Storage[Object.ID].Steals = Storage[Object.ID].Steals + 1
@@ -310,9 +358,16 @@ function AI_GoblinThief.Update(self, Object, Enemies, Allies)
 	end
 end
 
+-- Lava Man
+
 AI_LavaMan = {}
 
 function AI_LavaMan.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 5) == 1 then
@@ -328,12 +383,19 @@ function AI_LavaMan.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 end
+
+-- Snow Man
 
 AI_Snowman = {}
 
 function AI_Snowman.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 3) == 1 then
@@ -349,12 +411,19 @@ function AI_Snowman.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 end
+
+-- Lava Spitter
 
 AI_LavaSpitter = {}
 
 function AI_LavaSpitter.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 5) == 1 then
@@ -370,12 +439,19 @@ function AI_LavaSpitter.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 end
+
+-- Skeleton Mage
 
 AI_SkeletonMage = {}
 
 function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Look for existing demon
 	FoundDemon = false
@@ -428,7 +504,7 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 		CanCast = Object.SetAction(Random.GetInt(3, 4))
 		if CanCast then
 			Target = Random.GetInt(1, #Enemies)
-			AI_AddTarget(Object, Enemies[Target], false)
+			Object.AddTarget(Enemies[Target].Pointer)
 
 			return
 		end
@@ -436,9 +512,11 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Attack
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 	Object.SetAction(0)
 end
+
+-- Raj
 
 AI_Raj = {}
 
@@ -447,6 +525,11 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 	local Storage = Battles[Object.BattleID]
 	if Storage[Object.ID] == nil then
 		Storage[Object.ID] = { Turns = 0 }
+	end
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
 	end
 
 	-- Chance to do special attack
@@ -465,13 +548,15 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	if Object.SetAction(0) then
 		Storage[Object.ID].Turns = Storage[Object.ID].Turns + 1
 	end
 end
+
+-- Arach
 
 AI_Arach = {}
 
@@ -480,6 +565,11 @@ function AI_Arach.Update(self, Object, Enemies, Allies)
 	local Storage = Battles[Object.BattleID]
 	if Storage[Object.ID] == nil then
 		Storage[Object.ID] = { Turns = 0 }
+	end
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
 	end
 
 	-- Special attack
@@ -500,7 +590,7 @@ function AI_Arach.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	if Object.SetAction(0) then
@@ -508,9 +598,16 @@ function AI_Arach.Update(self, Object, Enemies, Allies)
 	end
 end
 
+-- Jem
+
 AI_Jem = {}
 
 function AI_Jem.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Heal
 	if Object.Health > 0 and Object.Health <= Object.MaxHealth * 0.75 then
@@ -552,15 +649,22 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	Object.SetAction(0)
 end
 
+-- Zog
+
 AI_Zog = {}
 
 function AI_Zog.Update(self, Object, Enemies, Allies)
+
+	-- Handle taunt debuff
+	if AI_HandleTaunt(Object, 0) then
+		return
+	end
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 3) == 1 then
@@ -579,7 +683,7 @@ function AI_Zog.Update(self, Object, Enemies, Allies)
 	Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
-	AI_AddTarget(Object, Enemies[Target], true)
+	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
 	Object.SetAction(0)
