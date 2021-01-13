@@ -1370,7 +1370,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	if(WasAlive && !Character->IsAlive()) {
 		Fighter->PotentialAction.Unset();
 		Character->Action.Unset();
-		Character->ResetUIState();
+		Character->ResetUIState(false);
 
 		// If not in battle apply penalty immediately
 		if(!Character->Battle) {

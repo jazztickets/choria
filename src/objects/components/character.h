@@ -136,7 +136,7 @@ class _Character {
 		// UI
 		bool IsTrading() { return WaitingForTrade || TradePlayer; }
 		bool CanTrade() const;
-		void ResetUIState();
+		void ResetUIState(bool ResetMenuState=true);
 		bool AddStatusEffect(_StatusEffect *StatusEffect);
 		void DeleteStatusEffects();
 		uint8_t GetStatus();

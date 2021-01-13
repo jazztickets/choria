@@ -887,16 +887,17 @@ bool _Character::CanTrade() const {
 }
 
 // Reset ui state variables
-void _Character::ResetUIState() {
+void _Character::ResetUIState(bool ResetMenuState) {
 	InventoryOpen = false;
 	SkillsOpen = false;
-	MenuOpen = false;
 	Vendor = nullptr;
 	Trader = nullptr;
 	Blacksmith = nullptr;
 	Enchanter = nullptr;
 	Minigame = nullptr;
 	TeleportTime = -1.0;
+	if(ResetMenuState)
+		MenuOpen = false;
 }
 
 // Add status effect, return true if added
