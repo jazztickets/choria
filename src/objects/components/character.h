@@ -91,7 +91,6 @@ class _Character {
 		void UpdateMana(int Value);
 		void UpdateGold(int64_t Value);
 		void UpdateExperience(int64_t Value);
-		void UpdateStatus();
 		void UpdateAllResist(int Value);
 		void UpdateElementalResist(int Value);
 
@@ -140,6 +139,8 @@ class _Character {
 		void ResetUIState();
 		bool AddStatusEffect(_StatusEffect *StatusEffect);
 		void DeleteStatusEffects();
+		uint8_t GetStatus();
+		void UpdateStatusTexture();
 
 		// Unlocks
 		void ClearUnlocks();

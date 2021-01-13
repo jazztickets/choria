@@ -227,7 +227,7 @@ void _Object::Update(double FrameTime) {
 
 	// Update status
 	if(Character && !Monster->DatabaseID)
-		Character->UpdateStatus();
+		Character->Status = Character->GetStatus();
 
 	if(Server) {
 		if(Position != OldPosition)
@@ -956,6 +956,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	Data.Write<int16_t>(Character->Attributes["Rebirths"].Int);
 	Data.Write<int16_t>(Character->Attributes["Evolves"].Int);
 	Data.Write<uint8_t>(Light);
+	Data.Write<uint8_t>(Character->GetStatus());
 	Data.WriteBit(Character->Invisible);
 	Data.WriteBit(Character->Offline);
 }
@@ -972,6 +973,7 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Character->Attributes["Rebirths"].Int = Data.Read<int16_t>();
 	Character->Attributes["Evolves"].Int = Data.Read<int16_t>();
 	Light = Data.Read<uint8_t>();
+	Character->Status = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();
 	Character->Offline = Data.ReadBit();
 

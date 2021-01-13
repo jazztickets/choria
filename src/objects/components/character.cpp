@@ -24,6 +24,7 @@
 #include <ae/buffer.h>
 #include <ae/random.h>
 #include <ae/database.h>
+#include <ae/assets.h>
 #include <scripting.h>
 #include <packet.h>
 #include <stats.h>
@@ -245,36 +246,6 @@ void _Character::UpdateGold(int64_t Value) {
 // Update experience
 void _Character::UpdateExperience(int64_t Value) {
 	Attributes["Experience"].Int64 = std::max(Attributes["Experience"].Int64 + Value, (int64_t)0);
-}
-
-// Update status of character
-void _Character::UpdateStatus() {
-
-	Status = STATUS_NONE;
-	if(!IsAlive())
-		Status = STATUS_DEAD;
-	else if(Battle)
-		Status = STATUS_BATTLE;
-	else if(WaitingForTrade)
-		Status = STATUS_TRADE;
-	else if(Vendor)
-		Status = STATUS_VENDOR;
-	else if(Trader)
-		Status = STATUS_TRADER;
-	else if(Blacksmith)
-		Status = STATUS_BLACKSMITH;
-	else if(Enchanter)
-		Status = STATUS_SKILLS;
-	else if(Minigame)
-		Status = STATUS_MINIGAME;
-	else if(InventoryOpen)
-		Status = STATUS_INVENTORY;
-	else if(SkillsOpen)
-		Status = STATUS_SKILLS;
-	else if(MenuOpen)
-		Status = STATUS_MENU;
-	else if(TeleportTime > 0)
-		Status = STATUS_TELEPORT;
 }
 
 // Update all resistances
@@ -972,6 +943,81 @@ void _Character::DeleteStatusEffects() {
 		delete StatusEffect;
 
 	StatusEffects.clear();
+}
+
+// Update status of character
+uint8_t _Character::GetStatus() {
+	if(!IsAlive())
+		return STATUS_DEAD;
+	else if(Battle)
+		return STATUS_BATTLE;
+	else if(WaitingForTrade)
+		return STATUS_TRADE;
+	else if(Vendor)
+		return STATUS_VENDOR;
+	else if(Trader)
+		return STATUS_TRADER;
+	else if(Blacksmith)
+		return STATUS_BLACKSMITH;
+	else if(Enchanter)
+		return STATUS_SKILLS;
+	else if(Minigame)
+		return STATUS_MINIGAME;
+	else if(InventoryOpen)
+		return STATUS_INVENTORY;
+	else if(SkillsOpen)
+		return STATUS_SKILLS;
+	else if(MenuOpen)
+		return STATUS_MENU;
+	else if(TeleportTime > 0)
+		return STATUS_TELEPORT;
+
+	return STATUS_NONE;
+}
+
+// Update status texture from status
+void _Character::UpdateStatusTexture() {
+
+	switch(Status) {
+		case _Character::STATUS_NONE:
+			Object->Character->StatusTexture = nullptr;
+		break;
+		case _Character::STATUS_MENU:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/pause.png"];
+		break;
+		case _Character::STATUS_INVENTORY:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/bag.png"];
+		break;
+		case _Character::STATUS_VENDOR:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
+		break;
+		case _Character::STATUS_SKILLS:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/skills.png"];
+		break;
+		case _Character::STATUS_TRADE:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/trade.png"];
+		break;
+		case _Character::STATUS_TRADER:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
+		break;
+		case _Character::STATUS_BLACKSMITH:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
+		break;
+		case _Character::STATUS_MINIGAME:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
+		break;
+		case _Character::STATUS_TELEPORT:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/teleport.png"];
+		break;
+		case _Character::STATUS_BATTLE:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/battle.png"];
+		break;
+		case _Character::STATUS_DEAD:
+			Object->Character->StatusTexture = ae::Assets.Textures["textures/status/dead.png"];
+		break;
+		default:
+		break;
+	}
 }
 
 // Clear player unlocks

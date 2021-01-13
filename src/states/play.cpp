@@ -1117,47 +1117,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			}
 			Object->Light = Light;
 			Object->ServerPosition = Position;
-
-			switch(Status) {
-				case _Character::STATUS_NONE:
-					Object->Character->StatusTexture = nullptr;
-				break;
-				case _Character::STATUS_MENU:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/pause.png"];
-				break;
-				case _Character::STATUS_INVENTORY:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/bag.png"];
-				break;
-				case _Character::STATUS_VENDOR:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
-				break;
-				case _Character::STATUS_SKILLS:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/skills.png"];
-				break;
-				case _Character::STATUS_TRADE:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/trade.png"];
-				break;
-				case _Character::STATUS_TRADER:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
-				break;
-				case _Character::STATUS_BLACKSMITH:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
-				break;
-				case _Character::STATUS_MINIGAME:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
-				break;
-				case _Character::STATUS_TELEPORT:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/teleport.png"];
-				break;
-				case _Character::STATUS_BATTLE:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/battle.png"];
-				break;
-				case _Character::STATUS_DEAD:
-					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/dead.png"];
-				break;
-				default:
-				break;
-			}
+			Object->Character->UpdateStatusTexture();
 		}
 	}
 }
@@ -1823,6 +1783,7 @@ _Object *_PlayState::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID
 	Object->Character->CalcLevelStats = false;
 	Object->Character->Init();
 	Object->UnserializeCreate(Data);
+	Object->Character->UpdateStatusTexture();
 
 	// Add to map
 	Map->AddObject(Object);

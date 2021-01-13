@@ -756,124 +756,121 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	ButtonBarElement->Render();
 	FullscreenElement->Render();
 
-	// Draw hud elements while alive or in battle
-	if(Player->Character->IsAlive() || Player->Character->Battle) {
-		DiedElement->SetActive(false);
-		ae::Assets.Elements["element_hud"]->Render();
+	// Draw hud elements
+	ae::Assets.Elements["element_hud"]->Render();
 
-		// Draw action bar
-		DrawActionBar();
+	// Draw action bar
+	DrawActionBar();
 
-		// Update label text
-		UpdateLabels();
+	// Update label text
+	UpdateLabels();
 
-		// Update clock
-		if(ae::Input.ModKeyDown(KMOD_ALT)) {
-			std::time_t CurrentTime = std::time(nullptr);
-			Buffer << std::put_time(std::localtime(&CurrentTime), "%X");
-		}
-		else
-			Map->GetClockAsString(Buffer);
+	// Update clock
+	if(ae::Input.ModKeyDown(KMOD_ALT)) {
+		std::time_t CurrentTime = std::time(nullptr);
+		Buffer << std::put_time(std::localtime(&CurrentTime), "%X");
+	}
+	else
+		Map->GetClockAsString(Buffer);
 
-		ae::Assets.Elements["label_hud_clock"]->Text = Buffer.str();
-		Buffer.str("");
+	ae::Assets.Elements["label_hud_clock"]->Text = Buffer.str();
+	Buffer.str("");
 
-		// Update pvp zone
-		if(Map->IsPVPZone(Player->Position))
-			ae::Assets.Elements["label_hud_pvp"]->Text = "PVP Zone";
-		else
-			ae::Assets.Elements["label_hud_pvp"]->Text = "";
+	// Update pvp zone
+	if(Map->IsPVPZone(Player->Position))
+		ae::Assets.Elements["label_hud_pvp"]->Text = "PVP Zone";
+	else
+		ae::Assets.Elements["label_hud_pvp"]->Text = "";
 
-		// Draw experience bar
-		Buffer << Player->Character->ExperienceNextLevel - Player->Character->ExperienceNeeded << " / " << Player->Character->ExperienceNextLevel << " XP";
-		ae::Assets.Elements["label_hud_experience"]->Text = Buffer.str();
-		Buffer.str("");
-		ae::Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->Character->GetNextLevelPercent());
-		ae::Assets.Elements["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
-		ExperienceElement->Render();
+	// Draw experience bar
+	Buffer << Player->Character->ExperienceNextLevel - Player->Character->ExperienceNeeded << " / " << Player->Character->ExperienceNextLevel << " XP";
+	ae::Assets.Elements["label_hud_experience"]->Text = Buffer.str();
+	Buffer.str("");
+	ae::Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->Character->GetNextLevelPercent());
+	ae::Assets.Elements["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
+	ExperienceElement->Render();
 
-		// Draw health bar
-		Buffer << Player->Character->Attributes["Health"].Int << " / " << Player->Character->Attributes["MaxHealth"].Int;
-		ae::Assets.Elements["label_hud_health"]->Text = Buffer.str();
-		Buffer.str("");
-		ae::Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->Character->GetHealthPercent());
-		ae::Assets.Elements["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
-		HealthElement->Render();
+	// Draw health bar
+	Buffer << Player->Character->Attributes["Health"].Int << " / " << Player->Character->Attributes["MaxHealth"].Int;
+	ae::Assets.Elements["label_hud_health"]->Text = Buffer.str();
+	Buffer.str("");
+	ae::Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->Character->GetHealthPercent());
+	ae::Assets.Elements["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
+	HealthElement->Render();
 
-		// Draw mana bar
-		Buffer << Player->Character->Attributes["Mana"].Int << " / " << Player->Character->Attributes["MaxMana"].Int;
-		ae::Assets.Elements["label_hud_mana"]->Text = Buffer.str();
-		Buffer.str("");
-		ae::Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->Character->GetManaPercent());
-		ae::Assets.Elements["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
-		ManaElement->Render();
+	// Draw mana bar
+	Buffer << Player->Character->Attributes["Mana"].Int << " / " << Player->Character->Attributes["MaxMana"].Int;
+	ae::Assets.Elements["label_hud_mana"]->Text = Buffer.str();
+	Buffer.str("");
+	ae::Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->Character->GetManaPercent());
+	ae::Assets.Elements["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
+	ManaElement->Render();
 
-		DrawMessage();
-		DrawHudEffects();
-		DrawMinigame(BlendFactor);
-		InventoryScreen->Render(BlendFactor);
-		VendorScreen->Render(BlendFactor);
-		TradeScreen->Render(BlendFactor);
-		TraderScreen->Render(BlendFactor);
-		BlacksmithScreen->Render(BlendFactor);
-		EnchanterScreen->Render(BlendFactor);
-		SkillScreen->Render(BlendFactor);
-		CharacterScreen->Render(BlendFactor);
-		ae::Assets.Elements["label_hud_pvp"]->Render();
-		DrawParty();
-		DrawTeleport();
-		DrawConfirm();
+	DrawMessage();
+	DrawHudEffects();
+	DrawMinigame(BlendFactor);
+	InventoryScreen->Render(BlendFactor);
+	VendorScreen->Render(BlendFactor);
+	TradeScreen->Render(BlendFactor);
+	TraderScreen->Render(BlendFactor);
+	BlacksmithScreen->Render(BlendFactor);
+	EnchanterScreen->Render(BlendFactor);
+	SkillScreen->Render(BlendFactor);
+	CharacterScreen->Render(BlendFactor);
+	ae::Assets.Elements["label_hud_pvp"]->Render();
+	DrawParty();
+	DrawTeleport();
+	DrawConfirm();
 
-		// Draw stat changes
-		for(auto &StatChange : StatChanges) {
-			StatChange.Render(BlendFactor);
-		}
+	// Draw stat changes
+	for(auto &StatChange : StatChanges)
+		StatChange.Render(BlendFactor);
 
-		// Draw item information
-		DrawCursorItem();
-		const _Item *Item = Tooltip.InventorySlot.Item;
-		if(Item) {
+	// Draw item information
+	DrawCursorItem();
+	const _Item *Item = Tooltip.InventorySlot.Item;
+	if(Item) {
 
-			// Compare items
-			_Slot CompareSlot;
-			Item->GetEquipmentSlot(CompareSlot);
-			if(Item->IsEquippable() && (Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
+		// Compare items
+		_Slot CompareSlot;
+		Item->GetEquipmentSlot(CompareSlot);
+		if(Item->IsEquippable() && (Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
 
-				// Get equipment slot to compare
-				switch(Tooltip.Window) {
-					case WINDOW_BLACKSMITH:
-						CompareSlot = BlacksmithScreen->UpgradeSlot;
-					break;
-					case WINDOW_EQUIPMENT:
-						CompareSlot.Type = BagType::NONE;
-					break;
-					default:
-					break;
-				}
-
-				// Check for valid slot
-				if(Player->Inventory->IsValidSlot(CompareSlot)) {
-
-					// Draw equipped item tooltip
-					_Cursor EquippedTooltip;
-					EquippedTooltip.InventorySlot = Player->Inventory->GetSlot(CompareSlot);
-					if(EquippedTooltip.InventorySlot.Item)
-						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(5, -1), Player, EquippedTooltip, _Slot());
-				}
+			// Get equipment slot to compare
+			switch(Tooltip.Window) {
+				case WINDOW_BLACKSMITH:
+					CompareSlot = BlacksmithScreen->UpgradeSlot;
+				break;
+				case WINDOW_EQUIPMENT:
+					CompareSlot.Type = BagType::NONE;
+				break;
+				default:
+				break;
 			}
 
-			// Draw item tooltip
-			Item->DrawTooltip(ae::Input.GetMouse(), Player, Tooltip, CompareSlot);
+			// Check for valid slot
+			if(Player->Inventory->IsValidSlot(CompareSlot)) {
+
+				// Draw equipped item tooltip
+				_Cursor EquippedTooltip;
+				EquippedTooltip.InventorySlot = Player->Inventory->GetSlot(CompareSlot);
+				if(EquippedTooltip.InventorySlot.Item)
+					EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(5, -1), Player, EquippedTooltip, _Slot());
+			}
 		}
 
-		// Draw status effects
-		if(Tooltip.StatusEffect) {
-			int DismissLevel = !Player->Character->Battle ? Tooltip.StatusEffect->Buff->Dismiss : 0;
-			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level, Tooltip.StatusEffect->Infinite, Tooltip.StatusEffect->Duration, DismissLevel);
-		}
+		// Draw item tooltip
+		Item->DrawTooltip(ae::Input.GetMouse(), Player, Tooltip, CompareSlot);
 	}
+
+	// Draw status effects
+	if(Tooltip.StatusEffect) {
+		int DismissLevel = !Player->Character->Battle ? Tooltip.StatusEffect->Buff->Dismiss : 0;
+		Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level, Tooltip.StatusEffect->Infinite, Tooltip.StatusEffect->Duration, DismissLevel);
+	}
+
 	// Dead outside of combat
-	else {
+	if(!Player->Character->IsAlive() && !Player->Character->Battle) {
 		if(!DiedElement->Active)
 			CloseWindows(false);
 
@@ -890,6 +887,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DiedElement->SetActive(true);
 		DiedElement->Render();
 	}
+	else
+		DiedElement->SetActive(false);
 }
 
 // Starts the chat box
