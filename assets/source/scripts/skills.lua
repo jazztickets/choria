@@ -1269,6 +1269,10 @@ function Skill_Pickpocket.Proc(self, Roll, Level, Duration, Source, Target, Resu
 	return false
 end
 
+function Skill_Pickpocket.CanUse(self, Level, Source, Target)
+	return not Source.ZoneOnCooldown
+end
+
 function Skill_Pickpocket.Use(self, Level, Duration, Source, Target, Result)
 	self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 

@@ -560,6 +560,12 @@ void _Scripting::PushObject(_Object *Object) {
 		lua_pushboolean(LuaState, false);
 	lua_setfield(LuaState, -2, "Server");
 
+	if(Object->Character->Battle)
+		lua_pushboolean(LuaState, Object->Character->IsZoneOnCooldown(Object->Character->Battle->Zone));
+	else
+		lua_pushboolean(LuaState, false);
+	lua_setfield(LuaState, -2, "ZoneOnCooldown");
+
 	lua_pushinteger(LuaState, Object->Monster->DatabaseID);
 	lua_setfield(LuaState, -2, "MonsterID");
 
