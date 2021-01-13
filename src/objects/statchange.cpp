@@ -108,7 +108,6 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 
 // Constructor
 _StatChangeUI::_StatChangeUI() :
-	Object(nullptr),
 	Font(nullptr),
 	Color(1.0f),
 	StartPosition(0.0f, 0.0f),
@@ -124,7 +123,7 @@ _StatChangeUI::_StatChangeUI() :
 
 // Render stat change
 void _StatChangeUI::Render(double BlendFactor) {
-	if(!Object || Change == 0.0f)
+	if(Change == 0.0f)
 		return;
 
 	// Get alpha

@@ -1902,7 +1902,6 @@ void _PlayState::AssignPlayer(_Object *Object) {
 
 	if(HUD) {
 		HUD->SetPlayer(Player);
-		HUD->StatChanges.clear();
 		HUD->StopTeleport();
 	}
 

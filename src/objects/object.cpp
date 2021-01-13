@@ -105,7 +105,6 @@ _Object::~_Object() {
 		}
 
 		if(Character->HUD) {
-			Character->HUD->RemoveStatChanges(this);
 			Character->HUD = nullptr;
 		}
 

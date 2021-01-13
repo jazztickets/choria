@@ -1610,19 +1610,6 @@ void _HUD::UpdateActionBarSize() {
 		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetEnabled(i < ACTIONBAR_BELT_STARTS + Player->Character->BeltSize);
 }
 
-// Remove stat changes owned by an object
-void _HUD::RemoveStatChanges(_Object *Owner) {
-
-	for(auto Iterator = StatChanges.begin(); Iterator != StatChanges.end(); ) {
-		_Object *StatObject = Iterator->Object;
-		if(StatObject == Owner) {
-			Iterator = StatChanges.erase(Iterator);
-		}
-		else
-			++Iterator;
-	}
-}
-
 // Add multiple statchange ui elements
 void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.Values.size() == 0 || !StatChange.Object)
@@ -1630,14 +1617,13 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 	if(StatChange.HasStat("Health")) {
 		_StatChangeUI StatChangeUI;
-		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.Change = StatChange.Values["Health"].Int;
-		if(StatChangeUI.Object->Character->Battle) {
+		if(StatChange.Object->Character->Battle) {
 			float OffsetX = 55;
 			if(StatChangeUI.Change < 0)
 				OffsetX = 0;
 
-			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition + glm::vec2(OffsetX, -50) * ae::_Element::GetUIScale();
+			StatChangeUI.StartPosition = StatChange.Object->Fighter->StatPosition + glm::vec2(OffsetX, -50) * ae::_Element::GetUIScale();
 			StatChangeUI.Battle = true;
 		}
 		else
@@ -1649,14 +1635,13 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 	if(StatChange.HasStat("Mana")) {
 		_StatChangeUI StatChangeUI;
-		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.Change = StatChange.Values["Mana"].Int;
-		if(StatChangeUI.Object->Character->Battle) {
+		if(StatChange.Object->Character->Battle) {
 			float OffsetX = 55;
 			if(StatChangeUI.Change < 0)
 				OffsetX = 0;
 
-			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition + glm::vec2(OffsetX, -14) * ae::_Element::GetUIScale();
+			StatChangeUI.StartPosition = StatChange.Object->Fighter->StatPosition + glm::vec2(OffsetX, -14) * ae::_Element::GetUIScale();
 			StatChangeUI.Battle = true;
 		}
 		else
@@ -1668,7 +1653,6 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 	if(StatChange.HasStat("Experience")) {
 		_StatChangeUI StatChangeUI;
-		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + glm::vec2(ExperienceElement->Size.x / 2.0f, -150 * ae::_Element::GetUIScale());
 		StatChangeUI.Change = StatChange.Values["Experience"].Int64;
 		StatChangeUI.Direction = -1.0f;
@@ -1680,11 +1664,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 	if(StatChange.HasStat("Gold") || StatChange.HasStat("GoldStolen")) {
 		_StatChangeUI StatChangeUI;
-		StatChangeUI.Object = StatChange.Object;
 
 		// Check for battle
-		if(StatChangeUI.Object->Character->Battle) {
-			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->ResultPosition;
+		if(StatChange.Object->Character->Battle) {
+			StatChangeUI.StartPosition = StatChange.Object->Fighter->ResultPosition;
 			StatChangeUI.Battle = true;
 		}
 		else  {

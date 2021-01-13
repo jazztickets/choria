@@ -151,7 +151,6 @@ class _HUD {
 		// Objects
 		void SetPlayer(_Object *Player);
 		void UpdateActionBarSize();
-		void RemoveStatChanges(_Object *Owner);
 		void AddStatChange(_StatChange &StatChange);
 		void ClearBattleStatChanges();
 		void UpdateLabels();

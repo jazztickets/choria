@@ -91,7 +91,6 @@ class _StatChangeUI {
 		void Render(double BlendFactor);
 		void SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor);
 
-		_Object *Object;
 		const ae::_Font *Font;
 		std::string Text;
 		glm::vec4 Color;
