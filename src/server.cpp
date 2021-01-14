@@ -2614,11 +2614,14 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 		Stats->Items.at(267),
 		Stats->Items.at(239),
 		Stats->Items.at(238),
+		Stats->Items.at(357),
+		Stats->Items.at(358),
+		Stats->Items.at(356),
+		Stats->Items.at(359),
 	};
 	int KeyUnlockCount = std::clamp(Character->Attributes["RebirthPassage"].Int, 0, (int)KeyUnlocks.size());
-	for(int i = 0; i < KeyUnlockCount; i++) {
+	for(int i = 0; i < KeyUnlockCount; i++)
 		Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(KeyUnlocks[i], 1));
-	}
 
 	// Get highest skills
 	int SkillCount = Character->Attributes["RebirthKnowledge"].Int;
