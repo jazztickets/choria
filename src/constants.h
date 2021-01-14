@@ -29,7 +29,7 @@ const  bool         DEFAULT_FULLSCREEN                 =  false;
 const  bool         DEFAULT_AUDIOENABLED               =  true;
 const  bool         DEFAULT_VSYNC                      =  true;
 const  double       DEFAULT_MAXFPS                     =  180.0;
-const  std::size_t       DEFAULT_MAXCLIENTS                 =  500;
+const  std::size_t  DEFAULT_MAXCLIENTS                 =  500;
 const  double       DEFAULT_NETWORKRATE                =  1.0/20.0;
 const  uint16_t     DEFAULT_NETWORKPORT                =  31234;
 const  uint16_t     DEFAULT_NETWORKPINGPORT            =  31235;
@@ -45,8 +45,8 @@ const  float        CAMERA_FAR                         =  100.0f;
 //     Account
 const  uint32_t     ACCOUNT_SINGLEPLAYER_ID            =  1;
 const  uint32_t     ACCOUNT_BOTS_ID                    =  2;
-const  std::size_t       ACCOUNT_MAX_USERNAME_SIZE          =  20;
-const  std::size_t       ACCOUNT_MAX_PASSWORD_SIZE          =  20;
+const  std::size_t  ACCOUNT_MAX_USERNAME_SIZE          =  20;
+const  std::size_t  ACCOUNT_MAX_PASSWORD_SIZE          =  20;
 const  int          ACCOUNT_MAX_CHARACTER_SLOTS        =  10;
 //     Map
 const  int          MAP_VERSION                        =  1;
