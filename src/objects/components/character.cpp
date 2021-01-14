@@ -382,6 +382,7 @@ void _Character::CalculateStats() {
 		Attributes["GoldBonus"].Int += std::floor(Item->GetAttribute("GoldBonus", Upgrades));
 		Attributes["AttackPower"].Int += std::floor(Item->GetAttribute("AttackPower", Upgrades));
 		Attributes["SummonPower"].Int += std::floor(Item->GetAttribute("SummonPower", Upgrades));
+		Attributes["Initiative"].Int += std::floor(Item->GetAttribute("Initiative", Upgrades));
 
 		// Handle all resist
 		if(Item->ResistanceTypeID == 1)

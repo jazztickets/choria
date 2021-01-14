@@ -11,6 +11,11 @@ Item_Data = {
 
 -- Rings
 
+	-- Elusive One
+	[273] = {
+		Initiative = 10,
+	},
+
 	-- Hungering Ring
 	[286] = {
 		Cursed = true,
