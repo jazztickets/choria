@@ -1552,6 +1552,7 @@ function Item_EternalKnowledge.PlaySound(self)
 end
 
 Item_EternalPain = Base_Rebirth:New()
+Item_EternalPain.Type = 2
 
 function Item_EternalPain.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] difficulty increase", Source)
