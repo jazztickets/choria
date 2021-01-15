@@ -104,7 +104,11 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
 
 # set output path
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/working/)
+
+# set debug options
+set(STRIP_LUA "-s")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(STRIP_LUA "")
 	set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${CMAKE_PROJECT_NAME}_debug)
 endif()
 
@@ -128,7 +132,7 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/assets/source/process.sh")
 		list(APPEND DATA_SCRIPTS "${SCRIPT_OUTPUT}")
 		add_custom_command(
 			OUTPUT "${SCRIPT_OUTPUT}"
-			COMMAND luac -o "${SCRIPT_OUTPUT}" "${SCRIPT_PATH}"
+			COMMAND luac "${STRIP_LUA}" -o "${SCRIPT_OUTPUT}" "${SCRIPT_PATH}"
 			DEPENDS "${SCRIPT_PATH}"
 		)
 	endforeach()
