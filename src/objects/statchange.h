@@ -89,7 +89,7 @@ class _StatChangeUI {
 		_StatChangeUI();
 
 		void Render(double BlendFactor);
-		void SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor);
+		void SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor, bool UseLocale=false);
 
 		const ae::_Font *Font;
 		std::string Text;

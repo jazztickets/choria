@@ -28,6 +28,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
+#include <locale>
 
 // Constructor
 _StatChange::_StatChange() :
@@ -140,7 +141,7 @@ void _StatChangeUI::Render(double BlendFactor) {
 }
 
 // Set text and color
-void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor) {
+void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor, bool UseLocale) {
 
 	// Get text color and sign
 	std::stringstream Buffer;
@@ -158,6 +159,8 @@ void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &Pos
 	}
 
 	// Set text
+	if(UseLocale)
+		Buffer.imbue(std::locale(""));
 	Buffer << (int64_t)(std::abs(Change));
 	Text = Buffer.str();
 }

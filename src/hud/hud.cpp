@@ -1657,7 +1657,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Direction = -1.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = ae::Assets.Fonts["battle_large"];
-		StatChangeUI.SetText(glm::vec4(1.0f), glm::vec4(1.0f));
+		StatChangeUI.SetText(glm::vec4(1.0f), glm::vec4(1.0f), true);
 		StatChanges.push_back(StatChangeUI);
 	}
 
@@ -1684,7 +1684,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Direction = -1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = ae::Assets.Fonts["menu_buttons"];
-		StatChangeUI.SetText(ae::Assets.Colors["gold"], ae::Assets.Colors["gold"]);
+		StatChangeUI.SetText(ae::Assets.Colors["gold"], ae::Assets.Colors["gold"], true);
 		StatChanges.push_back(StatChangeUI);
 
 		// Play sound
@@ -1729,6 +1729,7 @@ void _HUD::UpdateLabels() {
 	ae::Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
+	Buffer.imbue(std::locale(""));
 	Buffer << Player->Character->Attributes["Gold"].Int64;
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");

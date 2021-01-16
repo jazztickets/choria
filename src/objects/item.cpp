@@ -38,6 +38,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include <locale>
 #include <algorithm>
 #include <SDL_keycode.h>
 
@@ -421,6 +422,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	// Vendors
 	if(Player->Character->Vendor) {
 		std::stringstream Buffer;
+		Buffer.imbue(std::locale(""));
 		if(Tooltip.Window == _HUD::WINDOW_VENDOR) {
 			Buffer << "Buy " << Tooltip.InventorySlot.Count << "x for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
