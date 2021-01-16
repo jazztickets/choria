@@ -76,6 +76,7 @@ class _Config {
 		std::string LastUsername;
 		std::string LastHost;
 		std::string LastPort;
+		std::string Locale;
 
 	private:
 

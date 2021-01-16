@@ -22,6 +22,7 @@
 #include <ae/buffer.h>
 #include <ae/util.h>
 #include <ae/font.h>
+#include <config.h>
 #include <stats.h>
 #include <constants.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -160,7 +161,7 @@ void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &Pos
 
 	// Set text
 	if(UseLocale)
-		Buffer.imbue(std::locale(""));
+		Buffer.imbue(std::locale(Config.Locale));
 	Buffer << (int64_t)(std::abs(Change));
 	Text = Buffer.str();
 }

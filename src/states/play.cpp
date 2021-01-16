@@ -446,7 +446,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 
 			// Display report
 			try {
-				std::locale Locale("");
+				std::locale Locale(Config.Locale);
 				std::stringstream Buffers[LINES];
 				std::size_t MaxLength = 0;
 				for(int i = 0; i < LINES; i++) {

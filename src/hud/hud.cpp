@@ -1729,7 +1729,7 @@ void _HUD::UpdateLabels() {
 	ae::Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
-	Buffer.imbue(std::locale(""));
+	Buffer.imbue(std::locale(Config.Locale));
 	Buffer << Player->Character->Attributes["Gold"].Int64;
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");

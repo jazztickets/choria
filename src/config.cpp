@@ -260,6 +260,7 @@ void _Config::Load() {
 	GetValue("highlight_target", HighlightTarget);
 	GetValue("rightclick_sell", RightClickSell);
 	GetValue("offline", Offline);
+	GetValue("locale", Locale);
 
 	if(NetworkRate < 0.01)
 		NetworkRate = 0.01;
@@ -324,6 +325,7 @@ void _Config::Save() {
 	File << "highlight_target=" << HighlightTarget << std::endl;
 	File << "rightclick_sell=" << RightClickSell << std::endl;
 	File << "offline=" << Offline << std::endl;
+	File << "locale=" << Locale << std::endl;
 
 	// Write out input map
 	ae::Actions.Serialize(File, ae::_Input::KEYBOARD);
