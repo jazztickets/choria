@@ -406,6 +406,23 @@ void _Character::CalculateStats() {
 
 			SetPieceLevels[Item->SetID].push_back(Upgrades);
 		}
+
+		// Add to networth
+		Attributes["EquippedNetworth"].Int64 += Item->GetPrice(Scripting, Object, nullptr, 1, false, Upgrades);
+	}
+
+	// Inventory networth
+	for(const auto &InventoryBag : Object->Inventory->GetBags()) {
+		if(InventoryBag.Type != BagType::INVENTORY && InventoryBag.Type != BagType::TRADE)
+			continue;
+
+		for(std::size_t i = 0; i < InventoryBag.Slots.size(); i++) {
+			const _Item *Item = InventoryBag.Slots[i].Item;
+			if(!Item)
+				continue;
+
+			Attributes["InventoryNetworth"].Int64 += Item->GetPrice(Scripting, Object, nullptr, InventoryBag.Slots[i].Count, false, InventoryBag.Slots[i].Upgrades);
+		}
 	}
 
 	// Add set bonus

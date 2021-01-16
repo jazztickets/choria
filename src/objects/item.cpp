@@ -786,17 +786,18 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 
 // Returns the item's price to/from a vendor
 int64_t _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
-	if(!Vendor)
-		return 0;
 
 	// Calculate
-	float Percent;
-	if(Buy)
-		Percent = Vendor->BuyPercent;
-	else {
-		Percent = Vendor->SellPercent;
-		if(Category == 100)
-			Percent = 0.0;
+	float Percent = 1.0f;
+	if(Vendor) {
+		if(Buy) {
+			Percent = Vendor->BuyPercent;
+		}
+		else {
+			Percent = Vendor->SellPercent;
+			if(Category == 100)
+				Percent = 0.0;
+		}
 	}
 
 	// Check for GetCost function in script

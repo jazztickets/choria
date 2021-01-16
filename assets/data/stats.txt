@@ -224,8 +224,10 @@ INSERT INTO attribute VALUES(118,'GoldLost','Gold Lost',2,0,'0',0.0,5,0,1,0,1);
 INSERT INTO attribute VALUES(119,'Bounty','Bounty',2,0,'0',0.0,5,0,1,0,1);
 INSERT INTO attribute VALUES(120,'GamesPlayed','Games Played',1,0,'0',0.0,5,0,1,0,1);
 INSERT INTO attribute VALUES(121,'Trades','Trades',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(122,'Rebirths','Rebirths',1,0,'0',0.0,0,0,1,1,1);
-INSERT INTO attribute VALUES(123,'Evolves','Evolves',1,0,'0',0.0,0,0,1,1,1);
+INSERT INTO attribute VALUES(122,'EquippedNetworth','Equipped Networth',2,0,'0',0.0,0,1,0,0,0);
+INSERT INTO attribute VALUES(123,'InventoryNetworth','Inventory Networth',2,0,'0',0.0,0,1,0,0,0);
+INSERT INTO attribute VALUES(124,'Rebirths','Rebirths',1,0,'0',0.0,0,0,1,1,1);
+INSERT INTO attribute VALUES(125,'Evolves','Evolves',1,0,'0',0.0,0,0,1,1,1);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT

@@ -68,6 +68,7 @@
 #include <SDL_mouse.h>
 #include <iostream>
 #include <sstream>
+#include <locale>
 #include <iomanip>
 
 _PlayState PlayState;
@@ -421,6 +422,47 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 	// Handle normal commands
 	if(Console->Command == "quit") {
 		HandleQuit();
+		return true;
+	}
+	else if(Console->Command == "networth") {
+		if(Player) {
+
+			// Get fields
+			const int LINES = 4;
+			std::string Fields[LINES] = {
+				" equipped: ",
+				"inventory: ",
+				"     gold: ",
+				"    total: ",
+			};
+
+			// Get values
+			int64_t Values[LINES] = {
+				Player->Character->Attributes["EquippedNetworth"].Int64,
+				Player->Character->Attributes["InventoryNetworth"].Int64,
+				Player->Character->Attributes["Gold"].Int64,
+				Player->Character->Attributes["EquippedNetworth"].Int64 + Player->Character->Attributes["InventoryNetworth"].Int64 + Player->Character->Attributes["Gold"].Int64
+			};
+
+			// Display report
+			try {
+				std::locale Locale("");
+				std::stringstream Buffers[LINES];
+				std::size_t MaxLength = 0;
+				for(int i = 0; i < LINES; i++) {
+					Buffers[i].imbue(Locale);
+					Buffers[i] << Values[i];
+
+					MaxLength = std::max(MaxLength, Buffers[i].str().length());
+				}
+
+				for(int i = 0; i < LINES; i++)
+					Console->AddMessage(Fields[i] + std::string(MaxLength - Buffers[i].str().length(), ' ').append(Buffers[i].str()));
+			}
+			catch (std::exception &Error) {
+			}
+		}
+
 		return true;
 	}
 
