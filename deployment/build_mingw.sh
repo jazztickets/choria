@@ -76,7 +76,7 @@ build() {
 	#echo "${project}.exe -hardcore" > "${archive_base}"/run_hardcore.bat
 	#echo "${project}.exe -test" > "${archive_base}"/run_test.bat
 	#echo -e "${project}.exe -benchmark\npause" > "${archive_base}"/run_benchmark.bat
-	echo "${project}.exe -connect serverhost serverport -username myusername -password mypassword" > "${archive_base}"/run_connect.bat
+	#echo "${project}.exe -connect serverhost serverport -username myusername -password mypassword" > "${archive_base}"/run_connect.bat
 	chmod +x "${archive_base}"/*.bat
 
 	if [ "${build_4k}" -eq 1 ]; then
