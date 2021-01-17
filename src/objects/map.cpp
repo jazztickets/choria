@@ -1070,7 +1070,7 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 }
 
 // Returns a battle instance close to a player
-_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction) {
+_Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction, bool &HitBossBattle) {
 	if(Player && Player->Character->Offline)
 		return nullptr;
 
@@ -1092,6 +1092,12 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool
 		// Check for battle
 		if(!Object->Character->Battle)
 			continue;
+
+		// Can't join boss battles
+		if(Object->Character->Battle->Boss) {
+			HitBossBattle = true;
+			continue;
+		}
 
 		// Can't join PVP battle
 		if(Object->Character->Battle->PVP)

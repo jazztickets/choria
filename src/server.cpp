@@ -1806,14 +1806,17 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 	bool HitPrivateParty = false;
 	bool HitFullBattle = false;
 	bool HitLevelRestriction = false;
-	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty, HitFullBattle, HitLevelRestriction);
+	bool HitBossBattle = false;
+	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty, HitFullBattle, HitLevelRestriction, HitBossBattle);
 	if(!Battle) {
-		if(HitPrivateParty)
-			SendMessage(Peer, "Can't join private party", "red");
+		if(HitBossBattle)
+			SendMessage(Peer, "Can't join boss battles", "red");
+		else if(HitPrivateParty)
+			SendMessage(Peer, "Can't join private parties", "red");
 		else if(HitFullBattle)
-			SendMessage(Peer, "Can't join full battle", "red");
+			SendMessage(Peer, "Can't join full battles", "red");
 		else if(HitLevelRestriction)
-			SendMessage(Peer, "Can't join level restricted battle", "red");
+			SendMessage(Peer, "Can't join level restricted battles", "red");
 
 		return;
 	}

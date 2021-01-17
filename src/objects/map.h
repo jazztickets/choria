@@ -130,7 +130,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void RemoveObject(const _Object *RemoveObject);
 		void SendObjectList(ae::_Peer *Peer);
 		void GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, std::size_t Max, std::vector<_Object *> &Players);
-		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction);
+		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty, bool &HitFullBattle, bool &HitLevelRestriction, bool &HitBossBattle);
 		void GetPVPPlayers(const _Object *Attacker, std::vector<_Object *> &Players, bool UsePVPZone);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		_Object *FindDeadPlayer(const _Object *Player, float MaxDistanceSquared);
