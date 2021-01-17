@@ -460,7 +460,7 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	local FoundDemon = false
 	local AllyCount = 0
 	for i = 1, #Allies do
-		if Allies[i].MonsterID == 23 and Allies[i].Owner == Object.Pointer then
+		if (Allies[i].MonsterID == 23 or Allies[i].MonsterID == 39) and Allies[i].Owner == Object.Pointer then
 			FoundDemon = true
 		end
 
