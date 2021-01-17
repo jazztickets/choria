@@ -221,7 +221,7 @@ void _Character::Update(double FrameTime) {
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::PLAYER_BOSSCOOLDOWNS);
 		Object->SerializeBossCooldowns(Packet);
-		Object->SendPacket(Packet);
+		Object->SendPacket(Packet, false);
 	}
 }
 
