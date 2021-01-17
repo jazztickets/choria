@@ -4,7 +4,7 @@ function AI_HandleTaunt(Source, ActionBarSlot)
 
 	-- Check for taunt and use first action
 	for i = 1, #Source.StatusEffects do
-		Effect = Source.StatusEffects[i]
+		local Effect = Source.StatusEffects[i]
 		if Effect.Buff == Buff_Taunted and Effect.Source ~= nil then
 			Source.AddTarget(Effect.Source)
 			Source.SetAction(ActionBarSlot)
@@ -19,7 +19,7 @@ end
 function AI_FindAttractant(Buff, Enemies)
 
 	-- Find enemy with attractant
-	AttractIndex = 0
+	local AttractIndex = 0
 	for i = 1, #Enemies do
 		for j = 1, #Enemies[i].StatusEffects do
 			if Enemies[i].StatusEffects[j].Buff == Buff then
@@ -43,7 +43,7 @@ function AI_Dumb.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -64,12 +64,13 @@ function AI_Attract.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Find enemy with debuff
-	AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
+	local AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
 	if AttractIndex == 0 then
 		AttractIndex = AI_FindAttractant(Buff_Flayed, Enemies)
 	end
 
 	-- Target enemy with debuff
+	local Target = 1
 	if AttractIndex > 0 then
 		Target = AttractIndex
 	else
@@ -96,8 +97,8 @@ function AI_Smart.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get lowest health target
-	LowestHealth = math.huge
-	TargetIndex = 1
+	local LowestHealth = math.huge
+	local TargetIndex = 1
 	for i = 1, #Enemies do
 		if Enemies[i].Health < LowestHealth then
 			TargetIndex = i
@@ -130,7 +131,7 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 	-- Chance to do special attack
 	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 5) == 1 then
 
-		CanUse = Object.SetAction(1)
+		local CanUse = Object.SetAction(1)
 		if CanUse then
 			for i = 1, #Enemies do
 				Object.AddTarget(Enemies[i].Pointer)
@@ -141,7 +142,7 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -170,7 +171,7 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 	-- Chance to do special attack
 	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 5) == 1 then
 
-		CanUse = Object.SetAction(1)
+		local CanUse = Object.SetAction(1)
 		if CanUse then
 			for i = 1, #Enemies do
 				Object.AddTarget(Enemies[i].Pointer)
@@ -181,12 +182,13 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
 
 	-- Set skill
+	local ActionSet = nil
 	if Random.GetInt(1, 10) <= 7 then
 		ActionSet = Object.SetAction(0)
 	else
@@ -210,11 +212,11 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Use potion when mana is low
-	CanUse = Object.SetAction(10)
+	local CanUse = Object.SetAction(10)
 	if CanUse and Object.Mana < Object.MaxMana * 0.5 then
 
 		-- Check for existing mana buff
-		ShouldUse = true
+		local ShouldUse = true
 		for i = 1, #Object.StatusEffects do
 			if Object.StatusEffects[i].Buff == Buff_Mana then
 				ShouldUse = false
@@ -244,7 +246,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -266,10 +268,10 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get heal target
-	PlayerHealIndex = 0
-	OtherHealIndex = 0
-	LowestPlayerHealth = math.huge
-	LowestOtherHealth = math.huge
+	local PlayerHealIndex = 0
+	local OtherHealIndex = 0
+	local LowestPlayerHealth = math.huge
+	local LowestOtherHealth = math.huge
 	for i = 1, #Allies do
 		if Allies[i].Health > 0 and Allies[i].Health <= Allies[i].MaxHealth * self.HealThreshold then
 			if Allies[i].MonsterID == 0 then
@@ -287,7 +289,7 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Prioritize players
-	HealIndex = OtherHealIndex
+	local HealIndex = OtherHealIndex
 	if PlayerHealIndex ~= 0 then
 		HealIndex = PlayerHealIndex
 	end
@@ -306,9 +308,10 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Find enemy with debuff
-	AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
+	local AttractIndex = AI_FindAttractant(Buff_Fractured, Enemies)
 
 	-- Target enemy with debuff
+	local Target = 1
 	if AttractIndex > 0 then
 		Target = AttractIndex
 	else
@@ -346,7 +349,7 @@ function AI_GoblinThief.Update(self, Object, Enemies, Allies)
 		Object.AddTarget(Object.Pointer)
 		Object.SetAction(2)
 	else
-		Target = Random.GetInt(1, #Enemies)
+		local Target = Random.GetInt(1, #Enemies)
 		Object.AddTarget(Enemies[Target].Pointer)
 
 		if Random.GetInt(1, 10) <= 7 and Object.SetAction(1) then
@@ -371,7 +374,7 @@ function AI_LavaMan.Update(self, Object, Enemies, Allies)
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 5) == 1 then
-		CanUse = Object.SetAction(10)
+		local CanUse = Object.SetAction(10)
 		if CanUse == false then
 			Object.SetAction(0)
 		end
@@ -380,7 +383,7 @@ function AI_LavaMan.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -399,7 +402,7 @@ function AI_Snowman.Update(self, Object, Enemies, Allies)
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 3) == 1 then
-		CanUse = Object.SetAction(1)
+		local CanUse = Object.SetAction(1)
 		if CanUse == false then
 			Object.SetAction(0)
 		end
@@ -408,7 +411,7 @@ function AI_Snowman.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -427,7 +430,7 @@ function AI_LavaSpitter.Update(self, Object, Enemies, Allies)
 
 	-- Chance to do special attack
 	if Random.GetInt(1, 5) == 1 then
-		CanUse = Object.SetAction(10)
+		local CanUse = Object.SetAction(10)
 		if CanUse == false then
 			Object.SetAction(0)
 		end
@@ -436,7 +439,7 @@ function AI_LavaSpitter.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -454,8 +457,8 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Look for existing demon
-	FoundDemon = false
-	AllyCount = 0
+	local FoundDemon = false
+	local AllyCount = 0
 	for i = 1, #Allies do
 		if Allies[i].MonsterID == 23 and Allies[i].Owner == Object.Pointer then
 			FoundDemon = true
@@ -465,7 +468,7 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Don't summon if one exists
-	SummonDemon = false
+	local SummonDemon = false
 	if FoundDemon == false then
 		SummonDemon = true
 	end
@@ -486,11 +489,11 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Cast spell
-	Roll = Random.GetInt(1, 10)
+	local Roll = Random.GetInt(1, 10)
 	if Roll < 4 then
 
 		-- Ice nova
-		CanCast = Object.SetAction(2)
+		local CanCast = Object.SetAction(2)
 		if CanCast then
 			for i = 1, #Enemies do
 				Object.AddTarget(Enemies[i].Pointer)
@@ -501,17 +504,17 @@ function AI_SkeletonMage.Update(self, Object, Enemies, Allies)
 	else
 
 		-- Enfeeble or Flay
-		CanCast = Object.SetAction(Random.GetInt(3, 4))
+		local CanCast = Object.SetAction(Random.GetInt(3, 4))
 		if CanCast then
-			Target = Random.GetInt(1, #Enemies)
+			local Target = Random.GetInt(1, #Enemies)
 			Object.AddTarget(Enemies[Target].Pointer)
 
 			return
 		end
-
 	end
 
 	-- Attack
+	local Target = Random.GetInt(1, #Enemies)
 	Object.AddTarget(Enemies[Target].Pointer)
 	Object.SetAction(0)
 end
@@ -534,7 +537,7 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 
 	-- Chance to do special attack
 	if Storage[Object.ID].Turns >= 2 and Random.GetInt(1, 3) == 1 then
-		CanUse = Object.SetAction(1)
+		local CanUse = Object.SetAction(1)
 		if CanUse then
 			for i = 1, #Enemies do
 				Object.AddTarget(Enemies[i].Pointer)
@@ -545,7 +548,7 @@ function AI_Raj.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -587,7 +590,7 @@ function AI_Arach.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -613,7 +616,7 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 	if Object.Health > 0 and Object.Health <= Object.MaxHealth * 0.75 then
 
 		-- Check if already healing
-		Healing = false
+		local Healing = false
 		for i = 1, #Object.StatusEffects do
 			Effect = Object.StatusEffects[i]
 			if Effect.Buff == Buff_Healing then
@@ -646,7 +649,7 @@ function AI_Jem.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
@@ -680,7 +683,7 @@ function AI_Zog.Update(self, Object, Enemies, Allies)
 	end
 
 	-- Get random target
-	Target = Random.GetInt(1, #Enemies)
+	local Target = Random.GetInt(1, #Enemies)
 
 	-- Set target
 	Object.AddTarget(Enemies[Target].Pointer)
