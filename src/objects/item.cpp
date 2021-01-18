@@ -528,7 +528,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 			}
 		} break;
 		case ItemType::KEY: {
-			if(Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID)) {
+			if(Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID) != NOSLOT) {
 				InfoText = "Already in keychain";
 				InfoColor = ae::Assets.Colors["red"];
 			}
@@ -892,7 +892,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 	// Check for item in key bag
 	if(IsKey())
-		return !Object->Inventory->GetBag(BagType::KEYS).HasItemID(ID);
+		return Object->Inventory->GetBag(BagType::KEYS).HasItemID(ID) == NOSLOT;
 
 	// Unlocking item
 	if(IsUnlockable())

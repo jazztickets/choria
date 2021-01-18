@@ -81,7 +81,7 @@ struct _Bag {
 	void Serialize(ae::_Buffer &Data);
 	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 
-	bool HasItemID(uint32_t ItemID);
+	std::size_t HasItemID(uint32_t ItemID);
 
 	std::vector<_InventorySlot> Slots;
 	std::string Name;
@@ -123,7 +123,6 @@ class _Inventory {
 		void UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats);
 
 		bool FindItem(const _Item *Item, std::size_t &Slot, std::size_t StartSlot);
-		bool HasItemID(uint32_t ItemID);
 		int CountItem(const _Item *Item);
 		bool IsValidSlot(const _Slot &Slot) { return Slot.Type > BagType::NONE && Slot.Type < BagType::COUNT && Slot.Index < GetBag(Slot.Type).Slots.size(); }
 		_InventorySlot &GetSlot(const _Slot &Slot) { return GetBag(Slot.Type).Slots[Slot.Index]; }

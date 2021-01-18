@@ -32,11 +32,13 @@
 #include <ae/program.h>
 #include <ae/camera.h>
 #include <ae/servernetwork.h>
+#include <ae/clientnetwork.h>
 #include <ae/peer.h>
 #include <ae/graphics.h>
 #include <ae/random.h>
 #include <ae/light.h>
 #include <states/editor.h>
+#include <states/play.h>
 #include <server.h>
 #include <scripting.h>
 #include <constants.h>
@@ -988,14 +990,43 @@ bool _Map::Save(const std::string &Path) {
 // Determines if a square can be moved to
 bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 
-	// Bounds
+	// Check bounds
 	if(Position.x < 0 || Position.x >= Size.x || Position.y < 0 || Position.y >= Size.y)
 		return false;
 
+	// Check events
 	const _Tile *Tile = &Tiles[Position.x][Position.y];
 	if(Tile->Event.Type == _Map::EVENT_KEY) {
-		if(Object->Inventory->HasItemID(Tile->Event.Data))
+
+		// Search for item in key chain
+		if(Object->Inventory->GetBag(BagType::KEYS).HasItemID(Tile->Event.Data) != NOSLOT)
 			return true;
+
+		// Automatically add key to keychain on use if found in inventory bag
+		std::size_t FoundIndex = Object->Inventory->GetBag(BagType::INVENTORY).HasItemID(Tile->Event.Data);
+		if(FoundIndex != NOSLOT) {
+
+			// Check for client
+			if(!Server) {
+
+				// Only add keys
+				try {
+					const _Item *Item = Stats->Items.at(Tile->Event.Data);
+					if(Item->Type == ItemType::KEY) {
+						_Slot Slot(BagType::INVENTORY, FoundIndex);
+						ae::_Buffer Packet;
+						Packet.Write<PacketType>(PacketType::INVENTORY_USE);
+						Packet.WriteBit(0);
+						Slot.Serialize(Packet);
+						PlayState.Network->SendPacket(Packet);
+					}
+				}
+				catch(std::exception &Error) {
+				}
+			}
+
+			return true;
+		}
 
 		// Set message for client
 		if(!Server) {

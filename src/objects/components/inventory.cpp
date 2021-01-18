@@ -103,16 +103,6 @@ bool _Inventory::FindItem(const _Item *Item, std::size_t &Slot, std::size_t Star
 	return false;
 }
 
-// Return true if a certain item id is in the inventory
-bool _Inventory::HasItemID(uint32_t ItemID) {
-	for(auto &Bag : Bags) {
-		if(Bag.HasItemID(ItemID))
-			return true;
-	}
-
-	return false;
-}
-
 // Count the number of a certain item in inventory
 int _Inventory::CountItem(const _Item *Item) {
 	int Count = 0;
@@ -284,7 +274,7 @@ _Slot _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
 		Slot = FindSlotForItemInBag(BagType::INVENTORY, Item, Upgrades, Count);
 
 	// Add key to keychain
-	if(!IsValidSlot(Slot) && Item && Item->Type == ItemType::KEY && !GetBag(BagType::KEYS).HasItemID(Item->ID))
+	if(!IsValidSlot(Slot) && Item && Item->Type == ItemType::KEY && GetBag(BagType::KEYS).HasItemID(Item->ID) == NOSLOT)
 		GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(Item, 1));
 
 	return Slot;
@@ -608,12 +598,12 @@ void _Bag::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	}
 }
 
-// Check for an item
-bool _Bag::HasItemID(uint32_t ItemID) {
+// Check for an item and return the slot index or NOSLOT
+std::size_t _Bag::HasItemID(uint32_t ItemID) {
 	for(std::size_t i = 0; i < Slots.size(); i++) {
 		if(Slots[i].Item && Slots[i].Item->ID == ItemID)
-			return true;
+			return i;
 	}
 
-	return false;
+	return NOSLOT;
 }
