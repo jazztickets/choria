@@ -18,6 +18,7 @@
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
+#include <objects/components/monster.h>
 #include <objects/object.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
@@ -533,7 +534,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Add fist damage
-	if(!HasWeaponDamage) {
+	if(!Object->Monster->DatabaseID && !HasWeaponDamage) {
 		Attributes["MinDamage"].Int = 1;
 		Attributes["MaxDamage"].Int = 2;
 	}
