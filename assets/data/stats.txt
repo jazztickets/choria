@@ -3252,7 +3252,7 @@ INSERT INTO item VALUES(348,9,0,0,0,0,0,0,'Constricting Amulet','textures/items/
 INSERT INTO item VALUES(349,10,0,1,1,0,0,0,'Warming Torch','textures/items/warm_torch.png','','Item_WarmingTorch','',0,1000,1,0,0,0,60.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(350,13,0,0,0,0,0,0,'Frozen Key','textures/items/key2.png','','','',0,50000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(351,13,0,0,0,0,0,0,'Dark Chamber Key','textures/items/key1.png','','','',0,200000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(352,11,0,0,0,0,0,0,'Credits','textures/items/note.png','','Item_Credits','',0,10000000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(352,11,0,0,0,0,0,0,'Credits','textures/items/note.png','','Item_Credits','',0,10000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(353,10,0,2,2,0,0,0,'Cold Dust','textures/items/cold_dust.png','','Item_ColdDust','',0,200,1,40,0,0,10.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(354,10,0,8,2,0,0,0,'Snowball','textures/items/snowball.png','','Item_Bone','',0,125,1,75,0,0,2.5,3.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(355,9,0,0,0,0,4,0,'Chilly Amulet','textures/items/amulet_ice.png','','Item_FreezeProtection','',0,100000,1,0,0,0,0.0,0.0,1,0,0,0,0,0,35,0,0,0,0,0,0,0,0,0);
