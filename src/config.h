@@ -72,11 +72,12 @@ class _Config {
 		std::string DesignToolURL;
 
 		// Misc
-		bool ShowTutorial;
 		std::string LastUsername;
 		std::string LastHost;
 		std::string LastPort;
 		std::string Locale;
+		bool ShowTutorial;
+		bool Clock24Hour;
 
 	private:
 

@@ -122,6 +122,7 @@ void _Config::SetDefaults() {
 	LastUsername = "";
 	LastHost = "127.0.0.1";
 	LastPort = std::to_string(DEFAULT_NETWORKPORT);
+	Clock24Hour = false;
 
 #ifdef _WIN32
 	BrowserCommand = "explorer";
@@ -261,6 +262,7 @@ void _Config::Load() {
 	GetValue("rightclick_sell", RightClickSell);
 	GetValue("offline", Offline);
 	GetValue("locale", Locale);
+	GetValue("24hourclock", Clock24Hour);
 
 	if(NetworkRate < 0.01)
 		NetworkRate = 0.01;
@@ -326,6 +328,7 @@ void _Config::Save() {
 	File << "rightclick_sell=" << RightClickSell << std::endl;
 	File << "offline=" << Offline << std::endl;
 	File << "locale=" << Locale << std::endl;
+	File << "24hourclock=" << Clock24Hour << std::endl;
 
 	// Write out input map
 	ae::Actions.Serialize(File, ae::_Input::KEYBOARD);

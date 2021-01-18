@@ -108,7 +108,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void CheckEvents(_Object *Object, _Scripting *Scripting) const;
 		void CheckBattle(_Object *Object, const _Tile *Tile) const;
 		void IndexEvents();
-		void GetClockAsString(std::stringstream &Buffer) const;
+		void GetClockAsString(std::stringstream &Buffer, bool Clock24Hour) const;
 		void SetAmbientLightByClock();
 		void StartEvent(_Object *Object, _Event Event) const;
 		bool IsPVPZone(const glm::ivec2 &Position) const;

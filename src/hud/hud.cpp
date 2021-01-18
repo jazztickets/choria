@@ -771,7 +771,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer << std::put_time(std::localtime(&CurrentTime), "%X");
 	}
 	else
-		Map->GetClockAsString(Buffer);
+		Map->GetClockAsString(Buffer, Config.Clock24Hour);
 
 	ae::Assets.Elements["label_hud_clock"]->Text = Buffer.str();
 	Buffer.str("");

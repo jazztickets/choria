@@ -408,20 +408,24 @@ void _Map::IndexEvents() {
 }
 
 // Convert clock time to text
-void _Map::GetClockAsString(std::stringstream &Buffer) const {
-
+void _Map::GetClockAsString(std::stringstream &Buffer, bool Clock24Hour) const {
 	int Hours = (int)(Clock / 60.0);
-	if(Hours == 0)
-		Hours = 12;
-	else if(Hours > 12)
-		Hours -= 12;
-
 	int Minutes = (int)std::fmod(Clock, 60.0);
+	if(!Clock24Hour) {
+		if(Hours == 0)
+			Hours = 12;
+		else if(Hours > 12)
+			Hours -= 12;
 
-	if(Clock < MAP_DAY_LENGTH / 2)
-		Buffer << Hours << ":" << std::setfill('0') << std::setw(2) << Minutes << " AM";
-	else
-		Buffer << Hours << ":" << std::setfill('0') << std::setw(2) << Minutes << " PM";
+		Buffer << Hours << ":" << std::setfill('0') << std::setw(2) << Minutes;
+		if(Clock < MAP_DAY_LENGTH / 2)
+			Buffer << " AM";
+		else
+			Buffer << " PM";
+	}
+	else {
+		Buffer << std::setfill('0') << std::setw(2) << Hours << ":" << std::setfill('0') << std::setw(2) << Minutes;
+	}
 }
 
 // Set ambient light for map

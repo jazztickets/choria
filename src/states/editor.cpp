@@ -595,7 +595,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Clock
 	if(Map) {
-		Map->GetClockAsString(Buffer);
+		Map->GetClockAsString(Buffer, Config.Clock24Hour);
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(ae::Graphics.ViewportSize.x - 84 * ae::_Element::GetUIScale(), 50 * ae::_Element::GetUIScale()));
 		Buffer.str("");
 	}
