@@ -523,9 +523,19 @@ void _Character::CalculateStats() {
 	}
 
 	// Get damage
+	bool HasWeaponDamage = false;
 	for(std::size_t i = 0; i < ItemMinDamage.size(); i++) {
+		if(ItemMinDamage[i] != 0 || ItemMaxDamage[i] != 0)
+			HasWeaponDamage = true;
+
 		Attributes["MinDamage"].Int += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
 		Attributes["MaxDamage"].Int += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
+	}
+
+	// Add fist damage
+	if(!HasWeaponDamage) {
+		Attributes["MinDamage"].Int = 1;
+		Attributes["MaxDamage"].Int = 2;
 	}
 
 	// Cap resistances
@@ -582,8 +592,8 @@ void _Character::CalculateLevelStats() {
 	// Set base attributes
 	BaseMaxHealth = LevelStat->Health;
 	BaseMaxMana = LevelStat->Mana;
-	BaseMinDamage = 1;
-	BaseMaxDamage = 2;
+	BaseMinDamage = 0;
+	BaseMaxDamage = 0;
 	BaseArmor = 0;
 	BaseDamageBlock = 0;
 	SkillPoints = LevelStat->SkillPoints;
