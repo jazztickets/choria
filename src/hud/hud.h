@@ -209,6 +209,8 @@ class _HUD {
 
 	private:
 
+		static double RoundPrice(double Number);
+
 		bool CloseConfirm();
 		bool CloseMinigame();
 		bool CloseParty();
@@ -227,7 +229,6 @@ class _HUD {
 		void DrawCooldown(const ae::_Element *Button, const _Item *Item);
 
 		void SetActionBar(std::size_t Slot, std::size_t OldSlot, const _Action &Action);
-
 		void SplitStack(const _Slot &Slot, uint8_t Count);
 		void Transfer(const _Slot &Slot);
 		BagType GetBagFromWindow(int Window);

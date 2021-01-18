@@ -61,6 +61,11 @@
 #include <sstream>
 #include <iomanip>
 
+// Round display price up
+double _HUD::RoundPrice(double Number) {
+	return std::ceil(Number * 100) / 100.0;
+}
+
 // Initialize
 _HUD::_HUD() {
 	EnableMouseCombat = false;
@@ -155,11 +160,11 @@ void _HUD::FormatTime(std::stringstream &Buffer, int64_t Time) {
 // Format large number into K, M, etc.
 void _HUD::FormatLargeNumber(std::stringstream &Buffer, int64_t Number) {
 	if(std::abs(Number) >= 1000000000)
-		Buffer << ae::Round(Number / 1000000000.0) << "B";
+		Buffer << _HUD::RoundPrice(Number * 0.000000001) << "B";
 	else if(std::abs(Number) >= 1000000)
-		Buffer << ae::Round(Number / 1000000.0) << "M";
+		Buffer << _HUD::RoundPrice(Number * 0.000001) << "M";
 	else if(std::abs(Number) >= 10000)
-		Buffer << ae::Round(Number / 1000.0) << "K";
+		Buffer << _HUD::RoundPrice(Number * 0.001) << "K";
 	else
 		Buffer << Number;
 }
