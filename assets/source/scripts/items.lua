@@ -122,7 +122,7 @@ end
 Item_PoisonPotion = Base_Potion:New()
 
 function Item_PoisonPotion.GetInfo(self, Source, Item)
-	return "Poison a target for [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower * 0.01) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Poison a target for [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower * 0.01) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c yellow]Heal power is reduced when poisoned"
 end
 
 function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)

@@ -423,7 +423,7 @@ function Skill_PoisonTouch.GetInfo(self, Source, Item)
 		DamageValue = self:GetDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self.Duration .. "[c white] seconds"
 	end
 
-	return "Infuse venom into your enemy, dealing [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Infuse venom into your enemy, dealing [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heal power is reduced when poisoned"
 end
 
 function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
@@ -437,6 +437,32 @@ end
 
 function Skill_PoisonTouch.PlaySound(self)
 	Audio.Play("touch0.ogg")
+end
+
+
+-- Fireball --
+
+Skill_Fireball = Base_Spell:New()
+Skill_Fireball.DamageBase = 60
+Skill_Fireball.DamagePerLevel = 20
+Skill_Fireball.DamageScale = 1.5
+Skill_Fireball.DamagePower = 2
+Skill_Fireball.DamageRange = 0.2
+Skill_Fireball.CostPerLevel = 10
+Skill_Fireball.ManaCostBase = 50 - Skill_Fireball.CostPerLevel
+Skill_Fireball.Targets = 3
+Skill_Fireball.TargetsPerLevel = 0
+
+function Skill_Fireball.GetDamagePower(self, Source, Level)
+	return Source.FirePower * 0.01 * Source.SpellDamage * 0.01
+end
+
+function Skill_Fireball.GetInfo(self, Source, Item)
+	return "Hurl a flaming ball at [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foes for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Fireball.PlaySound(self)
+	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Fire Blast --
@@ -557,7 +583,7 @@ function Skill_ChainLightning.GetChance(self, Level)
 end
 
 function Skill_ChainLightning.GetInfo(self, Source, Item)
-	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. "[c white] MP"
+	return "Summon a powerful bolt of energy, hitting [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies for [c green]" .. self:GetDamageText(Source, Item) .. "[c white] lightning damage with a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to stun for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. "[c white] MP"
 end
 
 function Skill_ChainLightning.Proc(self, Roll, Level, Duration, Source, Target, Result)
