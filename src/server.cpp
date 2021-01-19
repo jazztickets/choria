@@ -63,6 +63,9 @@ static void RunThread(void *Arguments) {
 		// Run server
 		TimeStepAccumulator += FrameTime * Config.TimeScale;
 		while(TimeStepAccumulator >= TimeStep) {
+			if(TimeStepAccumulator > DEBUG_STALL_THRESHOLD)
+				Server->Log << "[STALL] TimeStepAccumulator=" << TimeStepAccumulator << std::endl;
+
 			Server->Update(TimeStep);
 			TimeStepAccumulator -= TimeStep;
 		}

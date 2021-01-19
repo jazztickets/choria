@@ -637,6 +637,9 @@ void _PlayState::HandleQuit() {
 
 // Update
 void _PlayState::Update(double FrameTime) {
+	if(Framework.GetTimeStepAccumulator() > DEBUG_STALL_THRESHOLD)
+		std::cout << "[STALL] TimeStepAccumulator=" << Framework.GetTimeStepAccumulator() << std::endl;
+
 	CoinSoundPlayed = false;
 	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
 	//	std::cout << "Client: O=" << ObjectManager->Objects.size() << " B=" << (int)(Battle != nullptr) << std::endl;

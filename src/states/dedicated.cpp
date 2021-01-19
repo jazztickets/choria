@@ -27,6 +27,7 @@
 #include <framework.h>
 #include <server.h>
 #include <stats.h>
+#include <constants.h>
 #include <enet/enet.h>
 #include <iomanip>
 
@@ -128,6 +129,10 @@ void _DedicatedState::Close() {
 
 // Update
 void _DedicatedState::Update(double FrameTime) {
+	if(Framework.GetTimeStepAccumulator() > DEBUG_STALL_THRESHOLD)
+		Server->Log << "[STALL] TimeStepAccumulator=" << Framework.GetTimeStepAccumulator() << std::endl;
+
+	// Update server
 	Server->Update(FrameTime);
 
 	if(Server->Done) {

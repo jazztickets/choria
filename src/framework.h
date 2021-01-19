@@ -51,6 +51,7 @@ class _Framework {
 
 		ae::_State *GetState() { return State; }
 		void ChangeState(ae::_State *RequestedState);
+		double GetTimeStepAccumulator() const { return TimeStepAccumulator; }
 
 		// Graphics
 		ae::_FrameLimit *FrameLimit;

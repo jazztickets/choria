@@ -35,6 +35,8 @@ const  uint16_t     DEFAULT_NETWORKPORT                =  31234;
 const  uint16_t     DEFAULT_NETWORKPINGPORT            =  31235;
 const  double       DEFAULT_TIMESTEP                   =  1/100.0;
 const  double       DEFAULT_AUTOSAVE_PERIOD            =  60.0;
+//     Debug
+const  double       DEBUG_STALL_THRESHOLD              =  1.0;
 //     Camera
 const  float        CAMERA_DISTANCE                    =  8.4375f;
 const  float        CAMERA_DIVISOR                     =  30.0f;

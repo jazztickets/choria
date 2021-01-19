@@ -323,6 +323,7 @@ void _Framework::Update() {
 						Console->Command = "";
 					}
 				}
+
 				TimeStepAccumulator -= TimeStep;
 			}
 
