@@ -1002,6 +1002,10 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 		if(Object->Inventory->GetBag(BagType::KEYS).HasItemID(Tile->Event.Data) != NOSLOT)
 			return true;
 
+		// Search for item in equipment
+		if(Object->Inventory->GetBag(BagType::EQUIPMENT).HasItemID(Tile->Event.Data) != NOSLOT)
+			return true;
+
 		// Automatically add key to keychain on use if found in inventory bag
 		std::size_t FoundIndex = Object->Inventory->GetBag(BagType::INVENTORY).HasItemID(Tile->Event.Data);
 		if(FoundIndex != NOSLOT) {
