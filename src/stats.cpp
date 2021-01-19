@@ -782,7 +782,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, float MonsterCount
 		std::vector<_Zone> Zone;
 		uint32_t OddsSum = 0;
 		int MaxTotal = 0;
-		bool HasZeroMax = true;
+		bool AllMaxCount = true;
 		while(Database->FetchRow()) {
 
 			// Get zone data
@@ -801,7 +801,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, float MonsterCount
 				ZoneData.Max += AdditionalCount;
 			}
 			else
-				HasZeroMax = false;
+				AllMaxCount = false;
 
 			OddsSum += ZoneData.Odds;
 			ZoneData.Odds = OddsSum;
@@ -813,7 +813,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, float MonsterCount
 		if(OddsSum > 0) {
 
 			// Cap monster count if all monsters have a max set
-			if(HasZeroMax)
+			if(AllMaxCount)
 				MonsterCount = std::min(MaxTotal, MonsterCount);
 
 			// Generate monsters
