@@ -515,7 +515,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 					// No damage dealt
 					if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
-					   && ((ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Int == 0) || ActionResult.Target.HasStat("Miss"))) {
+						&& ((ActionResult.Target.HasStat("Health") && ActionResult.Target.Values["Health"].Int == 0) || ActionResult.Target.HasStat("Miss"))) {
 						ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 						ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 					}

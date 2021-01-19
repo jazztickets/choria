@@ -1499,13 +1499,13 @@ void _Menu::Render() {
 		} break;
 		case STATE_OPTIONS: {
 			if(FromInGame)
-			   ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
+				ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
 
 			ae::Assets.Elements["element_menu_options"]->Render();
 		} break;
 		case STATE_KEYBINDINGS: {
 			if(FromInGame)
-			   ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
+				ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
 
 			CurrentLayout->Render();
 			if(ae::Assets.Elements["element_menu_keybindings_newkey"]->Active) {
@@ -1632,7 +1632,7 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 
 				// Check server settings
 				if(HardcoreServer && !Hardcore)
-				   CharacterSlots[Slot].CanPlay = false;
+					CharacterSlots[Slot].CanPlay = false;
 
 				// Set portrait
 				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);

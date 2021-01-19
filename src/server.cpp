@@ -480,7 +480,7 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Send an item to the player
 void _Server::SendItem(ae::_Peer *Peer, const _Item *Item, int Count) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 	if(!Player || !Item)
@@ -654,7 +654,7 @@ void _Server::HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handles move commands from a client
 void _Server::HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 	if(!Player->Character->IsAlive())
@@ -672,7 +672,7 @@ void _Server::HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handles use command from a client
 void _Server::HandleUseCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 	if(!Player->Character->IsAlive())
@@ -684,7 +684,7 @@ void _Server::HandleUseCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle respawn command from client
 void _Server::HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 
@@ -706,7 +706,7 @@ void _Server::HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle a chat message
 void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 
@@ -730,7 +730,7 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Send position to player
 void _Server::SendPlayerPosition(ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 
@@ -794,7 +794,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 		return;
 
 	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
-	   return;
+		return;
 
 	// Use spawn point for new characters
 	if(MapID == 0) {
@@ -886,7 +886,7 @@ void _Server::QueueRebirth(_Object *Object, int Mode, int Type, int Value) {
 // Queue a battle for an object
 void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed) {
 	if(NoPVP)
-	   SendMessage(Object->Peer, "PVP is disabled", "red");
+		SendMessage(Object->Peer, "PVP is disabled", "red");
 
 	_BattleEvent BattleEvent;
 	BattleEvent.Object = Object;
@@ -1646,7 +1646,7 @@ void _Server::HandlePlayerStatus(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle a player dismissing a buff
 void _Server::HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	// Get data
 	uint32_t BuffID = Data.Read<uint32_t>();
@@ -1677,7 +1677,7 @@ void _Server::HandleClearBuff(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Upgrade an item
 void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 
@@ -1734,7 +1734,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle paying to play a minigame
 void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	// Validate
 	_Object *Player = Peer->Object;
@@ -1759,7 +1759,7 @@ void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Give player minigame reward
 void _Server::HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	// Validate
 	_Object *Player = Peer->Object;
@@ -1796,7 +1796,7 @@ void _Server::HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle join battle request by player
 void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 	if(!Player->Character->AcceptingMoveInput())
@@ -1836,54 +1836,55 @@ void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle client exit command
 void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool Penalize) {
 	if(!Peer)
-	   return;
+		return;
 
 	// Get object
 	_Object *Player = Peer->Object;
-	if(Player) {
-		Player->Peer = nullptr;
+	if(!Player)
+		return;
 
-		if(Player->Map) {
-			if(!Player->Character->Offline)
-				BroadcastMessage(Peer, Player->Name + " has left the server", "gray");
-			Player->Character->LoadMapID = Player->GetMapID();
-		}
-
-		// Penalize player for leaving battle
-		if(Player->Character->Battle) {
-
-			// Remove stolen gold
-			if(Player->Fighter->GoldStolen)
-				Player->Character->Attributes["Gold"].Int64 -= Player->Fighter->GoldStolen;
-
-			// Apply penalty
-			if(Penalize) {
-				Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
-				Player->Character->Attributes["Health"].Int = 0;
-				Player->Character->Attributes["Mana"].Int = Player->Character->Attributes["MaxMana"].Int / 2;
-				Player->Character->LoadMapID = 0;
-				Player->Character->DeleteStatusEffects();
-			}
-		}
-
-		// Leave trading screen
-		_Object *TradePlayer = Player->Character->TradePlayer;
-		if(TradePlayer) {
-			TradePlayer->Character->TradePlayer = nullptr;
-
-			ae::_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
-			Network->SendPacket(Packet, TradePlayer->Peer);
-		}
-
-		// Save player
-		Save->StartTransaction();
-		Save->SavePlayer(Player, Player->Character->LoadMapID, &Log);
-		Save->EndTransaction();
-
-		Player->Deleted = true;
-		Peer->Object = nullptr;
+	// Broadcast message
+	if(Player->Map) {
+		if(!Player->Character->Offline)
+			BroadcastMessage(Peer, Player->Name + " has left the server", "gray");
+		Player->Character->LoadMapID = Player->GetMapID();
 	}
+
+	// Penalize player for leaving battle
+	if(Player->Character->Battle) {
+
+		// Remove stolen gold
+		if(Player->Fighter->GoldStolen)
+			Player->Character->Attributes["Gold"].Int64 -= Player->Fighter->GoldStolen;
+
+		// Apply penalty
+		if(Penalize) {
+			Player->ApplyDeathPenalty(true, PLAYER_DEATH_GOLD_PENALTY, 0);
+			Player->Character->Attributes["Health"].Int = 0;
+			Player->Character->Attributes["Mana"].Int = Player->Character->Attributes["MaxMana"].Int / 2;
+			Player->Character->LoadMapID = 0;
+			Player->Character->DeleteStatusEffects();
+		}
+	}
+
+	// Leave trading screen
+	_Object *TradePlayer = Player->Character->TradePlayer;
+	if(TradePlayer) {
+		TradePlayer->Character->TradePlayer = nullptr;
+
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
+		Network->SendPacket(Packet, TradePlayer->Peer);
+	}
+
+	// Save player
+	Save->StartTransaction();
+	Save->SavePlayer(Player, Player->Character->LoadMapID, &Log);
+	Save->EndTransaction();
+
+	Player->Deleted = true;
+	Player->Peer = nullptr;
+	Peer->Object = nullptr;
 }
 
 // Handle console commands
@@ -1892,7 +1893,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	// Get player
 	_Object *Player = Peer->Object;
@@ -1990,7 +1991,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle last update id from player
 void _Server::HandleUpdateID(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	Peer->Object->UpdateID = Data.Read<uint8_t>();
 }
@@ -1998,7 +1999,7 @@ void _Server::HandleUpdateID(ae::_Buffer &Data, ae::_Peer *Peer) {
 // Handle action use by player
 void _Server::HandleActionUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
-	   return;
+		return;
 
 	_Object *Player = Peer->Object;
 	if(!Player->Character->IsAlive())

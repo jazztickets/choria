@@ -765,7 +765,7 @@ int _Map::AddLights(_Object *ClientPlayer, const std::list<_Object *> *ObjectLis
 		// Check for valid light
 		const auto &Iterator = Stats->Lights.find(Object->Light);
 		if(Iterator == Stats->Lights.end())
-		   continue;
+			continue;
 
 		const _LightType &LightType = Iterator->second;
 

@@ -1716,7 +1716,7 @@ bool _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 			_Object *LastTarget = Target;
 			auto Iterator = ObjectList.begin();
 			if(ObjectList.size())
-			   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
+				Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 			// Set up alive targets
 			for(std::size_t i = 0; i < ObjectList.size(); i++) {
@@ -1880,7 +1880,7 @@ void _Object::SetLogging(bool Value) {
 
 // Check if object is a monster
 bool _Object::IsMonster() const {
-	 return Monster->DatabaseID != 0;
+	return Monster->DatabaseID != 0;
 }
 
 // Create list of nodes to destination

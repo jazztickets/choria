@@ -350,7 +350,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 	// Get iterator to last target
 	_Object *LastTarget = InitialTarget;
 	if(ObjectList.size() && LastTarget && Item->CanTarget(Scripting, ClientPlayer, LastTarget))
-	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
+		Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 	// Set up targets
 	int TargetCount = Item->GetTargetCount(Scripting, ClientPlayer);
@@ -401,7 +401,7 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 	// Get iterator to current target
 	auto Iterator = ObjectList.begin();
 	if(ObjectList.size())
-	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), ClientPlayer->Character->Targets.front());
+	Iterator = std::find(ObjectList.begin(), ObjectList.end(), ClientPlayer->Character->Targets.front());
 
 	// Get target count
 	std::size_t TargetCount;

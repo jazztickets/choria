@@ -987,7 +987,7 @@ std::size_t _Vendor::GetSlotFromID(uint32_t ID) const {
 // Determine if a blacksmith can upgrade an item
 bool _Blacksmith::CanUpgrade(const _Item *Item, int Upgrades) const {
 	if(!Item)
-	   return false;
+		return false;
 
 	if(!Item->IsEquippable())
 		return false;
