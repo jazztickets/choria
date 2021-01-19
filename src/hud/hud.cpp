@@ -1057,6 +1057,7 @@ bool _HUD::CloseTeleport() {
 	if(WasOpen) {
 		PlayState.SendStatus(_Character::STATUS_NONE);
 		Player->Controller->WaitForServer = false;
+		Player->Character->TeleportTime = 0.0;
 	}
 
 	return WasOpen;
