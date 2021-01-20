@@ -2630,6 +2630,10 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	for(int i = 0; i < KeyUnlockCount; i++)
 		Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(KeyUnlocks[i], 1));
 
+	// Give tears on evolve
+	if(RebirthEvent.Mode == 1)
+		Player->Inventory->AddItem(Stats->Items.at(365), 1, 1);
+
 	// Unlock highest learned skills
 	int SkillCount = Character->Attributes["RebirthKnowledge"].Int;
 	if(SkillCount) {
