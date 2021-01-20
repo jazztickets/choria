@@ -1361,7 +1361,7 @@ Base_Evolve = {
 		if self.Type == 1 then
 			return math.floor(Source.EvolveTier * 10)
 		elseif self.Type == 2 then
-			return math.floor(Source.EvolveTier)
+			return math.floor(Source.EvolveTier * 2)
 		end
 	end,
 
