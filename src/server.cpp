@@ -2633,15 +2633,15 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	// Get highest skills
 	int SkillCount = Character->Attributes["RebirthKnowledge"].Int;
 	if(SkillCount) {
-		std::list<_HighestSkill> Skills;
+		std::list<_HighestSkill> HighestSkills;
 		for(const auto &Skill : OldSkills) {
-			if(Skill.second > 0)
-				Skills.push_back(_HighestSkill(Skill.first, Skill.second));
+			if(Build->Character->Skills.find(Skill.first) == Build->Character->Skills.end())
+				HighestSkills.push_back(_HighestSkill(Skill.first, Skill.second));
 		}
-		Skills.sort();
+		HighestSkills.sort();
 
 		// Learn old skills
-		for(const auto &Skill : Skills) {
+		for(const auto &Skill : HighestSkills) {
 			Character->Skills[Skill.ID] = 0;
 
 			SkillCount--;
