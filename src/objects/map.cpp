@@ -1017,12 +1017,18 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 				try {
 					const _Item *Item = Stats->Items.at(Tile->Event.Data);
 					if(Item->Type == ItemType::KEY) {
+
+						// Send use command
 						_Slot Slot(BagType::INVENTORY, FoundIndex);
 						ae::_Buffer Packet;
 						Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 						Packet.WriteBit(0);
 						Slot.Serialize(Packet);
 						PlayState.Network->SendPacket(Packet);
+
+						// Add message
+						if(PlayState.HUD)
+							PlayState.HUD->AddChatMessage(_Message("Used " + Item->Name, ae::Assets.Colors["yellow"], PlayState.Time));
 					}
 				}
 				catch(std::exception &Error) {

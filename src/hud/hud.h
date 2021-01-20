@@ -74,6 +74,7 @@ struct _Cursor {
 };
 
 struct _Message {
+	_Message(const std::string &Message, const glm::vec4 &Color, double Time) : Message(Message), Color(Color), Time(Time) { }
 	_Message() : Message(""), Color(1.0f), Time(0) { }
 
 	std::string Message;
@@ -170,7 +171,7 @@ class _HUD {
 		// Chat
 		void ToggleChat();
 		bool IsChatting();
-		void AddChatMessage(_Message &Chat) { ChatHistory.push_back(Chat); }
+		void AddChatMessage(const _Message &Chat) { ChatHistory.push_back(Chat); }
 		void UpdateSentHistory(int Direction);
 		void CloseChat();
 
