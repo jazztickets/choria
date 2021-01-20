@@ -535,8 +535,8 @@ void _Character::CalculateStats() {
 
 	// Add fist damage
 	if(!Object->Monster->DatabaseID && !HasWeaponDamage) {
-		Attributes["MinDamage"].Int = 1;
-		Attributes["MaxDamage"].Int = 2;
+		Attributes["MinDamage"].Int = Level;
+		Attributes["MaxDamage"].Int = Level + 1;
 	}
 
 	// Cap resistances
