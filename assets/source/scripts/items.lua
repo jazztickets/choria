@@ -175,6 +175,21 @@ function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
+-- Bottle of Tears --
+
+Item_Tears = Base_Potion:New()
+
+function Item_Tears.GetInfo(self, Source, Item)
+	return "Drink your tears to convert [c gold]gold lost[c white] into [c silver]experience points[c white]"
+end
+
+function Item_Tears.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Experience = Source.GoldLost
+	Result.Target.GoldLost = -Source.GoldLost
+
+	return Result
+end
+
 -- Skill Slot --
 
 Item_SkillSlot = { }

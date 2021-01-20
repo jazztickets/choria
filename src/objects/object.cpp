@@ -1359,6 +1359,12 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	// Update experience
 	if(StatChange.HasStat("Experience")) {
 		Character->UpdateExperience(StatChange.Values["Experience"].Int64);
+		Character->CalculateStats();
+	}
+
+	// Update gold lost
+	if(StatChange.HasStat("GoldLost")) {
+		Character->Attributes["GoldLost"].Int64 += StatChange.Values["GoldLost"].Int64;
 	}
 
 	// Update health

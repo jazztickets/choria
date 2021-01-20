@@ -1677,40 +1677,47 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 
 	// Check if player is alive
 	bool WasAlive = Player->Character->IsAlive();
+	int OldLevel = Player->Character->Level;
 
 	// Get stats
 	StatChange.Unserialize(Data, ObjectManager);
-	if(StatChange.Object) {
+	if(!StatChange.Object)
+		return;
 
-		// Update object
-		_StatusEffect *StatusEffect = StatChange.Object->UpdateStats(StatChange);
-		if(StatChange.Object == Player) {
+	// Update object
+	_StatusEffect *StatusEffect = StatChange.Object->UpdateStats(StatChange);
+	if(StatChange.Object == Player) {
 
-			// Create hud element for status effects
-			if(StatusEffect)
-				StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
+		// Create hud element for status effects
+		if(StatusEffect)
+			StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 
-			// Play buff sounds
-			if(StatChange.HasStat("BuffSound")) {
-				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values["BuffSound"].Int);
-				if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
-					Scripting->MethodCall(0, 0);
-					Scripting->FinishMethodCall();
-				}
+		// Play buff sounds
+		if(StatChange.HasStat("BuffSound")) {
+			const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values["BuffSound"].Int);
+			if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
+				Scripting->MethodCall(0, 0);
+				Scripting->FinishMethodCall();
 			}
-
-			// Update action bar
-			if(StatChange.HasStat("SkillBarSize") || StatChange.HasStat("BeltSize"))
-				HUD->UpdateActionBarSize();
-
-			// Play death sound
-			if(!Player->Character->Battle && Player->Character->Attributes["Health"].Int <= 0 && WasAlive)
-				PlayDeathSound();
 		}
 
-		// Add stat change
-		HUD->AddStatChange(StatChange);
+		// Update action bar
+		if(StatChange.HasStat("SkillBarSize") || StatChange.HasStat("BeltSize"))
+			HUD->UpdateActionBarSize();
+
+		// Play death sound
+		if(!Player->Character->Battle && Player->Character->Attributes["Health"].Int <= 0 && WasAlive) {
+			PlayDeathSound();
+		}
+		else {
+
+			// Handle leveling up
+			HandleLevelChange(OldLevel);
+		}
 	}
+
+	// Add stat change
+	HUD->AddStatChange(StatChange);
 }
 
 // Handles HUD updates
@@ -1718,8 +1725,8 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	int OldLevel = Player->Character->Level;
 	bool WasAlive = Player->Character->IsAlive();
+	int OldLevel = Player->Character->Level;
 
 	Player->Character->Attributes["Health"].Int = Data.Read<int>();
 	Player->Character->Attributes["Mana"].Int = Data.Read<int>();
@@ -1742,19 +1749,7 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 			ae::Audio.StopMusic();
 	}
 
-	if(Player->Character->Level > OldLevel) {
-		std::string Plural = "";
-		if(Player->Character->GetSkillPointsAvailable() != 1)
-			Plural = "s";
-
-		HUD->SetMessage("You have " + std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point" + Plural + ". Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to increase your skills.");
-		ae::Audio.PlaySound(ae::Assets.Sounds["success0.ogg"]);
-
-		if(Player->Character->Level == 2) {
-			Config.ShowTutorial = 0;
-			Config.Save();
-		}
-	}
+	HandleLevelChange(OldLevel);
 }
 
 // Handle seed from server
@@ -1925,6 +1920,29 @@ void _PlayState::DeleteBattle() {
 void _PlayState::DeleteMap() {
 	delete Map;
 	Map = nullptr;
+}
+
+// Handle when player changes level
+void _PlayState::HandleLevelChange(int OldLevel) {
+
+	// Check for higher level
+	if(Player->Character->Level <= OldLevel)
+		return;
+
+	// Handle text
+	std::string Plural = "";
+	if(Player->Character->GetSkillPointsAvailable() != 1)
+		Plural = "s";
+
+	// Display
+	HUD->SetMessage("You have " + std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point" + Plural + ". Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to increase your skills.");
+	ae::Audio.PlaySound(ae::Assets.Sounds["success0.ogg"]);
+
+	// Disable tutorial
+	if(Player->Character->Level == 2) {
+		Config.ShowTutorial = 0;
+		Config.Save();
+	}
 }
 
 // Set view projection matrix in shaders

@@ -180,6 +180,7 @@ class _PlayState : public ae::_State {
 		void AssignPlayer(_Object *Object);
 		void DeleteBattle();
 		void DeleteMap();
+		void HandleLevelChange(int OldLevel);
 
 		void SetViewProjection(ae::_Camera *CameraUsed);
 
