@@ -869,7 +869,10 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::vector<u
 	// Adjust odds by added odds
 	OddsSum -= AddedOdds;
 	for(auto &DropChance : PossibleItemDrops) {
-		DropChance.Odds -= AddedOdds;
+		if(DropChance.Odds >= AddedOdds)
+			DropChance.Odds -= AddedOdds;
+		else
+			DropChance.Odds = 0;
 	}
 
 	// Check for items
