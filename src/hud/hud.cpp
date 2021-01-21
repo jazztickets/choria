@@ -1058,6 +1058,10 @@ bool _HUD::CloseTeleport() {
 		PlayState.SendStatus(_Character::STATUS_NONE);
 		Player->Controller->WaitForServer = false;
 		Player->Character->TeleportTime = 0.0;
+		if(PlayState.TeleportSound) {
+			PlayState.TeleportSound->Stop();
+			PlayState.TeleportSound = nullptr;
+		}
 	}
 
 	return WasOpen;

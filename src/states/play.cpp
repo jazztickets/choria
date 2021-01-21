@@ -1890,9 +1890,6 @@ void _PlayState::SendStatus(uint8_t Status) {
 	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 	Packet.Write<uint8_t>(Status);
 	Network->SendPacket(Packet);
-
-	if(TeleportSound)
-		TeleportSound->Stop();
 }
 
 // Assigns the client player pointer
