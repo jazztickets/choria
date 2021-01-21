@@ -37,6 +37,7 @@ _Fighter::_Fighter(_Object *Object) :
 	FleeBattle(false),
 	BattleSide(0) {
 
+	ItemDropsReceived.reserve(10);
 }
 
 // Create a UI element for battle
