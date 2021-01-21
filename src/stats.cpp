@@ -839,62 +839,59 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, float MonsterCount
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::vector<uint32_t> &ItemDrops, float DropRate) const {
+void _Stats::GenerateItemDrops(uint32_t MonsterID, int Count, std::vector<uint32_t> &ItemDrops, float DropRate) const {
 	if(MonsterID == 0)
 		return;
 
-	// Run query
-	Database->PrepareQuery("SELECT item_id, odds FROM monsterdrop WHERE monster_id = @monster_id");
+	// Run query to generate CDT
+	Database->PrepareQuery("SELECT item_id, SUM(odds) OVER (ROWS UNBOUNDED PRECEDING) AS cdt FROM monsterdrop WHERE monster_id = @monster_id");
 	Database->BindInt(1, MonsterID);
 
-	// Get list of possible drops and build CDT
+	// Get list of possible drops
 	std::vector<_ItemDrop> PossibleItemDrops;
 	PossibleItemDrops.reserve(10);
-	uint32_t OddsSum = 0;
-	uint32_t AddedOdds = 0;
+	int OddsSum;
 	while(Database->FetchRow()) {
 		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
-		uint32_t Odds = 100 * Database->GetInt<uint32_t>("odds");
-		if(ItemID) {
-			uint32_t IncreasedOdds = Odds * DropRate;
-			AddedOdds += IncreasedOdds - Odds;
-			Odds = IncreasedOdds;
-		}
-
-		OddsSum += Odds;
+		OddsSum = Database->GetInt<int>("cdt");
 		PossibleItemDrops.push_back(_ItemDrop(ItemID, OddsSum));
 	}
 	Database->CloseQuery();
-
-	// Adjust odds by added odds
-	OddsSum -= AddedOdds;
-	for(auto &DropChance : PossibleItemDrops) {
-		if(DropChance.Odds >= AddedOdds)
-			DropChance.Odds -= AddedOdds;
-		else
-			DropChance.Odds = 0;
-	}
 
 	// Check for items
 	if(OddsSum <= 0)
 		return;
 
 	// Generate items
-	for(uint32_t i = 0; i < Count; i++) {
-		uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
+	for(int i = 0; i < Count; i++) {
+		int Rolls = (int)DropRate;
 
-		// Find item id in CDT
-		uint32_t ItemID = 0;
-		for(auto &MonsterDrop : PossibleItemDrops) {
-			if(RandomNumber <= MonsterDrop.Odds) {
-				ItemID = MonsterDrop.ItemID;
+		// Check for extra roll
+		double MultiOdds = DropRate - (int)DropRate;
+		double MultiRoll = ae::GetRandomReal(0, 1);
+		if(MultiRoll <= MultiOdds)
+			Rolls++;
+
+		// Roll for drops
+		for(int j = 0; j < Rolls; j++) {
+			int Roll = ae::GetRandomInt(1, OddsSum);
+
+			// Find item id in CDT
+			for(auto &MonsterDrop : PossibleItemDrops) {
+
+				// Check roll
+				if(Roll > MonsterDrop.Odds)
+					continue;
+
+				// Got nothing
+				if(!MonsterDrop.ItemID)
+					break;
+
+				// Add item
+				ItemDrops.push_back(MonsterDrop.ItemID);
 				break;
 			}
 		}
-
-		// Populate item list
-		if(ItemID)
-			ItemDrops.push_back(ItemID);
 	}
 }
 

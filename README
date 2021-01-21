@@ -37,7 +37,7 @@ libogg
 FreeType2
 Lua 5.2+
 GLM 0.9.9+
-SQLite 3+
+SQLite 3.25+
 jsoncpp
 tinyxml2
 zlib

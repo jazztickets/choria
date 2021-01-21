@@ -47,6 +47,35 @@ void _TestState::Init() {
 
 	Stats = new _Stats();
 
+	/*
+	if(1) {
+		const _Stats *Stats = new _Stats(true);
+
+		// Item drop sim
+		int Samples = 1000000;
+		float Rate = 2.f;
+		uint32_t MonsterID = 5;
+
+		ae::RandomGenerator.seed(SDL_GetPerformanceCounter());
+		std::map<uint32_t, int> Count;
+		std::vector<uint32_t> ItemDrops;
+		ItemDrops.reserve(Samples * Rate);
+		Stats->GenerateItemDrops(MonsterID, Samples, ItemDrops, Rate);
+		for(std::size_t j = 0; j < ItemDrops.size(); j++) {
+			Count[ItemDrops[j]]++;
+		}
+
+		int ItemSum = 0;
+		for(const auto &Value : Count) {
+			std::cout << "ItemID=" << Value.first << " Count=" << Value.second << " Percent=" << std::setprecision(5) << Value.second / (float)Samples * 100 << std::endl;
+			ItemSum += Value.second;
+		}
+		std::cout << "Sum=" << ItemSum << " Percent=" << std::setprecision(5) << ItemSum / (float)Samples * 100 << std::endl;
+
+		return 0;
+	}
+	*/
+
 	double MaxTime = 0;
 	double MinTime = 30;
 	int MaxBounces = 0;
