@@ -118,7 +118,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	if(Player->Character->Blacksmith)
 		Size.y += SpacingY + LargeSpacingY;
 	if(Type == ItemType::MAP)
-		Size.y = INVENTORY_TOOLTIP_MAP_HEIGHT;
+		Size.y = INVENTORY_TOOLTIP_MAP_HEIGHT * ae::_Element::GetUIScale();
 
 	// Increase size for description
 	int DescriptionWidth = Size.x - SidePadding * 2;
