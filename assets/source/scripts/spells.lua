@@ -283,8 +283,10 @@ end
 -- Resurrect --
 
 Skill_Resurrect = Base_Spell:New()
-Skill_Resurrect.HealBase = 0
+Skill_Resurrect.HealBase = 100
 Skill_Resurrect.HealPerLevel = 25
+Skill_Resurrect.ManaBase = 100
+Skill_Resurrect.ManaPerLevel = 25
 Skill_Resurrect.Targets = 1
 Skill_Resurrect.TargetsPerLevel = 0.1
 Skill_Resurrect.CostPerLevel = 20
@@ -294,13 +296,19 @@ function Skill_Resurrect.GetHeal(self, Source, Level)
 	return math.floor((self.HealBase + self.HealPerLevel * Level) * Source.HealPower * 0.01)
 end
 
+function Skill_Resurrect.GetMana(self, Source, Level)
+	return math.floor((self.ManaBase + self.ManaPerLevel * Level) * Source.ManaPower * 0.01)
+end
+
 function Skill_Resurrect.GetInfo(self, Source, Item)
+	Count = self:GetTargetCount(Item.Level, Item.MoreInfo)
+
 	Ally = "ally"
 	if Count ~= 1 then
 		Ally = "allies"
 	end
 
-	return "Resurrect [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] " .. Ally .. " with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Can be used outside of battle"
+	return "Resurrect [c green]" .. Count .. "[c white] fallen " .. Ally .. ", giving them [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP and [c green]" .. self:GetMana(Source, Item.Level) .. "[c white] MP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Can be used outside of battle"
 end
 
 function Skill_Resurrect.CanTarget(self, Source, Target, Alive)
@@ -313,6 +321,7 @@ end
 
 function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Health = self:GetHeal(Source, Level)
+	Result.Target.Mana = self:GetMana(Source, Level)
 	Result.Target.Corpse = 1
 	WeaponProc(Source, Target, Result, true)
 
