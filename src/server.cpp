@@ -192,6 +192,12 @@ _Object *_Server::CreateSummon(_Object *Source, const _Summon &Summon) {
 	Object->Character->BaseMaxDamage = Summon.MaxDamage;
 	Object->Character->BaseArmor = Summon.Armor;
 	Object->Character->BaseBattleSpeed = Summon.BattleSpeed;
+	Object->Character->BaseResistances["FireResist"] += Summon.ResistAll;
+	Object->Character->BaseResistances["ColdResist"] += Summon.ResistAll;
+	Object->Character->BaseResistances["LightningResist"] += Summon.ResistAll;
+	Object->Character->BaseResistances["PoisonResist"] += Summon.ResistAll;
+	Object->Character->BaseResistances["BleedResist"] += Summon.ResistAll;
+	Object->Character->BaseResistances["StunResist"] += Summon.ResistAll;
 
 	for(auto &Skill : Object->Character->Skills)
 		Skill.second = Summon.SkillLevel;

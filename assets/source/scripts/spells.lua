@@ -117,6 +117,7 @@ Base_SummonSpell = {
 	SkillLevel = 0,
 	SkillLevelPerLevel = 0,
 	SkillLevelPower = 0.75,
+	ResistAllSummonPowerScale = 0.2,
 	SpecialChance = 0,
 	SpecialChancePerLevel = 0,
 	Duration = -1,
@@ -170,6 +171,16 @@ Base_SummonSpell = {
 
 	GetArmor = function(self, Source, Level, Fraction)
 		Value = (self.BaseArmor + (Level - 1) * self.ArmorPerLevel) * Source.SummonPower * 0.01
+		if Fraction == nil or Fraction == false then
+			return math.floor(Value)
+		else
+			return Round(Value)
+		end
+	end,
+
+	GetResistAll = function(self, Source, Level, Fraction)
+		Value = (self.BaseResistAll + (Level - 1) * self.ResistAllPerLevel)
+		Value = Value + Value * (Source.SummonPower - 100) * self.ResistAllSummonPowerScale * 0.01
 		if Fraction == nil or Fraction == false then
 			return math.floor(Value)
 		else
@@ -274,6 +285,8 @@ end
 Skill_Resurrect = Base_Spell:New()
 Skill_Resurrect.HealBase = 0
 Skill_Resurrect.HealPerLevel = 25
+Skill_Resurrect.Targets = 1
+Skill_Resurrect.TargetsPerLevel = 0.1
 Skill_Resurrect.CostPerLevel = 20
 Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
@@ -282,7 +295,12 @@ function Skill_Resurrect.GetHeal(self, Source, Level)
 end
 
 function Skill_Resurrect.GetInfo(self, Source, Item)
-	return "Resurrect an ally with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Can be used outside of battle"
+	Ally = "ally"
+	if Count ~= 1 then
+		Ally = "allies"
+	end
+
+	return "Resurrect [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] " .. Ally .. " with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Can be used outside of battle"
 end
 
 function Skill_Resurrect.CanTarget(self, Source, Target, Alive)
@@ -730,9 +748,11 @@ Skill_DemonicConjuring.BaseHealth = 100
 Skill_DemonicConjuring.BaseMinDamage = 15
 Skill_DemonicConjuring.BaseMaxDamage = 25
 Skill_DemonicConjuring.BaseArmor = 1.1
+Skill_DemonicConjuring.BaseResistAll = 0.5
 Skill_DemonicConjuring.HealthPerLevel = 20
 Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 0.1
+Skill_DemonicConjuring.ResistAllPerLevel = 0.5
 Skill_DemonicConjuring.Limit = 1
 Skill_DemonicConjuring.LimitPerLevel = 0.05
 Skill_DemonicConjuring.DamageScale = 0.30
@@ -742,7 +762,7 @@ Skill_DemonicConjuring.Monster = Monsters[23]
 Skill_DemonicConjuring.SpecialMonster = Monsters[39]
 
 function Skill_DemonicConjuring.GetInfo(self, Source, Item)
-	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and does [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon an ice imp that deals cold damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health demon at limit"
+	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor, [c green]+" .. self:GetResistAll(Source, Item.Level, Item.MoreInfo) .. "%[c white] resist all and does [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon an ice imp that deals cold damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health demon at limit"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
@@ -753,6 +773,7 @@ function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Resul
 	Result.Summons[1].Health = self:GetHealth(Source, Level)
 	Result.Summons[1].MinDamage, Result.Summons[1].MaxDamage = self:GetDamage(Source, Level)
 	Result.Summons[1].Armor = self:GetArmor(Source, Level)
+	Result.Summons[1].ResistAll = self:GetResistAll(Source, Level)
 	Result.Summons[1].SummonBuff = Buff_SummonDemon.Pointer
 	Result.Summons[1].Duration = self:GetDuration(Source, Level)
 	Result.Summons[1].BattleSpeed = Source.SummonBattleSpeed
@@ -800,10 +821,12 @@ Skill_RaiseDead.BaseMana = 30
 Skill_RaiseDead.BaseMinDamage = 10
 Skill_RaiseDead.BaseMaxDamage = 15
 Skill_RaiseDead.BaseArmor = 1
+Skill_RaiseDead.BaseResistAll = 0.5
 Skill_RaiseDead.HealthPerLevel = 19
 Skill_RaiseDead.ManaPerLevel = 20
 Skill_RaiseDead.DamagePerLevel = 9.5
 Skill_RaiseDead.ArmorPerLevel = 0.07
+Skill_RaiseDead.ResistAllPerLevel = 0.5
 Skill_RaiseDead.SpecialChance = 35
 Skill_RaiseDead.SpecialChancePerLevel = 0
 Skill_RaiseDead.Limit = 2
@@ -835,11 +858,13 @@ function Skill_RaiseDead.GetInfo(self, Source, Item)
 	Count = self:GetCount(Source, Item.Level, Item.MoreInfo)
 
 	Plural = ""
+	Has = "has"
 	if Count ~= 1 then
 		Plural = "s"
+		Has = "have"
 	end
 
-	return "Raise [c green]" .. Count .. "[c white] skeleton" .. Plural .. " from a corpse with [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor and [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest that can heal but only deals [c green]" .. math.floor(self.SpecialDamage * 100) .. "%[c white] damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health skeleton at limit"
+	return "Raise [c green]" .. Count .. "[c white] skeleton" .. Plural .. " from a corpse that ".. Has .. " [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor, [c green]+" .. self:GetResistAll(Source, Item.Level, Item.MoreInfo) .. "%[c white] resist all and [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest that can heal but only deals [c green]" .. math.floor(self.SpecialDamage * 100) .. "%[c white] damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health skeleton at limit"
 end
 
 function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
@@ -857,6 +882,7 @@ function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
 		Result.Summons[i].Health = self:GetHealth(Source, Level)
 		Result.Summons[i].MinDamage, Result.Summons[i].MaxDamage = self:GetDamage(Source, Level)
 		Result.Summons[i].Armor = self:GetArmor(Source, Level)
+		Result.Summons[i].ResistAll = self:GetResistAll(Source, Level)
 		Result.Summons[i].Limit = self:GetLimit(Source, Level)
 		Result.Summons[i].SkillLevel = self:GetSkillLevel(Source, Level)
 		Result.Summons[i].Duration = self:GetDuration(Source, Level)

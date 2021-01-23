@@ -943,6 +943,11 @@ void _Scripting::GetSummons(int Index, std::vector<_Summon> &Summons) {
 		Summon.Armor = (int)lua_tonumber(LuaState, -1);
 		lua_pop(LuaState, 1);
 
+		// Get Resist All
+		lua_getfield(LuaState, -1, "ResistAll");
+		Summon.ResistAll = (int)lua_tonumber(LuaState, -1);
+		lua_pop(LuaState, 1);
+
 		// Get Battle Speed
 		lua_getfield(LuaState, -1, "BattleSpeed");
 		Summon.BattleSpeed = (int)lua_tointeger(LuaState, -1);

@@ -706,7 +706,7 @@ function Skill_Cleave.GetInfo(self, Source, Item)
 		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
 	end
 
-	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes with [c green]" .. DamageValue .. "[c white] weapon damage\n[c " .. TextColor .. "]Cannot use with off-hand weapons"
+	return "Swing your weapon and hit [c green]" .. self:GetTargetCount(Item.Level) .. "[c white] foes for [c green]" .. DamageValue .. "[c white] weapon damage\n[c " .. TextColor .. "]Cannot use with off-hand weapons"
 end
 
 function Skill_Cleave.PlaySound(self)
@@ -778,7 +778,7 @@ function Skill_BladeDance.GetInfo(self, Source, Item)
 		BleedDamageValue = self:GetBleedDamage(Source, Item.Level) .. "[c white] bleeding damage over [c green]" .. self.Duration .. "[c white] seconds"
 	end
 
-	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies with [c green]" .. DamageValue .. "[c white] weapon damage and a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. BleedDamageValue .. "\n[c " .. TextColor .. "]Requires two off-hand weapons"
+	return "Whirl in a dance of blades, hitting [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies for [c green]" .. DamageValue .. "[c white] weapon damage with a [c green]" .. self:GetChance(Item.Level) .. "% [c white]chance to cause [c green]" .. BleedDamageValue .. "\n[c " .. TextColor .. "]Requires two off-hand weapons"
 end
 
 function Skill_BladeDance.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -844,7 +844,7 @@ function Skill_Whirlwind.GetInfo(self, Source, Item)
 		DamageValue = Round(Source.GetAverageDamage() * (self:GetDamage(Item.Level) * 0.01)) .. " avg"
 	end
 
-	return "Spin around and slash all enemies with [c green]" .. DamageValue .. "[c white] weapon damage\nCauses [c yellow]fatigue[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
+	return "Spin around and slash all enemies for [c green]" .. DamageValue .. "[c white] weapon damage\nCauses [c yellow]fatigue[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a two-handed weapon"
 end
 
 function Skill_Whirlwind.PlaySound(self)

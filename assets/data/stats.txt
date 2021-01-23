@@ -2099,7 +2099,7 @@ INSERT INTO monster VALUES(34,'Lava Spitter',12,46,'textures/monsters/lava_spitt
 INSERT INTO monster VALUES(35,'Lost One',1,25,'textures/monsters/lost_one.png',150,50,2000,0,500,600,90,0,7.0,0,50,0,75,75,0);
 INSERT INTO monster VALUES(36,'Lava Slime',1,35,'textures/monsters/lava_slime.png',165,200,7000,0,300,325,10,5,3.0,65,-45,0,0,25,0);
 INSERT INTO monster VALUES(37,'The Elite',1,20,'textures/monsters/the_elite.png',0,0,100000,0,5000,10000,100,1000,10.0,0,0,0,0,0,0);
-INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,1000000,1000000,1000000,10000,20000,100,4000,5.0,75,75,75,75,75,75);
+INSERT INTO monster VALUES(38,'Zog',13,47,'textures/monsters/zog.png',1000000,1000000,1000000,1000000,10000,20000,100,1000,5.0,75,75,75,75,75,75);
 INSERT INTO monster VALUES(39,'Ice Imp',14,48,'textures/monsters/ice_imp.png',40,35,1200,0,100,225,10,0,2.0,-25,50,0,0,0,0);
 INSERT INTO monster VALUES(40,'Sentinel',1,20,'textures/monsters/sentinel.png',1000,1000,10000,0,1000,1000,100,100,10.0,75,75,75,75,75,25);
 INSERT INTO monster VALUES(41,'Arach',15,49,'textures/monsters/arach.png',5000,5000,50000,0,350,500,10,50,4.0,10,35,35,45,45,25);
@@ -2954,7 +2954,7 @@ INSERT INTO item VALUES(13,1,0,1,2,0,0,0,'Parry','textures/skills/parry.png','',
 INSERT INTO item VALUES(14,1,0,4,2,0,0,0,'Taunt','textures/skills/taunt.png','','Skill_Taunt','',5,800,0,0,50,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(15,1,3,2,2,0,0,0,'Ignite','textures/skills/ignite.png','','Skill_Ignite','',3,500,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(16,1,2,2,2,0,0,0,'Backstab','textures/skills/backstab.png','','Skill_Backstab','',2,500,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(17,1,0,3,3,0,0,0,'Resurrect','textures/skills/resurrect.png','','Skill_Resurrect','',3,1000,0,0,50,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(17,1,0,5,3,0,0,0,'Resurrect','textures/skills/resurrect.png','','Skill_Resurrect','',3,1000,0,0,50,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(18,1,0,3,3,0,0,0,'Rejuvenation','textures/skills/rejuvenation.png','','Skill_Rejuvenation','',3,300,0,0,50,0,0.0,2.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(19,1,4,2,2,0,0,0,'Icicle','textures/skills/icicle.png','','Skill_Icicle','',3,175,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(20,1,2,2,2,0,0,0,'Fury','textures/skills/fury.png','','Skill_Fury','',2,1200,0,0,50,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

@@ -59,7 +59,7 @@ enum class ScopeType : uint8_t {
 };
 
 struct _Summon {
-	_Summon() : ID(0), SpellID(0), SummonBuff(nullptr), Duration(0.0), Health(0), Mana(0), Armor(0), Limit(0), BattleSpeed(0), SkillLevel(0), MinDamage(0), MaxDamage(0) { }
+	_Summon() : ID(0), SpellID(0), SummonBuff(nullptr), Duration(0.0), Health(0), Mana(0), Armor(0), Limit(0), BattleSpeed(0), SkillLevel(0), MinDamage(0), MaxDamage(0), ResistAll(0) { }
 
 	uint32_t ID;
 	uint32_t SpellID;
@@ -73,6 +73,7 @@ struct _Summon {
 	int SkillLevel;
 	int MinDamage;
 	int MaxDamage;
+	int ResistAll;
 };
 
 struct _SummonCaptain {
