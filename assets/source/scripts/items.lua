@@ -364,13 +364,14 @@ end
 Item_CrabLegs = { }
 
 function Item_CrabLegs.GetInfo(self, Source, Item)
-	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds"
+	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]flayed"
 end
 
 function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Hardened.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Flayed.Pointer
 
 	return Result
 end
