@@ -364,14 +364,14 @@ end
 Item_CrabLegs = { }
 
 function Item_CrabLegs.GetInfo(self, Source, Item)
-	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]flayed"
+	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]fractured"
 end
 
 function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Hardened.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
-	Result.Target.ClearBuff = Buff_Flayed.Pointer
+	Result.Target.ClearBuff = Buff_Fractured.Pointer
 
 	return Result
 end
@@ -573,7 +573,7 @@ function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Slowed.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
-	Result.Target.ClearBuff = Buff_Burning.Pointer
+	Result.Source.ClearBuff = Buff_Burning.Pointer
 
 	return Result
 end
@@ -587,7 +587,7 @@ end
 Item_LavaSludge = { }
 
 function Item_LavaSludge.GetInfo(self, Source, Item)
-	return "Ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower * 0.01) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]weakness[c white]\n\n[c red]Damages yourself when used"
+	return "Ignite a target for [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower * 0.01) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]flayed[c white]\n\n[c red]Damages yourself when used"
 end
 
 function Item_LavaSludge.GetDamageType(self, Source)
@@ -598,14 +598,13 @@ function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Burning.Pointer
 	Result.Target.BuffLevel = Level * Source.FirePower * 0.01
 	Result.Target.BuffDuration = Duration
-	Result.Target.ClearBuff = Buff_Weak.Pointer
 
 	if Source.MonsterID == 0 then
 		Result.Source.Buff = Buff_Burning.Pointer
 		Result.Source.BuffLevel = math.max(1, math.floor(Level / 2))
 		Result.Source.BuffDuration = Duration
 	end
-	Result.Source.ClearBuff = Buff_Weak.Pointer
+	Result.Source.ClearBuff = Buff_Flayed.Pointer
 
 	return Result
 end
@@ -734,15 +733,20 @@ end
 Item_Stinger = { }
 
 function Item_Stinger.GetInfo(self, Source, Item)
-	return "Increase attack power by [c_green]" .. Item.Level .. "%[c_white] for [c_green]" .. Item.Duration .. " [c_white]seconds"
+	return "Increase attack power by [c_green]" .. Item.Level .. "%[c_white] for [c_green]" .. Item.Duration .. " [c_white]seconds\n\nPurges [c yellow]weakness"
 end
 
 function Item_Stinger.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Empowered.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+	Result.Target.ClearBuff = Buff_Weak.Pointer
 
 	return Result
+end
+
+function Item_Stinger.PlaySound(self)
+	Audio.Play("thud0.ogg")
 end
 
 -- Elusive Potion --

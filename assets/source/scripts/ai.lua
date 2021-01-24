@@ -675,7 +675,7 @@ function AI_Zog.Update(self, Object, Enemies, Allies)
 			Object.AddTarget(Enemies[i].Pointer)
 		end
 
-		if Object.SetAction(Random.GetInt(1, 5)) then
+		if Object.SetAction(Random.GetInt(1, 6)) then
 			return
 		end
 

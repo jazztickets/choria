@@ -930,15 +930,15 @@ end
 -- Enfeeble --
 
 Skill_Enfeeble = Base_Spell:New()
-Skill_Enfeeble.Constant = 15
-Skill_Enfeeble.BasePercent = 22
-Skill_Enfeeble.Multiplier = 50
+Skill_Enfeeble.Constant = 97
+Skill_Enfeeble.BasePercent = 24
+Skill_Enfeeble.Multiplier = 150
 Skill_Enfeeble.DurationPerLevel = 0.1
 Skill_Enfeeble.Duration = 5
 Skill_Enfeeble.CostPerLevel = 10
 Skill_Enfeeble.ManaCostBase = 10 - Skill_Enfeeble.CostPerLevel
 Skill_Enfeeble.Targets = 1
-Skill_Enfeeble.TargetsPerLevel = 0.05
+Skill_Enfeeble.TargetsPerLevel = 0.1
 
 function Skill_Enfeeble.GetPercent(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
