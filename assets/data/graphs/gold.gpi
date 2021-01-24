@@ -1,7 +1,10 @@
 files = system("ls gold/*")
+set grid
 set key outside
 set key right top
-set xlabel 'play_time' noenhanced
-set ylabel 'gold' noenhanced
+set xlabel 'Hours' noenhanced
+set ylabel 'Gold' noenhanced
+#set terminal svg size 1900,1000
+#set output "gold.svg"
 plot for [data in files] data using 1:2 title data noenhanced with lines
-#pause mouse close
+pause mouse close
