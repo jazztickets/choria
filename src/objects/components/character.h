@@ -129,7 +129,7 @@ class _Character {
 		// Skills
 		bool HasLearned(const _Item *Skill) const;
 		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
-		void AdjustSkillLevel(uint32_t SkillID, int Amount);
+		void AdjustSkillLevel(uint32_t SkillID, int Amount, bool SoftMax);
 		void AdjustMaxSkillLevel(uint32_t SkillID, int Amount);
 		void InitializeSkillLevels();
 

@@ -1377,13 +1377,14 @@ void _Server::HandleSkillAdjust(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Process packet
 	uint32_t SkillID = Data.Read<uint32_t>();
 	int Amount = Data.Read<int>();
+	bool SoftMax = Data.ReadBit();
 
 	// Check respec condition
 	if(Amount < 0 && !Player->CanRespec())
 		return;
 
 	// Update values
-	Player->Character->AdjustSkillLevel(SkillID, Amount);
+	Player->Character->AdjustSkillLevel(SkillID, Amount, SoftMax);
 	Player->Character->CalculateStats();
 }
 

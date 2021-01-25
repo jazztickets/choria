@@ -370,14 +370,14 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(SkillScreen->Element->GetClickedElement()) {
 			int Amount = 1;
 			if(ae::Input.ModKeyDown(KMOD_SHIFT))
-				Amount *= 5;
+				Amount = 5;
 			else if(ae::Input.ModKeyDown(KMOD_CTRL))
-				Amount *= 50;
+				Amount = 50;
 
 			if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_plus")
-				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Index, Amount);
+				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Index, Amount, !ae::Input.ModKeyDown(KMOD_ALT));
 			else if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_minus")
-				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Index, -Amount);
+				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Index, -Amount, !ae::Input.ModKeyDown(KMOD_ALT));
 		}
 		// Check enchanter buy
 		else if(EnchanterScreen->Element->GetClickedElement()) {

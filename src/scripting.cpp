@@ -1180,7 +1180,7 @@ int _Scripting::ObjectSpendSkillPoints(lua_State *LuaState) {
 	int Amount = (int)lua_tointeger(LuaState, 2);
 
 	// Spend points
-	Object->Character->AdjustSkillLevel(SkillID, Amount);
+	Object->Character->AdjustSkillLevel(SkillID, Amount, false);
 	Object->Character->CalculateStats();
 
 	// Push points available

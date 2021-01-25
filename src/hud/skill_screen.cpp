@@ -297,31 +297,31 @@ void _SkillScreen::RefreshSkillButtons(bool ShowBonusPoints) {
 }
 
 // Adjust skill level
-void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount) {
+void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount, bool SoftMax) {
 	if(SkillID == 0)
 		return;
 
+	// Write respec message
 	if(Amount < 0 && !HUD->Player->CanRespec()) {
 		HUD->SetMessage("You can only respec on spawn points");
 		return;
 	}
 
+	// Notify server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::SKILLS_SKILLADJUST);
-
-	// Sell skill
 	Packet.Write<uint32_t>(SkillID);
 	Packet.Write<int>(Amount);
+	Packet.WriteBit(SoftMax);
+	PlayState.Network->SendPacket(Packet);
 
+	// Update skill
 	int OldSkillLevel = HUD->Player->Character->Skills[SkillID];
-	HUD->Player->Character->AdjustSkillLevel(SkillID, Amount);
+	HUD->Player->Character->AdjustSkillLevel(SkillID, Amount, SoftMax);
 
 	// Equip new skills
-	if(Amount > 0 && OldSkillLevel == 0) {
+	if(Amount > 0 && OldSkillLevel == 0)
 		EquipSkill(SkillID);
-	}
-
-	PlayState.Network->SendPacket(Packet);
 
 	// Update player
 	HUD->Player->Character->CalculateStats();

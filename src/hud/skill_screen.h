@@ -36,7 +36,7 @@ class _SkillScreen : public _Screen {
 
 		void ClearSkills();
 		void RefreshSkillButtons(bool ShowBonusPoints=true);
-		void AdjustSkillLevel(uint32_t SkillID, int Amount);
+		void AdjustSkillLevel(uint32_t SkillID, int Amount, bool SoftMax);
 		void EquipSkill(uint32_t SkillID);
 
 	private:
