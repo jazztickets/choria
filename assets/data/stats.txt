@@ -2289,6 +2289,7 @@ INSERT INTO trader VALUES(93,'eternal_command',361,1);
 INSERT INTO trader VALUES(94,'eternal_impatience',362,1);
 INSERT INTO trader VALUES(95,'mana_shield',27,1);
 INSERT INTO trader VALUES(96,'fireball',364,1);
+INSERT INTO trader VALUES(97,'empower',38,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -2532,6 +2533,8 @@ INSERT INTO traderitem VALUES(269,95,6,1);
 INSERT INTO traderitem VALUES(270,95,208,1);
 INSERT INTO traderitem VALUES(271,96,172,1);
 INSERT INTO traderitem VALUES(272,96,270,25);
+INSERT INTO traderitem VALUES(273,97,244,1);
+INSERT INTO traderitem VALUES(274,97,240,50);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
