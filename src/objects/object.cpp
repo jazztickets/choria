@@ -1209,7 +1209,7 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Character->Attributes["Mana"].Int = Data.Read<int>();
 	Character->BaseMaxMana = Character->Attributes["MaxMana"].Int = Data.Read<int>();
 	Character->EquipmentBattleSpeed = Data.Read<int>();
-	if(!IsClient)
+	if(!IsClient && !Monster->DatabaseID)
 		Character->BaseBattleSpeed = Character->EquipmentBattleSpeed;
 	Fighter->TurnTimer = Data.Read<double>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
