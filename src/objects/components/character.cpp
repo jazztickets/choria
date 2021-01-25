@@ -524,19 +524,25 @@ void _Character::CalculateStats() {
 	}
 
 	// Get damage
-	bool HasWeaponDamage = false;
-	for(std::size_t i = 0; i < ItemMinDamage.size(); i++) {
-		if(ItemMinDamage[i] != 0 || ItemMaxDamage[i] != 0)
-			HasWeaponDamage = true;
+	if(!Object->Monster->DatabaseID) {
+		bool HasWeaponDamage = false;
+		for(std::size_t i = 0; i < ItemMinDamage.size(); i++) {
+			if(ItemMinDamage[i] != 0 || ItemMaxDamage[i] != 0)
+				HasWeaponDamage = true;
 
-		Attributes["MinDamage"].Int += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
-		Attributes["MaxDamage"].Int += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
+			Attributes["MinDamage"].Int += (int)std::roundf(ItemMinDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
+			Attributes["MaxDamage"].Int += (int)std::roundf(ItemMaxDamage[i] * Attributes["AttackPower"].Mult() * GetDamagePowerMultiplier(i));
+		}
+
+		// Add fist damage
+		if(!HasWeaponDamage) {
+			Attributes["MinDamage"].Int = Level;
+			Attributes["MaxDamage"].Int = Level + 1;
+		}
 	}
-
-	// Add fist damage
-	if(!Object->Monster->DatabaseID && !HasWeaponDamage) {
-		Attributes["MinDamage"].Int = Level;
-		Attributes["MaxDamage"].Int = Level + 1;
+	else {
+		Attributes["MinDamage"].Int *= Attributes["AttackPower"].Mult();
+		Attributes["MaxDamage"].Int *= Attributes["AttackPower"].Mult();
 	}
 
 	// Cap resistances

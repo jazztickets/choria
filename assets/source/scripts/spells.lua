@@ -1072,25 +1072,6 @@ function Skill_Light.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
--- Portal --
-
-Skill_Portal = Base_Spell:New()
-Skill_Portal.Duration = 3
-Skill_Portal.CostPerLevel = -10
-Skill_Portal.ManaCostBase = 200 - Skill_Portal.CostPerLevel
-Skill_Portal.CostScale = 0
-
-function Skill_Portal.GetInfo(self, Source, Item)
-	return "Teleport home after [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
-end
-
-function Skill_Portal.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Teleport = self:GetDuration(Level)
-	WeaponProc(Source, Target, Result, true)
-
-	return Result
-end
-
 -- Magic Barrier --
 
 Skill_MagicBarrier = Base_Spell:New()
@@ -1165,4 +1146,37 @@ end
 
 function Skill_Sanctuary.PlaySound(self)
 	Audio.Play("sanctuary0.ogg")
+end
+
+-- Empower --
+
+Skill_Empower = Base_Spell:New()
+Skill_Empower.Level = 17
+Skill_Empower.LevelPerLevel = 1.7
+Skill_Empower.CostPerLevel = 20
+Skill_Empower.ManaCostBase = 100 - Skill_Empower.CostPerLevel
+Skill_Empower.Targets = 3
+Skill_Empower.TargetsPerLevel = 0.1
+Skill_Empower.Duration = 10
+Skill_Empower.DurationPerLevel = 0
+
+function Skill_Empower.GetLevel(self, Source, Level)
+	return math.floor((self.Level + self.LevelPerLevel * (Level - 1)) * Source.HealPower * 0.01)
+end
+
+function Skill_Empower.GetInfo(self, Source, Item)
+	return "Empower [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] allies with [c green]" .. self:GetLevel(Source, Item.Level) .. "%[c white] attack power for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+end
+
+function Skill_Empower.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Empowered.Pointer
+	Result.Target.BuffLevel = self:GetLevel(Source, Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+	WeaponProc(Source, Target, Result, true)
+
+	return Result
+end
+
+function Skill_Empower.PlaySound(self)
+	Audio.Play("enfeeble0.ogg")
 end
