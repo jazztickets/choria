@@ -791,8 +791,15 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	else
 		ae::Assets.Elements["label_hud_pvp"]->Text = "";
 
+	// Set locale formatting
+	Buffer.imbue(std::locale(Config.Locale));
+
 	// Draw experience bar
-	Buffer << Player->Character->ExperienceNextLevel - Player->Character->ExperienceNeeded << " / " << Player->Character->ExperienceNextLevel << " XP";
+	if(ae::Input.ModKeyDown(KMOD_ALT))
+		Buffer << Player->Character->Attributes["Experience"].Int64 << " XP";
+	else
+		Buffer << Player->Character->ExperienceNextLevel - Player->Character->ExperienceNeeded << " / " << Player->Character->ExperienceNextLevel << " XP";
+
 	ae::Assets.Elements["label_hud_experience"]->Text = Buffer.str();
 	Buffer.str("");
 	ae::Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->Character->GetNextLevelPercent());
