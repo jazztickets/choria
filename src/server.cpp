@@ -2044,8 +2044,10 @@ void _Server::HandleActionBarChanged(ae::_Buffer &Data, ae::_Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Read skills
-	for(std::size_t i = 0; i < Player->Character->ActionBar.size(); i++)
+	for(std::size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
 		Player->Character->ActionBar[i].Unserialize(Data, Stats);
+		Player->Character->ActionBar[i].ActionBarSlot = i;
+	}
 
 	Player->Character->CalculateStats();
 }
