@@ -99,8 +99,10 @@ _Character::_Character(_Object *Object) :
 
 	Bot(false) {
 
-	ActionBar.resize(ACTIONBAR_MAX_SIZE);
 	Targets.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
+	ActionBar.resize(ACTIONBAR_MAX_SIZE);
+	for(std::size_t i = 0; i < ActionBar.size(); i++)
+		ActionBar[i].ActionBarSlot = i;
 }
 
 // Destructor
