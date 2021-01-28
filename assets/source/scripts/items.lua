@@ -1093,7 +1093,7 @@ end
 Item_Credits = { }
 
 function Item_Credits.GetInfo(self, Source, Item)
-	return "Thank you for playing!\n\n[c gray]Programming\nAlan Witkowski\n\n[c gray]Game Design\nAlan Witkowski\n\n[c gray]Scripting\nAlan Witkowski\n\n[c gray]Artwork\nAlan Witkowski\n\n[c gray]Sound Design\nAlan Witkowski\n\n[c gray]Music\nAlan Witkowski"
+	return "Thank you for playing!\n\n[c gray]Programming\nAlan Witkowski\n\n[c gray]Game Design\nAlan Witkowski\n\n[c gray]Artwork\nAlan Witkowski\n\n[c gray]Sound Design\nAlan Witkowski\n\n[c gray]Music\nAlan Witkowski"
 end
 
 -- Dark Ring --
