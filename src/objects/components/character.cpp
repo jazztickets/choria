@@ -858,14 +858,17 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount, bool SoftMax) {
 	// Buying
 	if(Amount > 0) {
 
-		// Get cap
-		int Cap = Skill->MaxLevel - Skills[SkillID];
-		if(SoftMax)
-			Cap -= Attributes["AllSkills"].Int;
+		// Get max level for skill
+		int MaxLevel = std::min(MaxSkillLevels[SkillID], Skill->MaxLevel);
 
-		// Cap points
+		// Get number of points until max level is hit
+		int PointsToMax = MaxLevel - Skills[SkillID];
+		if(SoftMax)
+			PointsToMax -= Attributes["AllSkills"].Int;
+
+		// Cap points to spend
 		int PointsToSpend = std::min(GetSkillPointsAvailable(), Amount);
-		PointsToSpend = std::min(PointsToSpend, Cap);
+		PointsToSpend = std::min(PointsToSpend, PointsToMax);
 
 		// Update level
 		Skills[SkillID] += PointsToSpend;
