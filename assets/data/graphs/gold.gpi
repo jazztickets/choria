@@ -1,9 +1,12 @@
 files = system("ls gold/*")
+set object 1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb "#151515" behind
+set border lw 3 lc rgb "#DDDDDD"
+set key textcolor rgb "#DDDDDD"
+set xlabel 'Hours' textcolor rgb "#DDDDDD" noenhanced
+set ylabel 'Gold' textcolor rgb "#DDDDDD" noenhanced
 set grid
 set key outside
 set key right top
-set xlabel 'Hours' noenhanced
-set ylabel 'Gold' noenhanced
 #set terminal svg size 1900,1000
 #set output "gold.svg"
 plot for [data in files] data using 1:2 title data noenhanced with lines
