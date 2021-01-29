@@ -11,6 +11,11 @@ Item_Data = {
 
 -- Rings
 
+	-- Attack Power Ring
+	[366] = {
+		AttackPower = 100,
+	},
+
 	-- Elusive One
 	[273] = {
 		Initiative = 10,
