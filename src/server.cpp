@@ -2200,6 +2200,8 @@ void _Server::SendBattleCooldownMessage(ae::_Peer *Peer, double Duration) {
 		SendMessage(Peer, "The soul is faint", "yellow");
 	else if(Duration <= 1000000)
 		SendMessage(Peer, "The soul has vanished... for now", "yellow");
+	else if(Duration <= 5000000)
+		SendMessage(Peer, "The soul has been... banished?", "yellow");
 	else
 		SendMessage(Peer, "The soul has been banished", "yellow");
 }
