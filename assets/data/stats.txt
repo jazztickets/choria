@@ -3067,7 +3067,7 @@ INSERT INTO item VALUES(147,5,2,0,0,0,0,4,'Morning Star','textures/items/morning
 INSERT INTO item VALUES(148,2,0,0,0,0,0,2,'Cap','textures/items/cap.png','','SetBonus_Cap','',0,45,1,0,10,0,0.0,0.0,1,0,0,1,0,0,0,0,10,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(149,6,2,0,0,0,0,6,'Holy Staff','textures/items/holy_staff.png','','SetBonus_HolyStaff','Proc_Harden',0,1000,1,15,20,15,5.0,0.0,1,120,300,0,15,0,0,0,75,0,1,15,0,2,5,0);
 INSERT INTO item VALUES(150,14,2,0,0,0,0,5,'Swift Knife','textures/items/small_knife.png','','SetBonus_SwiftKnife','Proc_Bleed',0,1500,1,40,20,20,5.0,0.0,1,120,120,0,5,30,0,0,0,0,0,15,0,0,0,0);
-INSERT INTO item VALUES(151,10,0,1,1,0,0,0,'Battle Potion','textures/items/battle_potion.png','','Item_BattlePotion','',0,25,1,0,0,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(151,10,0,1,1,0,0,0,'Battle Potion','textures/items/battle_potion.png','','Item_BattlePotion','',0,25,1,50,0,0,1.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(152,2,0,0,0,0,0,2,'Mage Hat','textures/items/mage_hat.png','','','',0,70,1,0,10,0,0.0,0.0,1,0,0,1,0,0,0,0,15,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(153,2,0,0,0,0,0,6,'Wizard Hat','textures/items/wizard_hat.png','','','',0,700,1,0,20,0,0.0,0.0,1,0,0,2,0,0,0,0,30,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(154,6,2,0,0,0,0,7,'Claymore','textures/items/claymore.png','','SetBonus_Claymore','Proc_Empowered',0,2000,1,15,20,15,5.0,0.0,1,225,600,-5,0,0,0,0,0,0,0,-10,0,0,0,0);
@@ -3235,7 +3235,7 @@ INSERT INTO item VALUES(322,10,0,0,1,0,0,0,'Rite of Passage','textures/items/rit
 INSERT INTO item VALUES(323,5,2,0,0,0,0,0,'Stick','textures/items/stick.png','','','',0,5,1,0,5,0,0.0,0.0,1,5,10,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(324,10,0,0,1,0,0,0,'Rite of Enchantment','textures/items/rite_enchantment.png','','Item_RiteEnchantment','',100,200000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(325,1,0,1,2,0,0,0,'Dodge','textures/skills/dodge.png','','Skill_Dodge','',5,150,0,0,50,0,0.0,3.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(326,10,0,1,1,0,0,0,'Ultimate Battle Potion','textures/items/ultimate_battle_potion.png','','Item_UltimateBattlePotion','',0,10000,1,50,0,0,0.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(326,10,0,1,1,0,0,0,'Ultimate Battle Potion','textures/items/ultimate_battle_potion.png','','Item_UltimateBattlePotion','',0,10000,1,50,0,0,600.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(327,10,0,1,1,0,0,0,'Belligerent Potion','textures/items/attractant.png','','Item_BelligerentPotion','',0,500,1,2,0,0,10.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(328,2,0,0,0,0,0,10,'Arcane Hat','textures/items/arcane_hat.png','','','',0,7000,1,0,50,0,0.0,0.0,1,0,0,4,0,0,0,0,60,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(329,2,0,0,0,0,7,11,'Warrior''s Helm','textures/items/warriors_helm.png','','','',0,6500,1,0,50,0,0.0,0.0,1,0,0,8,0,0,8,0,0,0,0,0,0,0,0,0);

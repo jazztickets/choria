@@ -94,29 +94,6 @@ function Item_DeathPotion.Use(self, Level, Duration, Source, Target, Result)
 	return Result
 end
 
--- Battle Potion --
-
-Item_BattlePotion = Base_Potion:New()
-
-function Item_BattlePotion.GetInfo(self, Source, Item)
-	return "Get into a fight"
-end
-
-function Item_BattlePotion.CanUse(self, Level, Source, Target)
-	Zone = Source.GetTileZone(Source.X, Source.Y)
-	if Zone > 0 then
-		return true
-	end
-
-	return false
-end
-
-function Item_BattlePotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Battle = Source.GetTileZone(Source.X, Source.Y)
-
-	return Result
-end
-
 -- Poison Potion --
 
 Item_PoisonPotion = Base_Potion:New()
@@ -773,6 +750,32 @@ function Item_ElusivePotion.PlaySound(self)
 	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Battle Potion --
+
+Item_BattlePotion = Base_Potion:New()
+
+function Item_BattlePotion.GetInfo(self, Source, Item)
+	return "Get into a fight"
+end
+
+function Item_BattlePotion.CanUse(self, Level, Source, Target)
+	Zone = Source.GetTileZone(Source.X, Source.Y)
+	if Zone > 0 then
+		return true
+	end
+
+	return false
+end
+
+function Item_BattlePotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Difficult.Pointer
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+	Result.Target.Battle = Source.GetTileZone(Source.X, Source.Y)
+
+	return Result
+end
+
 -- Greater Battle Potion --
 
 Item_GreaterBattlePotion = Base_Potion:New()
@@ -785,6 +788,41 @@ function Item_GreaterBattlePotion.Use(self, Level, Duration, Source, Target, Res
 	Result.Target.Buff = Buff_Difficult.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
+
+	return Result
+end
+
+-- Ultimate Battle Potion --
+
+Item_UltimateBattlePotion = Base_Potion:New()
+Item_UltimateBattlePotion.Difficulty = 200
+
+function Item_UltimateBattlePotion.GetInfo(self, Source, Item)
+	return "Reduce current boss cooldowns by [c green]" .. Item.Level .. "%[c white]\nIncrease difficulty by [c green]" .. self.Difficulty .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Item_UltimateBattlePotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Difficult.Pointer
+	Result.Target.BuffLevel = self.Difficulty
+	Result.Target.BuffDuration = Duration
+	Result.Target.BossCooldowns = Level
+
+	return Result
+end
+
+-- Belligerent Potion --
+
+Item_BelligerentPotion = Base_Potion:New()
+
+function Item_BelligerentPotion.GetInfo(self, Source, Item)
+	return "Get into fights more often for [c green]" .. Item.Duration .. "[c white] seconds"
+end
+
+function Item_BelligerentPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Buff = Buff_Attractant.Pointer
+	Result.Target.BuffLevel = 2
+	Result.Target.BuffDuration = Duration
+	Result.Target.Battle = Source.GetTileZone(Source.X, Source.Y)
 
 	return Result
 end
@@ -824,37 +862,6 @@ end
 
 function Item_WarmingTorch.PlaySound(self)
 	Audio.Play("flame0.ogg")
-end
-
--- Ultimate Battle Potion --
-
-Item_UltimateBattlePotion = Base_Potion:New()
-
-function Item_UltimateBattlePotion.GetInfo(self, Source, Item)
-	return "Reduce current boss cooldowns by [c green]" .. Item.Level .. "%[c white]"
-end
-
-function Item_UltimateBattlePotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.BossCooldowns = Level
-
-	return Result
-end
-
--- Belligerent Potion --
-
-Item_BelligerentPotion = Base_Potion:New()
-
-function Item_BelligerentPotion.GetInfo(self, Source, Item)
-	return "Get into fights more often for [c green]" .. Item.Duration .. "[c white] seconds"
-end
-
-function Item_BelligerentPotion.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.Buff = Buff_Attractant.Pointer
-	Result.Target.BuffLevel = 2
-	Result.Target.BuffDuration = Duration
-	Result.Target.Battle = Source.GetTileZone(Source.X, Source.Y)
-
-	return Result
 end
 
 -- Torch --
