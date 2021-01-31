@@ -395,7 +395,7 @@ end
 Buff_Shielded = Base_Buff:New()
 
 function Buff_Shielded.GetInfo(self, Level)
-	return "Blocking [c green]" .. Level .. "[c white] damage before breaking"
+	return "Blocking [c green]" .. Level .. "[c white] attack damage"
 end
 
 function Buff_Shielded.OnHit(self, Object, Effect, Change, Result)
