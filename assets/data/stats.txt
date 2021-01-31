@@ -154,12 +154,12 @@ INSERT INTO attribute VALUES(48,'HealPower','Heal Power',4,1,'100',0.0,1,1,0,1,0
 INSERT INTO attribute VALUES(49,'ManaPower','Mana Power',4,1,'100',0.0,1,1,0,1,0);
 INSERT INTO attribute VALUES(50,'Health','Health',1,0,'0',0.0,0,0,1,1,1);
 INSERT INTO attribute VALUES(51,'MaxHealth','Max Health',1,1,'0',0.5,0,1,0,1,0);
-INSERT INTO attribute VALUES(52,'HealthBonus','Health Bonus',4,1,'100',0.0,1,1,0,0,0);
+INSERT INTO attribute VALUES(52,'HealthBonus','Health Bonus',4,1,'0',0.0,1,1,0,0,0);
 INSERT INTO attribute VALUES(53,'HealthRegen','Health Regen',1,1,'0',1.0,1,1,0,0,0);
 INSERT INTO attribute VALUES(54,'HealthUpdateMultiplier','Health Update Multiplier',4,1,'100',0.0,0,1,0,0,0);
 INSERT INTO attribute VALUES(55,'Mana','Mana',1,0,'0',0.0,0,0,1,1,1);
 INSERT INTO attribute VALUES(56,'MaxMana','Max Mana',1,1,'0',0.5,0,1,0,1,0);
-INSERT INTO attribute VALUES(57,'ManaBonus','Mana Bonus',4,1,'100',0.0,1,1,0,0,0);
+INSERT INTO attribute VALUES(57,'ManaBonus','Mana Bonus',4,1,'0',0.0,1,1,0,0,0);
 INSERT INTO attribute VALUES(58,'ManaRegen','Mana Regen',1,1,'0',1.0,1,1,0,0,0);
 INSERT INTO attribute VALUES(59,'DamageBlock','Damage Block',1,1,'0',1.0,-1,1,0,1,0);
 INSERT INTO attribute VALUES(60,'Armor','Armor',1,1,'0',0.5,-1,1,0,0,0);
@@ -175,8 +175,8 @@ INSERT INTO attribute VALUES(69,'PoisonResist','Poison Resist',4,1,'0',0.0,2,1,0
 INSERT INTO attribute VALUES(70,'BleedResist','Bleed Resist',4,1,'0',0.0,2,1,0,1,0);
 INSERT INTO attribute VALUES(71,'StunResist','Stun Resist',4,1,'0',0.0,2,1,0,1,0);
 INSERT INTO attribute VALUES(72,'ElementalResist','Elemental Resist',4,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(73,'ExperienceBonus','Experience Bonus',4,1,'100',1.0,3,1,0,0,0);
-INSERT INTO attribute VALUES(74,'GoldBonus','Gold Bonus',4,1,'100',1.0,3,1,0,0,0);
+INSERT INTO attribute VALUES(73,'ExperienceBonus','Experience Bonus',4,1,'0',1.0,3,1,0,0,0);
+INSERT INTO attribute VALUES(74,'GoldBonus','Gold Bonus',4,1,'0',1.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(75,'SummonBattleSpeed','Summon Battle Speed',4,1,'100',0.0,3,1,0,1,0);
 INSERT INTO attribute VALUES(76,'SummonLimit','Summon Limit',1,1,'0',0.0,3,1,0,1,0);
 INSERT INTO attribute VALUES(77,'Difficulty','Difficulty',4,1,'0',0.0,3,1,0,0,0);

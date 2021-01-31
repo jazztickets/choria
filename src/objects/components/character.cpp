@@ -570,8 +570,8 @@ void _Character::CalculateStats() {
 	Attributes["ConsumeChance"].Int = std::clamp(Attributes["ConsumeChance"].Int, 5, 100);
 	Attributes["ManaShield"].Int = std::clamp(Attributes["ManaShield"].Int, 0, 100);
 
-	Attributes["MaxHealth"].Int *= Attributes["HealthBonus"].Mult();
-	Attributes["MaxMana"].Int *= Attributes["ManaBonus"].Mult();
+	Attributes["MaxHealth"].Int *= Attributes["HealthBonus"].BonusMult();
+	Attributes["MaxMana"].Int *= Attributes["ManaBonus"].BonusMult();
 	Attributes["Health"].Int = std::min(Attributes["Health"].Int, Attributes["MaxHealth"].Int);
 	Attributes["Mana"].Int = std::min(Attributes["Mana"].Int, Attributes["MaxMana"].Int);
 	if(Attributes["HealthRegen"].Int > 0)
