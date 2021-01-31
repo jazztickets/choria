@@ -6,7 +6,7 @@ Battles = {}
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
 	-- Check for hit
-	if Random.GetInt(1, 100) <= Source.HitChance - Target.Evasion then
+	if Random.GetInt(1, 100) <= Source.HitChance and Random.GetInt(1, 100) > Target.Evasion then
 
 		-- Get damage
 		Change = {}
