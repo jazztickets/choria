@@ -448,6 +448,7 @@ void _Menu::PlayCharacter(std::size_t Slot) {
 	CharactersState = CHARACTERS_PLAYSENT;
 
 	ae::Audio.StopMusic();
+	PlayState.HUD->GoldGained.Clear();
 	PlayState.HUD->Reset();
 	PlayState.HUD->ResetChat();
 }

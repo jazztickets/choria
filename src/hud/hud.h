@@ -20,6 +20,7 @@
 // Libraries
 #include <objects/statchange.h>
 #include <objects/components/inventory.h>
+#include <ae/circular_buffer.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <vector>
@@ -87,6 +88,14 @@ struct _RecentItem {
 
 	const _Item *Item;
 	int Count;
+	double Time;
+};
+
+struct _RecentGold {
+	_RecentGold() : Value(0), Time(0.0) { }
+	_RecentGold(int64_t Value, double Time) : Value(Value), Time(Time) { }
+
+	int64_t Value;
 	double Time;
 };
 
@@ -186,6 +195,7 @@ class _HUD {
 		bool EnableMouseCombat;
 
 		// Stats
+		ae::_CircularBuffer<_RecentGold> GoldGained;
 		bool ShowDebug;
 
 		// Scripting
@@ -233,6 +243,7 @@ class _HUD {
 		void SplitStack(const _Slot &Slot, uint8_t Count);
 		void Transfer(const _Slot &Slot);
 		BagType GetBagFromWindow(int Window);
+		int64_t GetGPM();
 
 		// UI
 		ae::_Element *DarkOverlayElement;

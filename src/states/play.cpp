@@ -1512,8 +1512,9 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	Player->Character->Attributes["MonsterKills"].Int = Data.Read<int>();
 	Player->Character->Attributes["GoldLost"].Int64 = Data.Read<int64_t>();
 	Player->Character->Attributes["Bounty"].Int64 = Data.Read<int64_t>();
-	StatChange.Values["Experience"].Int = Data.Read<int64_t>();
-	StatChange.Values["Gold"].Int = Data.Read<int64_t>();
+	StatChange.Values["Experience"].Int64 = Data.Read<int64_t>();
+	StatChange.Values["Gold"].Int64 = Data.Read<int64_t>();
+
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		_RecentItem RecentItem;

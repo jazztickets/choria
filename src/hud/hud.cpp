@@ -75,6 +75,7 @@ _HUD::_HUD() {
 	LowestRecentItemTime = 0.0;
 	Tooltip.Reset();
 	Cursor.Reset();
+	GoldGained.Init(100);
 
 	ChatTextBox = ae::Assets.Elements["textbox_chat"];
 
@@ -136,6 +137,7 @@ _HUD::_HUD() {
 // Shutdown
 _HUD::~_HUD() {
 	Reset();
+	GoldGained.Close();
 
 	delete CharacterScreen;
 	delete InventoryScreen;
@@ -715,6 +717,10 @@ void _HUD::Update(double FrameTime) {
 			}
 		}
 	}
+
+	// Update GPM
+	while(GoldGained.Size() && PlayState.Time - GoldGained.Front().Time >= HUD_GPM_TIME)
+		GoldGained.Pop();
 
 	Message.Time += FrameTime;
 }
@@ -1573,6 +1579,16 @@ BagType _HUD::GetBagFromWindow(int Window) {
 	return BagType::NONE;
 }
 
+// Calculate GPM
+int64_t _HUD::GetGPM() {
+
+	int64_t Sum = 0;
+	for(int i = 0; i < GoldGained.Size(); i++)
+		Sum += GoldGained.Back(i).Value;
+
+	return Sum;
+}
+
 // Return true if player is typing gold
 bool _HUD::IsTypingGold() {
 	return ae::FocusedElement == ae::Assets.Elements["textbox_trade_gold_yours"];
@@ -1698,10 +1714,16 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		}
 
 		// Get amount
-		if(StatChange.HasStat("Gold"))
+		if(StatChange.HasStat("Gold")) {
 			StatChangeUI.Change = StatChange.Values["Gold"].Int64;
-		else
+			if(StatChange.Object == Player)
+				GoldGained.PushBack(_RecentGold(StatChange.Values["Gold"].Int64, PlayState.Time));
+		}
+		else {
 			StatChangeUI.Change = StatChange.Values["GoldStolen"].Int64;
+			if(StatChange.Object == Player)
+				GoldGained.PushBack(_RecentGold(StatChange.Values["GoldStolen"].Int64, PlayState.Time));
+		}
 
 		StatChangeUI.Direction = -1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
@@ -1752,9 +1774,14 @@ void _HUD::UpdateLabels() {
 
 	// Update gold
 	Buffer.imbue(std::locale(Config.Locale));
-	Buffer << Player->Character->Attributes["Gold"].Int64;
+	if(ae::Input.ModKeyDown(KMOD_ALT))
+		Buffer << GetGPM() << " GPM";
+	else
+		Buffer << Player->Character->Attributes["Gold"].Int64;
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
+
+	// Set color
 	if(Player->Character->Attributes["Gold"].Int64 < 0)
 		GoldElement->Color = ae::Assets.Colors["red"];
 	else
