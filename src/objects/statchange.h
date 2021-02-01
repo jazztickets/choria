@@ -22,6 +22,7 @@
 #include <glm/vec4.hpp>
 #include <string>
 #include <unordered_map>
+#include <cmath>
 
 // Forward Declarations
 class _Object;
@@ -52,6 +53,7 @@ enum class StatUpdateType : int {
 struct _Value {
 	float Mult() const { return Int * 0.01f; }
 	float BonusMult() const { return (100 + Int) * 0.01f; }
+	int Multiplicative(int Current) { return std::ceil(Int * (100 - Current) * 0.01f); }
 
 	union {
 		int Int;

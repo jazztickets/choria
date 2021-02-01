@@ -123,7 +123,7 @@ const  double       PLAYER_IDLE_TIME                   =  120.0;
 //     Game
 const  int          GAME_MAX_RESISTANCE                =  75;
 const  int          GAME_MIN_RESISTANCE                =  -200;
-const  int          GAME_MAX_EVASION                   =  90;
+const  int          GAME_MAX_EVASION                   =  99;
 const  int64_t      GAME_ENCHANT_COST_BASE             =  5;
 const  int64_t      GAME_ENCHANT_COST_POWER            =  3;
 const  int64_t      GAME_ENCHANT_COST_RATE             =  5;

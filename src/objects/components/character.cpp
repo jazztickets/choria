@@ -377,7 +377,6 @@ void _Character::CalculateStats() {
 		Attributes["ManaRegen"].Int += std::floor(Item->GetAttribute("ManaRegen", Upgrades));
 		Attributes["BattleSpeed"].Int += std::floor(Item->GetAttribute("BattleSpeed", Upgrades));
 		Attributes["MoveSpeed"].Int += std::floor(Item->GetAttribute("MoveSpeed", Upgrades));
-		Attributes["Evasion"].Int += std::floor(Item->GetAttribute("Evasion", Upgrades));
 		Attributes["AllSkills"].Int += std::floor(Item->GetAttribute("AllSkills", Upgrades));
 		Attributes["SpellDamage"].Int += std::floor(Item->GetAttribute("SpellDamage", Upgrades));
 		Attributes["Cooldowns"].Int += std::floor(Item->GetCooldownReduction(Upgrades));
@@ -386,6 +385,7 @@ void _Character::CalculateStats() {
 		Attributes["AttackPower"].Int += std::floor(Item->GetAttribute("AttackPower", Upgrades));
 		Attributes["SummonPower"].Int += std::floor(Item->GetAttribute("SummonPower", Upgrades));
 		Attributes["Initiative"].Int += std::floor(Item->GetAttribute("Initiative", Upgrades));
+		Attributes["Evasion"].Int = Attributes["Evasion"].Multiplicative(std::floor(Item->GetAttribute("Evasion", Upgrades)));
 
 		// Handle all resist
 		if(Item->ResistanceTypeID == 1)
@@ -558,7 +558,7 @@ void _Character::CalculateStats() {
 	Attributes["PhysicalResist"].Int = (int)(ArmorResist * 100);
 
 	// Cap stats
-	Attributes["Evasion"].Int = std::clamp(Attributes["Evasion"].Int, 0, GAME_MAX_EVASION);
+	Attributes["Evasion"].Int = std::clamp(100 - Attributes["Evasion"].Int, 0, GAME_MAX_EVASION);
 	Attributes["MoveSpeed"].Int = std::max(Attributes["MoveSpeed"].Int, PLAYER_MIN_MOVESPEED);
 	Attributes["BattleSpeed"].Int = std::max(Attributes["BattleSpeed"].Int, BATTLE_MIN_SPEED);
 	Attributes["Cooldowns"].Int = std::max(Attributes["Cooldowns"].Int, 0);
@@ -639,7 +639,7 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 				Attributes[Update.first].Int = Update.second.Int;
 			break;
 			case StatUpdateType::MULTIPLICATIVE:
-				Attributes[Update.first].Int = (Attributes[Update.first].Mult() * (100 - Update.second.Int) * 0.01f) * 100;
+				Attributes[Update.first].Int = Attributes[Update.first].Multiplicative(Update.second.Int);
 			break;
 		}
 	}
