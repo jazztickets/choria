@@ -43,7 +43,7 @@ class _Buff {
 		std::string Script;
 		const ae::_Texture *Texture;
 		bool PauseDuringBattle;
-		bool ShowLevel;
+		int ShowLevel;
 		int Dismiss;
 		double WarningTime;
 

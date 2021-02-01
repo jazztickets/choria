@@ -23,12 +23,14 @@
 #include <ae/font.h>
 #include <ae/input.h>
 #include <ae/graphics.h>
+#include <ae/util.h>
 #include <constants.h>
 #include <stats.h>
 #include <SDL_keycode.h>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 _StatusEffect::_StatusEffect() :
@@ -128,7 +130,14 @@ void _StatusEffect::Render(ae::_Element *Element, double Timer) {
 		ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, OverlayHeight), Element->Bounds.End, true);
 	}
 
-	// Draw level
-	if(Level && Buff->ShowLevel)
-		ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Level), glm::ivec2(Element->Bounds.Start.x + 2 * ae::_Element::GetUIScale(), Element->Bounds.End.y - 3 * ae::_Element::GetUIScale()), ae::LEFT_BASELINE, ae::Assets.Colors["white"]);
+	// Draw level or timer
+	std::stringstream Buffer;
+	if(Level && Buff->ShowLevel == 1)
+		Buffer << Level;
+	else if(Buff->ShowLevel == 2)
+		Buffer << std::fixed << std::setprecision(1) << ae::Round((float)Duration);
+
+	// Draw small text
+	if(Buffer.str().length())
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Element->Bounds.Start.x + 2 * ae::_Element::GetUIScale(), Element->Bounds.End.y - 3 * ae::_Element::GetUIScale()), ae::LEFT_BASELINE, ae::Assets.Colors["white"]);
 }
