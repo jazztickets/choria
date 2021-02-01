@@ -1895,7 +1895,7 @@ function Item_RitePrivilege.GetInfo(self, Source, Item)
 		AddedText = "\n\n[c red]Max privilege attained"
 	end
 
-	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText .. "\n\n[c yellow]Items must be placed in your trade bag")
 end
 
 function Item_RitePrivilege.GetCost(self, Source)
