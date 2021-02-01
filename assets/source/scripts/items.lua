@@ -980,11 +980,10 @@ end
 -- Pain Ring --
 
 Item_PainRing = { }
-Item_PainRing.Difficulty = 50
 Item_PainRing.DifficultyPerLevel = 5
 
 function Item_PainRing.GetDifficulty(self, Source, Item)
-	return self.Difficulty + Item.Upgrades * self.DifficultyPerLevel
+	return Item.Level + Item.Upgrades * self.DifficultyPerLevel
 end
 
 function Item_PainRing.GetInfo(self, Source, Item)

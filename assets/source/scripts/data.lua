@@ -21,6 +21,11 @@ Item_Data = {
 		Initiative = 10,
 	},
 
+	-- Greater Ring of Pain
+	[367] = {
+		Cursed = true,
+	},
+
 	-- Hungering Ring
 	[286] = {
 		Cursed = true,
