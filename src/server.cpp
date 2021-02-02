@@ -2401,9 +2401,9 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			AdditionalCount = (int)Players.size();
 
 		// Get monster count modifier
-		int MonsterCountModifier = BattleEvent.Object->Character->Attributes["Monsters"].Int;
+		int MonsterCountModifier = BattleEvent.Object->Character->Attributes["MonsterCount"].Int;
 		for(const auto &Player : Players)
-			MonsterCountModifier += Player->Character->Attributes["Monsters"].Int - 100;
+			MonsterCountModifier += Player->Character->Attributes["MonsterCount"].Int - 100;
 
 		// Get monsters
 		std::list<_Zone> Monsters;

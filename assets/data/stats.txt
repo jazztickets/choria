@@ -181,7 +181,7 @@ INSERT INTO attribute VALUES(75,'SummonBattleSpeed','Summon Battle Speed',4,1,'1
 INSERT INTO attribute VALUES(76,'SummonLimit','Summon Limit',1,1,'0',0.0,3,1,0,1,0);
 INSERT INTO attribute VALUES(77,'SetLimit','Set Limit',1,1,'0',0.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(78,'Difficulty','Difficulty',4,1,'0',0.0,3,1,0,0,0);
-INSERT INTO attribute VALUES(79,'Monsters','Monsters',4,1,'100',0.0,3,1,0,0,0);
+INSERT INTO attribute VALUES(79,'MonsterCount','Monster Count',4,1,'100',0.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(80,'ConsumeChance','Consume Chance',4,1,'100',0.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(81,'DropRate','Drop Rate',4,1,'100',0.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(82,'MoveSpeed','Move Speed',4,1,'100',0.10000000000000000555,-3,1,0,0,0);

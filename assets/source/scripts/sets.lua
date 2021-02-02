@@ -253,12 +253,12 @@ Set_Jem.Attributes = {
 
 Set_Pain = Base_Set:New()
 Set_Pain.Attributes = {
-	Monsters = { "25%", "50%" },
+	MonsterCount = { "25%", "50%" },
 }
 
 Set_GreaterPain = Base_Set:New()
 Set_GreaterPain.Attributes = {
-	Monsters = { "50%", "100%" },
+	MonsterCount = { "50%", "100%" },
 }
 
 Set_Fire = Base_Set:New()

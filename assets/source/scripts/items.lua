@@ -1095,7 +1095,7 @@ function Item_ConstrictingAmulet.GetAmount(self, Item)
 end
 
 function Item_ConstrictingAmulet.Stats(self, Item, Object, Change)
-	Change.Monsters = self:GetAmount(Item)
+	Change.MonsterCount = self:GetAmount(Item)
 
 	return Change
 end
