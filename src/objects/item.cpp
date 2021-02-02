@@ -683,7 +683,7 @@ int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosit
 			if(MoreInfo)
 				LevelText = " Level " + std::to_string(Upgrades);
 			else
-				LevelText = " (" + std::to_string(EquippedCount) + "/" + std::to_string(Set.Count) + ")";
+				LevelText = " (" + std::to_string(EquippedCount) + "/" + std::to_string(Set.Count + Object->Character->Attributes["SetLimit"].Int) + ")";
 
 			ae::Assets.Fonts["hud_small"]->DrawTextFormatted("[c light_green]" + Set.Name + " Set Bonus" + LevelText, DrawPosition, ae::CENTER_BASELINE);
 			DrawPosition.y += TextSpacingY;

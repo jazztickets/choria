@@ -433,7 +433,8 @@ void _Character::CalculateStats() {
 
 		// Check for completed set
 		const _Set &Set = Object->Stats->Sets.at(SetData.first);
-		if(SetData.second.EquippedCount < Set.Count) {
+		int SetLimit = Set.Count + Attributes["SetLimit"].Int;
+		if(SetData.second.EquippedCount < SetLimit) {
 			SetData.second.Level = 0;
 			continue;
 		}
@@ -441,7 +442,7 @@ void _Character::CalculateStats() {
 		// Get set level from nth highest level piece, where n is the set count
 		auto SetPieceLevelsArray = SetPieceLevels[SetData.first];
 		std::sort(SetPieceLevelsArray.begin(), SetPieceLevelsArray.end(), std::greater<int>());
-		SetData.second.Level = SetPieceLevelsArray[Set.Count-1];
+		SetData.second.Level = SetPieceLevelsArray[SetLimit-1];
 
 		// Get stat bonuses when set is complete
 		_StatChange StatChange;
@@ -467,7 +468,8 @@ void _Character::CalculateStats() {
 
 		const _SetData &SetData = Sets.at(Item->SetID);
 		const _Set &Set = Object->Stats->Sets.at(Item->SetID);
-		if(SetData.EquippedCount < Set.Count)
+		int SetLimit = Set.Count + Attributes["SetLimit"].Int;
+		if(SetData.EquippedCount < SetLimit)
 			continue;
 
 		_StatChange StatChange;

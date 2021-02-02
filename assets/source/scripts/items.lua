@@ -977,6 +977,20 @@ function Item_FreezeProtection.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Set Limit --
+
+Item_SetLimit = { }
+
+function Item_SetLimit.GetInfo(self, Source, Item)
+	return "Reduce set requirements by [c green]" .. Item.Level
+end
+
+function Item_SetLimit.Stats(self, Item, Object, Change)
+	Change.SetLimit = -Item.Level
+
+	return Change
+end
+
 -- Pain Ring --
 
 Item_PainRing = { }
