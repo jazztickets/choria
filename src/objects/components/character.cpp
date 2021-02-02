@@ -433,7 +433,7 @@ void _Character::CalculateStats() {
 
 		// Check for completed set
 		const _Set &Set = Object->Stats->Sets.at(SetData.first);
-		int SetLimit = Set.Count + Attributes["SetLimit"].Int;
+		int SetLimit = std::max(1, Set.Count + Attributes["SetLimit"].Int);
 		if(SetData.second.EquippedCount < SetLimit) {
 			SetData.second.Level = 0;
 			continue;
@@ -468,7 +468,7 @@ void _Character::CalculateStats() {
 
 		const _SetData &SetData = Sets.at(Item->SetID);
 		const _Set &Set = Object->Stats->Sets.at(Item->SetID);
-		int SetLimit = Set.Count + Attributes["SetLimit"].Int;
+		int SetLimit = std::max(1, Set.Count + Attributes["SetLimit"].Int);
 		if(SetData.EquippedCount < SetLimit)
 			continue;
 
