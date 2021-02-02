@@ -244,6 +244,13 @@ Set_Trolls.Attributes = {
 	HealthBonus = { "5%", "25%" },
 }
 
+Set_Jem = Base_Set:New()
+Set_Jem.Attributes = {
+	AttackPower = { "25%", "50%" },
+	BleedPower = { "25%", "50%" },
+	PoisonPower = { "25%", "50%" },
+}
+
 Set_Fire = Base_Set:New()
 Set_Fire.Attributes = {
 	FirePower = { "25%", "75%" },

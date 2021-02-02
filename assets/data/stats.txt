@@ -2915,6 +2915,7 @@ INSERT INTO "set" VALUES(21,'Mundane','Set_Mundane',2);
 INSERT INTO "set" VALUES(22,'Warm','Set_Warm',2);
 INSERT INTO "set" VALUES(23,'Glowing','Set_Glowing',2);
 INSERT INTO "set" VALUES(24,'Troll''s','Set_Trolls',2);
+INSERT INTO "set" VALUES(25,'Jem''s','Set_Jem',2);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES "itemtype"(id) ON DELETE CASCADE,
@@ -3091,7 +3092,7 @@ INSERT INTO item VALUES(158,8,0,0,0,0,0,15,'Magic Ring','textures/items/ring.png
 INSERT INTO item VALUES(159,8,0,0,0,0,0,23,'Glowing Ring','textures/items/glowing_ring.png','','','',0,1000,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,50,0,3,0,0,0,0,0);
 INSERT INTO item VALUES(160,4,0,0,0,0,6,1,'Cloth Slippers','textures/items/cloth_slippers.png','','','',0,60,1,0,10,0,0.0,0.0,1,0,0,0,0,0,2,0,0,0,0,4,7,0,1,0);
 INSERT INTO item VALUES(161,11,0,0,0,0,0,0,'Ghost Trophy','textures/items/ghost_trophy.png','','','',0,1250,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(162,8,0,0,0,0,0,0,'Ring of Jem','textures/items/ring.png','','Item_AttackPower','',0,2500,1,10,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0);
+INSERT INTO item VALUES(162,8,0,0,0,0,0,25,'Ring of Jem','textures/items/ring.png','','','',0,2500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0);
 INSERT INTO item VALUES(163,4,0,0,0,0,7,7,'Reinforced Boots','textures/items/reinforced_boots.png','','','',0,550,1,0,20,0,0.0,0.0,1,0,0,4,0,0,4,0,0,0,0,0,6,0,0,0);
 INSERT INTO item VALUES(164,2,0,0,0,0,7,7,'Reinforced Helm','textures/items/reinforced_helm.png','','','',0,650,1,0,20,0,0.0,0.0,1,0,0,4,0,0,4,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(166,8,0,0,0,0,1,0,'Prismatic Ring','textures/items/ring.png','','','',0,500,1,0,10,0,0.0,0.0,1,0,0,0,0,0,20,0,0,0,0,0,0,0,0,0);
