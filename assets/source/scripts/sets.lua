@@ -251,6 +251,16 @@ Set_Jem.Attributes = {
 	PoisonPower = { "25%", "50%" },
 }
 
+Set_Pain = Base_Set:New()
+Set_Pain.Attributes = {
+	Monsters = { "25%", "50%" },
+}
+
+Set_GreaterPain = Base_Set:New()
+Set_GreaterPain.Attributes = {
+	Monsters = { "50%", "100%" },
+}
+
 Set_Fire = Base_Set:New()
 Set_Fire.Attributes = {
 	FirePower = { "25%", "75%" },
