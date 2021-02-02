@@ -2918,7 +2918,6 @@ INSERT INTO "set" VALUES(23,'Glowing','Set_Glowing',2);
 INSERT INTO "set" VALUES(24,'Troll''s','Set_Trolls',2);
 INSERT INTO "set" VALUES(25,'Jem''s','Set_Jem',2);
 INSERT INTO "set" VALUES(26,'Pain','Set_Pain',3);
-INSERT INTO "set" VALUES(27,'Greater Pain','Set_GreaterPain',2);
 CREATE TABLE IF NOT EXISTS "item" (
 	"id" INTEGER PRIMARY KEY,
 	"itemtype_id" INTEGER DEFAULT(0) REFERENCES "itemtype"(id) ON DELETE CASCADE,
