@@ -1716,7 +1716,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		// Get amount
 		if(StatChange.HasStat("Gold")) {
 			StatChangeUI.Change = StatChange.Values["Gold"].Int64;
-			if(StatChange.Object == Player)
+			if(StatChange.Object == Player && StatChange.Values["Gold"].Int64 > 0)
 				GoldGained.PushBack(_RecentGold(StatChange.Values["Gold"].Int64, PlayState.Time));
 		}
 		else {
