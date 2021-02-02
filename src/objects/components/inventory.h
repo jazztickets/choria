@@ -114,7 +114,7 @@ class _Inventory {
 
 	public:
 
-		_Inventory();
+		_Inventory(_Object *Object);
 
 		// Network
 		void Serialize(ae::_Buffer &Data);
@@ -136,6 +136,7 @@ class _Inventory {
 		void MoveTradeToInventory();
 		bool SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count);
 		int Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::list<_Slot> &SlotsUpdated);
+		bool IsTradable(const _Item *Item);
 
 		// Traders
 		_Slot GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots);
@@ -149,6 +150,9 @@ class _Inventory {
 		bool CanEquipItem(std::size_t Slot, const _Item *Item);
 		void SwapItem(const _Slot &Slot, const _Slot &OldSlot);
 		bool CanSwap(const _Slot &OldSlot, const _Slot &NewSlot);
+
+		// Objects
+		_Object *Object;
 
 		// Items
 		std::vector<_Bag> Bags;

@@ -16,6 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/components/inventory.h>
+#include <objects/components/character.h>
+#include <objects/object.h>
 #include <objects/item.h>
 #include <ae/buffer.h>
 #include <constants.h>
@@ -23,7 +25,8 @@
 #include <stdexcept>
 
 // Constructor
-_Inventory::_Inventory() {
+_Inventory::_Inventory(_Object *Object) :
+	Object(Object) {
 
 	Bags.resize((std::size_t)BagType::COUNT);
 	GetBag(BagType::EQUIPMENT).Slots.resize(EquipmentType::COUNT);
@@ -226,7 +229,7 @@ bool _Inventory::CanSwap(const _Slot &OldSlot, const _Slot &NewSlot) {
 		return false;
 
 	// Not tradable
-	if(NewSlot.Type == BagType::TRADE && OldItem && !OldItem->Tradable)
+	if(NewSlot.Type == BagType::TRADE && OldItem && !IsTradable(OldItem))
 		return false;
 
 	// Cursed items
@@ -411,7 +414,7 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 		return 0;
 
 	// Check for restrictions
-	if(!SourceItem.Item->Tradable && TargetBagType == BagType::TRADE)
+	if(!IsTradable(SourceItem.Item) && TargetBagType == BagType::TRADE)
 		return 0;
 
 	_Bag TargetBag = GetBag(TargetBagType);
@@ -478,6 +481,11 @@ int _Inventory::Transfer(const _Slot &SourceSlot, BagType TargetBagType, std::li
 	SlotsUpdated.push_back(SourceSlot);
 
 	return AmountMoved;
+}
+
+// Determine if item can be traded
+bool _Inventory::IsTradable(const _Item *Item) {
+	return Item->Tradable && Object->Character->Level >= Item->Tradable;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items

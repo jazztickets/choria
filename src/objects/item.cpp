@@ -461,9 +461,15 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	}
 
 	// Tradable
-	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Cannot trade with other players", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
-		DrawPosition.y += ControlSpacingY;
+	if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER) {
+		if(!Tradable) {
+			ae::Assets.Fonts["hud_small"]->DrawText("Cannot trade with other players", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+			DrawPosition.y += ControlSpacingY;
+		}
+		else if(Player->Character->Level < Tradable) {
+			ae::Assets.Fonts["hud_small"]->DrawText("Can trade with players at level " + std::to_string(Tradable), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+			DrawPosition.y += ControlSpacingY;
+		}
 	}
 
 	// Draw help text
@@ -546,7 +552,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	}
 
 	// Move hint
-	if(Player->Character->IsTrading() && Tradable && !(IsCursed() && Tooltip.Window == _HUD::WINDOW_EQUIPMENT))
+	if(Player->Character->IsTrading() && Player->Inventory->IsTradable(this) && !(IsCursed() && Tooltip.Window == _HUD::WINDOW_EQUIPMENT))
 		HelpTextList.push_back("Shift+click to move");
 
 	// Split hint

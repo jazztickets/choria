@@ -115,7 +115,7 @@ class _Item {
 		std::unordered_map<std::string, _Value> Attributes;
 		int Chance;
 		uint32_t ResistanceTypeID;
-		bool Tradable;
+		int Tradable;
 		bool TargetAlive;
 		TargetType TargetID;
 		ScopeType Scope;

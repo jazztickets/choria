@@ -123,7 +123,7 @@ _Object::~_Object() {
 
 // Create object components
 void _Object::CreateComponents() {
-	Inventory = new _Inventory();
+	Inventory = new _Inventory(this);
 	Character = new _Character(this);
 	Fighter = new _Fighter(this);
 	Controller = new _Controller(this);
