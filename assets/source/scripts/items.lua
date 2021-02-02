@@ -805,7 +805,7 @@ function Item_UltimateBattlePotion.Use(self, Level, Duration, Source, Target, Re
 	Result.Target.Buff = Buff_Difficult.Pointer
 	Result.Target.BuffLevel = self.Difficulty
 	Result.Target.BuffDuration = Duration
-	Result.Target.BossCooldowns = Level
+	Result.Target.CurrentBossCooldowns = Level
 
 	return Result
 end

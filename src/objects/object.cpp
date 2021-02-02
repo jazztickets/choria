@@ -1422,9 +1422,9 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 	}
 
 	// Boss cooldowns
-	if(StatChange.HasStat("BossCooldowns")) {
+	if(StatChange.HasStat("CurrentBossCooldowns")) {
 		for(auto &BattleCooldown : Character->BossCooldowns)
-			BattleCooldown.second *= 1.0 - StatChange.Values["BossCooldowns"].Mult();
+			BattleCooldown.second *= 1.0 - StatChange.Values["CurrentBossCooldowns"].Mult();
 	}
 
 	// Rebirth bonus
