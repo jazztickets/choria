@@ -96,7 +96,7 @@ class _Object : public ae::_BaseObject {
 		void SerializeBossCooldowns(ae::_Buffer &Data);
 		void UnserializeCreate(ae::_Buffer &Data);
 		void UnserializeStats(ae::_Buffer &Data);
-		void UnserializeBattle(ae::_Buffer &Data, bool IsClient);
+		void UnserializeBattle(ae::_Buffer &Data, bool IsSelf);
 		void UnserializeStatusEffects(ae::_Buffer &Data);
 		void UnserializeBossCooldowns(ae::_Buffer &Data);
 		void SendPacket(ae::_Buffer &Packet, bool Broadcast=true);

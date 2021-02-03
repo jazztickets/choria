@@ -194,7 +194,7 @@ class _Character {
 		std::unordered_map<std::string, _Value> Attributes;
 		std::unordered_map<std::string, int> BaseResistances;
 		std::unordered_map<uint32_t, _SetData> Sets;
-		int EquipmentBattleSpeed;
+		int BattleSpeedBeforeBuffs;
 
 		// Status effects
 		std::list<_StatusEffect *> StatusEffects;

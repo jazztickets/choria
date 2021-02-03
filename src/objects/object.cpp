@@ -1182,6 +1182,10 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 
 // Serialize object for battle
 void _Object::SerializeBattle(ae::_Buffer &Data) {
+
+	// Send players' battlespeed before buffs
+	int BattleSpeed = Monster->DatabaseID ? Character->BaseBattleSpeed : Character->BattleSpeedBeforeBuffs;
+
 	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<uint32_t>(Monster->DatabaseID);
 	Data.Write<glm::ivec2>(Position);
@@ -1190,15 +1194,15 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<int>(Character->Attributes["MaxHealth"].Int);
 	Data.Write<int>(Character->Attributes["Mana"].Int);
 	Data.Write<int>(Character->Attributes["MaxMana"].Int);
-	Data.Write<int>(Character->EquipmentBattleSpeed);
-	Data.Write<double>(Fighter->TurnTimer);
+	Data.Write<int>(BattleSpeed);
+	Data.Write<float>(Fighter->TurnTimer);
 	Data.Write<uint8_t>(Fighter->BattleSide);
 
 	SerializeStatusEffects(Data);
 }
 
 // Unserialize battle stats
-void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
+void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsSelf) {
 	Controller->InputStates.clear();
 
 	// Get object type
@@ -1208,10 +1212,11 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Character->BaseMaxHealth = Character->Attributes["MaxHealth"].Int = Data.Read<int>();
 	Character->Attributes["Mana"].Int = Data.Read<int>();
 	Character->BaseMaxMana = Character->Attributes["MaxMana"].Int = Data.Read<int>();
-	Character->EquipmentBattleSpeed = Data.Read<int>();
-	if(!IsClient && !Monster->DatabaseID)
-		Character->BaseBattleSpeed = Character->EquipmentBattleSpeed;
-	Fighter->TurnTimer = Data.Read<double>();
+	int BattleSpeed = Data.Read<int>();
+	if(!IsSelf)
+		Character->BaseBattleSpeed = BattleSpeed;
+
+	Fighter->TurnTimer = Data.Read<float>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
 
 	UnserializeStatusEffects(Data);

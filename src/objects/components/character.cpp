@@ -517,7 +517,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get speed before buffs
-	EquipmentBattleSpeed = Attributes["BattleSpeed"].Int;
+	BattleSpeedBeforeBuffs = Attributes["BattleSpeed"].Int;
 
 	// Get buff stats
 	for(const auto &StatusEffect : StatusEffects) {
