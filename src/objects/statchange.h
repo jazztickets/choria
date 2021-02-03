@@ -54,6 +54,7 @@ struct _Value {
 	float Mult() const { return Int * 0.01f; }
 	float BonusMult() const { return (100 + Int) * 0.01f; }
 	int Multiplicative(int Current) { return std::ceil(Int * (100 - Current) * 0.01f); }
+	static const _Value &Print(const std::unordered_map<std::string, _Value> &Map, const char *Key);
 
 	union {
 		int Int;

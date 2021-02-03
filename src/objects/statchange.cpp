@@ -31,6 +31,8 @@
 #include <iostream>
 #include <locale>
 
+const _Value &_Value::Print(const std::unordered_map<std::string, _Value> &Map, const char *Key) { return Map.at(Key); }
+
 // Constructor
 _StatChange::_StatChange() :
 	Object(nullptr) {
