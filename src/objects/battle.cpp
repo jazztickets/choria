@@ -731,7 +731,8 @@ void _Battle::ServerEndBattle() {
 	}
 
 	// Build results
-	std::map<_Object *, int> PlayerUpdates;
+	typedef std::pair<_Object *, const _Buff *> _SummonKey;
+	std::map<_SummonKey, int> PlayerSummons;
 	for(auto &Object : Objects) {
 		Object->Controller->InputStates.clear();
 		Object->Fighter->PotentialAction.Unset();
@@ -836,20 +837,20 @@ void _Battle::ServerEndBattle() {
 			Object->Character->Attributes["Mana"].Int = Object->Character->Attributes["MaxMana"].Int;
 		}
 
-		// See if summon is alive, then add buff to owner
+		// Build map of player summons
 		_Object *Owner = Object->Monster->Owner;
-		if(Object->Character->IsAlive() && Owner && !Owner->IsMonster() && Object->Monster->SummonBuff) {
+		if(Owner && !Owner->IsMonster() && Object->Monster->SummonBuff) {
+			_SummonKey Key(Owner, Object->Monster->SummonBuff);
 
-			// Tag player for a status effect sync
-			PlayerUpdates[Owner] = 1;
+			// Check if monster died
+			if(!Object->Character->IsAlive()) {
 
-			// Update summon buff
-			_StatChange Summons;
-			Summons.Object = Owner;
-			Summons.Values["Buff"].Pointer = (void *)Object->Monster->SummonBuff;
-			Summons.Values["BuffLevel"].Int = 1;
-			Summons.Values["BuffDuration"].Float = Object->Monster->Duration;
-			Owner->UpdateStats(Summons, Owner);
+				// Add at least summon if owner also died
+				if(!Owner->Character->IsAlive() && PlayerSummons.find(Key) == PlayerSummons.end())
+					PlayerSummons[Key] = 0;
+			}
+			else
+				PlayerSummons[Key]++;
 		}
 
 		// Get boss cooldown
@@ -906,23 +907,23 @@ void _Battle::ServerEndBattle() {
 		}
 	}
 
-	// Synchronize status effects for each player that has summons
-	for(auto &Object : PlayerUpdates) {
+	// Handle summon updates
+	for(auto &PlayerSummon : PlayerSummons) {
 
-		// Cut summons in half on death
-		if(!Object.first->Character->IsAlive()) {
-			for(auto &StatusEffect : Object.first->Character->StatusEffects) {
-				if(StatusEffect->Buff->Summon)
-					StatusEffect->Level = std::max(1, StatusEffect->Level / 2);
-			}
-		}
+		// Update summon buff
+		_StatChange Summons;
+		Summons.Object = PlayerSummon.first.first;
+		Summons.Values["Buff"].Pointer = (void *)PlayerSummon.first.second;
+		Summons.Values["BuffLevel"].Int = std::max(1, PlayerSummon.second);
+		Summons.Values["BuffDuration"].Float = -1;
+		Summons.Object->UpdateStats(Summons, Summons.Object);
 
-		// Send packet
+		// Sync status effects
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::PLAYER_STATUSEFFECTS);
-		Packet.Write<ae::NetworkIDType>(Object.first->NetworkID);
-		Object.first->SerializeStatusEffects(Packet);
-		Server->Network->SendPacket(Packet, Object.first->Peer);
+		Packet.Write<ae::NetworkIDType>(Summons.Object->NetworkID);
+		Summons.Object->SerializeStatusEffects(Packet);
+		Server->Network->SendPacket(Packet, Summons.Object->Peer);
 	}
 
 	Deleted = true;

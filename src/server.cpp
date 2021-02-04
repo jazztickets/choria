@@ -1889,11 +1889,11 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool Penalize) {
 			Player->UpdateStats(Summons, Player);
 		}
 
-		// Cut summons in half
+		// Give one of each summon on death
 		if(Penalize) {
 			for(auto &StatusEffect : Player->Character->StatusEffects) {
 				if(StatusEffect->Buff->Summon)
-					StatusEffect->Level = std::max(1, StatusEffect->Level/2);
+					StatusEffect->Level = 1;
 			}
 		}
 	}
