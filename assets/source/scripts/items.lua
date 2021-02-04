@@ -1359,7 +1359,7 @@ Base_Rebirth = {
 		return Object
 	end,
 
-	GetBonus = function(self, Source)
+	GetBonus = function(self, Source, MoreInfo)
 		if Source.RebirthTier == 0 then
 			return 0
 		end
@@ -1367,9 +1367,19 @@ Base_Rebirth = {
 		if self.Type == 1 then
 			return math.floor(Source.RebirthTier) + 4
 		elseif self.Type == 2 then
-			return math.floor(Source.RebirthTier / 2) + 2
+			local Value = Source.RebirthTier / 2 + 2
+			if MoreInfo then
+				return Round(Value)
+			else
+				return math.floor(Value)
+			end
 		elseif self.Type == 3 then
-			return math.ceil(Source.RebirthTier / 5)
+			local Value = (Source.RebirthTier - 1) / 5 + 1
+			if MoreInfo then
+				return Round(Value)
+			else
+				return math.floor(Value)
+			end
 		end
 	end,
 
@@ -1485,7 +1495,16 @@ end
 Item_EternalGuard = Base_Rebirth:New()
 
 function Item_EternalGuard.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "[c white] damage block, [c green]" .. math.floor(self:GetBonus(Source) / 3) .. "[c white] armor, and [c green]" .. math.floor(self:GetBonus(Source) / 4) .. "[c white] resistance bonus", Source)
+	local DamageBlock = self:GetBonus(Source)
+	local Armor = math.floor(self:GetBonus(Source) / 3)
+	local Resist = math.floor(self:GetBonus(Source) / 4)
+
+	if Item.MoreInfo then
+		Armor = Round(self:GetBonus(Source) / 3)
+		Resist = Round(self:GetBonus(Source) / 4)
+	end
+
+	return RebirthText(self, "[c green]" .. DamageBlock .. "[c white] damage block, [c green]" .. Armor .. "[c white] armor, and [c green]" .. Resist .. "[c white] resistance bonus", Source)
 end
 
 function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result)
@@ -1577,7 +1596,7 @@ function Item_EternalKnowledge.GetInfo(self, Source, Item)
 		Plural = "s"
 	end
 
-	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "[c white] extra skill point" .. Plural, Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source, Item.MoreInfo) .. "[c white] extra skill point" .. Plural, Source)
 end
 
 function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result)
@@ -1595,7 +1614,7 @@ Item_EternalPain = Base_Rebirth:New()
 Item_EternalPain.Type = 2
 
 function Item_EternalPain.GetInfo(self, Source, Item)
-	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] difficulty increase", Source)
+	return RebirthText(self, "[c green]" .. self:GetBonus(Source, Item.MoreInfo) .. "%[c white] difficulty increase", Source)
 end
 
 function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result)
