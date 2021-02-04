@@ -1875,6 +1875,27 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool Penalize) {
 			Player->Character->LoadMapID = 0;
 			Player->Character->DeleteStatusEffects();
 		}
+
+		// Add monsters from battle to player's summon buffs
+		for(const auto &BattleObject : Player->Character->Battle->Objects) {
+			if(BattleObject->Monster->Owner != Player)
+				continue;
+
+			_StatChange Summons;
+			Summons.Object = Player;
+			Summons.Values["Buff"].Pointer = (void *)BattleObject->Monster->SummonBuff;
+			Summons.Values["BuffLevel"].Int = 1;
+			Summons.Values["BuffDuration"].Float = -1;
+			Player->UpdateStats(Summons, Player);
+		}
+
+		// Cut summons in half
+		if(Penalize) {
+			for(auto &StatusEffect : Player->Character->StatusEffects) {
+				if(StatusEffect->Buff->Summon)
+					StatusEffect->Level = std::max(1, StatusEffect->Level/2);
+			}
+		}
 	}
 
 	// Leave trading screen

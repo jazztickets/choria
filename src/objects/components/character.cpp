@@ -182,7 +182,7 @@ void _Character::Update(double FrameTime) {
 		}
 
 		// Clean up
-		if(StatusEffect->Deleted || !IsAlive()) {
+		if(StatusEffect->Deleted || (!IsAlive() && !StatusEffect->Buff->Summon)) {
 			delete StatusEffect;
 			Iterator = StatusEffects.erase(Iterator);
 
@@ -965,24 +965,28 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 
 	// Find existing buff
 	for(auto &ExistingEffect : StatusEffects) {
+		if(StatusEffect->Buff != ExistingEffect->Buff)
+			continue;
 
-		// If buff exists, refresh duration
-		if(StatusEffect->Buff == ExistingEffect->Buff) {
-			if(StatusEffect->Level >= ExistingEffect->Level) {
-				double ExistingRemainder = std::fmod(ExistingEffect->Duration, 1.0);
-				double Offset = 0.0;
-				if(ExistingRemainder > 0.0 && ExistingRemainder < 1.0)
-					Offset = 1.0 - ExistingRemainder;
-
-				ExistingEffect->MaxDuration = StatusEffect->MaxDuration;
-				ExistingEffect->Duration = StatusEffect->Duration - Offset;
-				ExistingEffect->Level = StatusEffect->Level;
-				ExistingEffect->Time = Offset;
-				ExistingEffect->Source = StatusEffect->Source;
-			}
-
-			return false;
+		// Add to level of summon buff
+		if(StatusEffect->Buff->Summon) {
+			ExistingEffect->Level += StatusEffect->Level;
 		}
+		// Update duration
+		else if(StatusEffect->Level >= ExistingEffect->Level) {
+			double ExistingRemainder = std::fmod(ExistingEffect->Duration, 1.0);
+			double Offset = 0.0;
+			if(ExistingRemainder > 0.0 && ExistingRemainder < 1.0)
+				Offset = 1.0 - ExistingRemainder;
+
+			ExistingEffect->MaxDuration = StatusEffect->MaxDuration;
+			ExistingEffect->Duration = StatusEffect->Duration - Offset;
+			ExistingEffect->Level = StatusEffect->Level;
+			ExistingEffect->Time = Offset;
+			ExistingEffect->Source = StatusEffect->Source;
+		}
+
+		return false;
 	}
 
 	StatusEffects.push_back(StatusEffect);

@@ -69,13 +69,6 @@ struct _BattleResult {
 	bool Dead;
 };
 
-struct _SurvivedSummon {
-	_SurvivedSummon() : Monster(nullptr), Count(0) { }
-
-	const _Monster *Monster;
-	int Count;
-};
-
 // Classes
 class _Battle : public ae::_BaseObject {
 

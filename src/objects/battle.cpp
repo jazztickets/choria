@@ -731,8 +731,7 @@ void _Battle::ServerEndBattle() {
 	}
 
 	// Build results
-	typedef std::pair<_Object *, const _Monster *> _SurvivedSummonKey;
-	std::map<_SurvivedSummonKey, _SurvivedSummon> SurvivedSummons;
+	std::map<_Object *, int> PlayerUpdates;
 	for(auto &Object : Objects) {
 		Object->Controller->InputStates.clear();
 		Object->Fighter->PotentialAction.Unset();
@@ -838,10 +837,19 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// See if summon is alive, then add buff to owner
-		if(Object->Character->IsAlive() && Object->Monster->Owner && !Object->Monster->Owner->IsMonster() && Object->Monster->Owner->Character->IsAlive() && Object->Monster->SummonBuff) {
-			_SurvivedSummonKey Key(Object->Monster->Owner, Object->Monster);
-			SurvivedSummons[Key].Monster = Object->Monster;
-			SurvivedSummons[Key].Count++;
+		_Object *Owner = Object->Monster->Owner;
+		if(Object->Character->IsAlive() && Owner && !Owner->IsMonster() && Object->Monster->SummonBuff) {
+
+			// Tag player for a status effect sync
+			PlayerUpdates[Owner] = 1;
+
+			// Update summon buff
+			_StatChange Summons;
+			Summons.Object = Owner;
+			Summons.Values["Buff"].Pointer = (void *)Object->Monster->SummonBuff;
+			Summons.Values["BuffLevel"].Int = 1;
+			Summons.Values["BuffDuration"].Float = Object->Monster->Duration;
+			Owner->UpdateStats(Summons, Owner);
 		}
 
 		// Get boss cooldown
@@ -898,38 +906,18 @@ void _Battle::ServerEndBattle() {
 		}
 	}
 
-	// Send summon buffs to players
-	std::map<_Object *, int> PlayerUpdates;
-	for(const auto &SurvivedSummon : SurvivedSummons) {
-		_Object *Owner = SurvivedSummon.first.first;
-		const _Monster *Monster = SurvivedSummon.second.Monster;
+	// Synchronize status effects for each player that has summons
+	for(auto &Object : PlayerUpdates) {
 
-		PlayerUpdates[Owner] = 1;
-
-		// Add current level of summon buff to survived summon map
-		bool Existed = false;
-		for(const auto &StatusEffect : Owner->Character->StatusEffects) {
-			if(StatusEffect->Buff == Monster->SummonBuff) {
-				StatusEffect->Level += SurvivedSummon.second.Count;
-				Existed = true;
+		// Cut summons in half on death
+		if(!Object.first->Character->IsAlive()) {
+			for(auto &StatusEffect : Object.first->Character->StatusEffects) {
+				if(StatusEffect->Buff->Summon)
+					StatusEffect->Level = std::max(1, StatusEffect->Level / 2);
 			}
 		}
 
-		// Create buff if it didn't exist
-		if(!Existed) {
-
-			// Create buff
-			_StatChange Summons;
-			Summons.Object = Owner;
-			Summons.Values["Buff"].Pointer = (void *)Monster->SummonBuff;
-			Summons.Values["BuffLevel"].Int = SurvivedSummon.second.Count;
-			Summons.Values["BuffDuration"].Float = Monster->Duration;
-			Owner->UpdateStats(Summons, Owner);
-		}
-	}
-
-	// Synchronize status effects for each affected player
-	for(auto &Object : PlayerUpdates) {
+		// Send packet
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::PLAYER_STATUSEFFECTS);
 		Packet.Write<ae::NetworkIDType>(Object.first->NetworkID);
