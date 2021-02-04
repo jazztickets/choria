@@ -845,7 +845,7 @@ void _Battle::ServerEndBattle() {
 			// Check if monster died
 			if(!Object->Character->IsAlive()) {
 
-				// Add at least summon if owner also died
+				// Add at least one summon if owner also died
 				if(!Owner->Character->IsAlive() && PlayerSummons.find(Key) == PlayerSummons.end())
 					PlayerSummons[Key] = 0;
 			}
