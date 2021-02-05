@@ -390,7 +390,7 @@ void _Map::CheckBattle(_Object *Object, const _Tile *Tile) const {
 	if(!Server)
 		return;
 
-	if(Object->Character->NextBattle <= 0)
+	if(Object->Character->IsAlive() && Object->Character->NextBattle <= 0)
 		Server->QueueBattle(Object, Tile->Zone, false, false, 0.0f, 0.0f);
 }
 
