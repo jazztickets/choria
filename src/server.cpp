@@ -1691,6 +1691,9 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
+	// Get amount
+	uint8_t Amount = Data.Read<uint8_t>();
+
 	// Get slot
 	_Slot Slot;
 	Slot.Unserialize(Data);
@@ -1699,24 +1702,44 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Get item
 	_InventorySlot &InventorySlot = Player->Inventory->GetSlot(Slot);
-	if(InventorySlot.Upgrades >= InventorySlot.Item->MaxLevel)
-		return;
 
-	// Get upgrade price
-	int64_t Price = InventorySlot.Item->GetUpgradeCost(InventorySlot.Upgrades+1);
+	// Determine total cost and upgrades available
+	int64_t TotalCost = 0;
+	int Upgrades = InventorySlot.Upgrades;
+	for(int i = 0; i < Amount; i++) {
 
-	// Check gold
-	if(Price > Player->Character->Attributes["Gold"].Int64)
-		return;
+		// Check item's max level
+		if(Upgrades >= InventorySlot.Item->MaxLevel)
+			break;
 
-	// Upgrade item
-	InventorySlot.Upgrades++;
+		// Check if blacksmith can upgrade
+		if(!Player->Character->Blacksmith->CanUpgrade(InventorySlot.Item, Upgrades))
+			break;
+
+		// Get upgrade price
+		int64_t UpgradePrice = InventorySlot.Item->GetUpgradeCost(Upgrades+1);
+
+		// Check player gold
+		if(TotalCost + UpgradePrice > Player->Character->Attributes["Gold"].Int64)
+			break;
+
+		// Upgrade item
+		Upgrades++;
+		TotalCost += UpgradePrice;
+	}
+
+	// No gold or upgrades available
+	if(Upgrades == InventorySlot.Upgrades)
+	   return;
+
+	// Set new upgrade level
+	InventorySlot.Upgrades = Upgrades;
 
 	// Update gold
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values["Gold"].Int64 = -Price;
+		StatChange.Values["Gold"].Int64 = -TotalCost;
 		Player->UpdateStats(StatChange);
 
 		// Build packet

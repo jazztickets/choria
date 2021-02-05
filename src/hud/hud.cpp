@@ -245,21 +245,24 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				case WINDOW_TRADEYOURS:
 				case WINDOW_EQUIPMENT:
 				case WINDOW_INVENTORY:
-
-					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+
+						// Upgrade
 						if(ae::Input.ModKeyDown(KMOD_CTRL)) {
 							if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, Tooltip.InventorySlot.Upgrades)) {
 								ae::_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
+								Packet.Write<uint8_t>(ae::Input.ModKeyDown(KMOD_SHIFT) ? 5 : 1);
 								Tooltip.Slot.Serialize(Packet);
 								PlayState.Network->SendPacket(Packet);
 							}
 							else
 								SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
 						}
+						// Transfer between trade/inventory
 						else if(ae::Input.ModKeyDown(KMOD_SHIFT))
 							Transfer(Tooltip.Slot);
+						// Pickup item
 						else
 							Cursor = Tooltip;
 					}
@@ -407,6 +410,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(Player->Inventory->IsValidSlot(BlacksmithScreen->UpgradeSlot)) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
+				Packet.Write<uint8_t>(1);
 				BlacksmithScreen->UpgradeSlot.Serialize(Packet);
 				PlayState.Network->SendPacket(Packet);
 			}
@@ -579,7 +583,18 @@ void _HUD::Update(double FrameTime) {
 						}
 						else if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, Tooltip.InventorySlot.Upgrades)) {
 							Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
-							Tooltip.Cost = Tooltip.InventorySlot.Item->GetUpgradeCost(Tooltip.InventorySlot.Upgrades + 1);
+
+							// Get total upgrade cost
+							int Amount = ae::Input.ModKeyDown(KMOD_SHIFT) ? 5 : 1;
+							for(int i = 0; i < Amount; i++) {
+								int NextUpgrade = Tooltip.InventorySlot.Upgrades + i + 1;
+								if(NextUpgrade > Tooltip.InventorySlot.Item->MaxLevel)
+									break;
+
+								Tooltip.Cost += Tooltip.InventorySlot.Item->GetUpgradeCost(NextUpgrade);
+								if(!Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, NextUpgrade))
+									break;
+							}
 						}
 					}
 				}
