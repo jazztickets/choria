@@ -237,7 +237,7 @@ end
 
 Skill_GhostAttack = Base_Attack:New()
 
-function Skill_GhostAttack.Use(self, Level, Duration, Source, Target, Result)
+function Skill_GhostAttack.Use(self, Level, Duration, Source, Target, Result, Priority)
 
 	-- Ignore target's defense
 	Target.DamageBlock = 0
@@ -1206,7 +1206,7 @@ function Skill_Flee.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	return false
 end
 
-function Skill_Flee.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Flee.Use(self, Level, Duration, Source, Target, Result, Priority)
 	self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 
 	return Result
@@ -1273,7 +1273,7 @@ function Skill_Pickpocket.CanUse(self, Level, Source, Target)
 	return not Source.ZoneOnCooldown
 end
 
-function Skill_Pickpocket.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Pickpocket.Use(self, Level, Duration, Source, Target, Result, Priority)
 	self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 
 	return Result
@@ -1310,7 +1310,7 @@ function Skill_Parry.GetInfo(self, Source, Item)
 	return "Block [c green]" .. self:GetDamageReduction(Item.Level) .. "% [c white]attack damage for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nGain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked\nThe attacker is stunned for [c green]" .. Buff_Parry.StunDuration .. "[c white] second" .. Plural
 end
 
-function Skill_Parry.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Parry.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Parry.Pointer
 	Result.Target.BuffLevel = self:GetDamageReduction(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -1346,7 +1346,7 @@ function Skill_Taunt.GetInfo(self, Source, Item)
 	return "Taunt [c green]" .. Count .. "[c white] " .. Plural .. " for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, forcing them to attack you. Increase armor by [c green]" .. self:GetArmor(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds"
 end
 
-function Skill_Taunt.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Taunt.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Taunted.Pointer
 	Result.Target.BuffLevel = 1
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -1378,7 +1378,7 @@ function Skill_Hunt.GetInfo(self, Source, Item)
 	return "Attack another player and get [c green]" .. self:GetGold(Item.Level) .. "% [c white]of their gold for a kill. If you die, you will lose [c green]" .. self:GetGold(Item.Level) .. "%[c white] gold plus your bounty\n[c yellow]Must be in a PVP zone to use"
 end
 
-function Skill_Hunt.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Hunt.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Hunt = self:GetGold(Level) * 0.01
 
 	return Result
@@ -1392,7 +1392,7 @@ function Skill_BountyHunt.GetInfo(self, Source, Item)
 	return "Attack a fugitive and attempt to claim their bounty\n\n[c yellow]Can use anywhere"
 end
 
-function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result)
+function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.BountyHunt = 1.0
 
 	return Result
@@ -1419,7 +1419,7 @@ function Skill_Dodge.GetInfo(self, Source, Item)
 	return "Gain [c green]" .. self:GetEvasion(Item.Level) .. "%[c white] evasion for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds"
 end
 
-function Skill_Dodge.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Dodge.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Evasion.Pointer
 	Result.Target.BuffLevel = self:GetEvasion(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)

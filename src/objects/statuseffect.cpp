@@ -42,6 +42,7 @@ _StatusEffect::_StatusEffect() :
 	Duration(0.0),
 	MaxDuration(0.0),
 	Level(0),
+	Priority(0),
 	Infinite(false),
 	Deleted(false) {
 

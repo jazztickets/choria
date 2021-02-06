@@ -240,7 +240,7 @@ function Skill_Rejuvenation.GetInfo(self, Source, Item)
 	return "Heal [c green]" .. self:GetHeal(Source, Item.Level) .. " [c white]HP [c white]over [c green]" .. math.floor(self:GetDuration(Item.Level)) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Rejuvenation.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Rejuvenation.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Healing.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -269,7 +269,7 @@ function Skill_Heal.GetInfo(self, Source, Item)
 	return "Heal target for [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Heal.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Heal.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Health = self:GetHeal(Source, Level)
 	WeaponProc(Source, Target, Result, true)
 
@@ -319,7 +319,7 @@ function Skill_Resurrect.CanTarget(self, Source, Target, Alive)
 	return Target.Corpse > 0 and Target.Health == 0
 end
 
-function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Resurrect.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Health = self:GetHeal(Source, Level)
 	Result.Target.Mana = self:GetMana(Source, Level)
 	Result.Target.Corpse = 1
@@ -453,7 +453,7 @@ function Skill_PoisonTouch.GetInfo(self, Source, Item)
 	return "Infuse venom into your enemy, dealing [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heal power is reduced when poisoned"
 end
 
-function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result)
+function Skill_PoisonTouch.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Poisoned.Pointer
 	Result.Target.BuffLevel = self:GetPoisonLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -735,7 +735,7 @@ function Skill_Ignite.GetInfo(self, Source, Item)
 	return "Ignite an enemy and deal [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Ignite.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Ignite.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Burning.Pointer
 	Result.Target.BuffLevel = self:GetBurnLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -774,7 +774,7 @@ function Skill_DemonicConjuring.GetInfo(self, Source, Item)
 	return "Summon a demon that has [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor, [c green]+" .. self:GetResistAll(Source, Item.Level, Item.MoreInfo) .. "%[c white] resist all and does [c green]" .. self:GetDamageText(Source, Item) .. "[c white] fire damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon an ice imp that deals cold damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health demon at limit"
 end
 
-function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result)
+function Skill_DemonicConjuring.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Summons = {}
 	Result.Summons[1] = {}
 	Result.Summons[1].SpellID = self.Item.ID
@@ -876,7 +876,7 @@ function Skill_RaiseDead.GetInfo(self, Source, Item)
 	return "Raise [c green]" .. Count .. "[c white] skeleton" .. Plural .. " from a corpse that ".. Has .. " [c green]" .. self:GetHealth(Source, Item.Level) .. "[c white] HP, [c green]" .. self:GetArmor(Source, Item.Level, Item.MoreInfo) .. "[c white] armor, [c green]+" .. self:GetResistAll(Source, Item.Level, Item.MoreInfo) .. "%[c white] resist all and [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage\n[c green]" .. self:GetSpecialChance(Item.Level) .. "%[c white] chance to summon a skeleton priest that can heal but only deals [c green]" .. math.floor(self.SpecialDamage * 100) .. "%[c white] damage\nCan summon a maximum of [c green]" .. self:GetLimit(Source, Item.Level, Item.MoreInfo) .. "[c white]\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Heals lowest health skeleton at limit"
 end
 
-function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result)
+function Skill_RaiseDead.Use(self, Level, Duration, Source, Target, Result, Priority)
 
 	Count = self:GetCount(Source, Level, false)
 	if Result.SummonBuff ~= nil then
@@ -954,7 +954,7 @@ function Skill_Enfeeble.GetInfo(self, Source, Item)
 	return "Cripple [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foe" .. Plural .. ", reducing their attack damage by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Enfeeble.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Enfeeble.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Weak.Pointer
 	Result.Target.BuffLevel = self:GetPercent(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -994,10 +994,11 @@ function Skill_Flay.GetInfo(self, Source, Item)
 	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foe" .. Plural .. ", reducing their resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
 end
 
-function Skill_Flay.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Flay.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Flayed.Pointer
 	Result.Target.BuffLevel = self:GetPercent(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	Result.Target.BuffPriority = Priority
 	WeaponProc(Source, Target, Result, true)
 
 	return Result
@@ -1035,10 +1036,11 @@ function Skill_Fracture.GetInfo(self, Source, Item)
 	return "Decimate the defenses of [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] " .. Plural .. ", reducing their armor by [c green]" .. self:GetReduction(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
 end
 
-function Skill_Fracture.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Fracture.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Fractured.Pointer
 	Result.Target.BuffLevel = self:GetReduction(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
+	Result.Target.BuffPriority = Priority
 	WeaponProc(Source, Target, Result, true)
 
 	return Result
@@ -1060,7 +1062,7 @@ function Skill_Light.GetInfo(self, Source, Item)
 	return "Emit magic light for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Light.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Light.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Light.Pointer
 	Result.Target.BuffLevel = 20 + Level
 	if Result.Target.BuffLevel > 30 then
@@ -1090,7 +1092,7 @@ function Skill_MagicBarrier.GetInfo(self, Source, Item)
 	return "Create a magic shield around an ally that absorbs [c green]" .. self:GetLevel(Source, Item.Level) .. "[c white] attack damage\nLasts [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nShield increased with [c yellow]mana power\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result)
+function Skill_MagicBarrier.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Shielded.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -1135,7 +1137,7 @@ function Skill_Sanctuary.GetInfo(self, Source, Item)
 	return "Imbue [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] allies with sanctuary for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds, granting [c green]" .. self:GetArmor(Source, Item.Level) .. "[c white] armor, [c green]" .. self:GetDamageBlock(Source, Item.Level) .. "[c white] damage block and [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Sanctuary.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Sanctuary.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Sanctuary.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
@@ -1168,7 +1170,7 @@ function Skill_Empower.GetInfo(self, Source, Item)
 	return "Empower [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] allies with [c green]" .. self:GetLevel(Source, Item.Level) .. "%[c white] attack power for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
-function Skill_Empower.Use(self, Level, Duration, Source, Target, Result)
+function Skill_Empower.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Empowered.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Source, Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)

@@ -138,6 +138,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
+	int Priority = 0;
 	for(auto &Target : Source->Character->Targets) {
 
 		// Set objects
@@ -148,7 +149,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 		// Call Use script
 		if(!SkillUnlocked)
-			ItemUsed->Use(Source->Scripting, ActionResult);
+			ItemUsed->Use(Source->Scripting, ActionResult, Priority);
 
 		// Update objects
 		ActionResult.Source.Object->UpdateStats(ActionResult.Source);
@@ -158,6 +159,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		// Write stat changes
 		ActionResult.Source.Serialize(Data);
 		ActionResult.Target.Serialize(Data);
+		Priority++;
 	}
 
 	// Reset object

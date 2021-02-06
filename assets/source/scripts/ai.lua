@@ -18,17 +18,20 @@ end
 -- Return the first enemy index that has an attractant debuff
 function AI_FindAttractant(Buff, Enemies)
 
-	-- Find enemy with attractant
-	local AttractIndex = 0
+	-- Find enemy with attractant with lowest priority value
+	local LowestPriority = math.huge
+	local EnemyIndex = 0
 	for i = 1, #Enemies do
 		for j = 1, #Enemies[i].StatusEffects do
-			if Enemies[i].StatusEffects[j].Buff == Buff then
-				return i
+			local StatusEffect = Enemies[i].StatusEffects[j]
+			if StatusEffect.Buff == Buff and StatusEffect.Priority < LowestPriority then
+				EnemyIndex = i
+				LowestPriority = StatusEffect.Priority
 			end
 		end
 	end
 
-	return 0
+	return EnemyIndex
 end
 
 -- Attack random target

@@ -729,6 +729,9 @@ void _Scripting::PushStatusEffect(_StatusEffect *StatusEffect) {
 	lua_pushinteger(LuaState, StatusEffect->Level);
 	lua_setfield(LuaState, -2, "Level");
 
+	lua_pushinteger(LuaState, StatusEffect->Priority);
+	lua_setfield(LuaState, -2, "Priority");
+
 	lua_pushnumber(LuaState, StatusEffect->Duration);
 	lua_setfield(LuaState, -2, "Duration");
 

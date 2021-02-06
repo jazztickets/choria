@@ -22,7 +22,7 @@ function Item_HealingSalve.GetInfo(self, Source, Item)
 	return "Restore [c green]" .. math.floor(math.floor(Buff_Healing.Heal * Item.Level * Source.HealPower * 0.01) * Item.Duration) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_HealingSalve.Use(self, Level, Duration, Source, Target, Result)
+function Item_HealingSalve.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Healing.Pointer
 	Result.Target.BuffLevel = Level * Source.HealPower * 0.01
 	Result.Target.BuffDuration = Duration
@@ -38,7 +38,7 @@ function Item_ManaCider.GetInfo(self, Source, Item)
 	return "Restore [c light_blue]" .. math.floor(math.floor(Buff_Mana.Mana * Item.Level * Source.ManaPower * 0.01) * Item.Duration) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_ManaCider.Use(self, Level, Duration, Source, Target, Result)
+function Item_ManaCider.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Mana.Pointer
 	Result.Target.BuffLevel = Level * Source.ManaPower * 0.01
 	Result.Target.BuffDuration = Duration
@@ -54,7 +54,7 @@ function Item_InvisPotion.GetInfo(self, Source, Item)
 	return "Turn invisible and avoid battle for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_InvisPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_InvisPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Invis.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -70,7 +70,7 @@ function Item_HastePotion.GetInfo(self, Source, Item)
 	return "Increase battle speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_HastePotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_HastePotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Hasted.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -86,7 +86,7 @@ function Item_DeathPotion.GetInfo(self, Source, Item)
 	return "Do not drink"
 end
 
-function Item_DeathPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_DeathPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Bleeding.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -102,7 +102,7 @@ function Item_PoisonPotion.GetInfo(self, Source, Item)
 	return "Poison a target for [c green]" .. math.floor(math.floor(Item.Level * Source.PoisonPower * 0.01) * Item.Duration) .. "[c white] damage over [c green]" .. Item.Duration .. " [c white]seconds\n\n[c yellow]Heal power is reduced when poisoned"
 end
 
-function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Poisoned.Pointer
 	Result.Target.BuffLevel = Level * Source.PoisonPower * 0.01
 	Result.Target.BuffDuration = Duration
@@ -118,7 +118,7 @@ function Item_BrightPotion.GetInfo(self, Source, Item)
 	return "Turn the world to daylight"
 end
 
-function Item_BrightPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_BrightPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Clock = Level
 
 	return Result
@@ -132,7 +132,7 @@ function Item_DarkPotion.GetInfo(self, Source, Item)
 	return "Turn the world to darkness"
 end
 
-function Item_DarkPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_DarkPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Clock = Level
 
 	return Result
@@ -146,7 +146,7 @@ function Item_RespecPotion.GetInfo(self, Source, Item)
 	return "Reset your spent skill points\n[c yellow]Equipped skills are set to level 1"
 end
 
-function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_RespecPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Respec = 1
 
 	return Result
@@ -160,7 +160,7 @@ function Item_Tears.GetInfo(self, Source, Item)
 	return "Drink your tears to convert [c gold]gold lost[c white] into [c silver]experience points[c white]"
 end
 
-function Item_Tears.Use(self, Level, Duration, Source, Target, Result)
+function Item_Tears.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Experience = Source.GoldLost
 	Result.Target.GoldLost = -Source.GoldLost
 
@@ -175,7 +175,7 @@ function Item_SkillSlot.GetInfo(self, Source, Item)
 	return "Increase your skill bar size\n[c yellow]Can only be used once"
 end
 
-function Item_SkillSlot.Use(self, Level, Duration, Source, Target, Result)
+function Item_SkillSlot.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.SkillBarSize = 1
 
 	return Result
@@ -193,7 +193,7 @@ function Item_BeltSlot.GetInfo(self, Source, Item)
 	return "Increase your belt size\n[c yellow]Can only be used once"
 end
 
-function Item_BeltSlot.Use(self, Level, Duration, Source, Target, Result)
+function Item_BeltSlot.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.BeltSize = 1
 
 	return Result
@@ -217,7 +217,7 @@ function Item_SkillPoint.GetInfo(self, Source, Item)
 	return "Grants [c_green]" .. Item.Level .. "[c_white] extra skill point" .. Plural .. "\n[c yellow]Can only be used once"
 end
 
-function Item_SkillPoint.Use(self, Level, Duration, Source, Target, Result)
+function Item_SkillPoint.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.SkillPoint = Level
 
 	return Result
@@ -247,7 +247,7 @@ function Item_ThrowingKnives.GetInfo(self, Source, Item)
 	return "Throw a knife at your enemy, causing [c green]" .. math.floor(math.floor(Item.Level * Source.BleedPower * 0.01) * Item.Duration) .. "[c white] bleed damage over [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_ThrowingKnives.Use(self, Level, Duration, Source, Target, Result)
+function Item_ThrowingKnives.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Battle_ResolveDamage(self, Level, Source, Target, Result)
 	self:Proc(1, Level, Duration, Source, Target, Result)
 
@@ -294,7 +294,7 @@ function Item_PoisonKnives.GenerateDamage(self, Level, Source)
 	return self.Item.GenerateDamage(Source.Pointer, 0)
 end
 
-function Item_PoisonKnives.Use(self, Level, Duration, Source, Target, Result)
+function Item_PoisonKnives.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Battle_ResolveDamage(self, Level, Source, Target, Result)
 	self:Proc(1, Level, Duration, Source, Target, Result)
 
@@ -321,7 +321,7 @@ function Item_SlimyGlob.CanUse(self, Level, Source, Target)
 	return false
 end
 
-function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result)
+function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Source.HasBuff(Buff_Bleeding.Pointer) then
 		Result.Target.Buff = Buff_BleedResist.Pointer
 		Result.Target.BuffLevel = Level
@@ -344,7 +344,7 @@ function Item_CrabLegs.GetInfo(self, Source, Item)
 	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]fractured"
 end
 
-function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
+function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Hardened.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -365,7 +365,7 @@ function Item_CrowFeather.GetInfo(self, Source, Item)
 	return "Increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds\n\nPurges [c yellow]slowness"
 end
 
-function Item_CrowFeather.Use(self, Level, Duration, Source, Target, Result)
+function Item_CrowFeather.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Fast.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -386,7 +386,7 @@ function Item_FireDust.GetInfo(self, Source, Item)
 	return "Reduce target's hit chance by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_FireDust.Use(self, Level, Duration, Source, Target, Result)
+function Item_FireDust.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Blinded.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -406,7 +406,7 @@ function Item_ColdDust.GetInfo(self, Source, Item)
 	return "Slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]burning"
 end
 
-function Item_ColdDust.Use(self, Level, Duration, Source, Target, Result)
+function Item_ColdDust.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Slowed.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -435,7 +435,7 @@ function Item_SpiderLeg.CanUse(self, Level, Source, Target)
 	return false
 end
 
-function Item_SpiderLeg.Use(self, Level, Duration, Source, Target, Result)
+function Item_SpiderLeg.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Source.HasBuff(Buff_Slowed.Pointer) then
 		Result.Target.Buff = Buff_Hasted.Pointer
 		Result.Target.BuffLevel = Level
@@ -466,7 +466,7 @@ function Item_Fang.CanUse(self, Level, Source, Target)
 	return false
 end
 
-function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
+function Item_Fang.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Source.HasBuff(Buff_Poisoned.Pointer) then
 		Result.Target.Buff = Buff_PoisonResist.Pointer
 		Result.Target.BuffLevel = Level
@@ -489,7 +489,7 @@ function Item_SpectralDust.GetInfo(self, Source, Item)
 	return "Increase cold resist by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_SpectralDust.Use(self, Level, Duration, Source, Target, Result)
+function Item_SpectralDust.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_ColdResist.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -509,7 +509,7 @@ function Item_TeleportScroll.GetInfo(self, Source, Item)
 	return "Teleport home after [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_TeleportScroll.Use(self, Level, Duration, Source, Target, Result)
+function Item_TeleportScroll.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Teleport = Duration
 
 	return Result
@@ -527,7 +527,7 @@ function Item_Ankh.GetInfo(self, Source, Item)
 	return "Throw an ankh at an ally's corpse to resurrect them with [c green]" .. self:GetHeal(Source, Item.Level) .. "[c white] HP\n\n[c yellow]Can be used outside of battle"
 end
 
-function Item_Ankh.Use(self, Level, Duration, Source, Target, Result)
+function Item_Ankh.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Health = self:GetHeal(Source, Level)
 	Result.Target.Corpse = 1
 
@@ -546,7 +546,7 @@ function Item_SwampGlob.GetInfo(self, Source, Item)
 	return "Slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds\n\nPurges [c yellow]burning"
 end
 
-function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result)
+function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Slowed.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -571,7 +571,7 @@ function Item_LavaSludge.GetDamageType(self, Source)
 	return self.Item.DamageType
 end
 
-function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result)
+function Item_LavaSludge.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Burning.Pointer
 	Result.Target.BuffLevel = Level * Source.FirePower * 0.01
 	Result.Target.BuffDuration = Duration
@@ -610,7 +610,7 @@ function Item_Firebomb.GetInfo(self, Source, Item)
 	return "Toss an exploding potion at your enemies, dealing [c green]" .. math.floor(math.floor(Item.Level * Source.FirePower * 0.01) * Item.Duration) .. "[c white] burning damage over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_Firebomb.Use(self, Level, Duration, Source, Target, Result)
+function Item_Firebomb.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buff_Burning.Pointer
@@ -636,7 +636,7 @@ function Item_UnstablePotion.GetInfo(self, Source, Item)
 	return "Toss an unstable potion at your enemies, blinding them by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_UnstablePotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_UnstablePotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Blinded.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -668,7 +668,7 @@ function Item_ShrapnelBomb.GetInfo(self, Source, Item)
 	return "Toss an exploding contraption at your enemies, dealing pierce damage and reducing resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_ShrapnelBomb.Use(self, Level, Duration, Source, Target, Result)
+function Item_ShrapnelBomb.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buff_Flayed.Pointer
@@ -690,7 +690,7 @@ function Item_Bone.GetInfo(self, Source, Item)
 	return "Throw at your enemy for a [c green]" .. Item.Level .. "%[c white] chance to stun for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_Bone.Use(self, Level, Duration, Source, Target, Result)
+function Item_Bone.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Random.GetInt(1, 100) <= Level then
 		Result.Target.Buff = Buff_Stunned.Pointer
 		Result.Target.BuffLevel = 1
@@ -713,7 +713,7 @@ function Item_Stinger.GetInfo(self, Source, Item)
 	return "Increase attack power by [c_green]" .. Item.Level .. "%[c_white] for [c_green]" .. Item.Duration .. " [c_white]seconds\n\nPurges [c yellow]weakness"
 end
 
-function Item_Stinger.Use(self, Level, Duration, Source, Target, Result)
+function Item_Stinger.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Empowered.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -738,7 +738,7 @@ function Item_ElusivePotion.GetTargetCount(self, Level)
 	return 3
 end
 
-function Item_ElusivePotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_ElusivePotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Evasion.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -767,7 +767,7 @@ function Item_BattlePotion.CanUse(self, Level, Source, Target)
 	return false
 end
 
-function Item_BattlePotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_BattlePotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Difficult.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -784,7 +784,7 @@ function Item_GreaterBattlePotion.GetInfo(self, Source, Item)
 	return "Increase difficulty by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_GreaterBattlePotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_GreaterBattlePotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Difficult.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
@@ -801,7 +801,7 @@ function Item_UltimateBattlePotion.GetInfo(self, Source, Item)
 	return "Reduce current boss cooldowns by [c green]" .. Item.Level .. "%[c white]\nIncrease difficulty by [c green]" .. self.Difficulty .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_UltimateBattlePotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_UltimateBattlePotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Difficult.Pointer
 	Result.Target.BuffLevel = self.Difficulty
 	Result.Target.BuffDuration = Duration
@@ -818,7 +818,7 @@ function Item_BelligerentPotion.GetInfo(self, Source, Item)
 	return "Get into fights more often for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_BelligerentPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_BelligerentPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Attractant.Pointer
 	Result.Target.BuffLevel = 2
 	Result.Target.BuffDuration = Duration
@@ -835,7 +835,7 @@ function Item_LavaPotion.GetInfo(self, Source, Item)
 	return "Grants lava immunity for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_LavaPotion.Use(self, Level, Duration, Source, Target, Result)
+function Item_LavaPotion.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_LavaImmune.Pointer
 	Result.Target.BuffLevel = 0
 	Result.Target.BuffDuration = Duration
@@ -851,7 +851,7 @@ function Item_WarmingTorch.GetInfo(self, Source, Item)
 	return "Grants freeze immunity for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
-function Item_WarmingTorch.Use(self, Level, Duration, Source, Target, Result)
+function Item_WarmingTorch.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Warm.Pointer
 	Result.Target.BuffLevel = 0
 	Result.Target.BuffDuration = Duration
@@ -876,7 +876,7 @@ function Item_Torch.GetInfo(self, Source, Item)
 	return "Give light for [c green]" .. self:GetDuration(Source, Item.Duration) .. " [c white]seconds"
 end
 
-function Item_Torch.Use(self, Level, Duration, Source, Target, Result)
+function Item_Torch.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Light.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self:GetDuration(Source, Duration)
@@ -1481,7 +1481,7 @@ function Item_EternalStrength.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] damage power bonus", Source)
 end
 
-function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalStrength.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.MaxDamage = self:GetBonus(Source)
 
@@ -1507,7 +1507,7 @@ function Item_EternalGuard.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. DamageBlock .. "[c white] damage block, [c green]" .. Armor .. "[c white] armor, and [c green]" .. Resist .. "[c white] resistance bonus", Source)
 end
 
-function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalGuard.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.Armor = self:GetBonus(Source)
 
@@ -1524,7 +1524,7 @@ function Item_EternalFortitude.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] max health and heal power bonus", Source)
 end
 
-function Item_EternalFortitude.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalFortitude.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.Health = self:GetBonus(Source)
 
@@ -1541,7 +1541,7 @@ function Item_EternalSpirit.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] max mana and mana power bonus", Source)
 end
 
-function Item_EternalSpirit.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalSpirit.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.Mana = self:GetBonus(Source)
 
@@ -1558,7 +1558,7 @@ function Item_EternalWisdom.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] experience bonus", Source)
 end
 
-function Item_EternalWisdom.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalWisdom.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.Experience = self:GetBonus(Source)
 
@@ -1575,7 +1575,7 @@ function Item_EternalWealth.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] gold bonus", Source)
 end
 
-function Item_EternalWealth.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalWealth.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.Gold = self:GetBonus(Source)
 
@@ -1599,7 +1599,7 @@ function Item_EternalKnowledge.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source, Item.MoreInfo) .. "[c white] extra skill point" .. Plural, Source)
 end
 
-function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalKnowledge.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.SkillPoint = self:GetBonus(Source)
 
@@ -1617,7 +1617,7 @@ function Item_EternalPain.GetInfo(self, Source, Item)
 	return RebirthText(self, "[c green]" .. self:GetBonus(Source, Item.MoreInfo) .. "%[c white] difficulty increase", Source)
 end
 
-function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalPain.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Rebirth = 1
 	Result.Target.Difficulty = self:GetBonus(Source)
 
@@ -1634,7 +1634,7 @@ function Item_EternalAlacrity.GetInfo(self, Source, Item)
 	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] battle speed bonus", Source)
 end
 
-function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalAlacrity.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Evolve = 1
 	Result.Target.BattleSpeed = self:GetBonus(Source)
 
@@ -1651,7 +1651,7 @@ function Item_EternalCommand.GetInfo(self, Source, Item)
 	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] summon battle speed bonus", Source)
 end
 
-function Item_EternalCommand.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalCommand.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Evolve = 1
 	Result.Target.SummonBattleSpeed = self:GetBonus(Source)
 
@@ -1669,7 +1669,7 @@ function Item_EternalImpatience.GetInfo(self, Source, Item)
 	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] cooldown reduction bonus", Source)
 end
 
-function Item_EternalImpatience.Use(self, Level, Duration, Source, Target, Result)
+function Item_EternalImpatience.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Evolve = 1
 	Result.Target.Cooldowns = self:GetBonus(Source)
 
@@ -1725,7 +1725,7 @@ function Item_RiteWealth.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthWealth)
 end
 
-function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result)
+function Item_RiteWealth.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.RebirthWealth = Level
 
 	return Result
@@ -1742,7 +1742,7 @@ function Item_RiteWisdom.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthWisdom)
 end
 
-function Item_RiteWisdom.Use(self, Level, Duration, Source, Target, Result)
+function Item_RiteWisdom.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.RebirthWisdom = Level
 
 	return Result
@@ -1760,7 +1760,7 @@ function Item_RiteKnowledge.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthKnowledge)
 end
 
-function Item_RiteKnowledge.Use(self, Level, Duration, Source, Target, Result)
+function Item_RiteKnowledge.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.RebirthKnowledge = Level
 
 	return Result
@@ -1777,7 +1777,7 @@ function Item_RitePower.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthPower)
 end
 
-function Item_RitePower.Use(self, Level, Duration, Source, Target, Result)
+function Item_RitePower.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.RebirthPower = Level
 
 	return Result
@@ -1799,7 +1799,7 @@ function Item_RiteGirth.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthGirth)
 end
 
-function Item_RiteGirth.Use(self, Level, Duration, Source, Target, Result)
+function Item_RiteGirth.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Target.RebirthGirth < MAX_BELT_SIZE - DEFAULT_BELTSIZE then
 		Result.Target.RebirthGirth = Level
 	end
@@ -1823,7 +1823,7 @@ function Item_RiteProficiency.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthProficiency)
 end
 
-function Item_RiteProficiency.Use(self, Level, Duration, Source, Target, Result)
+function Item_RiteProficiency.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Target.RebirthProficiency < MAX_SKILLBAR_SIZE - DEFAULT_SKILLBARSIZE then
 		Result.Target.RebirthProficiency = Level
 	end
@@ -1847,7 +1847,7 @@ function Item_RiteInsight.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthInsight)
 end
 
-function Item_RiteInsight.Use(self, Level, Duration, Source, Target, Result)
+function Item_RiteInsight.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Target.RebirthInsight < MAX_SKILL_UNLOCKS then
 		Result.Target.RebirthInsight = Level
 	end
@@ -1886,7 +1886,7 @@ function Item_RitePassage.GetCost(self, Source)
 	return self.Keys[KeyIndex][2]
 end
 
-function Item_RitePassage.Use(self, Level, Duration, Source, Target, Result)
+function Item_RitePassage.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Target.RebirthPassage < #self.Keys then
 		Result.Target.RebirthPassage = Level
 	end
@@ -1910,7 +1910,7 @@ function Item_RiteEnchantment.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthEnchantment)
 end
 
-function Item_RiteEnchantment.Use(self, Level, Duration, Source, Target, Result)
+function Item_RiteEnchantment.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Target.RebirthEnchantment < MAX_SKILL_LEVEL - DEFAULT_MAX_SKILL_LEVEL then
 		Result.Target.RebirthEnchantment = Level
 	end
@@ -1935,7 +1935,7 @@ function Item_RitePrivilege.GetCost(self, Source)
 	return self:GetUpgradedPrice(Source, Source.RebirthPrivilege)
 end
 
-function Item_RitePrivilege.Use(self, Level, Duration, Source, Target, Result)
+function Item_RitePrivilege.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Source.RebirthPrivilege < self.Max then
 		Result.Target.RebirthPrivilege = Level
 	end

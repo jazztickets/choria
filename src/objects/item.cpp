@@ -1017,14 +1017,15 @@ void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const 
 }
 
 // Use an item
-void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult, int Priority) const {
 	if(Scripting->StartMethodCall(Script, "Use")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushInt(ActionResult.ActionUsed.Duration);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushObject(ActionResult.Target.Object);
 		Scripting->PushActionResult(&ActionResult);
-		Scripting->MethodCall(5, 1);
+		Scripting->PushInt(Priority);
+		Scripting->MethodCall(6, 1);
 		Scripting->GetActionResult(1, ActionResult);
 		Scripting->FinishMethodCall();
 	}

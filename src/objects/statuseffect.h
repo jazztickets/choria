@@ -54,6 +54,7 @@ class _StatusEffect {
 		double Duration;
 		double MaxDuration;
 		int Level;
+		int Priority;
 		bool Infinite;
 		bool Deleted;
 

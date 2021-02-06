@@ -1308,6 +1308,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 		StatusEffect->Buff = (const _Buff *)StatChange.Values["Buff"].Pointer;
 		StatusEffect->Level = StatChange.Values["BuffLevel"].Int;
 		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values["BuffDuration"].Float;
+		StatusEffect->Priority = StatChange.Values["BuffPriority"].Int;
 		StatusEffect->Source = Source;
 		if(StatusEffect->Duration < 0.0) {
 			StatusEffect->Infinite = true;

@@ -85,7 +85,7 @@ class _Item {
 		bool CanTarget(_Scripting *Scripting, _Object *Source, _Object *Target, bool ForceTargetAlive=false) const;
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void Use(_Scripting *Scripting, _ActionResult &ActionResult, int Priority=0) const;
 		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int SetLevel, int MaxSetLevel) const;
 		void PlaySound(_Scripting *Scripting) const;
 
