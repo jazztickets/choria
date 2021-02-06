@@ -723,14 +723,26 @@ void _PlayState::Update(double FrameTime) {
 	// Set input
 	if(Player->Character->AcceptingMoveInput() && !HUD->IsChatting() && ae::FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
 		int InputState = 0;
-		if(ae::Actions.State[Action::GAME_UP].Value > 0.0f)
-			InputState |= _Object::MOVE_UP;
-		if(ae::Actions.State[Action::GAME_DOWN].Value > 0.0f)
-			InputState |= _Object::MOVE_DOWN;
-		if(ae::Actions.State[Action::GAME_LEFT].Value > 0.0f)
-			InputState |= _Object::MOVE_LEFT;
-		if(ae::Actions.State[Action::GAME_RIGHT].Value > 0.0f)
-			InputState |= _Object::MOVE_RIGHT;
+		if(Player->Character->Attributes["DiagonalMovement"].Int) {
+			if(ae::Actions.State[Action::GAME_UP].Value > 0.0f)
+				InputState |= _Object::MOVE_UP;
+			if(ae::Actions.State[Action::GAME_DOWN].Value > 0.0f)
+				InputState |= _Object::MOVE_DOWN;
+			if(ae::Actions.State[Action::GAME_LEFT].Value > 0.0f)
+				InputState |= _Object::MOVE_LEFT;
+			if(ae::Actions.State[Action::GAME_RIGHT].Value > 0.0f)
+				InputState |= _Object::MOVE_RIGHT;
+		}
+		else {
+			if(ae::Actions.State[Action::GAME_UP].Value > 0.0f)
+				InputState = _Object::MOVE_UP;
+			else if(ae::Actions.State[Action::GAME_DOWN].Value > 0.0f)
+				InputState = _Object::MOVE_DOWN;
+			else if(ae::Actions.State[Action::GAME_LEFT].Value > 0.0f)
+				InputState = _Object::MOVE_LEFT;
+			else if(ae::Actions.State[Action::GAME_RIGHT].Value > 0.0f)
+				InputState = _Object::MOVE_RIGHT;
+		}
 
 		// Get player direction
 		glm::ivec2 Direction(0, 0);
@@ -993,6 +1005,9 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 		break;
 		case PacketType::PLAYER_BOSSCOOLDOWNS:
 			HandleBossCooldowns(Data);
+		break;
+		case PacketType::PLAYER_CLEARWAIT:
+			HandleClearWait(Data);
 		break;
 		default:
 			Menu.HandlePacket(Data, Type);
@@ -1295,6 +1310,7 @@ void _PlayState::HandleInventorySwap(ae::_Buffer &Data) {
 
 	HUD->TradeScreen->ResetAcceptButton();
 	Player->Character->CalculateStats();
+	Player->Controller->WaitForServer = false;
 }
 
 // Handle an inventory update
@@ -1307,6 +1323,7 @@ void _PlayState::HandleInventoryUpdate(ae::_Buffer &Data) {
 		Player->Inventory->UnserializeSlot(Data, Stats);
 
 	Player->Character->CalculateStats();
+	Player->Controller->WaitForServer = false;
 }
 
 // Handles a trade item update
@@ -1548,6 +1565,14 @@ void _PlayState::HandleBossCooldowns(ae::_Buffer &Data) {
 		return;
 
 	Player->UnserializeBossCooldowns(Data);
+}
+
+// Clear WaitForServer
+void _PlayState::HandleClearWait(ae::_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->Controller->WaitForServer = false;
 }
 
 // Clear action used and targets

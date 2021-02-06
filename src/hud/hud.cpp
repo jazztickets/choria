@@ -280,6 +280,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							Packet.WriteBit(ae::Input.ModKeyDown(KMOD_CTRL));
 							Tooltip.Slot.Serialize(Packet);
 							PlayState.Network->SendPacket(Packet);
+							if(Tooltip.InventorySlot.Item->IsEquippable())
+								Player->Controller->WaitForServer = true;
 						}
 					}
 				break;
@@ -332,6 +334,9 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					if(DeleteSlot.Type == BagType::TRADE)
 						TradeScreen->ResetAcceptButton();
+
+					if(DeleteSlot.Type == BagType::EQUIPMENT)
+						Player->Controller->WaitForServer = true;
 				}
 
 				CloseConfirm();
@@ -437,6 +442,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 								Cursor.Slot.Serialize(Packet);
 								Tooltip.Slot.Serialize(Packet);
 								PlayState.Network->SendPacket(Packet);
+								if(Cursor.Slot.Type == BagType::EQUIPMENT || Tooltip.Slot.Type == BagType::EQUIPMENT)
+									Player->Controller->WaitForServer = true;
 
 								// Remove upgrade item from upgrade window
 								if(Cursor.Slot == BlacksmithScreen->UpgradeSlot || Tooltip.Slot == BlacksmithScreen->UpgradeSlot)
@@ -1547,6 +1554,7 @@ void _HUD::SplitStack(const _Slot &Slot, uint8_t Count) {
 void _HUD::Transfer(const _Slot &SourceSlot) {
 
 	// Get target bag
+	bool Wait = false;
 	BagType TargetBagType = BagType::NONE;
 	switch(SourceSlot.Type) {
 		case BagType::INVENTORY:
@@ -1554,8 +1562,11 @@ void _HUD::Transfer(const _Slot &SourceSlot) {
 			if(SourceSlot.Type == BagType::EQUIPMENT && Player->Inventory->GetSlot(SourceSlot).Item && Player->Inventory->GetSlot(SourceSlot).Item->IsCursed())
 				return;
 
-			if(TradeScreen->Element->Active)
+			if(TradeScreen->Element->Active) {
 				TargetBagType = BagType::TRADE;
+				if(SourceSlot.Type == BagType::EQUIPMENT)
+					Wait = true;
+			}
 		break;
 		case BagType::TRADE:
 			TargetBagType = BagType::INVENTORY;
@@ -1573,6 +1584,8 @@ void _HUD::Transfer(const _Slot &SourceSlot) {
 	SourceSlot.Serialize(Packet);
 	Packet.Write<uint8_t>((uint8_t)TargetBagType);
 	PlayState.Network->SendPacket(Packet);
+	if(Wait)
+		Player->Controller->WaitForServer = true;
 }
 
 // Convert window into a player bag

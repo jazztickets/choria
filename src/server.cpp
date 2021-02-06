@@ -1036,6 +1036,8 @@ void _Server::HandleInventoryMove(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Network->SendPacket(Packet, Peer);
 		Player->Character->CalculateStats();
 	}
+	else
+		SendClearWait(Player);
 
 	// Check for trading players
 	if(OldSlot.Type == BagType::TRADE || NewSlot.Type == BagType::TRADE)
@@ -1123,6 +1125,10 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 			Network->SendPacket(Packet, Peer);
 			Player->Character->CalculateStats();
 		}
+		else {
+			SendClearWait(Player);
+		}
+
 	}
 	// Handle consumables
 	else {
@@ -2387,6 +2393,16 @@ void _Server::SendTradePlayerInventory(_Object *Player) {
 	Packet.Write<PacketType>(PacketType::TRADE_INVENTORY);
 	Player->Inventory->GetBag(BagType::TRADE).Serialize(Packet);
 	Network->SendPacket(Packet, TradePlayer->Peer);
+}
+
+// Send the clear WaitForServer packet
+void _Server::SendClearWait(_Object *Player) {
+	if(!Player || !Player->Peer)
+		return;
+
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::PLAYER_CLEARWAIT);
+	Network->SendPacket(Packet, Player->Peer);
 }
 
 // Start a battle event

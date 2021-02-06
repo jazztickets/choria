@@ -190,6 +190,7 @@ class _Server {
 		void SendCharacterList(ae::_Peer *Peer);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 		void SendTradePlayerInventory(_Object *Player);
+		void SendClearWait(_Object *Player);
 
 		// Threading
 		std::thread *Thread;
