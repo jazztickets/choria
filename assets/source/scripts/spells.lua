@@ -1163,7 +1163,7 @@ Skill_Empower.Duration = 10
 Skill_Empower.DurationPerLevel = 0
 
 function Skill_Empower.GetLevel(self, Source, Level)
-	return math.floor((self.Level + self.LevelPerLevel * (Level - 1)))
+	return math.floor(self.Level + self.LevelPerLevel * (Level - 1))
 end
 
 function Skill_Empower.GetInfo(self, Source, Item)
