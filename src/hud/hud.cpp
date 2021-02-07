@@ -1098,10 +1098,7 @@ bool _HUD::CloseTeleport() {
 		PlayState.SendStatus(_Character::STATUS_NONE);
 		Player->Controller->WaitForServer = false;
 		Player->Character->TeleportTime = 0.0;
-		if(PlayState.TeleportSound) {
-			PlayState.TeleportSound->Stop();
-			PlayState.TeleportSound = nullptr;
-		}
+		PlayState.StopTeleportSound();
 	}
 
 	return WasOpen;
@@ -1769,9 +1766,9 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 }
 
 // Remove all battle stat changes
-void _HUD::ClearBattleStatChanges() {
+void _HUD::ClearStatChanges(bool BattleOnly) {
 	for(auto &StatChange : StatChanges) {
-		if(StatChange.Battle)
+		if(!BattleOnly || (BattleOnly && StatChange.Battle))
 			StatChange.Time = StatChange.Timeout;
 	}
 }

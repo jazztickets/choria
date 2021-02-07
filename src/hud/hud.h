@@ -162,7 +162,7 @@ class _HUD {
 		void SetPlayer(_Object *Player);
 		void UpdateActionBarSize();
 		void AddStatChange(_StatChange &StatChange);
-		void ClearBattleStatChanges();
+		void ClearStatChanges(bool BattleOnly);
 		void UpdateLabels();
 
 		// Button bar

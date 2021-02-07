@@ -81,6 +81,7 @@ class _PlayState : public ae::_State {
 		// Sound
 		void PlayCoinSound();
 		void PlayDeathSound();
+		void StopTeleportSound();
 
 		// Menu map
 		glm::vec3 GetRandomMapPosition();

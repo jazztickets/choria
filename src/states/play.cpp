@@ -844,11 +844,20 @@ void _PlayState::PlayCoinSound() {
 
 // Play death sound
 void _PlayState::PlayDeathSound() {
-	ae::Audio.Stop();
+	ae::Audio.StopMusic();
+	StopTeleportSound();
 
 	std::stringstream Buffer;
 	Buffer << "death" << ae::GetRandomInt(0, 2) << ".ogg";
 	ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
+}
+
+// Stop teleport sound from playing
+void _PlayState::StopTeleportSound() {
+	if(TeleportSound) {
+		TeleportSound->Stop();
+		TeleportSound = nullptr;
+	}
 }
 
 // Get a random location in the background map
@@ -881,6 +890,7 @@ void _PlayState::HandleDisconnect() {
 	Menu.HandleDisconnect(Server != nullptr);
 	PlayState.StopLocalServer();
 
+	HUD->ClearStatChanges(false);
 	HUD->Reset();
 	ObjectManager->Clear();
 	AssignPlayer(nullptr);
@@ -1553,7 +1563,7 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	}
 
 	Player->Character->Battle = nullptr;
-	HUD->ClearBattleStatChanges();
+	HUD->ClearStatChanges(true);
 	HUD->AddStatChange(StatChange);
 
 	DeleteBattle();
