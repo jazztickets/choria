@@ -1361,7 +1361,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						ValidateConnect();
 
 						// Connect on double click
-						if(DoubleClick)
+						if(DoubleClick && ConnectTimer <= 0.0)
 							ConnectToHost();
 					}
 				}
