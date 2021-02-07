@@ -354,6 +354,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 	// Set up targets
 	int TargetCount = Item->GetTargetCount(Scripting, ClientPlayer);
+	int TargetIndex = 1;
 	for(std::size_t i = 0; i < ObjectList.size(); i++) {
 
 		// Check for valid target
@@ -362,6 +363,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 			// Add object to list of targets
 			ClientPlayer->Character->Targets.push_back(Target);
+			Target->Fighter->TargetIndex = TargetIndex++;
 
 			// Update count
 			TargetCount--;
@@ -423,6 +425,7 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 
 	// Search for valid target
 	_Object *NewTarget = nullptr;
+	int TargetIndex = 1;
 	while(TargetCount) {
 
 		// Wrap around
@@ -454,6 +457,7 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 		// Check break condition
 		if(Item->CanTarget(Scripting, ClientPlayer, NewTarget)) {
 			ClientPlayer->Character->Targets.push_back(NewTarget);
+			NewTarget->Fighter->TargetIndex = TargetIndex++;
 
 			// Update count
 			TargetCount--;

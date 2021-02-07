@@ -59,6 +59,7 @@ class _Fighter {
 		double TurnTimer;
 		int64_t GoldStolen;
 		int Corpse;
+		int TargetIndex;
 		bool JoinedBattle;
 		bool FleeBattle;
 		uint8_t BattleSide;

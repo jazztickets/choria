@@ -33,6 +33,7 @@ _Fighter::_Fighter(_Object *Object) :
 	TurnTimer(0.0),
 	GoldStolen(0),
 	Corpse(1),
+	TargetIndex(0),
 	JoinedBattle(false),
 	FleeBattle(false),
 	BattleSide(0) {

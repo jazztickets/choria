@@ -63,4 +63,15 @@ Item_Data = {
 		AttackPower = -100,
 	},
 
+-- Spells
+
+	-- Flay
+	[44] = {
+		BuffPriority = 1,
+	},
+
+	-- Fracture
+	[46] = {
+		BuffPriority = 1,
+	},
 }

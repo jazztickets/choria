@@ -274,6 +274,7 @@ void _Stats::LoadItems() {
 		Item->Attributes["SpellDamage"].Int = Database->GetInt<int>("spell_damage");
 		Item->Attributes["Resist"].Int = Database->GetInt<int>("res");
 		Item->Attributes["Cursed"].Int = 0;
+		Item->Attributes["BuffPriority"].Int = 0;
 		Item->Chance = Database->GetInt<int>("chance");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
 		Item->Tradable = Database->GetInt<int>("tradable");

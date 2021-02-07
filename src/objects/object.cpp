@@ -511,6 +511,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 
 			// Draw item
 			ae::Graphics.DrawScaledImage(DrawPosition, Texture,  UI_SLOT_SIZE, Color);
+
+			// Draw target index
+			if(ClientPlayer->Character->Targets.size() > 1 && ClientPlayer->Fighter->PotentialAction.Item->Attributes.at("BuffPriority").Int) {
+				glm::vec4 Color = Fighter->TargetIndex == 1 ? ae::Assets.Colors["white"] : ae::Assets.Colors["gray"];
+				ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(Fighter->TargetIndex), DrawPosition + glm::vec2(-28, 28) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE, Color);
+			}
 		}
 	}
 
@@ -522,7 +528,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time, bool ShowLevel) {
 		Buffer << Name;
 		if(ShowLevel && !Monster->DatabaseID)
 			Buffer << " (" << Character->Level << ")" << std::endl;
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), SlotPosition + glm::vec2(0, -12) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
 
