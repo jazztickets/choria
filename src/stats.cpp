@@ -327,6 +327,8 @@ void _Stats::LoadVendors() {
 		std::string OrderBy = "i.cost";
 		if(Vendor.Sort == "set")
 			OrderBy = "i.set_id, i.cost";
+		else if(Vendor.Sort == "category")
+			OrderBy = "i.category, i.cost";
 
 		// Get items
 		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i WHERE vi.vendor_id = @vendor_id AND i.id = vi.item_id ORDER BY " + OrderBy, 1);

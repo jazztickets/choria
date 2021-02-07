@@ -1691,7 +1691,7 @@ Base_Rite = {
 	end,
 
 	GetRiteText = function(self, UpgradeText)
-		return "Permanently increase " .. UpgradeText
+		return "Permanently " .. UpgradeText
 	end,
 
 	PlaySound = function(self)
@@ -1714,7 +1714,7 @@ Item_RiteWealth.CostA = 0.1
 Item_RiteWealth.Multiplier = REBIRTH_WEALTH_MULTIPLIER
 
 function Item_RiteWealth.GetInfo(self, Source, Item)
-	return self:GetRiteText("the amount of experience converted into gold after rebirth by [c green]" .. self:GetPercent(Item.Level) .. "%[c white]")
+	return self:GetRiteText("increase the amount of experience converted into gold after rebirth by [c green]" .. self:GetPercent(Item.Level) .. "%[c white]")
 end
 
 function Item_RiteWealth.GetPercent(self, Level)
@@ -1735,7 +1735,7 @@ Item_RiteWisdom = Base_Rite:New()
 Item_RiteWisdom.CostA = 0.1
 
 function Item_RiteWisdom.GetInfo(self, Source, Item)
-	return self:GetRiteText("the starting level after rebirth by [c green]" .. Item.Level .. "[c white]")
+	return self:GetRiteText("increase the starting level after rebirth by [c green]" .. Item.Level .. "[c white]")
 end
 
 function Item_RiteWisdom.GetCost(self, Source)
@@ -1753,7 +1753,7 @@ Item_RiteKnowledge.CostA = 0.75
 Item_RiteKnowledge.CostB = 0.75
 
 function Item_RiteKnowledge.GetInfo(self, Source, Item)
-	return self:GetRiteText("the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]\n\nSkills will have a max level of [c green]" .. Source.RebirthEnchantment + DEFAULT_MAX_SKILL_LEVEL)
+	return self:GetRiteText("increase the number of skills carried over after rebirth by [c green]" .. Item.Level .. "[c white]\n\nSkills will have a max level of [c green]" .. Source.RebirthEnchantment + DEFAULT_MAX_SKILL_LEVEL)
 end
 
 function Item_RiteKnowledge.GetCost(self, Source)
@@ -1770,7 +1770,7 @@ Item_RitePower = Base_Rite:New()
 Item_RitePower.CostA = 1.0
 
 function Item_RitePower.GetInfo(self, Source, Item)
-	return self:GetRiteText("your rebirth tier bonus by [c green]" .. Item.Level .. "[c white]")
+	return self:GetRiteText("increase your rebirth tier bonus by [c green]" .. Item.Level .. "[c white]")
 end
 
 function Item_RitePower.GetCost(self, Source)
@@ -1792,7 +1792,7 @@ function Item_RiteGirth.GetInfo(self, Source, Item)
 		AddedText = "\n\n[c red]Max girth attained"
 	end
 
-	return self:GetRiteText("the belt size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+	return self:GetRiteText("increase the belt size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
 end
 
 function Item_RiteGirth.GetCost(self, Source)
@@ -1816,7 +1816,7 @@ function Item_RiteProficiency.GetInfo(self, Source, Item)
 		AddedText = "\n\n[c red]Max proficiency attained"
 	end
 
-	return self:GetRiteText("the skill bar size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+	return self:GetRiteText("increase the skill bar size after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
 end
 
 function Item_RiteProficiency.GetCost(self, Source)
@@ -1840,7 +1840,7 @@ function Item_RiteInsight.GetInfo(self, Source, Item)
 		AddedText = "\n\n[c red]Max insight attained"
 	end
 
-	return self:GetRiteText("the starting skill point unlocks after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+	return self:GetRiteText("increase the starting skill point unlocks after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
 end
 
 function Item_RiteInsight.GetCost(self, Source)
@@ -1877,7 +1877,7 @@ function Item_RitePassage.GetInfo(self, Source, Item)
 		AddedText = "\n\n[c yellow]Start with the " .. self.Keys[Source.RebirthPassage + 1][1]
 	end
 
-	return self:GetRiteText("the number of keys unlocked after rebirth by [c green]" .. Item.Level .. AddedText)
+	return self:GetRiteText("increase the number of keys unlocked after rebirth by [c green]" .. Item.Level .. AddedText)
 end
 
 function Item_RitePassage.GetCost(self, Source)
@@ -1903,7 +1903,7 @@ function Item_RiteEnchantment.GetInfo(self, Source, Item)
 		AddedText = "\n\n[c red]Max enchantment attained"
 	end
 
-	return self:GetRiteText("the max level for starting skills after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
+	return self:GetRiteText("increase the max level for starting skills after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText)
 end
 
 function Item_RiteEnchantment.GetCost(self, Source)
@@ -1928,7 +1928,7 @@ function Item_RitePrivilege.GetInfo(self, Source, Item)
 		AddedText = "\n\n[c red]Max privilege attained"
 	end
 
-	return self:GetRiteText("the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText .. "\n\n[c yellow]Items must be placed in your trade bag")
+	return self:GetRiteText("increase the number of items carried over after rebirth by [c green]" .. Item.Level .. "[c white]" .. AddedText .. "\n\n[c yellow]Items must be placed in your trade bag")
 end
 
 function Item_RitePrivilege.GetCost(self, Source)
@@ -1938,6 +1938,32 @@ end
 function Item_RitePrivilege.Use(self, Level, Duration, Source, Target, Result, Priority)
 	if Source.RebirthPrivilege < self.Max then
 		Result.Target.RebirthPrivilege = Level
+	end
+
+	return Result
+end
+
+Item_RiteSoul = Base_Rite:New()
+Item_RiteSoul.Exponent = 2
+Item_RiteSoul.CostA = 1
+Item_RiteSoul.Max = 100
+
+function Item_RiteSoul.GetInfo(self, Source, Item)
+	AddedText = ""
+	if Source.RebirthSoul >= self.Max then
+		AddedText = "\n\n[c red]Max soul attained"
+	end
+
+	return self:GetRiteText("decrease boss cooldowns by [c green]" .. Item.Level .. "%[c white]" .. AddedText)
+end
+
+function Item_RiteSoul.GetCost(self, Source)
+	return self:GetUpgradedPrice(Source, Source.RebirthSoul)
+end
+
+function Item_RiteSoul.Use(self, Level, Duration, Source, Target, Result, Priority)
+	if Source.RebirthSoul < self.Max then
+		Result.Target.RebirthSoul = Level
 	end
 
 	return Result

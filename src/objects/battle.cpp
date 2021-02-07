@@ -762,7 +762,7 @@ void _Battle::ServerEndBattle() {
 
 					// Start cooldown timer
 					if(Cooldown > 0.0)
-						Object->Character->BossCooldowns[Zone] = Cooldown * Object->Character->Attributes["BossCooldowns"].Mult();
+						Object->Character->BossCooldowns[Zone] = std::max(Cooldown * Object->Character->Attributes["BossCooldowns"].Mult(), 10.0);
 
 					// Add to kill count
 					if(Boss) {

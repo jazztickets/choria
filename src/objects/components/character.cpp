@@ -340,6 +340,7 @@ void _Character::CalculateStats() {
 
 	// Eternal Impatience
 	Attributes["Cooldowns"].Int -= Attributes["EternalImpatience"].Int;
+	Attributes["BossCooldowns"].Int -= Attributes["RebirthSoul"].Int;
 
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
@@ -580,6 +581,7 @@ void _Character::CalculateStats() {
 		Attributes["HealthRegen"].Int *= Attributes["HealPower"].Mult();
 	if(Attributes["ManaRegen"].Int > 0)
 		Attributes["ManaRegen"].Int *= Attributes["ManaPower"].Mult();
+	Attributes["BossCooldowns"].Int = std::clamp(Attributes["BossCooldowns"].Int, 0, 100);
 
 	RefreshActionBarCount();
 }
