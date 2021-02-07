@@ -164,6 +164,7 @@ const  float        MENU_ACCEPTINPUT_FADE              =  0.7f;
 const  float        MENU_PAUSE_FADE                    =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME              =  0.250;
 const  float        MENU_MAP_SCROLL_SPEED              =  0.005f;
+const  double       MENU_CONNECT_COOLDOWN              =  5.0;
 //     Scripting
 const  std::string  SCRIPTS_GAME                       =  "scripts/game.lua";
 const  std::string  SCRIPTS_DATA                       =  "scripts/data.lua";

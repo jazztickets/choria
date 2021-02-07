@@ -123,6 +123,7 @@ _Menu::_Menu() {
 	RebindType = -1;
 	RebindAction = -1;
 	PingTime = 0;
+	ConnectTimer = 0.0;
 
 	ResetInGameState();
 }
@@ -1334,6 +1335,9 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					if(!PlayState.Network->IsDisconnected()) {
 						PlayState.Network->Disconnect(true, 1);
 						InitBrowseServers(false);
+
+						// Disable connect button
+						ConnectTimer = MENU_CONNECT_COOLDOWN;
 					}
 					// Clicked connect button
 					else
@@ -1461,6 +1465,17 @@ void _Menu::Update(double FrameTime) {
 	UpdateVolume();
 
 	PreviousClickTimer += FrameTime;
+
+	// Disable connect button
+	if(ConnectTimer > 0.0) {
+		ae::_Element *Button = ae::Assets.Elements["button_menu_browse_connect"];
+		Button->SetEnabled(false);
+		ConnectTimer -= FrameTime;
+		if(ConnectTimer <= 0.0) {
+			ConnectTimer = 0.0;
+			Button->SetEnabled(true);
+		}
+	}
 }
 
 // Render

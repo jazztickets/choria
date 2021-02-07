@@ -162,6 +162,7 @@ class _Menu {
 		// States
 		std::string DefaultUsername;
 		std::string DefaultPassword;
+		double ConnectTimer;
 		bool FromInGame;
 		bool BadGameVersion;
 		int RebindType;
