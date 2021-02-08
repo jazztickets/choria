@@ -1650,8 +1650,8 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 }
 
 // Update death count and gold loss
-void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int64_t BountyLoss) {
-	int64_t GoldPenalty = BountyLoss + (int64_t)(std::abs(Character->Attributes["Gold"].Int64) * Penalty + 0.5f);
+void _Object::ApplyDeathPenalty(bool InBattle, double Penalty, int64_t BountyLoss) {
+	int64_t GoldPenalty = BountyLoss + (int64_t)(std::abs(Character->Attributes["Gold"].Int64) * Penalty + 0.5);
 	int64_t OldBounty = Character->Attributes["Bounty"].Int64;
 
 	// Update stats
@@ -1661,6 +1661,8 @@ void _Object::ApplyDeathPenalty(bool InBattle, float Penalty, int64_t BountyLoss
 	Character->Attributes["Bounty"].Int64 -= BountyLoss;
 	if(Character->Attributes["Bounty"].Int64 < 0)
 		Character->Attributes["Bounty"].Int64 = 0;
+	if(Character->Attributes["GoldLost"].Int64 < 0)
+		Character->Attributes["GoldLost"].Int64 = 0;
 
 	// Send message
 	if(Server) {

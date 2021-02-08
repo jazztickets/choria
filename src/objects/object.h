@@ -108,7 +108,7 @@ class _Object : public ae::_BaseObject {
 		// Stats
 		bool IsMonster() const;
 		_StatusEffect *UpdateStats(_StatChange &StatChange, _Object *Source=nullptr);
-		void ApplyDeathPenalty(bool InBattle, float Penalty, int64_t BountyLoss);
+		void ApplyDeathPenalty(bool InBattle, double Penalty, int64_t BountyLoss);
 
 		// Battles
 		void UpdateMonsterAI(double FrameTime);
