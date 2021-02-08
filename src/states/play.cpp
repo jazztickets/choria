@@ -1507,7 +1507,8 @@ void _PlayState::HandleBattleJoin(ae::_Buffer &Data) {
 		// Update client targets
 		if(Player->Fighter->PotentialAction.IsSet()) {
 			const _Item *Item = Player->Fighter->PotentialAction.Item;
-			Battle->ClientSetTarget(Item, Player->Fighter->GetStartingSide(Item), Player->Character->Targets.front());
+			_Object *Target = Player->Character->Targets.size() ? Player->Character->Targets.front() : nullptr;
+			Battle->ClientSetTarget(Item, Player->Fighter->GetStartingSide(Item), Target);
 		}
 	}
 }
@@ -1708,7 +1709,8 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	// Update potential targets on client
 	if(Battle && Player->Fighter->PotentialAction.IsSet()) {
 		const _Item *Item = Player->Fighter->PotentialAction.Item;
-		Battle->ClientSetTarget(Item, Player->Fighter->GetStartingSide(Item), Player->Character->Targets.front());
+		_Object *Target = Player->Character->Targets.size() ? Player->Character->Targets.front() : nullptr;
+		Battle->ClientSetTarget(Item, Player->Fighter->GetStartingSide(Item), Target);
 	}
 }
 
