@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/components/fighter.h>
 #include <objects/statuseffect.h>
+#include <objects/item.h>
 #include <hud/hud.h>
 #include <ae/ui.h>
 #include <ae/assets.h>
@@ -39,6 +40,19 @@ _Fighter::_Fighter(_Object *Object) :
 	BattleSide(0) {
 
 	ItemDropsReceived.reserve(10);
+}
+
+// Get starting side for potential action based on target type
+int _Fighter::GetStartingSide(const _Item *Item) {
+
+	// Default to enemy side
+	int StartingSide = !BattleSide;
+
+	// Check for self/ally target
+	if(Item->TargetID != TargetType::ANY && Item->CanTargetAlly())
+		StartingSide = BattleSide;
+
+	return StartingSide;
 }
 
 // Create a UI element for battle

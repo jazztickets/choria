@@ -1503,6 +1503,12 @@ void _PlayState::HandleBattleJoin(ae::_Buffer &Data) {
 		Object->UnserializeBattle(Data, Player == Object);
 		Object->Character->CalculateStats();
 		Battle->AddObject(Object, Object->Fighter->BattleSide, true);
+
+		// Update client targets
+		if(Player->Fighter->PotentialAction.IsSet()) {
+			const _Item *Item = Player->Fighter->PotentialAction.Item;
+			Battle->ClientSetTarget(Item, Player->Fighter->GetStartingSide(Item), Player->Character->Targets.front());
+		}
 	}
 }
 
@@ -1700,9 +1706,9 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 		ItemUsed->PlaySound(Scripting);
 
 	// Update potential targets on client
-	if(Battle) {
-		Battle->ClientChangeTarget(1, false);
-		Battle->ClientChangeTarget(-1, false);
+	if(Battle && Player->Fighter->PotentialAction.IsSet()) {
+		const _Item *Item = Player->Fighter->PotentialAction.Item;
+		Battle->ClientSetTarget(Item, Player->Fighter->GetStartingSide(Item), Player->Character->Targets.front());
 	}
 }
 

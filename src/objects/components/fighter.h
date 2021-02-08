@@ -37,6 +37,9 @@ class _Fighter {
 
 		_Fighter(_Object *Object);
 
+		// Battle
+		int GetStartingSide(const _Item *Item);
+
 		// UI
 		void CreateBattleElement(ae::_Element *Parent);
 		void RemoveBattleElement();

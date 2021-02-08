@@ -259,15 +259,12 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1 && ClientPlayer->Character->HUD)
 				ClientPlayer->Character->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
-			// Get opposite side
-			int StartingSide = !ClientPlayer->Fighter->BattleSide;
+			// Get side to start action on
+			int StartingSide = ClientPlayer->Fighter->GetStartingSide(Item);
 
-			// Pick sides depending on action
-			if(Item->TargetID != TargetType::ANY && Item->CanTargetAlly()) {
-				StartingSide = ClientPlayer->Fighter->BattleSide;
-				if(!ClientPlayer->Fighter->LastTarget[StartingSide])
-					ClientPlayer->Fighter->LastTarget[StartingSide] = ClientPlayer;
-			}
+			// Set initial target to self when targetting ally/self
+			if(StartingSide == ClientPlayer->Fighter->BattleSide && !ClientPlayer->Fighter->LastTarget[StartingSide])
+				ClientPlayer->Fighter->LastTarget[StartingSide] = ClientPlayer;
 
 			// Set target
 			ClientSetTarget(Item, StartingSide, ClientPlayer->Fighter->LastTarget[StartingSide]);
