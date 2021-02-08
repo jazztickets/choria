@@ -1944,8 +1944,7 @@ function Item_RitePrivilege.Use(self, Level, Duration, Source, Target, Result, P
 end
 
 Item_RiteSoul = Base_Rite:New()
-Item_RiteSoul.Exponent = 2
-Item_RiteSoul.CostA = 1
+Item_RiteSoul.CostA = 2
 Item_RiteSoul.Max = 100
 
 function Item_RiteSoul.GetInfo(self, Source, Item)
