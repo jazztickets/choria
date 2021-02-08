@@ -61,7 +61,7 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 				Data.Write<uint32_t>(Buff->ID);
 			} break;
 			case StatValueType::INTEGER64:
-				Data.Write<int>(Iterator.second.Int64);
+				Data.Write<int64_t>(Iterator.second.Int64);
 			break;
 			default:
 				Data.Write<int>(Iterator.second.Int);
@@ -101,7 +101,7 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 					Values[Attribute.Name].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
 			} break;
 			case StatValueType::INTEGER64:
-				Values[Attribute.Name].Int64 = Data.Read<int>();
+				Values[Attribute.Name].Int64 = Data.Read<int64_t>();
 			break;
 			default:
 				Values[Attribute.Name].Int = Data.Read<int>();
