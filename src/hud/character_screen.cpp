@@ -89,9 +89,19 @@ void _CharacterScreen::Render(double BlendFactor) {
 			_HUD::FormatTime(Buffer, (int64_t)AttributeStorage.Double);
 		}
 		else {
-			Buffer << AttributeStorage.Int64;
-			if(Attribute.Type == StatValueType::PERCENT)
-				Buffer << "%";
+			switch(Attribute.Type) {
+				case StatValueType::INTEGER:
+					Buffer << AttributeStorage.Int;
+				break;
+				case StatValueType::INTEGER64:
+					Buffer << AttributeStorage.Int64;
+				break;
+				case StatValueType::PERCENT:
+					Buffer << AttributeStorage.Int << "%";
+				break;
+				default:
+				break;
+			}
 		}
 
 		// Draw values
