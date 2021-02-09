@@ -1561,6 +1561,10 @@ int _Object::Move() {
 	glm::ivec2 Direction(0, 0);
 	GetDirectionFromInput(InputState, Direction);
 
+	// Log movement
+	if(Logging && Server)
+		Log << "[MOVE] time=" << std::fixed << std::setprecision(2) << Server->Time << " mapid=" << Map->NetworkID << " x=" << Position.x << " y=" << Position.y << " input=" << InputState << std::endl;
+
 	// Test movement
 	bool Moved = false;
 	if(!Map->CanMoveTo(Position + Direction, this)) {

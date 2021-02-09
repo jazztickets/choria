@@ -671,11 +671,6 @@ void _Server::HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	Player->Character->IdleTime = 0.0;
 	Player->Controller->InputStates.push_back(Data.Read<char>());
-
-	if(Player->Logging) {
-		ae::NetworkIDType MapID = Player->Map ? Player->Map->NetworkID : 0;
-		Player->Log << "[MOVE] time=" << std::fixed << std::setprecision(2) << Time << " mapid=" << MapID << " x=" << Player->Position.x << " y=" << Player->Position.y << " input=" << Player->Controller->InputStates.back() << std::endl;
-	}
 }
 
 // Handles use command from a client
