@@ -223,7 +223,7 @@ void _Object::Update(double FrameTime) {
 
 	// Check events
 	if(Map && CheckEvent)
-		Map->CheckEvents(this, Scripting);
+		Map->CheckEvents(this);
 
 	// Update status
 	if(Character && !Monster->DatabaseID)

@@ -105,8 +105,9 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void Update(double FrameTime) override;
 
 		// Events
-		void CheckEvents(_Object *Object, _Scripting *Scripting) const;
+		void CheckEvents(_Object *Object) const;
 		void CheckBattle(_Object *Object, const _Tile *Tile) const;
+		void RunEventScript(const _Tile *Tile, _Object *Object) const;
 		void IndexEvents();
 		void GetClockAsString(std::stringstream &Buffer, bool Clock24Hour) const;
 		void SetAmbientLightByClock();

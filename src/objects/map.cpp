@@ -296,7 +296,7 @@ void _Map::Update(double FrameTime) {
 }
 
 // Check for events
-void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
+void _Map::CheckEvents(_Object *Object) const {
 
 	// Check for teleporting
 	if(Server && Object->Character->TeleportTime == 0.0) {
@@ -325,32 +325,16 @@ void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 		case _Map::EVENT_TRADER:
 		case _Map::EVENT_BLACKSMITH:
 		case _Map::EVENT_ENCHANTER:
-		case _Map::EVENT_MINIGAME: {
+		case _Map::EVENT_MINIGAME:
 			if(Server)
 				StartEvent(Object, Tile->Event);
 			else
 				Object->Controller->WaitForServer = true;
-		} break;
-		case _Map::EVENT_SCRIPT: {
-			if(Server) {
-				Server->RunEventScript(Tile->Event.Data, Object);
-				CheckBattle(Object, Tile);
-			}
-			else {
-
-				// Find script
-				auto Iterator = Stats->Scripts.find(Tile->Event.Data);
-				if(Iterator != Stats->Scripts.end()) {
-					const _Script &Script = Iterator->second;
-					if(Scripting->StartMethodCall(Script.Name, "PlaySound")) {
-						Scripting->PushObject(Object);
-						Scripting->MethodCall(1, 0);
-						Scripting->FinishMethodCall();
-					}
-				}
-			}
-		} break;
-		case _Map::EVENT_PORTAL: {
+		break;
+		case _Map::EVENT_SCRIPT:
+			RunEventScript(Tile, Object);
+		break;
+		case _Map::EVENT_PORTAL:
 			if(Server) {
 
 				// Find matching even/odd event
@@ -359,8 +343,8 @@ void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 			}
 			else
 				Object->Controller->WaitForServer = true;
-		} break;
-		case _Map::EVENT_JUMP: {
+		break;
+		case _Map::EVENT_JUMP:
 			if(Server) {
 
 				// Find next jump
@@ -369,7 +353,7 @@ void _Map::CheckEvents(_Object *Object, _Scripting *Scripting) const {
 			}
 			else
 				Object->Controller->WaitForServer = true;
-		} break;
+		break;
 		default:
 			if(Server) {
 				Object->Character->Vendor = nullptr;
@@ -392,6 +376,56 @@ void _Map::CheckBattle(_Object *Object, const _Tile *Tile) const {
 
 	if(Object->Character->IsAlive() && Object->Character->NextBattle <= 0)
 		Server->QueueBattle(Object, Tile->Zone, false, false, 0.0f, 0.0f);
+}
+
+// Run event script
+void _Map::RunEventScript(const _Tile *Tile, _Object *Object) const {
+
+	// Find script
+	auto Iterator = Stats->Scripts.find(Tile->Event.Data);
+	if(Iterator == Stats->Scripts.end())
+		return;
+
+	const _Script &Script = Iterator->second;
+
+	// Call script
+	_StatChange StatChange;
+	StatChange.Object = Object;
+	if(Object->Scripting->StartMethodCall(Script.Name, "Activate")) {
+		Object->Scripting->PushInt(Script.Level);
+		Object->Scripting->PushObject(StatChange.Object);
+		Object->Scripting->PushStatChange(&StatChange);
+		Object->Scripting->MethodCall(3, 1);
+		Object->Scripting->GetStatChange(1, Stats, StatChange);
+		Object->Scripting->FinishMethodCall();
+
+		if(Server) {
+			StatChange.Object->UpdateStats(StatChange);
+
+			// Update stat on client
+			if(Object->Peer) {
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+				StatChange.Serialize(Packet);
+				Server->Network->SendPacket(Packet, Object->Peer);
+			}
+
+			CheckBattle(Object, Tile);
+		}
+		else {
+
+			// Stop moving on client
+			if(StatChange.HasStat("MapChange"))
+				Object->Controller->WaitForServer = true;
+
+			// Play sound on client
+			if(Object->Scripting->StartMethodCall(Script.Name, "PlaySound")) {
+				Object->Scripting->PushObject(Object);
+				Object->Scripting->MethodCall(1, 0);
+				Object->Scripting->FinishMethodCall();
+			}
+		}
+	}
 }
 
 // Build indexed events list

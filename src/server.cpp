@@ -819,6 +819,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 		Map = MapManager->CreateWithID(MapID);
 		Map->Clock = Save->Clock;
 		Map->Server = this;
+		Map->Stats = Stats;
 		Map->Load(&Stats->Maps.at(MapID));
 	}
 
@@ -2116,43 +2117,6 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);
-}
-
-// Run event script from map
-void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
-	if(!Object)
-		return;
-
-	// Find script
-	auto Iterator = Stats->Scripts.find(ScriptID);
-	if(Iterator != Stats->Scripts.end()) {
-		const _Script &Script = Iterator->second;
-
-		_StatChange StatChange;
-		StatChange.Object = Object;
-		if(Scripting->StartMethodCall(Script.Name, "Activate")) {
-			Scripting->PushInt(Script.Level);
-			Scripting->PushObject(StatChange.Object);
-			Scripting->PushStatChange(&StatChange);
-			Scripting->MethodCall(3, 1);
-			Scripting->GetStatChange(1, Stats, StatChange);
-			Scripting->FinishMethodCall();
-
-			StatChange.Object->UpdateStats(StatChange);
-
-			// Notify peer
-			if(Object->Peer) {
-
-				// Build packet
-				ae::_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-				StatChange.Serialize(Packet);
-
-				// Send packet to player
-				Network->SendPacket(Packet, Object->Peer);
-			}
-		}
-	}
 }
 
 // Set server clock
