@@ -85,23 +85,22 @@ void _CharacterScreen::Render(double BlendFactor) {
 		if(LastCategory != Category)
 			DrawPosition.y += SpacingY;
 
-		if(Attribute.Type == StatValueType::TIME) {
-			_HUD::FormatTime(Buffer, (int64_t)AttributeStorage.Double);
-		}
-		else {
-			switch(Attribute.Type) {
-				case StatValueType::INTEGER:
-					Buffer << AttributeStorage.Int;
-				break;
-				case StatValueType::INTEGER64:
-					Buffer << AttributeStorage.Int64;
-				break;
-				case StatValueType::PERCENT:
-					Buffer << AttributeStorage.Int << "%";
-				break;
-				default:
-				break;
-			}
+		// Build buffer
+		switch(Attribute.Type) {
+			case StatValueType::INTEGER:
+				Buffer << AttributeStorage.Int;
+			break;
+			case StatValueType::INTEGER64:
+				Buffer << AttributeStorage.Int64;
+			break;
+			case StatValueType::PERCENT:
+				Buffer << AttributeStorage.Int << "%";
+			break;
+			case StatValueType::TIME:
+				_HUD::FormatTime(Buffer, (int64_t)AttributeStorage.Double);
+			break;
+			default:
+			break;
 		}
 
 		// Draw values
