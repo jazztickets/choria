@@ -138,6 +138,13 @@ const  int          GAME_DEFAULT_MAX_SKILL_LEVEL       =  5;
 const  int          GAME_MAX_SKILL_UNLOCKS             =  10;
 const  int          GAME_MAX_SKILL_LEVEL               =  50;
 const  double       GAME_REBIRTH_WEALTH_MULTIPLIER     =  0.1;
+//     Levels
+const  int          LEVELS_MAX                         =  9999;
+const  int          LEVELS_HEALTH_BASE                 =  150;
+const  int          LEVELS_HEALTH_RATE                 =  20;
+const  int          LEVELS_MANA_BASE                   =  0;
+const  int          LEVELS_MANA_RATE                   =  0;
+const  int          LEVELS_SKILL_POINTS                =  3;
 //     Actionbar
 const  int          ACTIONBAR_BELT_STARTS              =  10;
 const  int          ACTIONBAR_DEFAULT_BELTSIZE         =  1;

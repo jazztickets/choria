@@ -130,29 +130,37 @@ void _Stats::LoadEvents() {
 
 // Loads level data
 void _Stats::LoadLevels() {
+	Levels.clear();
+	Levels.reserve(10000);
 
-	// Run query
-	Database->PrepareQuery("SELECT * FROM level");
-
-	// Get data
+	// Build level table
 	_Level Level;
-	while(Database->FetchRow()) {
-		Level.Level = Database->GetInt<int>("level");
-		Level.Experience = Database->GetInt64("experience");
-		Level.SkillPoints = Database->GetInt<int>("skillpoints");
-		Level.Health = Database->GetInt<int>("health");
-		Level.Mana = Database->GetInt<int>("mana");
-		Level.RebirthTier = Database->GetInt<int>("rebirth_tier");
+	Level.Level = 1;
+	Level.Experience = 0;
+	Level.SkillPoints = LEVELS_SKILL_POINTS;
+	Level.Health = LEVELS_HEALTH_BASE;
+	Level.Mana = LEVELS_MANA_BASE;
+	Level.RebirthTier = 0;
+	Levels.push_back(Level);
+	for(int64_t i = 1; i < LEVELS_MAX; i++) {
+		int64_t ExperienceTilNext = i * i * i + 5 * (i - 1) + 9;
+		Level.Level = i + 1;
+		Level.Experience = ExperienceTilNext + Levels[(std::size_t)i - 1].Experience;
+		Level.SkillPoints = LEVELS_SKILL_POINTS + i + Level.Level / 5;
+		Level.Health = LEVELS_HEALTH_BASE + (Level.Level - 1) * LEVELS_HEALTH_RATE;
+		Level.Mana = LEVELS_MANA_BASE + (Level.Level - 1) * LEVELS_MANA_RATE;
+		Level.RebirthTier = Level.Level / 5;
 		Levels.push_back(Level);
 	}
-	Database->CloseQuery();
+	//for(std::size_t i = 0; i < Levels.size(); i++)
+	//	std::cout << Levels[i].Level << "|" << Levels[i].Experience << "|" << Levels[i].SkillPoints << "|" << Levels[i].Health << "|" << Levels[i].Mana << "|" << Levels[i].RebirthTier << std::endl;
 
 	// Calculate next level
-	for(std::size_t i = 1; i < Levels.size(); i++) {
-		Levels[i-1].NextLevel = Levels[i].Experience - Levels[i-1].Experience;
-	}
+	for(std::size_t i = 1; i < Levels.size(); i++)
+		Levels[i - 1].NextLevel = Levels[i].Experience - Levels[i - 1].Experience;
 
-	Levels[Levels.size()-1].NextLevel = 0;
+	// Cap next level
+	Levels[Levels.size() - 1].NextLevel = 0;
 }
 
 // Load buffs
