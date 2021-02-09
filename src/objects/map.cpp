@@ -733,12 +733,12 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[Layer]);
 	if(!Static)
 		glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices[Layer]);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)nullptr);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)sizeof(glm::vec2));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	if(!Static)
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
-	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, nullptr);
 
 	ae::Graphics.ResetState();
 }

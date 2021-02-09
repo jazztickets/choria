@@ -48,7 +48,7 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 	Data.Write<uint8_t>(Values.size());
 
 	// Iterate over statchanges
-	for(auto Iterator : Values) {
+	for(auto &Iterator : Values) {
 
 		// Write type
 		const _Attribute &Attribute = Object->Stats->Attributes.at(Iterator.first);

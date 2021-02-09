@@ -49,9 +49,9 @@
 
 _Menu Menu;
 
-const std::string CharacterButtonPrefix = "button_characters_slot";
-const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
-const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
+const char * const CharacterButtonPrefix = "button_characters_slot";
+const char * const NewCharacterPortraitPrefix = "button_newcharacter_portrait";
+const char * const NewCharacterBuildPrefix = "button_newcharacter_build";
 
 const int KeyBindings[] = {
 	Action::GAME_UP,
@@ -82,7 +82,7 @@ const int KeyBindings[] = {
 	Action::MISC_CONSOLE,
 };
 
-const char *KeyBindingNames[] = {
+const char * const KeyBindingNames[] = {
 	"Move Up",
 	"Move Down",
 	"Move Left",
@@ -1765,7 +1765,7 @@ void _Menu::RenderBrowser() {
 		Count++;
 		if(Count >= MainElement->Children.size())
 			break;
-	};
+	}
 }
 
 // Cycle focused elements

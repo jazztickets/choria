@@ -95,7 +95,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		};
 
 		_Map();
-		~_Map();
+		~_Map() override;
 
 		void AllocateMap();
 		void ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize);

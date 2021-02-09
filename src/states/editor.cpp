@@ -44,7 +44,7 @@
 _EditorState EditorState;
 
 // Constants
-const std::string MAPS_PATH = "maps/";
+const char * const MAPS_PATH = "maps/";
 
 // Constructor
 _EditorState::_EditorState() :

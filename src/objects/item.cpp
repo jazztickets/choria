@@ -43,7 +43,7 @@
 #include <SDL_keycode.h>
 
 // Category names
-static const std::string SkillCategories[5] = {
+const std::string SkillCategories[5] = {
 	"Passive Skill",
 	"Attack Skill",
 	"Spell",
@@ -52,7 +52,7 @@ static const std::string SkillCategories[5] = {
 };
 
 // Stats to hide on the item tooltip
-static const std::unordered_map<std::string, int> HiddenStats = {
+const std::unordered_map<std::string, int> HiddenStats = {
 	{ "BuffPriority", 1 },
 	{ "Cursed", 1 },
 	{ "MinDamage", 1 },

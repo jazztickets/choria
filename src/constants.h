@@ -59,7 +59,7 @@ const  double       MAP_DAY_LENGTH                     =  24.0*60.0;
 const  double       MAP_CLOCK_SPEED                    =  1.0;
 const  double       MAP_EDITOR_CLOCK_SPEED             =  200.0;
 const  glm::vec4    MAP_AMBIENT_LIGHT                  =  glm::vec4(0.3,0.3,0.3,1);
-const  std::string  MAP_DEFAULT_TILESET                =  "textures/atlas/main.png";
+const  char*const   MAP_DEFAULT_TILESET                =  "textures/atlas/main.png";
 //     UI
 const  glm::vec2    UI_PORTRAIT_SIZE                   =  glm::vec2(100,100);
 const  glm::vec2    UI_SLOT_SIZE                       =  glm::vec2(64,64);
@@ -173,5 +173,5 @@ const  double       MENU_DOUBLECLICK_TIME              =  0.250;
 const  float        MENU_MAP_SCROLL_SPEED              =  0.005f;
 const  double       MENU_CONNECT_COOLDOWN              =  5.0;
 //     Scripting
-const  std::string  SCRIPTS_GAME                       =  "scripts/game.lua";
-const  std::string  SCRIPTS_DATA                       =  "scripts/data.lua";
+const  char*const   SCRIPTS_GAME                       =  "scripts/game.lua";
+const  char*const   SCRIPTS_DATA                       =  "scripts/data.lua";

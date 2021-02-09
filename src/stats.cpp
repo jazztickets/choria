@@ -862,7 +862,7 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, int Count, std::vector<uint32
 	// Get list of possible drops
 	std::vector<_ItemDrop> PossibleItemDrops;
 	PossibleItemDrops.reserve(10);
-	int OddsSum;
+	int OddsSum = 0;
 	while(Database->FetchRow()) {
 		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
 		OddsSum = Database->GetInt<int>("cdt");

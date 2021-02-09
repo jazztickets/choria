@@ -52,7 +52,7 @@ void _Sprite::Render(double BlendFactor) {
 }
 
 // Check collision with a circle
-bool _Sprite::CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &Normal, float &Penetration, bool &AxisAlignedPush) {
+bool _Sprite::CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &Normal, float &Penetration, bool &AxisAlignedPush) const {
 
 	// Get vector to circle center
 	glm::vec2 Point = Position - glm::vec2(RigidBody.Position);

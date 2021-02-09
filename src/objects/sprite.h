@@ -35,11 +35,11 @@ class _Sprite : public ae::_BaseObject {
 		_Sprite();
 
 		// Update
-		void Update(double FrameTime);
+		void Update(double FrameTime) override;
 		void Render(double BlendFactor);
 
 		// Collision
-		bool CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &Normal, float &Penetration, bool &AxisAlignedPush);
+		bool CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &Normal, float &Penetration, bool &AxisAlignedPush) const;
 
 		// Attributes
 		std::string Name;

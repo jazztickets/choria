@@ -43,7 +43,7 @@ class _DedicatedState : public ae::_State {
 		void SetNetworkPort(uint16_t NetworkPort) { this->NetworkPort = NetworkPort; }
 		void SetHardcore(bool Value) { this->Hardcore = Value; }
 		void SetNoPVP(bool Value) { this->NoPVP = Value; }
-		void SetDevMode(bool Value) { this->DevMode = Value; };
+		void SetDevMode(bool Value) { this->DevMode = Value; }
 
 		// Commands
 		void ShowCommands();
