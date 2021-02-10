@@ -812,7 +812,7 @@ int64_t _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *V
 		}
 		else {
 			Percent = Vendor->SellPercent;
-			if(Category == 100)
+			if(Category == 100 || Type == ItemType::RELIC)
 				Percent = 0.0;
 		}
 	}
