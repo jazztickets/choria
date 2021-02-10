@@ -265,6 +265,7 @@ INSERT INTO itemtype VALUES(12,'Unlockable');
 INSERT INTO itemtype VALUES(13,'Key');
 INSERT INTO itemtype VALUES(14,'Off-Hand');
 INSERT INTO itemtype VALUES(15,'Map');
+INSERT INTO itemtype VALUES(16,'Relic');
 CREATE TABLE IF NOT EXISTS "target" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -644,6 +645,9 @@ INSERT INTO vendoritem VALUES(221,25,335);
 INSERT INTO vendoritem VALUES(222,18,191);
 INSERT INTO vendoritem VALUES(223,27,360);
 INSERT INTO vendoritem VALUES(224,27,363);
+INSERT INTO vendoritem VALUES(225,27,371);
+INSERT INTO vendoritem VALUES(226,27,372);
+INSERT INTO vendoritem VALUES(227,27,373);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES "monster"(id) ON DELETE CASCADE,
@@ -2293,6 +2297,9 @@ INSERT INTO item VALUES(367,8,0,0,0,0,0,26,'Greater Ring of Pain','textures/item
 INSERT INTO item VALUES(368,9,0,0,0,0,0,0,'Cunning Amulet','textures/items/amulet_red.png','','Item_SetLimit','',0,10000,1,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(369,10,0,0,1,0,0,0,'Rite of Soul','textures/items/rite_soul.png','','Item_RiteSoul','',100,100000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(370,13,0,0,0,0,0,0,'Dead Key','textures/items/key1.png','','','',0,1000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(371,16,0,0,0,0,0,0,'Dimensionality','textures/items/relic_diagonal.png','','Item_Diagonal','',0,50000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(372,16,0,0,0,0,0,0,'Firewalkers','textures/items/relic_lava.png','','Item_LavaProtection','',0,100000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(373,16,0,0,0,0,0,0,'Icewalkers','textures/items/relic_freeze.png','','Item_FreezeProtection','',0,150000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,

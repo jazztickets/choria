@@ -157,6 +157,10 @@ bool _Inventory::CanEquipItem(std::size_t Slot, const _Item *Item) {
 			if(Item->Type == ItemType::AMULET)
 				return true;
 		break;
+		case EquipmentType::RELIC:
+			if(Item->Type == ItemType::RELIC)
+				return true;
+		break;
 		default:
 		break;
 	}

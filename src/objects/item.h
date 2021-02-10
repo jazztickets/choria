@@ -50,6 +50,7 @@ enum class ItemType : uint32_t {
 	KEY,
 	OFFHAND,
 	MAP,
+	RELIC,
 };
 
 // Classes
@@ -68,7 +69,7 @@ class _Item {
 		bool IsConsumable() const { return Type == ItemType::CONSUMABLE; }
 		bool IsKey() const { return Type == ItemType::KEY; }
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
-		bool IsEquippable() const { return Type == ItemType::OFFHAND || (Type >= ItemType::HELMET && Type <= ItemType::AMULET); }
+		bool IsEquippable() const { return Type == ItemType::OFFHAND || Type == ItemType::RELIC || (Type >= ItemType::HELMET && Type <= ItemType::AMULET); }
 		bool IsStackable() const { return !IsEquippable(); }
 		bool IsCursed() const { return Attributes.at("Cursed").Int; }
 		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }

@@ -461,22 +461,14 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		DrawPosition.y += SpacingY;
 	}
 
-	// Tradable
-	if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER) {
-		if(!Tradable) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Cannot trade with other players", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
-			DrawPosition.y += ControlSpacingY;
-		}
-		else if(Player->Character->Level < Tradable) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Can trade with players at level " + std::to_string(Tradable), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
-			DrawPosition.y += ControlSpacingY;
-		}
-	}
 
 	// Draw help text
 	std::string InfoText;
 	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	switch(Type) {
+		case ItemType::RELIC:
+			InfoText = "Relics endure rebirthing";
+			InfoColor = ae::Assets.Colors["silver"];
 		case ItemType::HELMET:
 		case ItemType::ARMOR:
 		case ItemType::BOOTS:
@@ -547,9 +539,22 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		break;
 	}
 
+	// Draw info text
 	if(InfoText.length()) {
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, glm::ivec2(DrawPosition), ae::CENTER_BASELINE, InfoColor);
 		DrawPosition.y += ControlSpacingY;
+	}
+
+	// Tradable
+	if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER) {
+		if(!Tradable) {
+			ae::Assets.Fonts["hud_small"]->DrawText("Cannot trade with other players", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+			DrawPosition.y += ControlSpacingY;
+		}
+		else if(Player->Character->Level < Tradable) {
+			ae::Assets.Fonts["hud_small"]->DrawText("Can trade with players at level " + std::to_string(Tradable), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
+			DrawPosition.y += ControlSpacingY;
+		}
 	}
 
 	// Move hint
@@ -786,6 +791,9 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 		break;
 		case ItemType::OFFHAND:
 			Slot.Index = EquipmentType::HAND2;
+		break;
+		case ItemType::RELIC:
+			Slot.Index = EquipmentType::RELIC;
 		break;
 		default:
 			Slot.Type = BagType::NONE;

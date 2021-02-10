@@ -2531,6 +2531,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	const _Object *Build = BuildIterator->second;
 
 	// Save old info
+	_Bag OldEquipmentBag = Player->Inventory->GetBag(BagType::EQUIPMENT);
 	_Bag OldTradeBag = Player->Inventory->GetBag(BagType::TRADE);
 	std::unordered_map<uint32_t, int> OldSkills = Character->Skills;
 
@@ -2639,6 +2640,10 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 				break;
 		}
 	}
+
+	// Keep relic
+	const _InventorySlot &RelicSlot = OldEquipmentBag.Slots[EquipmentType::RELIC];
+	Player->Inventory->AddItem(RelicSlot.Item, RelicSlot.Upgrades, RelicSlot.Count);
 
 	// Unlock keys
 	const std::vector<const _Item *> KeyUnlocks = {

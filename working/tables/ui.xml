@@ -277,6 +277,7 @@
 		<element id="button_equipment_bag_5" style="style_hud_slot_alpha_ring" offset_x="16" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
 		<element id="button_equipment_bag_6" style="style_hud_slot_alpha_ring" offset_x="160" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
 		<element id="button_equipment_bag_7" style="style_hud_slot_alpha_amulet" offset_x="160" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
+		<element id="button_equipment_bag_8" style="style_hud_slot_alpha_relic" offset_x="16" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="8"/>
 	</element>
 	<element id="element_inventory" offset_x="-280" size_x="320" size_y="384" index="5">
 		<element id="button_inventory_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>

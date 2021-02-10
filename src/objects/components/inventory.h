@@ -46,6 +46,7 @@ enum EquipmentType : std::size_t {
 	RING1,
 	RING2,
 	AMULET,
+	RELIC,
 	COUNT,
 };
 

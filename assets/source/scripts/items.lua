@@ -902,7 +902,7 @@ end
 
 -- Icebrand
 function SetBonus_Icebrand.GetInfo(self, Source, Item)
-	return "[c yellow]Grants immunity to lava\n\n" .. self:GetAddedInfo(Source, Item)
+	return "[c yellow]Grants lava immunity\n\n" .. self:GetAddedInfo(Source, Item)
 end
 
 function SetBonus_Icebrand.Stats(self, Item, Object, Change)
@@ -914,7 +914,7 @@ end
 -- Dimensional Slippers --
 
 function SetBonus_DimensionalSlippers.GetInfo(self, Source, Item)
-	return "[c yellow]Allows for diagonal movement\n\n" .. self:GetAddedInfo(Source, Item)
+	return "[c yellow]Grants diagonal movement\n\n" .. self:GetAddedInfo(Source, Item)
 end
 
 function SetBonus_DimensionalSlippers.Stats(self, Item, Object, Change)
@@ -926,7 +926,7 @@ end
 -- Lava Boots --
 
 function SetBonus_LavaBoots.GetInfo(self, Source, Item)
-	return "[c yellow]Grants immunity to lava\n\n" .. self:GetAddedInfo(Source, Item)
+	return "[c yellow]Grants lava immunity\n\n" .. self:GetAddedInfo(Source, Item)
 end
 
 function SetBonus_LavaBoots.Stats(self, Item, Object, Change)
@@ -940,7 +940,7 @@ end
 Item_Diagonal = { }
 
 function Item_Diagonal.GetInfo(self, Source, Item)
-	return "[c yellow]Allows for diagonal movement"
+	return "[c yellow]Grants diagonal movement"
 end
 
 function Item_Diagonal.Stats(self, Item, Object, Change)
@@ -954,7 +954,7 @@ end
 Item_LavaProtection = { }
 
 function Item_LavaProtection.GetInfo(self, Source, Item)
-	return "[c yellow]Grants immunity to lava"
+	return "[c yellow]Grants lava immunity"
 end
 
 function Item_LavaProtection.Stats(self, Item, Object, Change)

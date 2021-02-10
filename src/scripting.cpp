@@ -159,6 +159,8 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "INVENTORY_RING2");
 	lua_pushinteger(LuaState, (int)EquipmentType::AMULET);
 	lua_setglobal(LuaState, "INVENTORY_AMULET");
+	lua_pushinteger(LuaState, (int)EquipmentType::RELIC);
+	lua_setglobal(LuaState, "INVENTORY_RELIC");
 
 	// Push item types
 	lua_pushinteger(LuaState, (int)ItemType::SKILL);
@@ -187,6 +189,10 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "ITEM_UNLOCKABLE");
 	lua_pushinteger(LuaState, (int)ItemType::OFFHAND);
 	lua_setglobal(LuaState, "ITEM_OFFHAND");
+	lua_pushinteger(LuaState, (int)ItemType::MAP);
+	lua_setglobal(LuaState, "ITEM_MAP");
+	lua_pushinteger(LuaState, (int)ItemType::RELIC);
+	lua_setglobal(LuaState, "ITEM_RELIC");
 }
 
 // Inject items pointers into existing lua tables
