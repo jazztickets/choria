@@ -467,7 +467,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	switch(Type) {
 		case ItemType::RELIC:
-			InfoText = "Relics endure rebirthing";
+			InfoText = "Equipped relics endure rebirthing";
 			InfoColor = ae::Assets.Colors["silver"];
 		case ItemType::HELMET:
 		case ItemType::ARMOR:
