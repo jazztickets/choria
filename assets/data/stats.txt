@@ -381,6 +381,7 @@ INSERT INTO script VALUES(28,'Script_Boss',59,'textures/objects/jem.png');
 INSERT INTO script VALUES(29,'Script_Boss',60,'textures/objects/boss.png');
 INSERT INTO script VALUES(30,'Script_Slow',5,'');
 INSERT INTO script VALUES(31,'Script_Spikes',20,'');
+INSERT INTO script VALUES(32,'Script_Spikes',50,'');
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT DEFAULT('None'),
@@ -1294,6 +1295,7 @@ INSERT INTO trader VALUES(97,'empower',38,1);
 INSERT INTO trader VALUES(98,'greater_pain_ring',367,1);
 INSERT INTO trader VALUES(99,'ruby_amulet',368,1);
 INSERT INTO trader VALUES(100,'rite_of_soul',369,1);
+INSERT INTO trader VALUES(101,'bone_wand',374,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -1546,6 +1548,9 @@ INSERT INTO traderitem VALUES(278,99,287,1);
 INSERT INTO traderitem VALUES(279,99,249,1);
 INSERT INTO traderitem VALUES(280,99,247,5);
 INSERT INTO traderitem VALUES(281,100,352,1);
+INSERT INTO traderitem VALUES(282,101,243,1);
+INSERT INTO traderitem VALUES(283,101,237,200);
+INSERT INTO traderitem VALUES(284,101,156,200);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
