@@ -38,6 +38,11 @@ Item_Data = {
 		ExperienceBonus = 5,
 	},
 
+	-- Bone Wand
+	[374] = {
+		SummonPower = 20,
+	},
+
 -- Two-Handed Weapons
 
 	-- Dark Staff

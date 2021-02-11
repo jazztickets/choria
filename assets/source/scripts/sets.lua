@@ -307,6 +307,13 @@ SetBonus_ArcaneWand.Attributes = {
 	SpellDamage = { "25%", "125%" },
 }
 
+SetBonus_BoneWand = Base_Set:New()
+SetBonus_BoneWand.Attributes = {
+	PoisonPower = { "50%", "200%" },
+	SummonBattleSpeed = { "10%", "25%" },
+	SummonLimit = { "0.5", "2" },
+}
+
 SetBonus_ShortSword = Base_Set:New()
 SetBonus_ShortSword.Attributes = {
 	AttackPower = { "15%", "30%" },
@@ -396,16 +403,19 @@ SetBonus_MysticStaff.Attributes = {
 SetBonus_DarkStaff = Base_Set:New()
 SetBonus_DarkStaff.Attributes = {
 	SummonBattleSpeed = { "5%", "15%" },
+	SummonLimit = { "0", "1" },
 }
 
 SetBonus_DemonStick = Base_Set:New()
 SetBonus_DemonStick.Attributes = {
 	SummonBattleSpeed = { "10%", "30%" },
+	SummonLimit = { "0.5", "2" },
 }
 
 SetBonus_DiabolicStaff = Base_Set:New()
 SetBonus_DiabolicStaff.Attributes = {
 	SummonBattleSpeed = { "15%", "50%" },
+	SummonLimit = { "1", "3" },
 }
 
 SetBonus_Axe = Base_Set:New()

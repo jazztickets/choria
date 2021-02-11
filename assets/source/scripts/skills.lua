@@ -1104,7 +1104,7 @@ Skill_SummonMastery = {}
 Skill_SummonMastery.Power = 25
 Skill_SummonMastery.PowerPerLevel = 5
 Skill_SummonMastery.SummonLimit = 1.1
-Skill_SummonMastery.SummonLimitPerLevel = 0.1
+Skill_SummonMastery.SummonLimitPerLevel = 0.06
 
 function Skill_SummonMastery.GetPower(self, Level)
 	return math.floor(self.Power + self.PowerPerLevel * (Level - 1))
