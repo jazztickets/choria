@@ -55,7 +55,7 @@ class _Fighter {
 
 		// Targets
 		_Action PotentialAction;
-		_Object *LastTarget[2];
+		std::unordered_map<uint32_t, _Object *> LastTarget;
 
 		// State
 		std::vector<uint32_t> ItemDropsReceived;

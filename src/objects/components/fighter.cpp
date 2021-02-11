@@ -30,7 +30,6 @@ _Fighter::_Fighter(_Object *Object) :
 	BattleBaseOffset(0.0f, 0.0f),
 	ResultPosition(0.0f, 0.0f),
 	StatPosition(0.0f, 0.0f),
-	LastTarget{nullptr, nullptr},
 	TurnTimer(0.0),
 	GoldStolen(0),
 	Corpse(1),

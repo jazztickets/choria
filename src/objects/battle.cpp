@@ -263,11 +263,11 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			int StartingSide = ClientPlayer->Fighter->GetStartingSide(Item);
 
 			// Set initial target to self when targetting ally/self
-			if(StartingSide == ClientPlayer->Fighter->BattleSide && !ClientPlayer->Fighter->LastTarget[StartingSide])
-				ClientPlayer->Fighter->LastTarget[StartingSide] = ClientPlayer;
+			if(StartingSide == ClientPlayer->Fighter->BattleSide && !ClientPlayer->Fighter->LastTarget[Item->ID])
+				ClientPlayer->Fighter->LastTarget[Item->ID] = ClientPlayer;
 
 			// Set target
-			ClientSetTarget(Item, StartingSide, ClientPlayer->Fighter->LastTarget[StartingSide]);
+			ClientSetTarget(Item, StartingSide, ClientPlayer->Fighter->LastTarget[Item->ID]);
 			if(ClientPlayer->Character->Targets.size()) {
 
 				// Check if item can be used
@@ -310,7 +310,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		}
 
 		// Remember target
-		ClientPlayer->Fighter->LastTarget[ClientPlayer->Character->Targets.front()->Fighter->BattleSide] = ClientPlayer->Character->Targets.front();
+		ClientPlayer->Fighter->LastTarget[Item->ID] = ClientPlayer->Character->Targets.front();
 
 		// Notify server
 		ae::_Buffer Packet;
@@ -471,8 +471,7 @@ void _Battle::ClientChangeTarget(int Direction, bool ChangeSides) {
 void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Character->Battle = this;
 	Object->Fighter->BattleSide = Side;
-	Object->Fighter->LastTarget[0] = nullptr;
-	Object->Fighter->LastTarget[1] = nullptr;
+	Object->Fighter->LastTarget.clear();
 	Object->Character->Targets.clear();
 	Object->Character->Action.Unset();
 	Object->Fighter->PotentialAction.Unset();
@@ -1015,9 +1014,9 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 			continue;
 
 		if(Object->Fighter) {
-			for(int i = 0; i < 2; i++) {
-				if(Object->Fighter->LastTarget[i] == RemoveObject)
-					Object->Fighter->LastTarget[i] = nullptr;
+			for(auto &Entry : Object->Fighter->LastTarget) {
+				if(Entry.second == RemoveObject)
+					Object->Fighter->LastTarget[Entry.first] = nullptr;
 			}
 		}
 
