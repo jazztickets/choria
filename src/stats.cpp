@@ -131,7 +131,7 @@ void _Stats::LoadEvents() {
 // Loads level data
 void _Stats::LoadLevels() {
 	Levels.clear();
-	Levels.reserve(10000);
+	Levels.reserve(LEVELS_MAX + 1);
 
 	// Build level table
 	_Level Level;
