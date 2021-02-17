@@ -448,7 +448,7 @@
 		<element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
 		<element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
 	</element>
-	<element id="element_character" style="style_hud_bg" size_x="350" size_y="1000" alignment_x="2"/>
+	<element id="element_character" style="style_hud_bg" size_x="380" size_y="1080" alignment_x="2"/>
 	<element id="element_teleport" style="style_hud_bg" offset_y="-140" size_x="210" size_y="66">
 		<element id="label_teleport_timeleft" font="hud_medium" offset_y="44" alignment_y="3"/>
 	</element>

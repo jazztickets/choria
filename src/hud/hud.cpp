@@ -858,10 +858,10 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	VendorScreen->Render(BlendFactor);
 	TradeScreen->Render(BlendFactor);
 	TraderScreen->Render(BlendFactor);
+	CharacterScreen->Render(BlendFactor);
 	BlacksmithScreen->Render(BlendFactor);
 	EnchanterScreen->Render(BlendFactor);
 	SkillScreen->Render(BlendFactor);
-	CharacterScreen->Render(BlendFactor);
 	ae::Assets.Elements["label_hud_pvp"]->Render();
 	DrawParty();
 	DrawTeleport();

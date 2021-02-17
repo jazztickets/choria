@@ -49,7 +49,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	int SpacingY = Font->MaxAbove + Font->MaxBelow;
 	glm::vec2 Spacing((int)(SpacingY * 0.5f), 0);
 	glm::vec2 DrawPosition = Element->Bounds.Start;
-	DrawPosition.x += (int)(Element->Size.x/2 + 15 * ae::_Element::GetUIScale());
+	DrawPosition.x += (int)(Element->Size.x/2 + 25 * ae::_Element::GetUIScale());
 	DrawPosition.y += (int)(SpacingY * 2.0f);
 	std::stringstream Buffer;
 
