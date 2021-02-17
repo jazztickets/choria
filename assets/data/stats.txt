@@ -2299,7 +2299,7 @@ INSERT INTO item VALUES(359,13,0,0,0,0,0,0,'Black Runestone','textures/items/bla
 INSERT INTO item VALUES(360,11,0,0,0,0,0,0,'Evolve Token','textures/items/evolve_token.png','','Item_EvolveToken','',0,1000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(361,10,0,1,1,0,0,0,'Eternal Command','textures/items/eternal_command.png','','Item_EternalCommand','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(362,10,0,1,1,0,0,0,'Eternal Impatience','textures/items/eternal_impatience.png','','Item_EternalImpatience','',0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(363,10,0,0,1,0,0,0,'Rite of Privilege','textures/items/rite_privilege.png','','Item_RitePrivilege','',100,100000000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(363,10,0,0,1,0,0,0,'Rite of Privilege','textures/items/rite_privilege.png','','Item_RitePrivilege','',100,1000000000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(364,1,3,4,2,0,0,0,'Fireball','textures/skills/fireball.png','','Skill_Fireball','',3,500,0,0,50,0,0.0,3.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(365,10,0,1,1,0,0,0,'Bottle of Tears','textures/items/tears.png','','Item_Tears','',0,10000,0,0,0,0,0.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(366,8,0,0,0,0,0,0,'Attack Power Ring','textures/items/ring.png','','','',0,100000,1,0,10,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -2307,9 +2307,9 @@ INSERT INTO item VALUES(367,8,0,0,0,0,0,26,'Greater Ring of Pain','textures/item
 INSERT INTO item VALUES(368,9,0,0,0,0,0,0,'Cunning Amulet','textures/items/amulet_red.png','','Item_SetLimit','',0,10000,1,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(369,10,0,0,1,0,0,0,'Rite of Soul','textures/items/rite_soul.png','','Item_RiteSoul','',100,100000,0,1,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(370,13,0,0,0,0,0,0,'Dead Key','textures/items/key1.png','','','',0,1000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(371,16,0,0,0,0,0,0,'Dimensionality','textures/items/relic_diagonal.png','','Item_Diagonal','',0,50000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(372,16,0,0,0,0,0,0,'Firewalkers','textures/items/relic_lava.png','','Item_LavaProtection','',0,100000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(373,16,0,0,0,0,0,0,'Icewalkers','textures/items/relic_freeze.png','','Item_FreezeProtection','',0,150000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(371,16,0,0,0,0,0,0,'Dimensionality','textures/items/relic_diagonal.png','','Item_Diagonal','',0,100000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(372,16,0,0,0,0,0,0,'Firewalkers','textures/items/relic_lava.png','','Item_LavaProtection','',0,250000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(373,16,0,0,0,0,0,0,'Icewalkers','textures/items/relic_freeze.png','','Item_FreezeProtection','',0,500000000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(374,5,6,0,0,0,0,10,'Bone Wand','textures/items/bone_wand.png','','SetBonus_BoneWand','Proc_Mana',0,9000,1,75,50,15,0.0,0.0,1,250,500,0,0,0,0,0,60,0,3,0,0,2,0,20);
 INSERT INTO item VALUES(375,13,0,0,0,0,0,0,'Icy Key','textures/items/key2.png','','','',0,25000,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (

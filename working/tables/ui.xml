@@ -377,8 +377,8 @@
 		<element id="label_blacksmith_level" font="hud_small" offset_y="80" alignment_y="3"/>
 		<element id="label_blacksmith_cost" font="hud_small" offset_y="132" alignment_y="3"/>
 	</element>
-	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="444" size_y="420" clickable="true">
-		<element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="9">
+	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="508" size_y="420" clickable="true">
+		<element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="320" size_y="128" alignment_x="0" alignment_y="0" index="9">
 			<element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2"/>
 			<element id="image_trade_portrait_theirs" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0">
 				<element id="button_trade_accept_theirs" offset_y="80" size_x="122" size_y="32">
@@ -390,15 +390,17 @@
 			<element id="button_trade_theirbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
 			<element id="button_trade_theirbag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
 			<element id="button_trade_theirbag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="3"/>
-			<element id="button_trade_theirbag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
-			<element id="button_trade_theirbag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
-			<element id="button_trade_theirbag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
-			<element id="button_trade_theirbag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
-			<element id="element_trade_gold_theirs" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="182" size_y="42" alignment_x="0" alignment_y="2">
-				<element id="textbox_trade_gold_theirs" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="10"/>
+			<element id="button_trade_theirbag_4" style="style_hud_slot" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
+			<element id="button_trade_theirbag_5" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
+			<element id="button_trade_theirbag_6" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
+			<element id="button_trade_theirbag_7" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
+			<element id="button_trade_theirbag_8" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="8"/>
+			<element id="button_trade_theirbag_9" style="style_hud_slot" offset_x="256" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="9"/>
+			<element id="element_trade_gold_theirs" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="246" size_y="42" alignment_x="0" alignment_y="2">
+				<element id="textbox_trade_gold_theirs" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="13"/>
 			</element>
 		</element>
-		<element id="element_trade_yours" offset_x="156" offset_y="216" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="10">
+		<element id="element_trade_yours" offset_x="156" offset_y="216" size_x="320" size_y="128" alignment_x="0" alignment_y="0" index="10">
 			<element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2"/>
 			<element id="image_trade_portrait_yours" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0">
 				<element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="80" size_x="122" size_y="32" clickable="true">
@@ -410,12 +412,14 @@
 			<element id="button_trade_yourbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
 			<element id="button_trade_yourbag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="2"/>
 			<element id="button_trade_yourbag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="3"/>
-			<element id="button_trade_yourbag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
-			<element id="button_trade_yourbag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
-			<element id="button_trade_yourbag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
-			<element id="button_trade_yourbag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
-			<element id="element_trade_gold_yours" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="182" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
-				<element id="textbox_trade_gold_yours" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="10"/>
+			<element id="button_trade_yourbag_4" style="style_hud_slot" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="4"/>
+			<element id="button_trade_yourbag_5" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="5"/>
+			<element id="button_trade_yourbag_6" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="6"/>
+			<element id="button_trade_yourbag_7" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="7"/>
+			<element id="button_trade_yourbag_8" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="8"/>
+			<element id="button_trade_yourbag_9" style="style_hud_slot" offset_x="256" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="9"/>
+			<element id="element_trade_gold_yours" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="246" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
+				<element id="textbox_trade_gold_yours" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="13"/>
 			</element>
 		</element>
 		<element id="label_trade_status" font="hud_medium" text="Waiting for other player..." offset_y="90" alignment_y="0"/>
