@@ -1857,17 +1857,19 @@ end
 
 Item_RitePassage = Base_Rite:New()
 Item_RitePassage.Keys = {
-	{ "Graveyard Key", 500000 },
-	{ "Library Key", 1000000 },
-	{ "Cellar Key", 2500000 },
-	{ "Tower Key", 5000000 },
-	{ "City Key", 10000000 },
-	{ "Bridge Key", 25000000 },
-	{ "Lost Key", 50000000 },
+	{ "Graveyard Key",   500000 },
+	{ "Library Key",     1000000 },
+	{ "Cellar Key",      2500000 },
+	{ "Tower Key",       5000000 },
+	{ "City Key",        10000000 },
+	{ "Bridge Key",      25000000 },
+	{ "Lost Key",        50000000 },
 	{ "Green Runestone", 75000000 },
-	{ "Blue Runestone", 100000000 },
-	{ "Red Runestone", 125000000 },
+	{ "Blue Runestone",  100000000 },
+	{ "Red Runestone",   125000000 },
 	{ "Black Runestone", 150000000 },
+	{ "Garden Key",      1000000000 },
+	{ "Timeless Key",    10000000000 },
 }
 
 function Item_RitePassage.GetInfo(self, Source, Item)

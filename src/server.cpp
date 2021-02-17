@@ -2658,6 +2658,8 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 		Stats->Items.at(358),
 		Stats->Items.at(356),
 		Stats->Items.at(359),
+		Stats->Items.at(272),
+		Stats->Items.at(262),
 	};
 	int KeyUnlockCount = std::clamp(Character->Attributes["RebirthPassage"].Int, 0, (int)KeyUnlocks.size());
 	for(int i = 0; i < KeyUnlockCount; i++)
