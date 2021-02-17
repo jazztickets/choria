@@ -28,6 +28,7 @@ enum class PingType : uint8_t {
 
 enum class PacketType : uint8_t {
 	VERSION,
+	ACCOUNT_BANNED,
 	ACCOUNT_EXISTS,
 	ACCOUNT_INUSE,
 	ACCOUNT_LOGININFO,

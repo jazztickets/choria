@@ -1674,6 +1674,9 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 			Label->Text = "Name in use";
 			Label->Color = ae::Assets.Colors["red"];
 		} break;
+		case PacketType::ACCOUNT_BANNED: {
+			SetAccountMessage(Buffer.ReadString());
+		} break;
 		case PacketType::ACCOUNT_EXISTS: {
 			SetAccountMessage("Account already exists");
 		} break;

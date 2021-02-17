@@ -50,8 +50,12 @@ class _Save {
 		// Accounts
 		bool CheckUsername(const std::string &Username);
 		void CreateAccount(const std::string &Username, const std::string &Password);
-		uint32_t GetAccountID(const std::string &Username, const std::string &Password);
-		uint32_t GetCharacterID(uint32_t AccountID, uint32_t Slot);
+		bool GetAccountInfo(const std::string &Username, const std::string &Password, uint32_t &AccountID, std::string &BannedText);
+		void SetBanTime(uint32_t AccountID, const std::string &TimeFromNow);
+		void SetMute(uint32_t AccountID, bool Value);
+
+		// Characters
+		uint32_t GetCharacterID(uint32_t AccountID, uint32_t Slot, bool &Muted);
 		uint32_t GetCharacterCount(uint32_t AccountID);
 		uint32_t GetCharacterIDByName(const std::string &Name);
 		uint32_t GetCharacterIDBySlot(uint32_t AccountID, uint32_t Slot);
@@ -61,7 +65,7 @@ class _Save {
 		// Objects
 		void SetData(const char *JsonString, uint32_t CharacterID);
 		void SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogFile *Log);
-		void LoadPlayer(const _Stats *Stats, _Object *Player);
+		void LoadPlayer(_Object *Player);
 
 		// State
 		uint64_t Secret;

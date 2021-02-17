@@ -57,6 +57,7 @@
 _Object::_Object() :
 	Name(""),
 	Logging(false),
+	Muted(false),
 	Character(nullptr),
 	Inventory(nullptr),
 	Fighter(nullptr),

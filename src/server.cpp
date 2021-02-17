@@ -544,14 +544,12 @@ void _Server::HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Get account id
-	Peer->AccountID = Save->GetAccountID(Username, Password);
+	std::string BannedText;
+	bool Found = Save->GetAccountInfo(Username, Password, Peer->AccountID, BannedText);
 
 	// Make sure account exists
 	ae::_Buffer Packet;
-	if(Peer->AccountID == 0) {
-		Packet.Write<PacketType>(PacketType::ACCOUNT_NOTFOUND);
-	}
-	else {
+	if(Found) {
 
 		// Check for account already being used
 		bool AccountInUse = CheckAccountUse(Peer);
@@ -559,9 +557,15 @@ void _Server::HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer) {
 			Peer->AccountID = 0;
 			Packet.Write<PacketType>(PacketType::ACCOUNT_INUSE);
 		}
+		else if(!BannedText.empty()) {
+			Packet.Write<PacketType>(PacketType::ACCOUNT_BANNED);
+			Packet.WriteString(BannedText.c_str());
+		}
 		else
 			Packet.Write<PacketType>(PacketType::ACCOUNT_SUCCESS);
 	}
+	else
+		Packet.Write<PacketType>(PacketType::ACCOUNT_NOTFOUND);
 
 	Network->SendPacket(Packet, Peer);
 }
@@ -639,12 +643,14 @@ void _Server::HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Check for valid character id
 	if(!Peer->Object) {
-		Peer->CharacterID = Save->GetCharacterID(Peer->AccountID, Slot);
+		bool Muted = false;
+		Peer->CharacterID = Save->GetCharacterID(Peer->AccountID, Slot, Muted);
 		if(!Peer->CharacterID)
 			return;
 
 		// Create player
 		Peer->Object = CreatePlayer(Peer);
+		Peer->Object->Muted = Muted;
 	}
 
 	// Send map and players to new player
@@ -724,7 +730,7 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Message.resize(HUD_CHAT_SIZE);
 
 	// Send message to other players
-	if(!Player->Character->Offline)
+	if(!Player->Character->Offline && !Player->Muted)
 		BroadcastMessage(nullptr, Player->Name + ": " + Message, "white");
 
 	// Log
@@ -935,7 +941,7 @@ _Object *_Server::CreatePlayer(ae::_Peer *Peer) {
 	Player->Character->Init();
 	Peer->Object = Player;
 
-	Save->LoadPlayer(Stats, Player);
+	Save->LoadPlayer(Player);
 	Player->SetLogging(Player->Logging);
 
 	return Player;
@@ -954,7 +960,8 @@ _Object *_Server::CreateBot() {
 	uint32_t Slot = 0;
 
 	// Check for valid character id
-	uint32_t CharacterID = Save->GetCharacterID(ACCOUNT_BOTS_ID, Slot);
+	bool Muted = false;
+	uint32_t CharacterID = Save->GetCharacterID(ACCOUNT_BOTS_ID, Slot, Muted);
 	if(!CharacterID) {
 		std::string Name = "bot_test";
 		CharacterID = Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, 1, 1);
@@ -969,7 +976,7 @@ _Object *_Server::CreateBot() {
 	Bot->Character->CharacterID = CharacterID;
 	Bot->Stats = Stats;
 	Bot->Character->Init();
-	Save->LoadPlayer(Stats, Bot);
+	Save->LoadPlayer(Bot);
 	Bot->Character->PartyName = "bot";
 
 	// Create fake peer
@@ -2177,6 +2184,26 @@ void _Server::Slap(ae::NetworkIDType PlayerID, int GoldAmount) {
 
 	// Shame them
 	BroadcastMessage(nullptr, Player->Name + " has been slapped for misbehaving!", "yellow");
+}
+
+// Mute an account
+void _Server::Mute(uint32_t AccountID, bool Value) {
+	for(auto &Object : ObjectManager->Objects) {
+		if(Object->Peer->AccountID == AccountID) {
+			Object->Muted = Value;
+			Save->SetMute(AccountID, Value);
+		}
+	}
+}
+
+// Ban account
+void _Server::Ban(uint32_t AccountID, const std::string &TimeFromNow) {
+	for(auto &Object : ObjectManager->Objects) {
+		if(Object->Peer->AccountID == AccountID) {
+			Save->SetBanTime(AccountID, TimeFromNow);
+			Network->DisconnectPeer(Object->Peer, 0);
+		}
+	}
 }
 
 // Log character data

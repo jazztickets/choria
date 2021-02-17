@@ -146,6 +146,7 @@ class _Object : public ae::_BaseObject {
 		std::string Name;
 		ae::_LogFile Log;
 		bool Logging;
+		bool Muted;
 
 		// Components
 		_Character *Character;

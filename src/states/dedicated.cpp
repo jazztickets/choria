@@ -42,7 +42,16 @@ void RunCommandThread(_Server *Server) {
 		std::string Input;
 		std::getline(std::cin, Input);
 		Server->Log << "[SERVER_COMMAND] " << Input << std::endl;
-		if(Input == "b" || Input == "battles") {
+		if(Input.substr(0, 3) == "ban") {
+			std::vector<std::string> Parameters;
+			Parameters.reserve(4);
+			ae::TokenizeString(Input, Parameters);
+			if(Parameters.size() != 4)
+				std::cout << "Bad parameters" << std::endl;
+			else
+				Server->Ban(std::stoi(Parameters[1]), Parameters[2] + " " + Parameters[3]);
+		}
+		else if(Input == "b" || Input == "battles") {
 			DedicatedState.ShowBattles();
 		}
 		else if(Input.substr(0, 3) == "log" && Input.size() > 4) {
@@ -60,6 +69,15 @@ void RunCommandThread(_Server *Server) {
 		}
 		else if(Input == "p" || Input == "players") {
 			DedicatedState.ShowPlayers();
+		}
+		else if(Input.substr(0, 4) == "mute") {
+			std::vector<std::string> Parameters;
+			Parameters.reserve(3);
+			ae::TokenizeString(Input, Parameters);
+			if(Parameters.size() != 3)
+				std::cout << "Bad parameters" << std::endl;
+			else
+				Server->Mute(std::stoi(Parameters[1]), std::stoi(Parameters[2]));
 		}
 		else if(Input.substr(0, 3) == "say" && Input.size() > 4) {
 			Server->BroadcastMessage(nullptr, Input.substr(4, std::string::npos), "purple");
@@ -143,12 +161,14 @@ void _DedicatedState::Update(double FrameTime) {
 // List available commands
 void _DedicatedState::ShowCommands() {
 	std::cout << std::endl;
-	std::cout << "battles           - show current battles" << std::endl;
-	std::cout << "log [network_id]  - toggle logging player data" << std::endl;
-	std::cout << "players           - show players" << std::endl;
-	std::cout << "stop [seconds]    - stop server" << std::endl;
-	std::cout << "slap [network_id] - slap player" << std::endl;
-	std::cout << "say [message]     - broadcast message" << std::endl;
+	std::cout << "ban      <account_id> <time>    ban player (E.g. ban 1 5 days)" << std::endl;
+	std::cout << "battles                         show current battles" << std::endl;
+	std::cout << "log      <network_id>           toggle logging player data" << std::endl;
+	std::cout << "mute     <account_id> <value>   mute player (E.g. mute 1 1)" << std::endl;
+	std::cout << "players                         show players" << std::endl;
+	std::cout << "stop     [seconds]              stop server" << std::endl;
+	std::cout << "slap     <network_id>           slap player" << std::endl;
+	std::cout << "say      <message>              broadcast message" << std::endl;
 }
 
 // Show all players
@@ -168,7 +188,12 @@ void _DedicatedState::ShowPlayers() {
 			if(Peer->Object->Map)
 				MapID = Peer->Object->Map->NetworkID;
 
-			std::cout << ", network_id=" << Peer->Object->NetworkID << ", map_id=" << MapID << ", name=" << Peer->Object->Name << ", hardcore=" << (int)Peer->Object->Character->Hardcore;
+			std::cout
+				<< ", network_id=" << Peer->Object->NetworkID
+				<< ", map_id=" << MapID
+				<< ", name=" << Peer->Object->Name
+				<< ", muted=" << Peer->Object->Muted
+				<< ", hardcore=" << (int)Peer->Object->Character->Hardcore;
 		}
 
 		std::cout << std::endl;

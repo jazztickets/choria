@@ -95,6 +95,8 @@ class _Server {
 		void SetClock(double Clock);
 		void UpdateBuff(_Object *Player, _StatusEffect *StatusEffect);
 		void Slap(ae::NetworkIDType PlayerID, int GoldAmount);
+		void Mute(uint32_t AccountID, bool Value);
+		void Ban(uint32_t AccountID, const std::string &TimeFromNow);
 		bool StartLog(ae::NetworkIDType PlayerID);
 		void SendBattleCooldownMessage(ae::_Peer *Peer, double Duration);
 		void SendInventoryFullMessage(ae::_Peer *Peer);

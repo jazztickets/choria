@@ -158,8 +158,8 @@ void _Save::CreateAccount(const std::string &Username, const std::string &Passwo
 	Database->CloseQuery();
 }
 
-// Get account id from login credentials
-uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Password) {
+// Get data from account given login credentials
+bool _Save::GetAccountInfo(const std::string &Username, const std::string &Password, uint32_t &AccountID, std::string &BannedText) {
 	std::string TrimmedUsername = ae::TrimString(Username);
 
 	// Get salt
@@ -174,27 +174,49 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 	std::string Hash = picosha2::hash256_hex_string(Password + Salt);
 
 	// Get account information
-	uint32_t AccountID = 0;
-	Database->PrepareQuery("SELECT id FROM account WHERE username = @username AND password = @password");
+	AccountID = 0;
+	Database->PrepareQuery("SELECT id, CASE WHEN banned IS NOT NULL AND banned > DATETIME('now') THEN \"Banned until \" || banned || \"UTC\" ELSE \"\" END AS banned_text FROM account WHERE username = @username AND password = @password");
 	Database->BindString(1, TrimmedUsername);
 	Database->BindString(2, Hash);
-	if(Database->FetchRow())
-		AccountID = Database->GetInt<uint32_t>(0);
+	if(Database->FetchRow()) {
+		AccountID = Database->GetInt<uint32_t>("id");
+		BannedText = Database->GetString("banned_text");
+	}
 	Database->CloseQuery();
 
-	return AccountID;
+	return AccountID != 0;
+}
+
+// Update ban on account
+void _Save::SetBanTime(uint32_t AccountID, const std::string &TimeFromNow) {
+	Database->PrepareQuery("UPDATE account SET banned = DATETIME('now',@time) WHERE id = @id");
+	Database->BindString(1, TimeFromNow);
+	Database->BindInt(2, AccountID);
+	Database->FetchRow();
+	Database->CloseQuery();
+}
+
+// Update mute on account
+void _Save::SetMute(uint32_t AccountID, bool Value) {
+	Database->PrepareQuery("UPDATE account SET muted = @muted WHERE id = @id");
+	Database->BindInt(1, Value);
+	Database->BindInt(2, AccountID);
+	Database->FetchRow();
+	Database->CloseQuery();
 }
 
 // Get character id from account_id and slot
-uint32_t _Save::GetCharacterID(uint32_t AccountID, uint32_t Slot) {
+uint32_t _Save::GetCharacterID(uint32_t AccountID, uint32_t Slot, bool &Muted) {
 	uint32_t CharacterID = 0;
 
 	// Run query
-	Database->PrepareQuery("SELECT id FROM character WHERE account_id = @account_id and slot = @slot");
+	Database->PrepareQuery("SELECT c.id, a.muted FROM character c, account a WHERE c.account_id = a.id AND a.id = @account_id AND c.slot = @slot");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
-	if(Database->FetchRow())
+	if(Database->FetchRow()) {
 		CharacterID = Database->GetInt<uint32_t>("id");
+		Muted = Database->GetInt<int>("muted");
+	}
 
 	Database->CloseQuery();
 
@@ -353,7 +375,7 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 }
 
 // Load player from database
-void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
+void _Save::LoadPlayer(_Object *Player) {
 
 	// Get character info
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
@@ -412,6 +434,8 @@ void _Save::CreateDefaultDatabase() {
 		"	username TEXT,\n"
 		"	password TEXT,\n"
 		"	salt TEXT,\n"
+		"	muted INTEGER DEFAULT(0),\n"
+		"	banned TEXT,\n"
 		"	data TEXT\n"
 		")"
 	);
