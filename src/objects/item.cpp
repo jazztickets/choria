@@ -441,12 +441,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		}
 	}
 	else if(Player->Character->Blacksmith) {
-		std::stringstream Buffer;
 		if(Player->Character->Blacksmith && Player->Character->Blacksmith->CanUpgrade(this, Upgrades - ShowingNextUpgradeLevel) && (Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY)) {
 			glm::vec4 Color = ae::Assets.Colors["gold"];
 			if(Tooltip.Cost > Player->Character->Attributes["Gold"].Int64)
 				Color = ae::Assets.Colors["red"];
 
+			std::stringstream Buffer;
+			Buffer.imbue(std::locale(Config.Locale));
 			Buffer << "Upgrade for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 			DrawPosition.y += SpacingY;
@@ -456,6 +457,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 
 	if(Tooltip.Window == _HUD::WINDOW_ENCHANTER) {
 		std::stringstream Buffer;
+		Buffer.imbue(std::locale(Config.Locale));
 		Buffer << "Upgrade for " << Tooltip.Cost << " gold";
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
 		DrawPosition.y += SpacingY;

@@ -977,6 +977,44 @@ function Item_FreezeProtection.Stats(self, Item, Object, Change)
 	return Change
 end
 
+-- Gold Bonus --
+
+Item_GoldBonus = { }
+Item_GoldBonus.PerLevel = 25
+
+function Item_GoldBonus.GetBonus(self, Source, Item)
+	return Item.Level + Item.Upgrades * self.PerLevel
+end
+
+function Item_GoldBonus.GetInfo(self, Source, Item)
+	return "Increase gold bonus by [c green]" .. self:GetBonus(Source, Item) .. "%"
+end
+
+function Item_GoldBonus.Stats(self, Item, Object, Change)
+	Change.GoldBonus = self:GetBonus(Object, Item)
+
+	return Change
+end
+
+-- Experience Bonus --
+
+Item_ExperienceBonus = { }
+Item_ExperienceBonus.PerLevel = 25
+
+function Item_ExperienceBonus.GetBonus(self, Source, Item)
+	return Item.Level + Item.Upgrades * self.PerLevel
+end
+
+function Item_ExperienceBonus.GetInfo(self, Source, Item)
+	return "Increase experience bonus by [c green]" .. self:GetBonus(Source, Item) .. "%"
+end
+
+function Item_ExperienceBonus.Stats(self, Item, Object, Change)
+	Change.ExperienceBonus = self:GetBonus(Object, Item)
+
+	return Change
+end
+
 -- Set Limit --
 
 Item_SetLimit = { }
