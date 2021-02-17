@@ -2530,6 +2530,20 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 
 	const _Object *Build = BuildIterator->second;
 
+	// Log info
+	Log
+		<< "[REBIRTH] Player " << Player->Name
+		<< " ( character_id=" << Player->Character->CharacterID
+		<< " mode=" << RebirthEvent.Mode
+		<< " type=" << RebirthEvent.Type
+		<< " value=" << RebirthEvent.Value
+		<< " exp=" << Player->Character->Attributes["Experience"].Int64
+		<< " gold=" << Player->Character->Attributes["Gold"].Int64
+		<< " rebirths=" << Player->Character->Attributes["Rebirths"].Int
+		<< " evolves=" << Player->Character->Attributes["Evolves"].Int
+		<< " rebirthtime=" << Player->Character->Attributes["RebirthTime"].Double
+		<< " )" << std::endl;
+
 	// Save old info
 	_Bag OldEquipmentBag = Player->Inventory->GetBag(BagType::EQUIPMENT);
 	_Bag OldTradeBag = Player->Inventory->GetBag(BagType::TRADE);
