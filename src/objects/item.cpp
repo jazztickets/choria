@@ -463,14 +463,14 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 		DrawPosition.y += SpacingY;
 	}
 
-
 	// Draw help text
 	std::string InfoText;
 	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	switch(Type) {
 		case ItemType::RELIC:
-			InfoText = "Equipped relics endure rebirthing";
+			InfoText = "Equipped relics endure rebirth/evolve";
 			InfoColor = ae::Assets.Colors["silver"];
+		[[fallthrough]];
 		case ItemType::HELMET:
 		case ItemType::ARMOR:
 		case ItemType::BOOTS:

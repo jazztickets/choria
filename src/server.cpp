@@ -2576,6 +2576,22 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 	_Bag OldTradeBag = Player->Inventory->GetBag(BagType::TRADE);
 	std::unordered_map<uint32_t, int> OldSkills = Character->Skills;
 
+	// Reduce rite levels on evolve
+	if(RebirthEvent.Mode == 1) {
+		int RiteLevel = Character->Attributes["Evolves"].Int + 1;
+		Character->Attributes["RebirthEnchantment"].Int = std::min(Character->Attributes["RebirthEnchantment"].Int, RiteLevel);
+		Character->Attributes["RebirthGirth"].Int = std::min(Character->Attributes["RebirthGirth"].Int, RiteLevel);
+		Character->Attributes["RebirthInsight"].Int = std::min(Character->Attributes["RebirthInsight"].Int, RiteLevel);
+		Character->Attributes["RebirthKnowledge"].Int = std::min(Character->Attributes["RebirthKnowledge"].Int, RiteLevel);
+		Character->Attributes["RebirthPassage"].Int = std::min(Character->Attributes["RebirthPassage"].Int, RiteLevel);
+		Character->Attributes["RebirthPower"].Int = std::min(Character->Attributes["RebirthPower"].Int, RiteLevel);
+		Character->Attributes["RebirthPrivilege"].Int = std::min(Character->Attributes["RebirthPrivilege"].Int, RiteLevel);
+		Character->Attributes["RebirthProficiency"].Int = std::min(Character->Attributes["RebirthProficiency"].Int, RiteLevel);
+		Character->Attributes["RebirthSoul"].Int = std::min(Character->Attributes["RebirthSoul"].Int, RiteLevel);
+		Character->Attributes["RebirthWealth"].Int = std::min(Character->Attributes["RebirthWealth"].Int, RiteLevel);
+		Character->Attributes["RebirthWisdom"].Int = std::min(Character->Attributes["RebirthWisdom"].Int, RiteLevel);
+	}
+
 	// Reset character
 	Character->ActionBar = Build->Character->ActionBar;
 	Player->Inventory->Bags = Build->Inventory->GetBags();

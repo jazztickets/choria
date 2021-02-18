@@ -208,8 +208,7 @@ end
 Item_SkillPoint = { }
 
 function Item_SkillPoint.GetInfo(self, Source, Item)
-
-	Plural = ""
+	local Plural = ""
 	if Item.Level ~= 1 then
 		Plural = "s"
 	end
@@ -759,7 +758,7 @@ function Item_BattlePotion.GetInfo(self, Source, Item)
 end
 
 function Item_BattlePotion.CanUse(self, Level, Source, Target)
-	Zone = Source.GetTileZone(Source.X, Source.Y)
+	local Zone = Source.GetTileZone(Source.X, Source.Y)
 	if Zone > 0 then
 		return true
 	end
@@ -1365,9 +1364,9 @@ end
 Item_RebirthToken = { }
 
 function Item_RebirthToken.GetInfo(self, Source, Item)
-	Levels = 5
-	Tiers = 1
-	Difficulty = 1
+	local Levels = 5
+	local Tiers = 1
+	local Difficulty = 1
 
 	return "You are in rebirth tier [c green]" .. Source.RebirthTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] character levels gives [c green]" .. Tiers .. "[c white] tier, which increases your rebirth stat bonus\n\nEvery rebirth adds [c green]" .. Difficulty .. "%[c white] difficulty"
 end
@@ -1377,10 +1376,11 @@ end
 Item_EvolveToken = { }
 
 function Item_EvolveToken.GetInfo(self, Source, Item)
-	Levels = 10
-	Tiers = 1
+	local Levels = 10
+	local Tiers = 1
+	local RiteLevels = 1
 
-	return "You are in evolve tier [c green]" .. Source.EvolveTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] rebirths gives [c green]" .. Tiers .. "[c white] tier, which increases your evolve stat bonus\n\nEvolving increases your rebirth tier by [c green]1\n\n[c yellow]Evolving resets your rebirths and bonuses\n[c yellow]You will keep all unlocked rites"
+	return "You are in evolve tier [c green]" .. Source.EvolveTier .. "[c white]\n\nEvery [c green]" .. Levels .. "[c white] rebirths gives [c green]" .. Tiers .. "[c white] tier, which increases your evolve stat bonus\n\nEvolving increases your rebirth tier by [c green]1[c white] and your starting rite levels by [c green]1\n\n[c yellow]Evolving resets your rebirths and bonuses\n[c yellow]All rites will be reduced to level [c green]" .. RiteLevels
 end
 
 -- Rebirth --
@@ -1461,51 +1461,68 @@ Base_Evolve = {
 	Type = 1
 }
 
+function GetRiteLevel(Evolves, Mode, Value)
+	if Mode == 1 then
+		return math.min(Evolves, Value)
+	end
+
+	return Value
+end
+
 function RebirthStartText(Item, Source, Mode)
-	AddedDifficulty = 0
+
+	-- Reduce rite levels
+	local RebirthWisdom = GetRiteLevel(Source.Evolves + 1, Mode, Source.RebirthWisdom) + 1
+	local RebirthWealth = GetRiteLevel(Source.Evolves + 1, Mode, Source.RebirthWealth)
+	local RebirthKnowledge = GetRiteLevel(Source.Evolves + 1, Mode, Source.RebirthKnowledge)
+	local RebirthPrivilege = GetRiteLevel(Source.Evolves + 1, Mode, Source.RebirthPrivilege)
+	local RebirthEnchantment = GetRiteLevel(Source.Evolves + 1, Mode, Source.RebirthEnchantment)
+	local RebirthPassage = GetRiteLevel(Source.Evolves + 1, Mode, Source.RebirthPassage)
+
+	-- Get starting stats
+	local AddedDifficulty = 0
 	if Item == Item_EternalPain then
 		AddedDifficulty = Item:GetBonus(Source)
 	end
-
-	Gold = math.min(math.floor(Source.RebirthWealth * 0.01 * Source.Experience * Item_RiteWealth.Multiplier), MAX_GOLD)
-	PrivilegePlural = ""
-	WisdomPlural = ""
-	PassagePlural = ""
-	if Source.RebirthPrivilege ~= 1 then
+	local Gold = math.min(math.floor(RebirthWealth * 0.01 * Source.Experience * Item_RiteWealth.Multiplier), MAX_GOLD)
+	local PrivilegePlural = ""
+	local WisdomPlural = ""
+	local PassagePlural = ""
+	if RebirthPrivilege ~= 1 then
 		PrivilegePlural = "s"
 	end
-	if Source.RebirthWisdom + 1 ~= 1 then
+	if RebirthWisdom ~= 1 then
 		WisdomPlural = "s"
 	end
-	if Source.RebirthPassage ~= 1 then
+	if RebirthPassage ~= 1 then
 		PassagePlural = "s"
 	end
 
-	KeepText = "\n\n[c yellow]You will keep\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthKnowledge .. "[c white] of your highest level skills\n"
-	if Source.RebirthPrivilege > 0 then
-		KeepText = KeepText .. "[c green]" .. Source.RebirthPrivilege .. "[c white] item" .. PrivilegePlural .." in your trade bag\n"
+	local KeepText = "\n\n[c yellow]You will keep\n"
+	KeepText = KeepText .. "[c green]" .. RebirthKnowledge .. "[c white] of your highest level skills\n"
+	if RebirthPrivilege > 0 then
+		KeepText = KeepText .. "[c green]" .. RebirthPrivilege .. "[c white] item" .. PrivilegePlural .." in your trade bag\n"
 	end
 	KeepText = KeepText .. "\n[c yellow]You will start with\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthEnchantment .. "[c white] extra max skill levels\n"
+	KeepText = KeepText .. "[c green]" .. RebirthEnchantment .. "[c white] extra max skill levels\n"
 	if Mode == 0 then
 		KeepText = KeepText .. "[c green]" .. Source.Rebirths + Source.EternalPain + AddedDifficulty + 1 .. "%[c white] difficulty\n"
 	end
-	KeepText = KeepText .. "[c green]" .. Source.RebirthWisdom + 1 .. "[c white] character level" .. WisdomPlural .. "\n"
-	KeepText = KeepText .. "[c green]" .. Source.RebirthPassage .. "[c white] key" .. PassagePlural .. "\n"
+	KeepText = KeepText .. "[c green]" .. RebirthWisdom .. "[c white] character level" .. WisdomPlural .. "\n"
+	KeepText = KeepText .. "[c green]" .. RebirthPassage .. "[c white] key" .. PassagePlural .. "\n"
 	KeepText = KeepText .. "[c green]" .. Gold .. "[c white] gold\n"
 
 	return KeepText
 end
 
 function RebirthText(Item, UpgradeText, Source)
-	KeepText = RebirthStartText(Item, Source, 0)
+	local KeepText = RebirthStartText(Item, Source, 0)
 
 	return "[c gray]Sacrifice everything to rebirth anew\n\nLose all items, unlocks, keys, gold, experience and learned skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of rebirths"
 end
 
 function EvolveText(Item, UpgradeText, Source)
-	KeepText = RebirthStartText(Item, Source, 1)
+	local KeepText = RebirthStartText(Item, Source, 1)
 
 	return "[c gray]Evolve into a higher form\n\nLose all rebirths, items, unlocks, keys, gold, experience and learned skills for:\n\nPermanent " .. UpgradeText .. KeepText .. "\n[c yellow]Warning\nYou will only be able to interact with players that have the same number of evolves and rebirths"
 end
@@ -1533,7 +1550,6 @@ function Item_EternalGuard.GetInfo(self, Source, Item)
 	local DamageBlock = self:GetBonus(Source)
 	local Armor = math.floor(self:GetBonus(Source) / 3)
 	local Resist = math.floor(self:GetBonus(Source) / 4)
-
 	if Item.MoreInfo then
 		Armor = Round(self:GetBonus(Source) / 3)
 		Resist = Round(self:GetBonus(Source) / 4)
@@ -1625,8 +1641,8 @@ Item_EternalKnowledge = Base_Rebirth:New()
 Item_EternalKnowledge.Type = 3
 
 function Item_EternalKnowledge.GetInfo(self, Source, Item)
-	Bonus = self:GetBonus(Source)
-	Plural = ""
+	local Bonus = self:GetBonus(Source)
+	local Plural = ""
 	if Bonus ~= 1 then
 		Plural = "s"
 	end
@@ -1734,7 +1750,7 @@ Base_Rite = {
 	end,
 
 	GetUpgradedPrice = function(self, Source, Upgrades)
-		Index = Source.GetInventoryItemCount(self.Item.Pointer) + Upgrades
+		local Index = Source.GetInventoryItemCount(self.Item.Pointer) + Upgrades
 
 		return math.floor(self.Item.Cost + self.Item.Cost * (self.CostA * Index ^ self.Exponent + self.CostB * Index))
 	end,
@@ -1822,7 +1838,7 @@ Item_RiteGirth = Base_Rite:New()
 Item_RiteGirth.CostA = 5
 
 function Item_RiteGirth.GetInfo(self, Source, Item)
-	AddedText = ""
+	local AddedText = ""
 	if Source.RebirthGirth >= MAX_BELT_SIZE - DEFAULT_BELTSIZE then
 		AddedText = "\n\n[c red]Max girth attained"
 	end
@@ -1846,7 +1862,7 @@ Item_RiteProficiency = Base_Rite:New()
 Item_RiteProficiency.CostA = 1
 
 function Item_RiteProficiency.GetInfo(self, Source, Item)
-	AddedText = ""
+	local AddedText = ""
 	if Source.RebirthProficiency >= MAX_SKILLBAR_SIZE - DEFAULT_SKILLBARSIZE then
 		AddedText = "\n\n[c red]Max proficiency attained"
 	end
@@ -1870,7 +1886,7 @@ Item_RiteInsight = Base_Rite:New()
 Item_RiteInsight.CostA = 0.25
 
 function Item_RiteInsight.GetInfo(self, Source, Item)
-	AddedText = ""
+	local AddedText = ""
 	if Source.RebirthInsight >= MAX_SKILL_UNLOCKS then
 		AddedText = "\n\n[c red]Max insight attained"
 	end
@@ -1910,6 +1926,7 @@ Item_RitePassage.Keys = {
 }
 
 function Item_RitePassage.GetInfo(self, Source, Item)
+	local AddedText = ""
 	if Source.RebirthPassage >= #self.Keys then
 		AddedText = "\n\n[c red]Max passage attained"
 	else
@@ -1920,8 +1937,9 @@ function Item_RitePassage.GetInfo(self, Source, Item)
 end
 
 function Item_RitePassage.GetCost(self, Source)
-	Count = Source.GetInventoryItemCount(self.Item.Pointer)
-	KeyIndex = math.max(1, math.min(Source.RebirthPassage + Count + 1, #self.Keys))
+	local Count = Source.GetInventoryItemCount(self.Item.Pointer)
+	local KeyIndex = math.max(1, math.min(Source.RebirthPassage + Count + 1, #self.Keys))
+
 	return self.Keys[KeyIndex][2]
 end
 
@@ -1937,7 +1955,7 @@ Item_RiteEnchantment = Base_Rite:New()
 Item_RiteEnchantment.CostA = 0.25
 
 function Item_RiteEnchantment.GetInfo(self, Source, Item)
-	AddedText = ""
+	local AddedText = ""
 	if Source.RebirthEnchantment >= MAX_SKILL_LEVEL - DEFAULT_MAX_SKILL_LEVEL then
 		AddedText = "\n\n[c red]Max enchantment attained"
 	end
@@ -1959,10 +1977,10 @@ end
 
 Item_RitePrivilege = Base_Rite:New()
 Item_RitePrivilege.CostA = 2
-Item_RitePrivilege.Max = 8
+Item_RitePrivilege.Max = 10
 
 function Item_RitePrivilege.GetInfo(self, Source, Item)
-	AddedText = ""
+	local AddedText = ""
 	if Source.RebirthPrivilege >= self.Max then
 		AddedText = "\n\n[c red]Max privilege attained"
 	end
@@ -1987,7 +2005,7 @@ Item_RiteSoul.CostA = 2
 Item_RiteSoul.Max = 100
 
 function Item_RiteSoul.GetInfo(self, Source, Item)
-	AddedText = ""
+	local AddedText = ""
 	if Source.RebirthSoul >= self.Max then
 		AddedText = "\n\n[c red]Max soul attained"
 	end
