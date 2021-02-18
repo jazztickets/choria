@@ -8,6 +8,8 @@ pkg=${base}-src.tar.gz
 
 mkdir -p out
 
+#cp ../assets/source/scripts/*.lua ../working/scripts/
+
 tar --transform "s,^,${base}/," -czvf out/${pkg} -C ../ \
 --exclude=${pkg} \
 --exclude=*.swp \
@@ -25,5 +27,7 @@ build.sh \
 README \
 CHANGELOG \
 LICENSE
+
+#rm ../working/scripts/*.lua
 
 echo -e "\nMade ${pkg}"
