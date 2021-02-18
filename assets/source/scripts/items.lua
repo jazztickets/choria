@@ -980,10 +980,9 @@ end
 -- Gold Bonus --
 
 Item_GoldBonus = { }
-Item_GoldBonus.PerLevel = 25
 
 function Item_GoldBonus.GetBonus(self, Source, Item)
-	return Item.Level + Item.Upgrades * self.PerLevel
+	return Item.Level + Item.Upgrades * Items[Item.ID].Increase
 end
 
 function Item_GoldBonus.GetInfo(self, Source, Item)
@@ -999,10 +998,9 @@ end
 -- Experience Bonus --
 
 Item_ExperienceBonus = { }
-Item_ExperienceBonus.PerLevel = 25
 
 function Item_ExperienceBonus.GetBonus(self, Source, Item)
-	return Item.Level + Item.Upgrades * self.PerLevel
+	return Item.Level + Item.Upgrades * Items[Item.ID].Increase
 end
 
 function Item_ExperienceBonus.GetInfo(self, Source, Item)
@@ -1032,10 +1030,9 @@ end
 -- Pain Ring --
 
 Item_PainRing = { }
-Item_PainRing.DifficultyPerLevel = 5
 
 function Item_PainRing.GetDifficulty(self, Source, Item)
-	return Item.Level + Item.Upgrades * self.DifficultyPerLevel
+	return Item.Level + Item.Upgrades * Items[Item.ID].Increase
 end
 
 function Item_PainRing.GetInfo(self, Source, Item)

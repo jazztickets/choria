@@ -261,6 +261,7 @@ void _Stats::LoadItems() {
 		Item->Category = Database->GetInt<int>("category");
 		Item->Level = Database->GetInt<int>("level");
 		Item->MaxLevel = Database->GetInt<int>("maxlevel");
+		Item->Increase = Database->GetInt<int>("increase");
 		Item->Duration = Database->GetReal("duration");
 		Item->Cooldown = Database->GetReal("cooldown");
 		Item->Cost = Database->GetInt64("cost");

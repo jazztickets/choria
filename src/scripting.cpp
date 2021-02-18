@@ -245,6 +245,9 @@ void _Scripting::InjectItems(const _Stats *Stats) {
 		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("cost"));
 		lua_setfield(LuaState, -2, "Cost");
 
+		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("increase"));
+		lua_setfield(LuaState, -2, "Increase");
+
 		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("itemtype_id"));
 		lua_setfield(LuaState, -2, "Type");
 
@@ -776,8 +779,11 @@ void _Scripting::PushObjectStatusEffects(_Object *Object) {
 }
 
 // Push varying parameters for an item
-void _Scripting::PushItemParameters(int Chance, int Level, double Duration, int Upgrades, int SetLevel, int MaxSetLevel, int MoreInfo) {
+void _Scripting::PushItemParameters(uint32_t ID, int Chance, int Level, double Duration, int Upgrades, int SetLevel, int MaxSetLevel, int MoreInfo) {
 	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, ID);
+	lua_setfield(LuaState, -2, "ID");
 
 	lua_pushinteger(LuaState, Chance);
 	lua_setfield(LuaState, -2, "Chance");

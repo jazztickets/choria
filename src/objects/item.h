@@ -108,6 +108,7 @@ class _Item {
 		int Category;
 		int Level;
 		int MaxLevel;
+		int Increase;
 		double Duration;
 		double Cooldown;
 		int64_t Cost;

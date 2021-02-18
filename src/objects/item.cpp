@@ -595,7 +595,7 @@ int _Item::DrawDescription(bool Render, _Object *Object, const std::string &Func
 
 		// Get description from script
 		Scripting->PushObject(Object);
-		Scripting->PushItemParameters(Chance, DrawLevel, Duration, Upgrades, SetLevel, MaxSetLevel, ae::Input.ModKeyDown(KMOD_ALT));
+		Scripting->PushItemParameters(ID, Chance, DrawLevel, Duration, Upgrades, SetLevel, MaxSetLevel, ae::Input.ModKeyDown(KMOD_ALT));
 		Scripting->MethodCall(2, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -1048,7 +1048,7 @@ void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult, int Set
 		if(IsSkill())
 			Scripting->PushInt(ActionResult.ActionUsed.Level);
 		else
-			Scripting->PushItemParameters(Chance, Level, Duration, ActionResult.ActionUsed.Level, SetLevel, MaxSetLevel, 0);
+			Scripting->PushItemParameters(ID, Chance, Level, Duration, ActionResult.ActionUsed.Level, SetLevel, MaxSetLevel, 0);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushStatChange(&ActionResult.Source);
 		Scripting->MethodCall(3, 1);
