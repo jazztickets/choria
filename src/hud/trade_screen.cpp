@@ -188,7 +188,7 @@ void _TradeScreen::ResetTradeTheirsWindow() {
 	ae::_Element *RestrictLabel = ae::Assets.Elements["label_trade_status_restrict"];
 	if(GAME_TRADING_LEVEL_RANGE) {
 		RestrictLabel->SetActive(true);
-		RestrictLabel->Text = "Other player must be within " + std::to_string(GAME_TRADING_LEVEL_RANGE) + " levels";
+		RestrictLabel->Text = "Players must be within " + std::to_string(GAME_TRADING_LEVEL_RANGE) + " levels";
 	}
 	else
 		RestrictLabel->SetActive(false);

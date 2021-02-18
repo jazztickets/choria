@@ -21,6 +21,7 @@
 #include <hud/hud.h>
 #include <objects/object.h>
 #include <objects/components/character.h>
+#include <config.h>
 #include <ae/graphics.h>
 #include <ae/ui.h>
 #include <ae/assets.h>
@@ -101,6 +102,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 
 			// Update cost label
 			std::stringstream Buffer;
+			Buffer.imbue(std::locale(Config.Locale));
 			Buffer << Cost << " gold";
 			BlacksmithCost->Font = ae::Assets.Fonts["hud_medium"];
 			BlacksmithCost->Color = ae::Assets.Colors["gold"];
