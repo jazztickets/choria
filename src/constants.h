@@ -118,7 +118,7 @@ const  int          PLAYER_MIN_MOVESPEED               =  5;
 const  double       PLAYER_ATTACKTIME                  =  1.0;
 const  int          PLAYER_NAME_SIZE                   =  15;
 const  float        PLAYER_INVIS_ALPHA                 =  0.27f;
-const  int64_t      PLAYER_MAX_GOLD                    =  1000000000000;
+const  int64_t      PLAYER_MAX_GOLD                    =  1000000000000000;
 const  float        PLAYER_DEATH_GOLD_PENALTY          =  0.2f;
 const  double       PLAYER_IDLE_TIME                   =  120.0;
 //     Game

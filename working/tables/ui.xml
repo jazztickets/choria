@@ -380,11 +380,11 @@
 	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="508" size_y="420" clickable="true">
 		<element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="320" size_y="128" alignment_x="0" alignment_y="0" index="9">
 			<element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2"/>
-			<element id="image_trade_portrait_theirs" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0">
-				<element id="button_trade_accept_theirs" offset_y="80" size_x="122" size_y="32">
+			<element id="image_trade_portrait_theirs" offset_x="-122" offset_y="26" size_x="100" size_y="100" alignment_x="0" alignment_y="0">
+				<element id="button_trade_accept_theirs" offset_y="90" size_x="122" size_y="32">
 					<element id="label_trade_status_theirs" font="hud_small" offset_y="22" alignment_y="3"/>
 				</element>
-				<element id="label_trade_name_theirs" font="hud_small" offset_y="-16" alignment_y="3"/>
+				<element id="label_trade_name_theirs" font="hud_small" offset_y="-10" alignment_y="3"/>
 			</element>
 			<element id="button_trade_theirbag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
 			<element id="button_trade_theirbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
@@ -397,16 +397,16 @@
 			<element id="button_trade_theirbag_8" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="8"/>
 			<element id="button_trade_theirbag_9" style="style_hud_slot" offset_x="256" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="9"/>
 			<element id="element_trade_gold_theirs" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="246" size_y="42" alignment_x="0" alignment_y="2">
-				<element id="textbox_trade_gold_theirs" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="13"/>
+				<element id="textbox_trade_gold_theirs" font="hud_small" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="13"/>
 			</element>
 		</element>
 		<element id="element_trade_yours" offset_x="156" offset_y="216" size_x="320" size_y="128" alignment_x="0" alignment_y="0" index="10">
 			<element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2"/>
-			<element id="image_trade_portrait_yours" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0">
-				<element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="80" size_x="122" size_y="32" clickable="true">
+			<element id="image_trade_portrait_yours" offset_x="-122" offset_y="26" size_x="100" size_y="100" alignment_x="0" alignment_y="0">
+				<element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="90" size_x="122" size_y="32" clickable="true">
 					<element id="label_trade_status_yours" font="hud_small" text="Accept" offset_y="22" alignment_y="3"/>
 				</element>
-				<element id="label_trade_name_yours" font="hud_small" offset_y="-16" alignment_y="3"/>
+				<element id="label_trade_name_yours" font="hud_small" offset_y="-10" alignment_y="3"/>
 			</element>
 			<element id="button_trade_yourbag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
 			<element id="button_trade_yourbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
@@ -419,7 +419,7 @@
 			<element id="button_trade_yourbag_8" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="8"/>
 			<element id="button_trade_yourbag_9" style="style_hud_slot" offset_x="256" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="9"/>
 			<element id="element_trade_gold_yours" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="246" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
-				<element id="textbox_trade_gold_yours" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="13"/>
+				<element id="textbox_trade_gold_yours" font="hud_small" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="16"/>
 			</element>
 		</element>
 		<element id="label_trade_status" font="hud_medium" text="Waiting for other player..." offset_y="90" alignment_y="0"/>
