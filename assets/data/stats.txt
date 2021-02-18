@@ -100,8 +100,12 @@ CREATE TABLE IF NOT EXISTS "attribute" (
 	"updatetype_id" INTEGER DEFAULT(0) REFERENCES "updatetype"(id) ON DELETE CASCADE,
 	"default" TEXT DEFAULT(0),
 	"upgrade_scale" REAL DEFAULT(0.0),
-	"show" INTEGER DEFAULT(0)
-, "calc" INTEGER DEFAULT(0), "save" INTEGER DEFAULT(0), "script" INTEGER DEFAULT(0), "network" INTEGER DEFAULT(0));
+	"show" INTEGER DEFAULT(0),
+	"calc" INTEGER DEFAULT(0),
+	"save" INTEGER DEFAULT(0),
+	"script" INTEGER DEFAULT(0),
+	"network" INTEGER DEFAULT(0)
+);
 INSERT INTO attribute VALUES(0,'Buff','Buff',6,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(1,'BuffDuration','Buff Duration',3,0,'0',0.0,0,0,0,0,0);
 INSERT INTO attribute VALUES(2,'BuffLevel','Buff Level',1,0,'0',0.0,0,0,0,0,0);
@@ -347,8 +351,9 @@ INSERT INTO unlock VALUES(30,'Skill Point 10');
 CREATE TABLE IF NOT EXISTS "script" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
-	"level" INTEGER DEFAULT(0)
-, "data" TEXT);
+	"level" INTEGER DEFAULT(0),
+	"data" TEXT
+);
 INSERT INTO script VALUES(0,'None',0,'');
 INSERT INTO script VALUES(1,'Script_Rejuv',20,'');
 INSERT INTO script VALUES(2,'Script_Lava',10,'');
@@ -438,8 +443,9 @@ CREATE TABLE IF NOT EXISTS "vendor" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
 	"buy_percent" REAL DEFAULT(1.0),
-	"sell_percent" REAL DEFAULT(0.5)
-, sort TEXT);
+	"sell_percent" REAL DEFAULT(0.5),
+	"sort" TEXT
+);
 INSERT INTO vendor VALUES(1,'ham_skills',1.0,0.5,'');
 INSERT INTO vendor VALUES(2,'ham_supplies',1.0,0.5,'');
 INSERT INTO vendor VALUES(3,'ham_weapon',1.0,0.5,'');
@@ -887,8 +893,9 @@ CREATE TABLE IF NOT EXISTS "zonedata" (
 	"zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,
 	"monster_id" INTEGER REFERENCES "monster"(id) ON DELETE CASCADE,
 	"odds" INTEGER,
-	"max" INTEGER DEFAULT(0)
-, "difficulty" INTEGER DEFAULT(0));
+	"max" INTEGER DEFAULT(0),
+	"difficulty" INTEGER DEFAULT(0)
+);
 INSERT INTO zonedata VALUES(1,1,1,1,0,0);
 INSERT INTO zonedata VALUES(2,2,1,1,0,0);
 INSERT INTO zonedata VALUES(3,2,2,1,0,0);
