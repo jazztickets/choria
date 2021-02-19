@@ -470,8 +470,8 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	switch(Type) {
 		case ItemType::RELIC:
-			InfoText = "Equipped relics endure rebirth/evolve";
-			InfoColor = ae::Assets.Colors["silver"];
+			ae::Assets.Fonts["hud_small"]->DrawText("Equipped relics endure rebirth/evolve", glm::ivec2(DrawPosition), ae::CENTER_BASELINE, ae::Assets.Colors["silver"]);
+			DrawPosition.y += ControlSpacingY;
 		[[fallthrough]];
 		case ItemType::HELMET:
 		case ItemType::ARMOR:

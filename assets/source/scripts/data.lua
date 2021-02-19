@@ -31,6 +31,13 @@ Item_Data = {
 		Cursed = true,
 	},
 
+-- Relics
+
+	-- Suffering
+	[379] = {
+		Cursed = true,
+	},
+
 -- One-Handed Weapons
 
 	-- Shining Star
