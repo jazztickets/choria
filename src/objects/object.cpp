@@ -1305,6 +1305,21 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 
 			return nullptr;
 		}
+
+		if(StatChange.HasStat("DestroyCursed")) {
+
+			// Search for cursed items
+			for(auto &InventorySlot : Inventory->GetBag(BagType::EQUIPMENT).Slots) {
+				if(InventorySlot.Item && InventorySlot.Item->IsCursed())
+					InventorySlot.Reset();
+			}
+
+			// Send inventory
+			ae::_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::INVENTORY);
+			Inventory->Serialize(Packet);
+			Server->Network->SendPacket(Packet, Peer);
+		}
 	}
 
 	_StatusEffect *StatusEffect = nullptr;

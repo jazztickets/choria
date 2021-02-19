@@ -167,6 +167,24 @@ function Item_Tears.Use(self, Level, Duration, Source, Target, Result, Priority)
 	return Result
 end
 
+-- Voidstone --
+
+Item_Voidstone = Base_Potion:New()
+
+function Item_Voidstone.GetInfo(self, Source, Item)
+	return "Destroy all equipped cursed items"
+end
+
+function Item_Voidstone.Use(self, Level, Duration, Source, Target, Result, Priority)
+	Result.Target.DestroyCursed = 1
+
+	return Result
+end
+
+function Item_Voidstone.PlaySound(self)
+	Audio.Play("enfeeble0.ogg", 1)
+end
+
 -- Skill Slot --
 
 Item_SkillSlot = { }
