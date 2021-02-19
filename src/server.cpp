@@ -496,6 +496,7 @@ void _Server::SendItem(ae::_Peer *Peer, const _Item *Item, int Count) {
 		return;
 
 	// Add item
+	Count = std::min(Count, INVENTORY_MAX_STACK);
 	bool Added = Player->Inventory->AddItem(Item, 0, Count);
 	if(!Added)
 		SendInventoryFullMessage(Peer);
@@ -503,7 +504,7 @@ void _Server::SendItem(ae::_Peer *Peer, const _Item *Item, int Count) {
 	// Send item
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_ADD);
-	Packet.Write<uint8_t>((uint8_t)Count);
+	Packet.Write<uint16_t>((uint16_t)Count);
 	Packet.Write<uint32_t>(Item->ID);
 	Player->Inventory->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
@@ -1221,7 +1222,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Get info
 	bool Buy = Data.ReadBit();
-	int Amount = (int)Data.Read<uint8_t>();
+	int Amount = (int)Data.Read<uint16_t>();
 	_Slot Slot;
 	Slot.Unserialize(Data);
 

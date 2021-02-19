@@ -539,7 +539,7 @@ void _InventorySlot::Serialize(ae::_Buffer &Data) {
 	if(Item) {
 		Data.Write<uint32_t>(Item->ID);
 		Data.Write<uint8_t>((uint8_t)Upgrades);
-		Data.Write<uint8_t>((uint8_t)Count);
+		Data.Write<uint16_t>((uint16_t)Count);
 	}
 	else
 		Data.Write<uint32_t>(0);
@@ -552,7 +552,7 @@ void _InventorySlot::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	if(ItemID) {
 		Item = Stats->Items.at(ItemID);
 		Upgrades = Data.Read<uint8_t>();
-		Count = Data.Read<uint8_t>();
+		Count = Data.Read<uint16_t>();
 	}
 	else
 		Reset();

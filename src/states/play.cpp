@@ -1291,7 +1291,7 @@ void _PlayState::HandleInventoryAdd(ae::_Buffer &Data){
 		return;
 
 	_RecentItem RecentItem;
-	RecentItem.Count = (int)Data.Read<uint8_t>();
+	RecentItem.Count = (int)Data.Read<uint16_t>();
 	RecentItem.Item = Stats->Items.at(Data.Read<uint32_t>());
 	HUD->RecentItems.push_back(RecentItem);
 

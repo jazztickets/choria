@@ -124,11 +124,13 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Object *Player, const _Curso
 	// Increase size for description
 	int DescriptionWidth = Size.x - SidePadding * 2;
 	int DescriptionLines = DrawDescription(false, Player, Script, DrawPosition, false, 0, 0, 0, 0, true, DescriptionWidth, 0);
-	if(!Proc.empty()) {
+	if(!Proc.empty())
 		DescriptionLines += DrawDescription(false, Player, Proc, DrawPosition, false, 0, 0, 0, 0, false, DescriptionWidth, 0);
-	}
 	if(SetID)
 		DescriptionLines += DrawSetDescription(false, Player, DrawPosition, false, DescriptionWidth, 0) + 1;
+	if(!IsEquippable() && Cooldown > 0.0)
+		DescriptionLines++;
+
 	float DescriptionSizeY = DescriptionLines * INVENTORY_TOOLTIP_TEXT_SPACING * ae::_Element::GetUIScale();
 	Size.y += DescriptionSizeY;
 

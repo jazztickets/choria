@@ -96,7 +96,7 @@ void _VendorScreen::BuyItem(_Cursor *Cursor, _Slot TargetSlot) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(1);
-	Packet.Write<uint8_t>((uint8_t)Cursor->InventorySlot.Count);
+	Packet.Write<uint16_t>((uint16_t)Cursor->InventorySlot.Count);
 	VendorSlot.Serialize(Packet);
 	TargetSlot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
@@ -116,7 +116,7 @@ void _VendorScreen::SellItem(_Cursor *Cursor, int Amount) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
-	Packet.Write<uint8_t>((uint8_t)Amount);
+	Packet.Write<uint16_t>((uint16_t)Amount);
 	Cursor->Slot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
 }
