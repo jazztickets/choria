@@ -772,21 +772,21 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 0)));
 		Buffer.str("");
 
-		Buffer << std::fixed << std::setprecision(4) << PlayState.Network->GetSentSpeed() / 1024.0f << " KB/s out";
+		Buffer << std::fixed << std::setprecision(4) << PlayState.Network->GetSentSpeed() / 1024.0f << " KiB/s out";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 1)));
 		Buffer.str("");
 
-		Buffer << std::fixed << std::setprecision(4) << PlayState.Network->GetReceiveSpeed() / 1024.0f << " KB/s in";
+		Buffer << std::fixed << std::setprecision(4) << PlayState.Network->GetReceiveSpeed() / 1024.0f << " KiB/s in";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 2)));
+		Buffer.str("");
+
+		Buffer << PlayState.Network->GetPacketsLost() << "/" << PlayState.Network->GetPacketsSent() << "";
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 4)));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetRTT() << "ms";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 3)));
 		Buffer.str("");
-
-		//Buffer << PlayState.Network->GetPacketsLost() << "/" << PlayState.Network->GetPacketsSent() << "";
-		//ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(Offset + glm::vec2(0, SpacingY * 4)));
-		//Buffer.str("");
 	}
 
 	// Draw button bar
