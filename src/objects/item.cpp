@@ -809,7 +809,7 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 int64_t _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
 
 	// Calculate
-	float Percent = 1.0f;
+	double Percent = 1.0;
 	if(Vendor) {
 		if(Buy) {
 			Percent = Vendor->BuyPercent;
@@ -830,13 +830,16 @@ int64_t _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *V
 		Scripting->FinishMethodCall();
 	}
 
+	// Adjust price based on character's vendor discount
+	ItemCost = Source->Character->GetItemCost(ItemCost);
+
 	// Get vendor's price
 	int64_t Price = (int64_t)(ItemCost * Percent) * QueryCount;
 
 	// Add some value for upgrades
 	if(Level) {
 		for(int i = 1; i <= Level; i++)
-			Price += GetUpgradeCost(i) * Percent;
+			Price += GetUpgradeCost(Source, i) * Percent;
 	}
 
 	// Cap
@@ -849,17 +852,18 @@ int64_t _Item::GetPrice(_Scripting *Scripting, _Object *Source, const _Vendor *V
 }
 
 // Get upgrade cost
-int64_t _Item::GetUpgradeCost(int Level) const {
+int64_t _Item::GetUpgradeCost(_Object *Source, int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
-	return (int64_t)(std::floor(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_UPGRADE_BASE_COST));
+	int64_t ItemCost = Source->Character->GetItemCost(Cost);
+	return (int64_t)(std::floor(GAME_UPGRADE_COST_MULTIPLIER * Level * ItemCost + GAME_UPGRADE_BASE_COST));
 }
 
 // Get enchant cost
-int64_t _Item::GetEnchantCost(int Level) {
+int64_t _Item::GetEnchantCost(_Object *Source, int Level) {
 	int64_t Index = Level - GAME_DEFAULT_MAX_SKILL_LEVEL;
-	return std::floor(std::pow(Index, GAME_ENCHANT_COST_POWER) + Index * GAME_ENCHANT_COST_RATE + GAME_ENCHANT_COST_BASE);
+	return Source->Character->GetItemCost(std::floor(std::pow(Index, GAME_ENCHANT_COST_POWER) + Index * GAME_ENCHANT_COST_RATE + GAME_ENCHANT_COST_BASE));
 }
 
 // Get count of drawable attributes

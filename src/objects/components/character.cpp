@@ -582,6 +582,7 @@ void _Character::CalculateStats() {
 	if(Attributes["ManaRegen"].Int > 0)
 		Attributes["ManaRegen"].Int *= Attributes["ManaPower"].Mult();
 	Attributes["BossCooldowns"].Int = std::clamp(Attributes["BossCooldowns"].Int, 0, 100);
+	Attributes["VendorCost"].Int = std::clamp(Attributes["VendorCost"].Int, GAME_MIN_VENDOR_COST, 100);
 
 	RefreshActionBarCount();
 }
@@ -669,6 +670,17 @@ float _Character::GetNextLevelPercent() const {
 		Percent = 1.0f - (float)ExperienceNeeded / ExperienceNextLevel;
 
 	return Percent;
+}
+
+// Get adjusted item cost
+int64_t _Character::GetItemCost(int64_t ItemCost) {
+	if(Attributes["VendorCost"].Int != 100) {
+		ItemCost *= Attributes["VendorCost"].Int * 0.01;
+		if(ItemCost <= 0)
+			ItemCost = 1;
+	}
+
+	return ItemCost;
 }
 
 // Determines if the player can accept movement keys held down

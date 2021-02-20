@@ -328,8 +328,8 @@ void _Stats::LoadVendors() {
 		Vendor.ID = Database->GetInt<uint32_t>("id");
 		Vendor.Name = Database->GetString("name");
 		Vendor.Sort = Database->GetString("sort");
-		Vendor.BuyPercent = (float)Database->GetReal("buy_percent");
-		Vendor.SellPercent = (float)Database->GetReal("sell_percent");
+		Vendor.BuyPercent = Database->GetReal("buy_percent");
+		Vendor.SellPercent = Database->GetReal("sell_percent");
 		Vendor.Items.clear();
 
 		// Set order by for items

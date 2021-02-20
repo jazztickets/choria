@@ -598,7 +598,7 @@ void _HUD::Update(double FrameTime) {
 								if(NextUpgrade > Tooltip.InventorySlot.Item->MaxLevel)
 									break;
 
-								Tooltip.Cost += Tooltip.InventorySlot.Item->GetUpgradeCost(NextUpgrade);
+								Tooltip.Cost += Tooltip.InventorySlot.Item->GetUpgradeCost(Player, NextUpgrade);
 								if(!Player->Character->Blacksmith->CanUpgrade(Tooltip.InventorySlot.Item, NextUpgrade))
 									break;
 							}
@@ -642,7 +642,7 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_SKILLS:
 			case WINDOW_ENCHANTER: {
 				Tooltip.InventorySlot.Item = PlayState.Stats->Items.at((uint32_t)Tooltip.Slot.Index);
-				Tooltip.Cost = _Item::GetEnchantCost(Player->Character->MaxSkillLevels[(uint32_t)Tooltip.Slot.Index]);
+				Tooltip.Cost = _Item::GetEnchantCost(Player, Player->Character->MaxSkillLevels[(uint32_t)Tooltip.Slot.Index]);
 			} break;
 			case WINDOW_SKILLBAR: {
 				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())

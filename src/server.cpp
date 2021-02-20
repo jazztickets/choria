@@ -1418,7 +1418,7 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Get upgrade price
 	int MaxSkillLevel = Player->Character->MaxSkillLevels.at(SkillID);
-	int64_t Price = _Item::GetEnchantCost(MaxSkillLevel);
+	int64_t Price = _Item::GetEnchantCost(Player, MaxSkillLevel);
 
 	// Check gold
 	if(Price > Player->Character->Attributes["Gold"].Int64)
@@ -1727,7 +1727,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 			break;
 
 		// Get upgrade price
-		int64_t UpgradePrice = InventorySlot.Item->GetUpgradeCost(Upgrades+1);
+		int64_t UpgradePrice = InventorySlot.Item->GetUpgradeCost(Player, Upgrades+1);
 
 		// Check player gold
 		if(TotalCost + UpgradePrice > Player->Character->Attributes["Gold"].Int64)

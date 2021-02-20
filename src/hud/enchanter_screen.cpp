@@ -209,7 +209,7 @@ void _EnchanterScreen::RefreshBuyButtons() {
 		}
 		else if(ChildElement->Name == "button_max_skill_levels_buy") {
 			int CurrentLevel = HUD->Player->Character->MaxSkillLevels[SkillID];
-			int64_t Cost = _Item::GetEnchantCost(CurrentLevel);
+			int64_t Cost = _Item::GetEnchantCost(HUD->Player, CurrentLevel);
 
 			// Set button state
 			if(CurrentLevel >= Skill->MaxLevel || CurrentLevel >= Enchanter->Level || Cost > HUD->Player->Character->Attributes["Gold"].Int64) {

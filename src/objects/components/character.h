@@ -101,6 +101,7 @@ class _Character {
 		bool IsAlive() const { return Attributes.at("Health").Int > 0; }
 		float GetHealthPercent() const { return Attributes.at("MaxHealth").Int > 0 ? Attributes.at("Health").Int / (float)Attributes.at("MaxHealth").Int : 0; }
 		float GetManaPercent() const { return Attributes.at("MaxMana").Int > 0 ? Attributes.at("Mana").Int / (float)Attributes.at("MaxMana").Int : 0; }
+		int64_t GetItemCost(int64_t ItemCost);
 
 		// Input
 		bool AcceptingMoveInput();

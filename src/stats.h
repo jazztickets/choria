@@ -112,8 +112,8 @@ struct _Vendor {
 	uint32_t ID;
 	std::string Name;
 	std::string Sort;
-	float BuyPercent;
-	float SellPercent;
+	double BuyPercent;
+	double SellPercent;
 	std::vector<const _Item *> Items;
 };
 
