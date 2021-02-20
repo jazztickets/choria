@@ -342,6 +342,9 @@ void _Character::CalculateStats() {
 	Attributes["Cooldowns"].Int -= Attributes["EternalImpatience"].Int;
 	Attributes["BossCooldowns"].Int -= Attributes["RebirthSoul"].Int;
 
+	// Eternal Charisma
+	Attributes["VendorCost"].Int -= Attributes["EternalCharisma"].Int;
+
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
 	std::vector<int> ItemMaxDamage(Object->Stats->DamageTypes.size(), 0);

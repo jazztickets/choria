@@ -1465,6 +1465,8 @@ Base_Evolve = {
 			return math.floor(Source.EvolveTier * 10)
 		elseif self.Type == 2 then
 			return math.floor(Source.EvolveTier * 2)
+		elseif self.Type == 3 then
+			return math.floor(Source.EvolveTier)
 		end
 	end,
 
@@ -1746,6 +1748,24 @@ function Item_EternalImpatience.Use(self, Level, Duration, Source, Target, Resul
 end
 
 function Item_EternalImpatience.PlaySound(self)
+	Audio.Play("sparkle0.ogg")
+end
+
+Item_EternalCharisma = Base_Evolve:New()
+Item_EternalCharisma.Type = 3
+
+function Item_EternalCharisma.GetInfo(self, Source, Item)
+	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] vendor cost reduction bonus", Source)
+end
+
+function Item_EternalCharisma.Use(self, Level, Duration, Source, Target, Result, Priority)
+	Result.Target.Evolve = 1
+	Result.Target.VendorCost = self:GetBonus(Source)
+
+	return Result
+end
+
+function Item_EternalCharisma.PlaySound(self)
 	Audio.Play("sparkle0.ogg")
 end
 

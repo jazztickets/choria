@@ -224,20 +224,21 @@ INSERT INTO attribute VALUES(114,'EternalPain','Eternal Pain',1,0,'0',0.0,0,0,1,
 INSERT INTO attribute VALUES(115,'EternalAlacrity','Eternal Alacrity',1,0,'0',0.0,0,0,1,0,1);
 INSERT INTO attribute VALUES(116,'EternalCommand','Eternal Command',1,0,'0',0.0,0,0,1,0,1);
 INSERT INTO attribute VALUES(117,'EternalImpatience','Eternal Impatience',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(118,'PlayTime','Play Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(119,'RebirthTime','Rebirth Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(120,'BattleTime','Battle Time',5,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(121,'MonsterKills','Monster Kills',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(122,'PlayerKills','Player Kills',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(123,'Deaths','Deaths',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(124,'GoldLost','Gold Lost',2,0,'0',0.0,5,0,1,1,1);
-INSERT INTO attribute VALUES(125,'Bounty','Bounty',2,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(126,'GamesPlayed','Games Played',1,0,'0',0.0,5,0,1,0,1);
-INSERT INTO attribute VALUES(127,'Trades','Trades',1,0,'0',0.0,0,0,1,0,1);
-INSERT INTO attribute VALUES(128,'EquippedNetworth','Equipped Networth',2,0,'0',0.0,0,1,0,0,0);
-INSERT INTO attribute VALUES(129,'InventoryNetworth','Inventory Networth',2,0,'0',0.0,0,1,0,0,0);
-INSERT INTO attribute VALUES(130,'Rebirths','Rebirths',1,0,'0',0.0,0,0,1,1,1);
-INSERT INTO attribute VALUES(131,'Evolves','Evolves',1,0,'0',0.0,0,0,1,1,1);
+INSERT INTO attribute VALUES(118,'EternalCharisma','Eternal Charisma',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(119,'PlayTime','Play Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(120,'RebirthTime','Rebirth Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(121,'BattleTime','Battle Time',5,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(122,'MonsterKills','Monster Kills',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(123,'PlayerKills','Player Kills',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(124,'Deaths','Deaths',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(125,'GoldLost','Gold Lost',2,0,'0',0.0,5,0,1,1,1);
+INSERT INTO attribute VALUES(126,'Bounty','Bounty',2,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(127,'GamesPlayed','Games Played',1,0,'0',0.0,5,0,1,0,1);
+INSERT INTO attribute VALUES(128,'Trades','Trades',1,0,'0',0.0,0,0,1,0,1);
+INSERT INTO attribute VALUES(129,'EquippedNetworth','Equipped Networth',2,0,'0',0.0,0,1,0,0,0);
+INSERT INTO attribute VALUES(130,'InventoryNetworth','Inventory Networth',2,0,'0',0.0,0,1,0,0,0);
+INSERT INTO attribute VALUES(131,'Rebirths','Rebirths',1,0,'0',0.0,0,0,1,1,1);
+INSERT INTO attribute VALUES(132,'Evolves','Evolves',1,0,'0',0.0,0,0,1,1,1);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -1311,6 +1312,7 @@ INSERT INTO trader VALUES(100,'rite_of_soul',369,1);
 INSERT INTO trader VALUES(101,'bone_wand',374,1);
 INSERT INTO trader VALUES(102,'icy_key',375,1);
 INSERT INTO trader VALUES(103,'voidstone',378,1);
+INSERT INTO trader VALUES(104,'eternal_charisma',380,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES "trader"(id) ON DELETE CASCADE,
@@ -1573,6 +1575,7 @@ INSERT INTO traderitem VALUES(288,102,353,25);
 INSERT INTO traderitem VALUES(289,103,359,1);
 INSERT INTO traderitem VALUES(290,103,344,1);
 INSERT INTO traderitem VALUES(291,103,263,1);
+INSERT INTO traderitem VALUES(292,104,360,1);
 CREATE TABLE IF NOT EXISTS "enchanter" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -2334,6 +2337,7 @@ INSERT INTO item VALUES(376,16,0,0,0,0,0,0,'Greed','textures/items/relic_greed.p
 INSERT INTO item VALUES(377,16,0,0,0,0,0,0,'Wisdom','textures/items/relic_wisdom.png','','Item_ExperienceBonus','',0,50000000,0,250,50,25,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(378,10,0,1,1,0,0,0,'Voidstone','textures/items/voidstone.png','','Item_Voidstone','',0,100000,0,0,0,0,0,0.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(379,16,0,0,0,0,0,0,'Suffering','textures/items/relic_suffering.png','','Item_PainRing','',0,200000000,0,250,50,25,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(380,10,0,1,1,0,0,0,'Eternal Charisma','textures/items/eternal_charisma.png','','Item_EternalCharisma','',0,0,0,0,0,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE TABLE IF NOT EXISTS "zonedrop" (
 "id" INTEGER PRIMARY KEY,
 "zone_id" INTEGER REFERENCES "zone"(id) ON DELETE CASCADE,

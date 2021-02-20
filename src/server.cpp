@@ -2674,6 +2674,9 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 			case 3:
 				Character->Attributes["EternalImpatience"].Int += RebirthEvent.Value;
 			break;
+			case 4:
+				Character->Attributes["EternalCharisma"].Int += RebirthEvent.Value;
+			break;
 		}
 	}
 
