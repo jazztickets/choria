@@ -377,7 +377,7 @@
 		<element id="label_blacksmith_level" font="hud_small" offset_y="80" alignment_y="3"/>
 		<element id="label_blacksmith_cost" font="hud_small" offset_y="132" alignment_y="3"/>
 	</element>
-	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="508" size_y="420" clickable="true">
+	<element id="element_trade" style="style_hud_bg" offset_x="308" size_x="508" size_y="420" clickable="true">
 		<element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="320" size_y="128" alignment_x="0" alignment_y="0" index="9">
 			<element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2"/>
 			<element id="image_trade_portrait_theirs" offset_x="-122" offset_y="26" size_x="100" size_y="100" alignment_x="0" alignment_y="0">
