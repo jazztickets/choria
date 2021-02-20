@@ -181,7 +181,7 @@ INSERT INTO attribute VALUES(71,'PoisonResist','Poison Resist',4,1,'0',0.0,2,1,0
 INSERT INTO attribute VALUES(72,'BleedResist','Bleed Resist',4,1,'0',0.0,2,1,0,1,0);
 INSERT INTO attribute VALUES(73,'StunResist','Stun Resist',4,1,'0',0.0,2,1,0,1,0);
 INSERT INTO attribute VALUES(74,'ElementalResist','Elemental Resist',4,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(75,'VendorCost','Vendor Cost',4,1,'100',0.0,3,1,0,1,0);
+INSERT INTO attribute VALUES(75,'VendorDiscount','Vendor Discount',4,1,'0',0.0,3,1,0,1,0);
 INSERT INTO attribute VALUES(76,'ExperienceBonus','Experience Bonus',4,1,'0',1.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(77,'GoldBonus','Gold Bonus',4,1,'0',1.0,3,1,0,0,0);
 INSERT INTO attribute VALUES(78,'SummonBattleSpeed','Summon Battle Speed',4,1,'100',0.0,3,1,0,1,0);

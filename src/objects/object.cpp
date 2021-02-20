@@ -1302,8 +1302,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange, _Object *Source) {
 				Server->QueueRebirth(this, 1, 2, StatChange.Values["SummonBattleSpeed"].Int);
 			else if(StatChange.HasStat("Cooldowns"))
 				Server->QueueRebirth(this, 1, 3, StatChange.Values["Cooldowns"].Int);
-			else if(StatChange.HasStat("VendorCost"))
-				Server->QueueRebirth(this, 1, 4, StatChange.Values["VendorCost"].Int);
+			else if(StatChange.HasStat("VendorDiscount"))
+				Server->QueueRebirth(this, 1, 4, StatChange.Values["VendorDiscount"].Int);
 
 			return nullptr;
 		}

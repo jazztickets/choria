@@ -1755,12 +1755,12 @@ Item_EternalCharisma = Base_Evolve:New()
 Item_EternalCharisma.Type = 3
 
 function Item_EternalCharisma.GetInfo(self, Source, Item)
-	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] vendor cost reduction bonus", Source)
+	return EvolveText(self, "[c green]" .. self:GetBonus(Source) .. "%[c white] vendor discount bonus", Source)
 end
 
 function Item_EternalCharisma.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Evolve = 1
-	Result.Target.VendorCost = self:GetBonus(Source)
+	Result.Target.VendorDiscount = self:GetBonus(Source)
 
 	return Result
 end

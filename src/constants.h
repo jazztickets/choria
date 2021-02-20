@@ -137,7 +137,7 @@ const  int          GAME_TRADING_LEVEL_RANGE           =  10;
 const  int          GAME_DEFAULT_MAX_SKILL_LEVEL       =  5;
 const  int          GAME_MAX_SKILL_UNLOCKS             =  10;
 const  int          GAME_MAX_SKILL_LEVEL               =  50;
-const  int          GAME_MIN_VENDOR_COST               =  1;
+const  int          GAME_MAX_VENDOR_DISCOUNT           =  99;
 const  double       GAME_REBIRTH_WEALTH_MULTIPLIER     =  0.1;
 //     Levels
 const  int          LEVELS_MAX                         =  9999;

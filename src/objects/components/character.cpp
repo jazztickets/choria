@@ -343,7 +343,7 @@ void _Character::CalculateStats() {
 	Attributes["BossCooldowns"].Int -= Attributes["RebirthSoul"].Int;
 
 	// Eternal Charisma
-	Attributes["VendorCost"].Int -= Attributes["EternalCharisma"].Int;
+	Attributes["VendorDiscount"].Int += Attributes["EternalCharisma"].Int;
 
 	// Get item stats
 	std::vector<int> ItemMinDamage(Object->Stats->DamageTypes.size(), 0);
@@ -585,7 +585,7 @@ void _Character::CalculateStats() {
 	if(Attributes["ManaRegen"].Int > 0)
 		Attributes["ManaRegen"].Int *= Attributes["ManaPower"].Mult();
 	Attributes["BossCooldowns"].Int = std::clamp(Attributes["BossCooldowns"].Int, 0, 100);
-	Attributes["VendorCost"].Int = std::clamp(Attributes["VendorCost"].Int, GAME_MIN_VENDOR_COST, 100);
+	Attributes["VendorDiscount"].Int = std::clamp(Attributes["VendorDiscount"].Int, 0, GAME_MAX_VENDOR_DISCOUNT);
 
 	RefreshActionBarCount();
 }
@@ -677,8 +677,8 @@ float _Character::GetNextLevelPercent() const {
 
 // Get adjusted item cost
 int64_t _Character::GetItemCost(int64_t ItemCost) {
-	if(Attributes["VendorCost"].Int != 100) {
-		ItemCost *= Attributes["VendorCost"].Int * 0.01;
+	if(Attributes["VendorDiscount"].Int > 0) {
+		ItemCost *= (100 - Attributes["VendorDiscount"].Int) * 0.01;
 		if(ItemCost <= 0)
 			ItemCost = 1;
 	}
