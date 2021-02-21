@@ -66,6 +66,9 @@ void RunCommandThread() {
 			}
 			else if(Tokens[0] == "d" || Tokens[0] == "disconnect")
 				BotState.DisconnectAll();
+			else if(Tokens[0] == "p" || Tokens[0] == "prefix") {
+				BotState.BotNamePrefix = Tokens.size() > 1 ? Tokens[1] : "";
+			}
 			else if(Tokens[0] == "q" || Tokens[0] == "quit")
 				Done = true;
 			else
@@ -146,7 +149,7 @@ void _BotsState::Update(double FrameTime) {
 void _BotsState::Add() {
 	std::cout << "adding bot " << NextBotNumber << std::endl;
 	try {
-		std::string Credentials = "bot" + std::to_string(NextBotNumber);
+		std::string Credentials = "bot_" + BotNamePrefix + std::to_string(NextBotNumber);
 		_Bot *Bot = new _Bot(Stats, Credentials, Credentials, HostAddress, Port);
 		Bots.push_back(Bot);
 		NextBotNumber++;
@@ -166,7 +169,8 @@ void _BotsState::AddMultiple(int Count) {
 
 // Disconnect all bots
 void _BotsState::DisconnectAll() {
-	std::cout << "disconnecting all bots" << std::endl;
+	if(Bots.size())
+		std::cout << "disconnecting all bots" << std::endl;
 
 	for(auto &Bot : Bots)
 		Bot->Network->Disconnect(false, 1);
@@ -176,10 +180,12 @@ void _BotsState::DisconnectAll() {
 void _BotsState::ShowCommands() {
 
 	std::cout << std::endl;
-	std::cout << "a [bot_count]" << std::endl;
+	std::cout << "a|add [bot_count]" << std::endl;
 	std::cout << "  Add specified number of bots" << std::endl;
-	std::cout << "d" << std::endl;
+	std::cout << "d|disconnect" << std::endl;
 	std::cout << "  Disconnect all bots" << std::endl;
-	std::cout << "q" << std::endl;
+	std::cout << "p|prefix [name]" << std::endl;
+	std::cout << "  Set prefix on bot names" << std::endl;
+	std::cout << "q|quit" << std::endl;
 	std::cout << "  Quit" << std::endl;
 }

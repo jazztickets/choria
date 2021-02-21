@@ -55,6 +55,7 @@ class _BotsState : public ae::_State {
 		void HandleQuit() override;
 
 		std::string HostAddress;
+		std::string BotNamePrefix;
 		uint16_t Port;
 
 	protected:

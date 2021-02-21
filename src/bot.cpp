@@ -77,8 +77,6 @@ void _Bot::Update(double FrameTime) {
 
 		switch(NetworkEvent.Type) {
 			case ae::_NetworkEvent::CONNECT: {
-				//std::cout << Username << " connected" << std::endl;
-
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 				Packet.WriteBit(0);
@@ -88,7 +86,6 @@ void _Bot::Update(double FrameTime) {
 				Network->SendPacket(Packet);
 			} break;
 			case ae::_NetworkEvent::DISCONNECT:
-				//std::cout << Username << " disconnected" << std::endl;
 				ObjectManager->Clear();
 				AssignPlayer(nullptr);
 
