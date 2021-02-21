@@ -650,7 +650,7 @@ void _EditorState::DrawBrushInfo() {
 		TextureBounds.End = DrawPosition + UI_TILE_SIZE / 2.0f;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
+		ae::Graphics.DrawAtlasTexture(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
