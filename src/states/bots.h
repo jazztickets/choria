@@ -50,6 +50,7 @@ class _BotsState : public ae::_State {
 		// Commands
 		void ShowCommands();
 		void Add();
+		void AddMultiple(int Count);
 		void DisconnectAll();
 		void HandleQuit() override;
 

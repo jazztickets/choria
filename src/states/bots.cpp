@@ -62,10 +62,7 @@ void RunCommandThread() {
 					Count = ae::ToNumber<int>(Tokens[1]);
 				}
 
-				for(int i = 0; i < Count; i++) {
-					BotState.Add();
-					SDL_Delay(1);
-				}
+				BotState.AddMultiple(Count);
 			}
 			else if(Tokens[0] == "d" || Tokens[0] == "disconnect")
 				BotState.DisconnectAll();
@@ -147,8 +144,6 @@ void _BotsState::Update(double FrameTime) {
 
 // Add a bot and connect
 void _BotsState::Add() {
-	std::lock_guard<std::mutex> LockGuard(Mutex);
-
 	std::cout << "adding bot " << NextBotNumber << std::endl;
 	try {
 		std::string Credentials = "bot" + std::to_string(NextBotNumber);
@@ -159,6 +154,14 @@ void _BotsState::Add() {
 	catch(std::exception &Error) {
 		std::cout << Error.what() << std::endl;
 	}
+}
+
+// Add multiple bots
+void _BotsState::AddMultiple(int Count) {
+	std::lock_guard<std::mutex> LockGuard(Mutex);
+
+	for(int i = 0; i < Count; i++)
+		BotState.Add();
 }
 
 // Disconnect all bots
