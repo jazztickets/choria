@@ -1097,7 +1097,7 @@ int _Scripting::AudioPlay(lua_State *LuaState) {
 	// Play sound
 	ae::Audio.PlaySound(Sound->second, Volume);
 
-	return 1;
+	return 0;
 }
 
 // Set battle target
