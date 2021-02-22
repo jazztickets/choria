@@ -173,6 +173,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Console->LoadHistory(Config.ConfigPath + "history.txt");
 		Console->CommandList.push_back("maxfps");
 		Console->CommandList.push_back("networth");
+		Console->CommandList.push_back("players");
 		Console->CommandList.push_back("quit");
 		Console->CommandList.push_back("volume");
 		Console->CommandList.push_back("vsync");

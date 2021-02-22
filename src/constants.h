@@ -76,6 +76,7 @@ const  double       HUD_RECENTITEM_TIMEOUT             =  10.0;
 const  double       HUD_RECENTITEM_FADETIME            =  2.0;
 const  double       HUD_MESSAGE_TIMEOUT                =  10.0;
 const  double       HUD_MESSAGE_FADETIME               =  2.0;
+const  double       HUD_MESSAGE_MAX_WIDTH              =  800;
 const  double       HUD_ACTIONRESULT_TIMEOUT           =  2.5;
 const  double       HUD_ACTIONRESULT_SPEED             =  3.0;
 const  double       HUD_ACTIONRESULT_TIMEOUT_SHORT     =  1.0;

@@ -2047,6 +2047,23 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Position = Player->Map->GetValidCoord(glm::ivec2(X, Y));
 		SendPlayerPosition(Player->Peer);
 	}
+	else if(Command == "players") {
+		std::stringstream Buffer;
+		int Count = 0;
+		for(auto &Object : ObjectManager->Objects) {
+			if(!Object->Peer)
+				continue;
+
+			if(Count > 0)
+				Buffer << ", ";
+			Buffer << Object->Name;
+			Count++;
+		}
+
+		std::string Plural = Count == 1 ? "" : "s";
+		std::string Message = std::to_string(Count) + " player" + Plural + ": " + Buffer.str();
+		SendMessage(Peer, Message, "white");
+	}
 	else if(Command == "save") {
 		SaveTime = Config.AutoSavePeriod;
 	}

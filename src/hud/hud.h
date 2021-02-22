@@ -180,7 +180,7 @@ class _HUD {
 		// Chat
 		void ToggleChat();
 		bool IsChatting();
-		void AddChatMessage(const _Message &Chat) { ChatHistory.push_back(Chat); }
+		void AddChatMessage(const _Message &Chat);
 		void UpdateSentHistory(int Direction);
 		void CloseChat();
 

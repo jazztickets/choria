@@ -1629,6 +1629,15 @@ bool _HUD::IsChatting() {
 	return ChatTextBox->Active;
 }
 
+// Add chat message and break up if necessary
+void _HUD::AddChatMessage(const _Message &Chat) {
+	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
+	std::list<std::string> Strings;
+	Font->BreakupString(Chat.Message, HUD_MESSAGE_MAX_WIDTH * ae::_Element::GetUIScale(), Strings);
+	for(const auto &String : Strings)
+		ChatHistory.push_back(_Message(String, Chat.Color, Chat.Time));
+}
+
 // Set chat textbox string based on history
 void _HUD::UpdateSentHistory(int Direction) {
 	if(SentHistory.size() == 0)

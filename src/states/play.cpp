@@ -465,6 +465,12 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 
 		return true;
 	}
+	else if(Console->Command == "players") {
+		if(Player && Network && Network->IsConnected())
+			Network->SendPacket(Packet);
+
+		return true;
+	}
 
 	// Handle dev commands
 	if(DevMode) {
@@ -562,6 +568,11 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 				Console->AddMessage("usage: move [x] [y]");
 			}
 		}
+		else if(Console->Command == "save") {
+			if(Player && Network && Network->IsConnected()) {
+				Network->SendPacket(Packet);
+			}
+		}
 		else if(Console->Command == "search") {
 			if(Parameters.size() == 2) {
 				std::string Table = Parameters[0];
@@ -589,11 +600,6 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			}
 			else
 				Console->AddMessage("usage: search [table] [query]");
-		}
-		else if(Console->Command == "save") {
-			if(Player && Network && Network->IsConnected()) {
-				Network->SendPacket(Packet);
-			}
 		}
 		else {
 			return false;
