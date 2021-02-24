@@ -104,11 +104,11 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 					EditorState.SetFilePath(Arguments[++i]);
 			}
 		}
-		else if(Token == "-bot" && TokensRemaining > 1) {
-			State = &BotState;
-			BotState.HostAddress = Arguments[++i];
-			BotState.Port = ae::ToNumber<uint16_t>(Arguments[++i]);
-			LoadClientAssets = false;
+		else if(Token == "-bot") {
+			#ifndef NDEBUG
+				State = &BotState;
+				LoadClientAssets = false;
+			#endif
 		}
 		else if(Token == "-timescale" && TokensRemaining > 0) {
 			Config.TimeScale = ae::ToNumber<double>(Arguments[++i]);
