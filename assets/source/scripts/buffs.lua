@@ -334,7 +334,7 @@ function Buff_ColdResist.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Weak  --
+-- Weak --
 
 Buff_Weak = Base_Buff:New()
 
@@ -348,7 +348,21 @@ function Buff_Weak.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Flayed  --
+-- Vulnerable --
+
+Buff_Vulnerable = Base_Buff:New()
+
+function Buff_Vulnerable.GetInfo(self, Level)
+	return "All resistances reduced by [c green]" .. Level .. "%"
+end
+
+function Buff_Vulnerable.Stats(self, Level, Source, Change)
+	Change.AllResist = -Level
+
+	return Change
+end
+
+-- Flayed --
 
 Buff_Flayed = Base_Buff:New()
 
@@ -362,7 +376,7 @@ function Buff_Flayed.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Fractured  --
+-- Fractured --
 
 Buff_Fractured = Base_Buff:New()
 
@@ -378,7 +392,7 @@ function Buff_Fractured.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Light  --
+-- Light --
 
 Buff_Light = Base_Buff:New()
 

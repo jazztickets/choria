@@ -682,13 +682,13 @@ function Item_ShrapnelBomb.GetPierce(self, Source)
 end
 
 function Item_ShrapnelBomb.GetInfo(self, Source, Item)
-	return "Toss an exploding contraption at your enemies, dealing pierce damage and reducing resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
+	return "Toss an exploding contraption at your enemies, dealing pierce damage and reducing all resistances by [c green]" .. Item.Level .. "%[c white] for [c green]" .. Item.Duration .. "[c white] seconds"
 end
 
 function Item_ShrapnelBomb.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Battle_ResolveDamage(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buff_Flayed.Pointer
+	Result.Target.Buff = Buff_Vulnerable.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
 

@@ -822,6 +822,7 @@ INSERT INTO buff VALUES(32,'Attractant','Buff_Attractant','textures/buffs/attrac
 INSERT INTO buff VALUES(33,'Lava Immune','Buff_LavaImmune','textures/buffs/lava_immunity.png',1,2,1,10,0);
 INSERT INTO buff VALUES(34,'Freezing','Buff_Freezing','textures/buffs/freezing.png',0,1,0,0,0);
 INSERT INTO buff VALUES(35,'Warm','Buff_Warm','textures/buffs/warm.png',1,2,1,10,0);
+INSERT INTO buff VALUES(36,'Vulnerable','Buff_Vulnerable','textures/buffs/vulnerable.png',0,1,0,0,0);
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
