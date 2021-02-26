@@ -42,11 +42,9 @@ enum class TargetType : uint32_t {
 	SELF,
 	ENEMY,
 	ALLY,
-	UNUSED1,
-	UNUSED2,
+	ANY,
 	ENEMY_ALL,
 	ALLY_ALL,
-	ANY,
 	ENEMY_CORPSE_AOE,
 };
 
