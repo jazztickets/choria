@@ -338,6 +338,10 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 		return;
 	}
 
+	// Get side of last target
+	if(InitialTarget)
+		Side = InitialTarget->Fighter->BattleSide;
+
 	// Get list of objects on each side
 	std::vector<_Object *> ObjectList;
 	ObjectList.reserve(BATTLE_MAX_OBJECTS_PER_SIDE);
@@ -346,8 +350,11 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 	// Get iterator to last target
 	_Object *LastTarget = InitialTarget;
-	if(ObjectList.size() && LastTarget && Item->CanTarget(Scripting, ClientPlayer, LastTarget))
+	if(ObjectList.size() && LastTarget && Item->CanTarget(Scripting, ClientPlayer, LastTarget)) {
 		Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
+		if(Iterator == ObjectList.end())
+			Iterator = ObjectList.begin();
+	}
 
 	// Set up targets
 	int TargetCount = Item->GetTargetCount(Scripting, ClientPlayer);
