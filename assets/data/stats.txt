@@ -173,7 +173,7 @@ INSERT INTO attribute VALUES(63,'Evasion','Evasion',4,3,'100',0.25,1,1,0,1,0);
 INSERT INTO attribute VALUES(64,'ManaShield','Mana Shield',4,1,'0',0.0,1,1,0,1,0);
 INSERT INTO attribute VALUES(65,'Resist','Resist',4,0,'0',0.25,0,0,0,0,0);
 INSERT INTO attribute VALUES(66,'AllResist','All Resist',4,0,'0',0.0,0,0,0,0,0);
-INSERT INTO attribute VALUES(67,'PhysicalResist','Physical Resist',4,0,'0',0.0,2,1,0,1,0);
+INSERT INTO attribute VALUES(67,'PhysicalResist','Physical Resist',4,1,'0',0.0,2,1,0,1,0);
 INSERT INTO attribute VALUES(68,'FireResist','Fire Resist',4,1,'0',0.0,2,1,0,1,0);
 INSERT INTO attribute VALUES(69,'ColdResist','Cold Resist',4,1,'0',0.0,2,1,0,1,0);
 INSERT INTO attribute VALUES(70,'LightningResist','Lightning Resist',4,1,'0',0.0,2,1,0,1,0);
@@ -2031,7 +2031,7 @@ INSERT INTO item VALUES(38,1,0,5,3,0,0,0,'Empower','textures/skills/empower.png'
 INSERT INTO item VALUES(39,1,0,2,2,0,0,0,'Raise Dead','textures/skills/raise_dead.png','','Skill_RaiseDead','',4,300,0,0,50,0,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(40,1,0,0,0,0,0,0,'Summon Mastery','textures/skills/summon_mastery.png','','Skill_SummonMastery','',1,1500,0,0,50,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(41,1,5,4,2,0,0,0,'Chain Lightning','textures/skills/chain_lightning.png','','Skill_ChainLightning','',3,750,0,0,50,0,0,0.0,6.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(42,1,6,9,2,0,0,0,'Rupture','textures/skills/rupture.png','','Skill_Rupture','',3,1150,0,0,50,0,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(42,1,2,9,2,0,0,0,'Rupture','textures/skills/rupture.png','','Skill_Rupture','',3,1150,0,0,50,0,0,0.0,5.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(43,1,0,5,3,0,0,0,'Sanctuary','textures/skills/sanctuary.png','','Skill_Sanctuary','',3,1800,0,0,50,0,0,0.0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(44,1,0,4,2,0,0,0,'Flay','textures/skills/flay.png','','Skill_Flay','',3,2500,0,0,50,0,0,0.0,5.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(45,1,6,2,2,0,0,0,'Poison Touch','textures/skills/poison_touch.png','','Skill_PoisonTouch','',3,225,0,0,50,0,0,0.0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

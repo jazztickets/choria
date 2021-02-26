@@ -561,7 +561,7 @@ void _Character::CalculateStats() {
 	float ArmorResist = Attributes["Armor"].Int / (30.0f + std::abs(Attributes["Armor"].Int));
 
 	// Physical resist comes solely from armor
-	Attributes["PhysicalResist"].Int = (int)(ArmorResist * 100);
+	Attributes["PhysicalResist"].Int += (int)(ArmorResist * 100);
 
 	// Cap stats
 	Attributes["Evasion"].Int = std::clamp(100 - Attributes["Evasion"].Int, 0, GAME_MAX_EVASION);

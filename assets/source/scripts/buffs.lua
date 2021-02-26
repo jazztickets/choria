@@ -353,11 +353,11 @@ end
 Buff_Flayed = Base_Buff:New()
 
 function Buff_Flayed.GetInfo(self, Level)
-	return "Resistances reduced by [c green]" .. Level .. "%"
+	return "Elemental resist reduced by [c green]" .. Level .. "%"
 end
 
 function Buff_Flayed.Stats(self, Level, Source, Change)
-	Change.AllResist = -Level
+	Change.ElementalResist = -Level
 
 	return Change
 end
@@ -367,11 +367,13 @@ end
 Buff_Fractured = Base_Buff:New()
 
 function Buff_Fractured.GetInfo(self, Level)
-	return "Armor reduced by [c green]" .. Level
+	return "Physical resist reduced by [c green]" .. Level .. "%\nPoison resist reduced by [c green]" .. Level .. "%\nBleed resist reduced by [c green]" .. Level .. "%\n"
 end
 
 function Buff_Fractured.Stats(self, Level, Source, Change)
-	Change.Armor = -Level
+	Change.PhysicalResist = -Level
+	Change.PoisonResist = -Level
+	Change.BleedResist = -Level
 
 	return Change
 end

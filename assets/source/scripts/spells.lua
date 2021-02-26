@@ -649,11 +649,11 @@ function Skill_Rupture.GetPoisonDamage(self, Source, Level)
 end
 
 function Skill_Rupture.GetDamagePower(self, Source, Level)
-	return Source.PoisonPower * 0.01 * Source.SpellDamage * 0.01
+	return Source.PhysicalPower * 0.01 * Source.SpellDamage * 0.01
 end
 
 function Skill_Rupture.GetLevel(self, Source, Level)
-	return math.floor((self.Level + self.LevelPerLevel * Level) * self:GetDamagePower(Source, Level))
+	return math.floor((self.Level + self.LevelPerLevel * Level) * (Source.PoisonPower * 0.01 * Source.SpellDamage * 0.01))
 end
 
 function Skill_Rupture.CanTarget(self, Source, Target, Alive)
@@ -683,7 +683,7 @@ function Skill_Rupture.GetInfo(self, Source, Item)
 		DamageValue = self:GetPoisonDamage(Source, Item.Level) .. "[c white] poison damage over [c green]" .. self.Duration .. "[c white] seconds"
 	end
 
-	return "Explode a corpse, dealing [c green]" .. self:GetDamageText(Source, Item) .. "[c white] damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies that deals [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
+	return "Explode a corpse, dealing [c green]" .. self:GetDamageText(Source, Item) .. "[c white] physical damage and releasing noxious gas, covering [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] enemies that deals [c green]" .. DamageValue .. "\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP"
 end
 
 function Skill_Rupture.Proc(self, Roll, Level, Duration, Source, Target, Result)
@@ -991,7 +991,7 @@ function Skill_Flay.GetInfo(self, Source, Item)
 		Plural = "s"
 	end
 
-	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foe" .. Plural .. ", reducing their resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
+	return "Strip the skin of [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] foe" .. Plural .. ", reducing their elemental resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
 end
 
 function Skill_Flay.Use(self, Level, Duration, Source, Target, Result, Priority)
@@ -1017,13 +1017,12 @@ Skill_Fracture.CostPerLevel = 5
 Skill_Fracture.ManaCostBase = 40 - Skill_Fracture.CostPerLevel
 Skill_Fracture.Targets = 1
 Skill_Fracture.TargetsPerLevel = 0.14
-Skill_Fracture.ArmorBase = 4
-Skill_Fracture.ArmorPerLevel = 0
-Skill_Fracture.ArmorScale = 1
-Skill_Fracture.ArmorPower = 1.2
+Skill_Fracture.Constant = 100
+Skill_Fracture.BasePercent = 14
+Skill_Fracture.Multiplier = 200
 
-function Skill_Fracture.GetReduction(self, Level)
-	return math.floor(self.ArmorBase + (Level - 1) * self.ArmorPerLevel + math.pow(Level, self.ArmorPower) * self.ArmorScale)
+function Skill_Fracture.GetPercent(self, Level)
+	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
 end
 
 function Skill_Fracture.GetInfo(self, Source, Item)
@@ -1033,12 +1032,12 @@ function Skill_Fracture.GetInfo(self, Source, Item)
 		Plural = "enemies"
 	end
 
-	return "Decimate the defenses of [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] " .. Plural .. ", reducing their armor by [c green]" .. self:GetReduction(Item.Level) .. "[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
+	return "Decimate the defenses of [c green]" .. self:GetTargetCount(Item.Level, Item.MoreInfo) .. "[c white] " .. Plural .. ", reducing their physical, poison, and bleed resistances by [c green]" .. self:GetPercent(Item.Level) .. "%[c white] for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\nCosts [c light_blue]" .. self:GetManaCost(Item.Level) .. " [c white]MP\n\n[c yellow]Attracts summons"
 end
 
 function Skill_Fracture.Use(self, Level, Duration, Source, Target, Result, Priority)
 	Result.Target.Buff = Buff_Fractured.Pointer
-	Result.Target.BuffLevel = self:GetReduction(Level)
+	Result.Target.BuffLevel = self:GetPercent(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 	Result.Target.BuffPriority = Priority
 	WeaponProc(Source, Target, Result, true)
