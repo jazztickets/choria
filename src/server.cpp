@@ -2721,7 +2721,7 @@ void _Server::StartRebirth(_RebirthEvent &RebirthEvent) {
 
 	// Keep relic
 	const _InventorySlot &RelicSlot = OldEquipmentBag.Slots[EquipmentType::RELIC];
-	Player->Inventory->AddItem(RelicSlot.Item, RelicSlot.Upgrades, RelicSlot.Count);
+	Player->Inventory->AddItem(RelicSlot.Item, RelicSlot.Upgrades, RelicSlot.Count, _Slot(BagType::EQUIPMENT, EquipmentType::RELIC));
 
 	// Unlock keys
 	const std::vector<const _Item *> KeyUnlocks = {
