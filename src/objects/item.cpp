@@ -723,19 +723,14 @@ int _Item::DrawSetDescription(bool Render, _Object *Object, glm::vec2 &DrawPosit
 int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTarget) const {
 
 	switch(TargetID) {
-		case TargetType::SELF:
-		case TargetType::ALLY:
-		case TargetType::ANY:
-			return 1;
+		case TargetType::ENEMY_ALL:
+		case TargetType::ALLY_ALL:
+			return BATTLE_MAX_OBJECTS_PER_SIDE;
 		break;
-		case TargetType::ENEMY_MULTI:
-		case TargetType::ALLY_MULTI:
-		case TargetType::ENEMY_CORPSE_AOE: {
-
+		default: {
 			if(InitialTarget && TargetID == TargetType::ENEMY_CORPSE_AOE)
 				return 1;
 
-			int TargetCount = 0;
 			if(Scripting->StartMethodCall(Script, "GetTargetCount")) {
 				int SkillLevel = 1;
 				auto SkillIterator = Object->Character->Skills.find(ID);
@@ -747,19 +742,14 @@ int _Item::GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTa
 
 				Scripting->PushInt(SkillLevel);
 				Scripting->MethodCall(1, 1);
-				TargetCount = Scripting->GetInt(1);
+				int TargetCount = Scripting->GetInt(1);
 				Scripting->FinishMethodCall();
-			}
-			else
-				TargetCount = BATTLE_MULTI_TARGET_COUNT;
 
-			return TargetCount;
-		} break;
-		case TargetType::ENEMY_ALL:
-		case TargetType::ALLY_ALL:
-			return BATTLE_MAX_OBJECTS_PER_SIDE;
-		break;
-		default:
+				return TargetCount;
+			}
+
+			return 1;
+		}
 		break;
 	}
 

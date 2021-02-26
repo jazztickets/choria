@@ -72,9 +72,9 @@ class _Item {
 		bool IsEquippable() const { return Type == ItemType::OFFHAND || Type == ItemType::RELIC || (Type >= ItemType::HELMET && Type <= ItemType::AMULET); }
 		bool IsStackable() const { return !IsEquippable(); }
 		bool IsCursed() const { return Attributes.at("Cursed").Int; }
-		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
-		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
-		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
+		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
+		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY || TargetID == TargetType::ENEMY_CORPSE_AOE; }
+		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
 		int GetTargetCount(_Scripting *Scripting, _Object *Object, bool InitialTarget=true) const;
 
 		void GetEquipmentSlot(_Slot &Slot) const;

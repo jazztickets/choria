@@ -91,7 +91,6 @@ const  double       HUD_GPM_TIME                       =  60.0;
 const  int          BATTLE_MINSTEPS                    =  12;
 const  int          BATTLE_MAXSTEPS                    =  30;
 const  int          BATTLE_MAX_OBJECTS_PER_SIDE        =  8;
-const  int          BATTLE_MULTI_TARGET_COUNT          =  3;
 const  int          BATTLE_ROWS_PER_SIDE               =  4;
 const  int          BATTLE_COLUMN_SPACING              =  324;
 const  double       BATTLE_DEFAULTATTACKPERIOD         =  2.0;
