@@ -530,6 +530,8 @@ Skill_ShieldBash.DamagePerLevel = 10
 Skill_ShieldBash.Constant = 10000
 Skill_ShieldBash.BasePercent = 75
 Skill_ShieldBash.Multiplier = 2010
+Skill_ShieldBash.Targets = 1
+Skill_ShieldBash.TargetsPerLevel = 0.04
 
 function Skill_ShieldBash.GetChance(self, Level)
 	return math.floor(self.Multiplier * Level / (self.Constant + Level) + self.BasePercent)
@@ -548,17 +550,16 @@ function Skill_ShieldBash.GetDuration(self, Level)
 end
 
 function Skill_ShieldBash.GetInfo(self, Source, Item)
-	TextColor = "yellow"
+	local TextColor = "yellow"
 	if not self:CanUse(Item.Level, Source, nil) then
 		TextColor = "red"
 	end
 
-	DamageValue = self:GetDamage(Item.Level) .. "%"
+	local DamageValue = self:GetDamage(Item.Level) .. "%"
+	local AverageDamage = 0
 
 	Shield = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
-	if Shield == nil then
-		AverageDamage = 0
-	else
+	if Shield ~= nil then
 		AverageDamage = Shield.GetAverageDamage(Source.Pointer, Shield.Upgrades)
 	end
 
@@ -566,7 +567,13 @@ function Skill_ShieldBash.GetInfo(self, Source, Item)
 		DamageValue = Round(AverageDamage * self:GetDamageMultiplier(Source, Item.Level)) .. " [c green]avg[c white]"
 	end
 
-	return "Bash your enemy with a shield for [c green]" .. DamageValue .. "[c white] shield damage and a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a shield"
+	local Enemy = "enemy"
+	local TargetCount = self:GetTargetCount(Item.Level)
+	if TargetCount ~= 1 then
+		Enemy = "enemies"
+	end
+
+	return "Bash [c green]" .. TargetCount .. "[c white] " .. Enemy .. " with a shield for [c green]" .. DamageValue .. "[c white] shield damage and a [c green]" .. self:GetChance(Item.Level) .. "%[c white] chance to [c yellow]stun [c white]for [c green]" .. self:GetDuration(Item.Level) .. "[c white] seconds\n[c " .. TextColor .. "]Requires a shield"
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
