@@ -38,17 +38,17 @@
 #include <iomanip>
 
 // Constructor
-_Bot::_Bot(const _Stats *Stats, const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port) :
+_Bot::_Bot(const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port) :
 	Network(new ae::_ClientNetwork()),
 	Map(nullptr),
 	Battle(nullptr),
 	Player(nullptr),
-	Stats(Stats),
 	Username(Username),
 	Password(Password) {
 
 	ObjectManager = new ae::_Manager<_Object>();
 
+	Stats = new _Stats(true);
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_GAME);
 	Script = "Bot_Client";
@@ -58,7 +58,7 @@ _Bot::_Bot(const _Stats *Stats, const std::string &Username, const std::string &
 
 // Destructor
 _Bot::~_Bot() {
-
+	delete Stats;
 	delete ObjectManager;
 	delete Battle;
 	delete Map;

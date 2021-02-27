@@ -45,7 +45,7 @@ class _Bot {
 
 	public:
 
-		_Bot(const _Stats *Stats, const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port);
+		_Bot(const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port);
 		~_Bot();
 
 		// Update
@@ -63,9 +63,9 @@ class _Bot {
 
 		_Scripting *Scripting;
 		_Map *Map;
+		_Stats *Stats;
 		_Battle *Battle;
 		_Object *Player;
-		const _Stats *Stats;
 
 		std::string Script;
 

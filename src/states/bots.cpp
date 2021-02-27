@@ -79,6 +79,10 @@ void RunCommandThread() {
 	BotState.HandleQuit();
 }
 
+void UpdateBot(_Bot *Bot, double FrameTime) {
+	Bot->Update(FrameTime);
+}
+
 // Constructor
 _BotsState::_BotsState() :
 	HostAddress("127.0.0.1"),
@@ -125,11 +129,19 @@ void _BotsState::HandleQuit() {
 void _BotsState::Update(double FrameTime) {
 	std::lock_guard<std::mutex> LockGuard(Mutex);
 
+	// Update all bots
+	std::vector<std::thread> UpdateThreads;
+	UpdateThreads.reserve(Bots.size());
+	for(auto &Bot : Bots)
+		UpdateThreads.push_back(std::thread(UpdateBot, Bot, FrameTime));
+
+	// Join threads
+	for(auto &UpdateThread : UpdateThreads)
+		UpdateThread.join();
+
+	// Delete
 	for(auto Iterator = Bots.begin(); Iterator != Bots.end(); ) {
 		_Bot *Bot = *Iterator;
-
-		// Update
-		Bot->Update(FrameTime);
 
 		// Delete
 		if(Bot->Network->IsDisconnected()) {
@@ -150,7 +162,7 @@ void _BotsState::Add() {
 	std::cout << "adding bot " << NextBotNumber << std::endl;
 	try {
 		std::string Credentials = "bot_" + BotNamePrefix + std::to_string(NextBotNumber);
-		_Bot *Bot = new _Bot(Stats, Credentials, Credentials, HostAddress, Port);
+		_Bot *Bot = new _Bot(Credentials, Credentials, HostAddress, Port);
 		Bots.push_back(Bot);
 		NextBotNumber++;
 	}
