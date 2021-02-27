@@ -1953,9 +1953,6 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer, bool Penalize) {
 
 // Handle console commands
 void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
-	if(!IsTesting)
-		return;
-
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1964,8 +1961,31 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!Player->Map)
 		return;
 
-	// Process command
 	std::string Command = Data.ReadString();
+
+	// Handle player commands
+	if(Command == "players") {
+		std::stringstream Buffer;
+		int Count = 0;
+		for(auto &Object : ObjectManager->Objects) {
+			if(!Object->Peer)
+				continue;
+
+			if(Count > 0)
+				Buffer << ", ";
+			Buffer << Object->Name;
+			Count++;
+		}
+
+		std::string Plural = Count == 1 ? "" : "s";
+		std::string Message = std::to_string(Count) + " player" + Plural + ": " + Buffer.str();
+		SendMessage(Peer, Message, "white");
+	}
+
+	if(!IsTesting)
+		return;
+
+	// Process command
 	if(Command == "battle") {
 		Player->Character->BossCooldowns.clear();
 
@@ -2046,23 +2066,6 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		Player->Position = Player->Map->GetValidCoord(glm::ivec2(X, Y));
 		SendPlayerPosition(Player->Peer);
-	}
-	else if(Command == "players") {
-		std::stringstream Buffer;
-		int Count = 0;
-		for(auto &Object : ObjectManager->Objects) {
-			if(!Object->Peer)
-				continue;
-
-			if(Count > 0)
-				Buffer << ", ";
-			Buffer << Object->Name;
-			Count++;
-		}
-
-		std::string Plural = Count == 1 ? "" : "s";
-		std::string Message = std::to_string(Count) + " player" + Plural + ": " + Buffer.str();
-		SendMessage(Peer, Message, "white");
 	}
 	else if(Command == "save") {
 		SaveTime = Config.AutoSavePeriod;
