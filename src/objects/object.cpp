@@ -1568,7 +1568,7 @@ int _Object::Move() {
 		return 0;
 
 	// Check timer
-	if(Controller->MoveTime < PLAYER_MOVETIME / (Character->Attributes["MoveSpeed"].Mult()))
+	if(Controller->MoveTime < PLAYER_MOVETIME / Character->Attributes["MoveSpeed"].Mult())
 		return 0;
 
 	Controller->MoveTime = 0;

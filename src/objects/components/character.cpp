@@ -976,8 +976,8 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 
 	// Reduce duration of stun/slow with resist
 	if(StatusEffect->Buff->Name == "Stunned" || StatusEffect->Buff->Name == "Slowed" || StatusEffect->Buff->Name == "Taunted") {
-		StatusEffect->Duration *= 1.0f - (Attributes["StunResist"].Mult());
-		StatusEffect->MaxDuration *= 1.0f - (Attributes["StunResist"].Mult());
+		StatusEffect->Duration *= 1.0f - Attributes["StunResist"].Mult();
+		StatusEffect->MaxDuration *= 1.0f - Attributes["StunResist"].Mult();
 	}
 
 	// Find existing buff
