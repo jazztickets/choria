@@ -65,7 +65,8 @@ bool _TradeScreen::Close(bool SendNotify) {
 	// Close inventory
 	HUD->InventoryScreen->Close();
 	Element->SetActive(false);
-	ae::FocusedElement = nullptr;
+	if(HUD->IsTypingGold())
+		ae::FocusedElement = nullptr;
 
 	// Notify server
 	if(SendNotify)

@@ -1066,7 +1066,8 @@ void _HUD::CloseChat() {
 	SentHistoryIterator = SentHistory.end();
 	ChatElement->SetActive(false);
 	ChatTextBox->Clear();
-	ae::FocusedElement = nullptr;
+	if(ae::FocusedElement == ChatTextBox)
+		ae::FocusedElement = nullptr;
 }
 
 // Close confirmation screen
@@ -1633,7 +1634,7 @@ bool _HUD::IsChatting() {
 void _HUD::AddChatMessage(const _Message &Chat) {
 	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
 	std::list<std::string> Strings;
-	Font->BreakupString(Chat.Message, HUD_MESSAGE_MAX_WIDTH * ae::_Element::GetUIScale(), Strings);
+	Font->BreakupString(Chat.Message, ae::Graphics.CurrentSize.x - 100, Strings);
 	for(const auto &String : Strings)
 		ChatHistory.push_back(_Message(String, Chat.Color, Chat.Time));
 }
