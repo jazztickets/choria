@@ -95,7 +95,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 		else if(Token == "-nopvp") {
 			PlayState.NoPVP = true;
-			DedicatedState.SetHardcore(true);
+			DedicatedState.SetNoPVP(true);
 		}
 		else if(Token == "-editor") {
 			if(ENABLE_EDITOR) {

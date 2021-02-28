@@ -1382,7 +1382,7 @@ function Skill_Hunt.GetGold(self, Level)
 end
 
 function Skill_Hunt.GetInfo(self, Source, Item)
-	return "Attack another player and get [c green]" .. self:GetGold(Item.Level) .. "% [c white]of their gold for a kill. If you die, you will lose [c green]" .. self:GetGold(Item.Level) .. "%[c white] gold plus your bounty\n[c yellow]Must be in a PVP zone to use"
+	return "Attack another player and get [c green]" .. self:GetGold(Item.Level) .. "% [c white]of their gold for a kill. If you die, you will lose [c green]" .. self:GetGold(Item.Level) .. "%[c white] gold plus your bounty\n\n[c yellow]Must be in a PVP zone to use"
 end
 
 function Skill_Hunt.Use(self, Level, Duration, Source, Target, Result, Priority)
