@@ -172,6 +172,7 @@ class _PlayState : public ae::_State {
 		void HandleActionClear(ae::_Buffer &Data);
 		void HandleActionResults(ae::_Buffer &Data);
 		void HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange);
+		void HandleSkillMaxLevelAdjust(ae::_Buffer &Data);
 		void HandleHUD(ae::_Buffer &Data);
 		void HandleMinigameSeed(ae::_Buffer &Data);
 		void HandleBuffUpdate(ae::_Buffer &Data);

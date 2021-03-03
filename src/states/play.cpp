@@ -1007,6 +1007,9 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 			_StatChange StatChange;
 			HandleStatChange(Data, StatChange);
 		} break;
+		case PacketType::SKILLS_MAXLEVELADJUST:
+			HandleSkillMaxLevelAdjust(Data);
+		break;
 		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
 		break;
@@ -1768,6 +1771,17 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 
 	// Add stat change
 	HUD->AddStatChange(StatChange);
+}
+
+// Handle enchanter buy from server
+void _PlayState::HandleSkillMaxLevelAdjust(ae::_Buffer &Data) {
+	if(!Player)
+		return;
+
+	uint32_t SkillID = Data.Read<uint32_t>();
+	int MaxLevel = Data.Read<int>();
+	if(Player->Character->MaxSkillLevels.find(SkillID) != Player->Character->MaxSkillLevels.end())
+		Player->Character->MaxSkillLevels[SkillID] = MaxLevel;
 }
 
 // Handles HUD updates

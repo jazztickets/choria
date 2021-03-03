@@ -1404,9 +1404,15 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	_Object *Player = Peer->Object;
+	if(!Player->Character->Enchanter)
+		return;
 
-	// Process packet
+	// Get skill
 	uint32_t SkillID = Data.Read<uint32_t>();
+	if(Stats->Items.find(SkillID) == Stats->Items.end())
+	   return;
+
+	const _Item *Skill = Stats->Items.at(SkillID);
 
 	// Check for skill unlocked
 	if(Player->Character->Skills.find(SkillID) == Player->Character->Skills.end())
@@ -1423,6 +1429,23 @@ void _Server::HandleEnchanterBuy(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Check gold
 	if(Price > Player->Character->Attributes["Gold"].Int64)
 		return;
+
+	// Check max skill level
+	if(MaxSkillLevel >= Skill->MaxLevel)
+		return;
+
+	// Check enchanter level
+	if(MaxSkillLevel >= Player->Character->Enchanter->Level)
+		return;
+
+	// Update skill
+	{
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::SKILLS_MAXLEVELADJUST);
+		Packet.Write<uint32_t>(SkillID);
+		Packet.Write<int>(MaxSkillLevel + 1);
+		Network->SendPacket(Packet, Peer);
+	}
 
 	// Update gold
 	{

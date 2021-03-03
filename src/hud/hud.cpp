@@ -397,7 +397,6 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				Packet.Write<PacketType>(PacketType::ENCHANTER_BUY);
 				Packet.Write<uint32_t>(SkillID);
 				PlayState.Network->SendPacket(Packet);
-				Player->Character->AdjustMaxSkillLevel(SkillID, 1);
 			}
 		}
 		// Accept trader button
