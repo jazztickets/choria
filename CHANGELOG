@@ -21,28 +21,29 @@ choria 0.6.0 -
 - Added cooldowns to various skills/items
 - Increased inventory/trade bag size
 - Increased item stack amount
-- Use right-click to manually dismiss buffs
+- Bosses grow stronger after each kill and show a corpse when on cooldown
 - Newly learned skills start with a max level of 5
 - Summons that survive battle are now stored in buffs
-- Direction of party members now show on the HUD
-- Added unlocks tab to inventory
-- Keys now get used automatically
-- Hold alt to view more info on various screens, items, and skills
-- Added shift-click to transfer items between bags
-- Added ctrl-click to upgrade items in inventory (shift-ctrl-click for 5x)
-- Skills are now sorted by category, then name
-- Passwords are now hashed on server
-- Added 'players' and 'networth' console commands
 - Resurrect spell can now be cast in the world
 - Various items can now purge debuffs
 - Torches now pause during battle
-- Bosses grow stronger after each kill and show a corpse when on cooldown
 - Trader items now only search through inventory bag
-- Fixed many bugs/crashes
+- Added 4k resolution support and optional 4k texture pack
+- Direction of party members now show on the HUD
+- Use right-click to manually dismiss buffs
+- Added unlocks tab to inventory
+- Keys now get used automatically
+- Hold alt to view more info on various screens, items, and skills
+- Added shift+click to transfer items between bags
+- Added ctrl+click to upgrade items in inventory
+- Skills are now sorted by category, then name
 - Host field can be pasted on the connect screen
-- Optimized network traffic
+- Added 'players' and 'networth' console commands
+- Passwords are now hashed on server
 - Added more dedicated server commands
+- Optimized network traffic
 - Many balance and map updates
+- Fixed many bugs/crashes
 
 choria 0.5.0 - 2019-09-27
 - Replaced irrlicht with a custom SDL2/OpenGL based engine
